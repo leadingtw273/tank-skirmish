@@ -1,0 +1,64 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - "agent-team/**"
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tank-skirmish-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: quality
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      GODOT_VERSION: 4.7.1-stable
+      GODOT_ARCHIVE_SHA256: c7ff14fd28472c8d4f193043de30278dcf7e5241a1dcf7566b02e27addaa33ba
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Cache Godot
+        id: cache-godot
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}/godot
+          key: godot-${{ runner.os }}-${{ env.GODOT_VERSION }}-x86_64
+
+      - name: Install pinned Godot
+        if: steps.cache-godot.outputs.cache-hit != 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "${RUNNER_TEMP}/godot"
+          archive="${RUNNER_TEMP}/Godot_v${GODOT_VERSION}_linux.x86_64.zip"
+          curl --fail --location --silent --show-error \
+            --output "$archive" \
+            "https://github.com/godotengine/godot-builds/releases/download/${GODOT_VERSION}/Godot_v${GODOT_VERSION}_linux.x86_64.zip"
+          echo "${GODOT_ARCHIVE_SHA256}  ${archive}" | sha256sum --check --strict
+          python3 -m zipfile -e "$archive" "${RUNNER_TEMP}/godot"
+          chmod +x "${RUNNER_TEMP}/godot/Godot_v${GODOT_VERSION}_linux.x86_64"
+
+      - name: Run project quality gate
+        shell: bash
+        env:
+          GODOT_BIN: ${{ runner.temp }}/godot/Godot_v${{ env.GODOT_VERSION }}_linux.x86_64
+        run: bash scripts/ci.sh
+
+      - name: Upload validation artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tank-skirmish-validation-${{ github.run_id }}
+          path: artifacts/
+          if-no-files-found: ignore
+          retention-days: 7

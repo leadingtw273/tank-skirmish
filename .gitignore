@@ -1,0 +1,9 @@
+.godot/
+artifacts/
+export/
+.env
+.env.*
+.DS_Store
+Thumbs.db
+*.tmp
+*.log

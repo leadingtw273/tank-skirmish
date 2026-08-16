@@ -19,6 +19,7 @@ const CONTRACT_VERSION = "visual-review-v1";
 const REQUIRED_WIDTH = 1920;
 const REQUIRED_HEIGHT = 1080;
 const DEFAULT_SCENE = "res://src/main.tscn";
+const CAPTURE_SCENE = "res://tests/fixtures/visual_probe.tscn";
 const PROBE_SCENE_PREFIX = "res://tests/fixtures/";
 const ARTIFACT_NAME = "visual-evidence.png";
 const MANIFEST_NAME = "visual-manifest.json";
@@ -94,6 +95,7 @@ export function runStaticSelfCheck() {
     "function inspectPng",
     "function validateOutputDirectory",
     "--self-check",
+    "--target-scene=",
     "visual-manifest.json",
   ];
   for (const marker of requiredEntrypointMarkers) {
@@ -342,7 +344,19 @@ function main() {
   try {
     const result = spawnSync(
       godot,
-      ["--path", projectRoot, "--audio-driver", "Dummy", options.scene, "--", `--out=${artifact}`],
+      [
+        "--path",
+        projectRoot,
+        "--audio-driver",
+        "Dummy",
+        "--windowed",
+        "--resolution",
+        `${REQUIRED_WIDTH}x${REQUIRED_HEIGHT}`,
+        CAPTURE_SCENE,
+        "--",
+        `--target-scene=${options.scene}`,
+        `--out=${artifact}`,
+      ],
       { cwd: projectRoot, encoding: "utf8", env: environment },
     );
     process.stdout.write(`${result.stdout ?? ""}${result.stderr ?? ""}`);

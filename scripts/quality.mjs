@@ -1,5 +1,5 @@
 import { spawnSync } from "node:child_process";
-import { mkdirSync, writeFileSync } from "node:fs";
+import { lstatSync, mkdirSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -51,6 +51,11 @@ function run(name, executable, argumentsList) {
   }
 }
 
+const visualReview = join(projectRoot, "scripts", "visual-review.mjs");
+if (!lstatSync(visualReview).isFile()) {
+  throw new Error("visual-review.mjs must be a regular file");
+}
+run("visual-review-self-check", process.execPath, [visualReview, "--self-check"]);
 run("version", godot, ["--version"]);
 run("import", godot, ["--headless", "--path", ".", "--import"]);
 run("smoke", godot, [

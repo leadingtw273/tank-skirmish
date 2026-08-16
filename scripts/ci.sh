@@ -4,7 +4,9 @@ set -euo pipefail
 project_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$project_root"
 
-godot_bin="${GODOT_BIN:-godot}"
+task_tool_cache="${TANK_SKIRMISH_TOOL_CACHE:-${XDG_CACHE_HOME:-${HOME}/.cache}/tank-skirmish/toolchains}"
+default_godot_bin="$task_tool_cache/godot/4.7.1-stable/Godot_v4.7.1-stable_linux.x86_64"
+godot_bin="${GODOT_BIN:-$default_godot_bin}"
 artifact_dir="$project_root/artifacts/ci"
 
 export XDG_DATA_HOME="${XDG_DATA_HOME:-$project_root/.godot/xdg/data}"

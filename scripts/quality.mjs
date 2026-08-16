@@ -1,5 +1,5 @@
 import { spawnSync } from "node:child_process";
-import { mkdirSync, writeFileSync } from "node:fs";
+import { lstatSync, mkdirSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -50,6 +50,24 @@ function run(name, executable, argumentsList) {
     throw new Error(`${name} reported a Godot error`);
   }
 }
+
+function assertRegularFile(path, description) {
+  let stats;
+  try {
+    stats = lstatSync(path);
+  } catch (error) {
+    throw new Error(`${description} is missing: ${error.message}`);
+  }
+
+  if (!stats.isFile()) {
+    throw new Error(`${description} must be a regular file: ${path}`);
+  }
+}
+
+const visualReview = join(projectRoot, "scripts", "visual-review.mjs");
+assertRegularFile(visualReview, "visual review entrypoint");
+const { runStaticSelfCheck } = await import("./visual-review.mjs");
+runStaticSelfCheck();
 
 run("version", godot, ["--version"]);
 run("import", godot, ["--headless", "--path", ".", "--import"]);

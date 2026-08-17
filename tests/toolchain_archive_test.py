@@ -51,7 +51,7 @@ class ToolchainArchiveTest(unittest.TestCase):
             "memberCount": 2,
             "topLevelDirectory": "pack",
             "exactMemberNames": ["pack/a.txt", "pack/b.txt"],
-            "allowedEntryTypes": ["regular"],
+            "allowedEntryTypes": ["regular_file"],
             **overrides,
         }
 
@@ -108,8 +108,8 @@ class ToolchainArchiveTest(unittest.TestCase):
         self.assertEqual(
             json.loads(zip_result.stdout),
             {"ok": True, "members": [
-                {"path": "pack/a.txt", "type": "regular", "linkTarget": None},
-                {"path": "pack/b.txt", "type": "regular", "linkTarget": None},
+                {"path": "pack/a.txt", "type": "regular_file", "linkTarget": None},
+                {"path": "pack/b.txt", "type": "regular_file", "linkTarget": None},
             ]},
         )
 
@@ -124,7 +124,7 @@ class ToolchainArchiveTest(unittest.TestCase):
             self.contract(
                 memberCount=3,
                 exactMemberNames=["pack", "pack/a.txt", "pack/current"],
-                allowedEntryTypes=["regular", "directory", "symlink"],
+                allowedEntryTypes=["regular_file", "directory", "symlink"],
             ),
         )
         self.assertEqual(tar_result.returncode, 0, tar_result.stderr)
@@ -132,7 +132,7 @@ class ToolchainArchiveTest(unittest.TestCase):
             json.loads(tar_result.stdout)["members"],
             [
                 {"path": "pack", "type": "directory", "linkTarget": None},
-                {"path": "pack/a.txt", "type": "regular", "linkTarget": None},
+                {"path": "pack/a.txt", "type": "regular_file", "linkTarget": None},
                 {"path": "pack/current", "type": "symlink", "linkTarget": "a.txt"},
             ],
         )
@@ -260,7 +260,7 @@ class ToolchainArchiveTest(unittest.TestCase):
                     "tar.xz",
                     self.contract(
                         exactMemberNames=["pack/a.txt", "pack/link"],
-                        allowedEntryTypes=["regular", "symlink"],
+                        allowedEntryTypes=["regular_file", "symlink"],
                     ),
                 )
                 self.assert_failure(result, "unsafe_entry", "pack/link")
@@ -273,7 +273,7 @@ class ToolchainArchiveTest(unittest.TestCase):
             "tar.xz",
             self.contract(
                 exactMemberNames=["pack/link", "pack/link/child"],
-                allowedEntryTypes=["regular", "symlink"],
+                allowedEntryTypes=["regular_file", "symlink"],
             ),
         )
         self.assert_failure(result, "unsafe_entry", "pack/link/child")
@@ -285,7 +285,7 @@ class ToolchainArchiveTest(unittest.TestCase):
             (self.contract(topLevelDirectory=None), "topLevelDirectory"),
             (self.contract(exactMemberNames=["pack/a.txt", "pack/c.txt"]), "exactMemberNames"),
             (self.contract(allowedEntryTypes=[]), "contract.allowedEntryTypes"),
-            (self.contract(allowedEntryTypes=["regular", "symlink"]), "allowedEntryTypes"),
+            (self.contract(allowedEntryTypes=["regular_file", "symlink"]), "allowedEntryTypes"),
         ]:
             with self.subTest(contract=contract):
                 expected_code = "request_invalid" if not contract["allowedEntryTypes"] else "contract_mismatch"
@@ -304,6 +304,11 @@ class ToolchainArchiveTest(unittest.TestCase):
         broken = self.directory / "broken.zip"
         broken.write_bytes(b"not a zip")
         self.assert_failure(self.request(broken, "zip", self.contract()), "archive_invalid", "archivePath")
+
+    def test_rejects_legacy_regular_entry_type(self) -> None:
+        archive = self.make_zip([("pack/a.txt", b"a"), ("pack/b.txt", b"b")])
+        result = self.request(archive, "zip", self.contract(allowedEntryTypes=["regular"]))
+        self.assert_failure(result, "contract_mismatch", "allowedEntryTypes")
 
 
 if __name__ == "__main__":

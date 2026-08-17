@@ -18,6 +18,37 @@ function expectPath(mutator, path) {
   assert.throws(() => validateToolchainLock(value), { message: path });
 }
 
+function toolById(value, id) {
+  return value.tools.find((tool) => tool.id === id);
+}
+
+function expectToolPath(id, mutator, suffix) {
+  const value = lock();
+  const index = value.tools.findIndex((tool) => tool.id === id);
+  mutator(value.tools[index]);
+  assert.throws(() => validateToolchainLock(value), { message: `tools[${index}].${suffix}` });
+}
+
+function updateDerivedFields(tool, version) {
+  tool.version = version;
+  const [major, minor] = version.split(".");
+  if (tool.id === "godot") {
+    tool.archive.filename = `Godot_v${version}-${tool.channel}_linux.x86_64.zip`;
+    tool.archive.url = `https://github.com/godotengine/godot-builds/releases/download/${version}-${tool.channel}/${tool.archive.filename}`;
+    tool.archive.checksumSourceUrl = `https://github.com/godotengine/godot-builds/releases/download/${version}-${tool.channel}/SHA512-SUMS.txt`;
+    tool.archive.exactMemberNames = [`Godot_v${version}-${tool.channel}_linux.x86_64`];
+    tool.install.executableRelativePath = tool.archive.exactMemberNames[0];
+    tool.install.versionContract.value = `${version}.${tool.channel}.official.a13da4feb`;
+  } else {
+    tool.archive.filename = `blender-${version}-linux-x64.tar.xz`;
+    tool.archive.topLevelDirectory = `blender-${version}-linux-x64`;
+    tool.archive.url = `https://download.blender.org/release/Blender${major}.${minor}/${tool.archive.filename}`;
+    tool.archive.checksumSourceUrl = `https://download.blender.org/release/Blender${major}.${minor}/blender-${version}.sha256`;
+    tool.install.executableRelativePath = `${tool.archive.topLevelDirectory}/blender`;
+    tool.install.versionContract.firstLine = `Blender ${version} LTS`;
+  }
+}
+
 test("accepts the lock and recursively deep-freezes it", () => {
   const value = lock();
   const result = validateToolchainLock(value);
@@ -114,4 +145,163 @@ test("rejects missing install fields and invalid provenance", () => {
   expectPath((value) => {
     value.tools[0].provenance.verifiedBy = "other";
   }, "tools[0].provenance.verifiedBy");
+});
+
+test("enforces each vendor's channel and archive filename", () => {
+  for (const { id, channel, filename } of [
+    { id: "godot", channel: "beta", filename: "Godot_v4.7.1-stable_linux.x86_64.zip.bak" },
+    { id: "blender", channel: "stable", filename: "blender-4.5.12-linux-x64.tar.xz.bak" },
+  ]) {
+    expectToolPath(id, (tool) => {
+      tool.channel = channel;
+    }, "channel");
+    expectToolPath(id, (tool) => {
+      tool.archive.filename = filename;
+    }, "archive.filename");
+    expectToolPath(id, (tool) => {
+      tool.archive.filename = "../archive";
+    }, "archive.filename");
+  }
+});
+
+test("enforces three-component versions and accepts consistently derived versions", () => {
+  for (const id of ["godot", "blender"]) {
+    for (const version of ["4.7", "4.7.1.2", "v4.7.1", "4.7.x"]) {
+      expectToolPath(id, (tool) => {
+        tool.version = version;
+      }, "version");
+    }
+
+    const value = lock();
+    updateDerivedFields(toolById(value, id), id === "godot" ? "5.10.3" : "6.11.12");
+    assert.doesNotThrow(() => validateToolchainLock(value));
+  }
+});
+
+test("rejects every forbidden archive URL component for both vendors", () => {
+  const mutations = [
+    ["unparseable URL", () => "not a URL"],
+    ["userinfo", (url) => url.replace("https://", "https://user@")],
+    ["explicit port", (url) => url.replace(/^(https:\/\/[^/]+)/u, "$1:444")],
+    ["explicit default port", (url) => url.replace(/^(https:\/\/[^/]+)/u, "$1:443")],
+    ["host", (url) => url.replace("github.com", "example.com").replace("download.blender.org", "example.com")],
+    ["pathname", (url) => `${url}/extra`],
+    ["query", (url) => `${url}?download=1`],
+    ["fragment", (url) => `${url}#checksum`],
+  ];
+
+  for (const id of ["godot", "blender"]) {
+    for (const [, mutateUrl] of mutations) {
+      expectToolPath(id, (tool) => {
+        tool.archive.url = mutateUrl(tool.archive.url);
+      }, "archive.url");
+    }
+  }
+});
+
+test("enforces checksum sources, archive discriminants, and executable crossings", () => {
+  for (const id of ["godot", "blender"]) {
+    for (const mutateUrl of [
+      () => "not a URL",
+      (url) => url.replace("https://", "https://user@"),
+      (url) => url.replace(/^(https:\/\/[^/]+)/u, "$1:444"),
+      (url) => url.replace(/^(https:\/\/[^/]+)/u, "$1:443"),
+      (url) => url.replace("github.com", "example.com").replace("download.blender.org", "example.com"),
+      (url) => {
+        const parsed = new URL(url);
+        parsed.pathname = `/other/${parsed.pathname.split("/").at(-1)}`;
+        return parsed.href;
+      },
+      (url) => url.replace(/\/[^/]+$/u, "/other.txt"),
+      (url) => `${url}?download=1`,
+      (url) => `${url}#checksum`,
+    ]) {
+      expectToolPath(id, (tool) => {
+        tool.archive.checksumSourceUrl = mutateUrl(tool.archive.checksumSourceUrl);
+      }, "archive.checksumSourceUrl");
+    }
+  }
+
+  for (const { id, format, entryTypes, mutateCross } of [
+    {
+      id: "godot",
+      format: "tar.xz",
+      entryTypes: ["regular"],
+      mutateCross: (tool) => {
+        tool.archive.exactMemberNames = ["other-executable"];
+      },
+    },
+    {
+      id: "blender",
+      format: "zip",
+      entryTypes: ["regular_file", "directory"],
+      mutateCross: (tool) => {
+        tool.install.executableRelativePath = `${tool.archive.topLevelDirectory}/bin/blender`;
+      },
+    },
+  ]) {
+    expectToolPath(id, (tool) => {
+      tool.archive.format = format;
+    }, "archive.format");
+    expectToolPath(id, (tool) => {
+      tool.archive.allowedEntryTypes = entryTypes;
+    }, "archive.allowedEntryTypes");
+    expectToolPath(id, mutateCross, id === "godot" ? "archive.exactMemberNames" : "install.executableRelativePath");
+    expectToolPath(id, (tool) => {
+      tool.archive.checksum.algorithm = id === "godot" ? "sha256" : "sha512";
+      tool.archive.checksum.value = "a".repeat(id === "godot" ? 64 : 128);
+    }, "archive.checksum.algorithm");
+  }
+
+  expectToolPath("godot", (tool) => {
+    tool.archive.memberCount = 2;
+  }, "archive.memberCount");
+  expectToolPath("godot", (tool) => {
+    tool.archive.topLevelDirectory = "Godot";
+  }, "archive.topLevelDirectory");
+  expectToolPath("godot", (tool) => {
+    tool.install.executableRelativePath = "other-executable";
+  }, "install.executableRelativePath");
+  expectToolPath("blender", (tool) => {
+    tool.archive.topLevelDirectory = "blender/4.5.12";
+  }, "archive.topLevelDirectory");
+});
+
+test("enforces exact vendor version contracts with stable field paths", () => {
+  for (const id of ["godot", "blender"]) {
+    expectToolPath(id, (tool) => {
+      delete tool.install.versionContract;
+    }, "install.versionContract");
+  }
+
+  for (const { id, cases } of [
+    {
+      id: "godot",
+      cases: [
+        [(contract) => delete contract.value, "value"],
+        [(contract) => { contract.unknown = true; }, "unknown"],
+        [(contract) => { contract.mode = "first_line_and_build_hash"; }, "mode"],
+        [(contract) => { contract.value = ""; }, "value"],
+        [(contract) => { contract.value = "4.7.1.stable.official.A13DA4FEB"; }, "value"],
+        [(contract) => { contract.value = "4.7.1.stable.official."; }, "value"],
+      ],
+    },
+    {
+      id: "blender",
+      cases: [
+        [(contract) => delete contract.buildHash, "buildHash"],
+        [(contract) => { contract.unknown = true; }, "unknown"],
+        [(contract) => { contract.mode = "exact_output"; }, "mode"],
+        [(contract) => { contract.firstLine = "Blender 4.5.12"; }, "firstLine"],
+        [(contract) => { contract.buildHash = "84AFD5F785F7"; }, "buildHash"],
+        [(contract) => { contract.buildHash = "84afd5f785f"; }, "buildHash"],
+      ],
+    },
+  ]) {
+    for (const [mutateContract, field] of cases) {
+      expectToolPath(id, (tool) => {
+        mutateContract(tool.install.versionContract);
+      }, `install.versionContract.${field}`);
+    }
+  }
 });

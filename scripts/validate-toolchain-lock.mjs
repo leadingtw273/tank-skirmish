@@ -1,3 +1,7 @@
+import { readFile } from "node:fs/promises";
+import { resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+
 const ROOT_FIELDS = ["schemaVersion", "target", "tools"];
 const TOOL_FIELDS = ["id", "version", "channel", "archive", "install", "provenance"];
 const ARCHIVE_FIELDS = [
@@ -322,6 +326,15 @@ function deepFreeze(value, seen = new WeakSet()) {
   return Object.freeze(value);
 }
 
+export class ToolchainLockLoadError extends Error {
+  constructor(code, path) {
+    super(`Toolchain lock load failed: ${code}`);
+    this.name = "ToolchainLockLoadError";
+    this.code = code;
+    this.path = path;
+  }
+}
+
 export function validateToolchainLock(value) {
   assertExactFields(value, ROOT_FIELDS, "");
   if (value.schemaVersion !== 1) {
@@ -348,4 +361,68 @@ export function validateToolchainLock(value) {
   }
 
   return deepFreeze(value);
+}
+
+export async function loadAndValidateToolchainLock(path) {
+  let source;
+  try {
+    source = await readFile(path, "utf8");
+  } catch {
+    throw new ToolchainLockLoadError("io_error", path);
+  }
+
+  let value;
+  try {
+    value = JSON.parse(source);
+  } catch {
+    throw new ToolchainLockLoadError("parse_error", path);
+  }
+
+  try {
+    return validateToolchainLock(value);
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new ToolchainLockLoadError("validation_error", error.message);
+    }
+    throw error;
+  }
+}
+
+function writeJsonLine(stream, value) {
+  stream.write(`${JSON.stringify(value)}\n`);
+}
+
+export async function runToolchainLockCli(args, { lockPath, stdout, stderr }) {
+  if (args.length !== 1 || args[0] !== "--check") {
+    writeJsonLine(stderr, { ok: false, code: "usage_error", path: "argv" });
+    return 2;
+  }
+
+  try {
+    const lock = await loadAndValidateToolchainLock(lockPath);
+    writeJsonLine(stdout, {
+      ok: true,
+      schemaVersion: lock.schemaVersion,
+      target: lock.target,
+      tools: lock.tools.map((tool) => tool.id),
+    });
+    return 0;
+  } catch (error) {
+    if (error instanceof ToolchainLockLoadError) {
+      writeJsonLine(stderr, { ok: false, code: error.code, path: error.path });
+      return 1;
+    }
+    writeJsonLine(stderr, { ok: false, code: "unexpected_error", path: "internal" });
+    return 1;
+  }
+}
+
+const scriptPath = fileURLToPath(import.meta.url);
+if (process.argv[1] !== undefined && resolve(process.argv[1]) === scriptPath) {
+  const lockPath = fileURLToPath(new URL("../docs/toolchain-lock.json", import.meta.url));
+  process.exitCode = await runToolchainLockCli(process.argv.slice(2), {
+    lockPath,
+    stdout: process.stdout,
+    stderr: process.stderr,
+  });
 }

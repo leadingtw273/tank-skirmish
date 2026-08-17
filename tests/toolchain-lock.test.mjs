@@ -1,8 +1,18 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
+import { mkdtemp, rm, writeFile } from "node:fs/promises";
+import { spawnSync } from "node:child_process";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import test from "node:test";
+import { fileURLToPath } from "node:url";
 
-import { validateToolchainLock } from "../scripts/validate-toolchain-lock.mjs";
+import {
+  ToolchainLockLoadError,
+  loadAndValidateToolchainLock,
+  runToolchainLockCli,
+  validateToolchainLock,
+} from "../scripts/validate-toolchain-lock.mjs";
 
 const fixture = JSON.parse(
   readFileSync(new URL("../docs/toolchain-lock.json", import.meta.url), "utf8"),
@@ -47,6 +57,22 @@ function updateDerivedFields(tool, version) {
     tool.install.executableRelativePath = `${tool.archive.topLevelDirectory}/blender`;
     tool.install.versionContract.firstLine = `Blender ${version} LTS`;
   }
+}
+
+function expectLoadError(error, code, path) {
+  assert.equal(error instanceof ToolchainLockLoadError, true);
+  assert.equal(error.code, code);
+  assert.equal(error.path, path);
+  assert.doesNotMatch(error.message, /Toolchain lock source|SyntaxError|at /u);
+  return true;
+}
+
+function memoryStream() {
+  let value = "";
+  return {
+    stream: { write: (chunk) => { value += chunk; } },
+    value: () => value,
+  };
 }
 
 test("accepts the lock and recursively deep-freezes it", () => {
@@ -304,4 +330,98 @@ test("enforces exact vendor version contracts with stable field paths", () => {
       }, `install.versionContract.${field}`);
     }
   }
+});
+
+test("loads, validates, and deep-freezes a lock from the caller path", async (t) => {
+  const directory = await mkdtemp(join(tmpdir(), "toolchain-lock-"));
+  t.after(() => rm(directory, { recursive: true, force: true }));
+  const path = join(directory, "valid.json");
+  await writeFile(path, JSON.stringify(lock()), "utf8");
+
+  const result = await loadAndValidateToolchainLock(path);
+  assert.equal(Object.isFrozen(result), true);
+  assert.equal(Object.isFrozen(result.tools[0].archive), true);
+});
+
+test("reports stable loader errors without exposing source or stacks", async (t) => {
+  const directory = await mkdtemp(join(tmpdir(), "toolchain-lock-"));
+  t.after(() => rm(directory, { recursive: true, force: true }));
+  const missingPath = join(directory, "missing.json");
+  const invalidJsonPath = join(directory, "invalid-json.json");
+  const invalidSchemaPath = join(directory, "invalid-schema.json");
+  await writeFile(invalidJsonPath, "{ not json", "utf8");
+  const invalidSchema = lock();
+  invalidSchema.schemaVersion = 2;
+  await writeFile(invalidSchemaPath, JSON.stringify(invalidSchema), "utf8");
+
+  await assert.rejects(
+    loadAndValidateToolchainLock(missingPath),
+    (error) => expectLoadError(error, "io_error", missingPath),
+  );
+  await assert.rejects(
+    loadAndValidateToolchainLock(invalidJsonPath),
+    (error) => expectLoadError(error, "parse_error", invalidJsonPath),
+  );
+  await assert.rejects(
+    loadAndValidateToolchainLock(invalidSchemaPath),
+    (error) => expectLoadError(error, "validation_error", "schemaVersion"),
+  );
+});
+
+test("CLI seam returns load errors through injected streams", async (t) => {
+  const directory = await mkdtemp(join(tmpdir(), "toolchain-lock-"));
+  t.after(() => rm(directory, { recursive: true, force: true }));
+  const missingPath = join(directory, "missing.json");
+  const stdout = memoryStream();
+  const stderr = memoryStream();
+
+  const exitCode = await runToolchainLockCli(["--check"], {
+    lockPath: missingPath,
+    stdout: stdout.stream,
+    stderr: stderr.stream,
+  });
+
+  assert.equal(exitCode, 1);
+  assert.equal(stdout.value(), "");
+  assert.equal(stderr.value(), `${JSON.stringify({ ok: false, code: "io_error", path: missingPath })}\n`);
+});
+
+test("CLI is cwd-independent and enforces exact argument usage", async (t) => {
+  const directory = await mkdtemp(join(tmpdir(), "toolchain-lock-cwd-"));
+  t.after(() => rm(directory, { recursive: true, force: true }));
+  const scriptPath = fileURLToPath(new URL("../scripts/validate-toolchain-lock.mjs", import.meta.url));
+  const usage = `${JSON.stringify({ ok: false, code: "usage_error", path: "argv" })}\n`;
+
+  const valid = spawnSync(process.execPath, [scriptPath, "--check"], {
+    cwd: directory,
+    encoding: "utf8",
+  });
+  if (valid.error?.code === "EPERM") {
+    t.skip("execution sandbox blocks nested process creation");
+    return;
+  }
+  assert.equal(valid.status, 0);
+  assert.equal(valid.stdout, `${JSON.stringify({ ok: true, schemaVersion: 1, target: "linux-x64", tools: ["godot", "blender"] })}\n`);
+  assert.equal(valid.stderr, "");
+
+  for (const args of [[], ["--unknown"], ["--check", "extra"]]) {
+    const result = spawnSync(process.execPath, [scriptPath, ...args], {
+      cwd: directory,
+      encoding: "utf8",
+    });
+    assert.equal(result.status, 2);
+    assert.equal(result.stdout, "");
+    assert.equal(result.stderr, usage);
+  }
+});
+
+test("importing the module has no process-visible output", () => {
+  const scriptUrl = new URL("../scripts/validate-toolchain-lock.mjs", import.meta.url).href;
+  const result = spawnSync(process.execPath, ["--input-type=module", "--eval", `import ${JSON.stringify(scriptUrl)};`], {
+    encoding: "utf8",
+  });
+
+  assert.equal(result.status, 0);
+  assert.equal(result.stdout, "");
+  assert.equal(result.stderr, "");
 });

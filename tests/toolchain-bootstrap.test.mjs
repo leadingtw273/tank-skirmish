@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { createHash, randomUUID } from "node:crypto";
 import { mkdtemp, mkdir, readdir, rm, stat, symlink, writeFile } from "node:fs/promises";
 import { readFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
@@ -10,6 +11,7 @@ import { fileURLToPath } from "node:url";
 import {
   ToolCacheResolutionError,
   downloadPinnedArchive,
+  installPinnedToolchain,
   resolveCacheTarget,
   resolveToolCacheRoot,
   runBootstrapToolchainCli,
@@ -63,6 +65,60 @@ async function temporaryCache(t) {
   const directory = await mkdtemp(join(tmpdir(), "toolchain-download-"));
   t.after(() => rm(directory, { recursive: true, force: true }));
   return directory;
+}
+
+function fixtureTool(id, executableRelativePath, executableContents) {
+  const executableDigest = createHash("sha256").update(executableContents).digest("hex");
+  const godot = id === "godot";
+  return {
+    id,
+    archive: {
+      format: godot ? "zip" : "tar.xz",
+      memberCount: 1,
+      topLevelDirectory: godot ? null : "fixture-blender",
+      exactMemberNames: godot ? [executableRelativePath] : null,
+      allowedEntryTypes: godot ? ["regular_file"] : ["regular_file", "directory", "symlink"],
+    },
+    install: {
+      executableRelativePath,
+      executableChecksum: { algorithm: "sha256", value: executableDigest },
+      versionContract: godot
+        ? { mode: "exact_output", value: "4.7.1.stable.fixture" }
+        : { mode: "first_line_and_build_hash", firstLine: "Blender 4.5.12 LTS", buildHash: "fixturehash12" },
+    },
+  };
+}
+
+function fixtureDownloader(contents) {
+  const digest = createHash("sha512").update(contents).digest("hex");
+  return async (_toolId, { cacheRoot }) => {
+    const stagingRoot = join(cacheRoot, ".staging", randomUUID());
+    const downloadDirectory = join(stagingRoot, "download");
+    const archivePath = join(downloadDirectory, "archive");
+    const treePath = join(stagingRoot, "tree");
+    await mkdir(downloadDirectory, { recursive: true, mode: 0o700 });
+    await mkdir(treePath, { mode: 0o700 });
+    await writeFile(archivePath, contents);
+    return { archivePath, treePath, archive: { sizeBytes: contents.length, algorithm: "sha512", digest } };
+  };
+}
+
+function fixtureAdapter(executableRelativePath, executableContents) {
+  return async ({ treePath }) => {
+    const executablePath = join(treePath, ...executableRelativePath.split("/"));
+    await mkdir(dirname(executablePath), { recursive: true, mode: 0o700 });
+    await writeFile(executablePath, executableContents);
+  };
+}
+
+function fixtureProcessRunner(tool) {
+  return async () => ({
+    code: 0,
+    stdout: tool.install.versionContract.mode === "exact_output"
+      ? `${tool.install.versionContract.value}\n`
+      : `${tool.install.versionContract.firstLine}\nbuild hash: ${tool.install.versionContract.buildHash}\n`,
+    stderr: "",
+  });
 }
 
 test("resolves configured and XDG cache roots without consulting git", async (t) => {
@@ -246,7 +302,7 @@ test("uses a private 0700 staging transaction and removes only its failed UUID",
       snapshot = {
         rootMode: (await stat(transactionRoot)).mode & 0o777,
         archiveExists: (await stat(join(transactionRoot, "download", "archive"))).isFile(),
-        treeExists: (await stat(join(transactionRoot, "download", "tree"))).isDirectory(),
+        treeExists: (await stat(join(transactionRoot, "tree"))).isDirectory(),
       };
       throw new Error("partial stream");
     },
@@ -258,9 +314,141 @@ test("uses a private 0700 staging transaction and removes only its failed UUID",
   assert.deepEqual(await readdir(join(cacheRoot, ".staging")), ["00000000-0000-4000-8000-000000000000"]);
 });
 
+test("single install publishes verified Godot and Blender fixture layouts", async (t) => {
+  for (const [id, executableRelativePath] of [
+    ["godot", "Godot_fixture"],
+    ["blender", "fixture-blender/blender"],
+  ]) {
+    const cacheRoot = await temporaryCache(t);
+    const contents = `fixture executable for ${id}\n`;
+    const tool = fixtureTool(id, executableRelativePath, contents);
+    const result = await installPinnedToolchain(id, {
+      cacheRoot,
+      tool,
+      download: fixtureDownloader(Buffer.from(`synthetic ${id} archive`)),
+      adapter: fixtureAdapter(executableRelativePath, contents),
+      processRunner: fixtureProcessRunner(tool),
+    });
+    const destination = resolveCacheTarget(id, { cacheRoot });
+
+    assert.deepEqual(result, {
+      schemaVersion: 1,
+      tool: id,
+      state: "installed",
+      network: "used",
+      archive: {
+        sizeBytes: Buffer.byteLength(`synthetic ${id} archive`),
+        algorithm: "sha512",
+        digest: createHash("sha512").update(`synthetic ${id} archive`).digest("hex"),
+      },
+      executable: {
+        algorithm: "sha256",
+        digest: tool.install.executableChecksum.value,
+        version: tool.install.versionContract.mode === "exact_output"
+          ? tool.install.versionContract.value
+          : tool.install.versionContract.firstLine,
+      },
+    });
+    assert.equal((await stat(join(destination, ...executableRelativePath.split("/")))).mode & 0o100, 0o100);
+    assert.deepEqual(await readdir(join(cacheRoot, ".staging")), []);
+  }
+});
+
+test("single install calls the adapter by argv and stdin while redacting its failure", async (t) => {
+  const cacheRoot = await temporaryCache(t);
+  const contents = "fixture executable\n";
+  const tool = fixtureTool("godot", "Godot_fixture", contents);
+  let invocation;
+
+  await assert.rejects(
+    () => installPinnedToolchain("godot", {
+      cacheRoot,
+      tool,
+      download: fixtureDownloader(Buffer.from("synthetic archive")),
+      processRunner: async (executable, argumentsList, input) => {
+        invocation = { executable, argumentsList, request: JSON.parse(input) };
+        return { code: 1, stdout: "", stderr: `archive rejected at ${join(cacheRoot, "host-path")}` };
+      },
+    }),
+    (error) => {
+      assert.equal(error.code, "adapter_failed");
+      assert.match(error.message, /<REDACTED_PATH>/u);
+      assert.doesNotMatch(error.message, new RegExp(cacheRoot.replaceAll("/", "\\/"), "u"));
+      return true;
+    },
+  );
+  assert.equal(invocation.executable, "python3");
+  assert.deepEqual(invocation.argumentsList, [join(projectRoot, "scripts", "toolchain_archive.py")]);
+  assert.equal(invocation.request.operation, "extract");
+  assert.equal(invocation.request.format, "zip");
+  assert.deepEqual(await readdir(join(cacheRoot, ".staging")), []);
+});
+
+test("single install rejects bad executables and destinations without leaking staging", async (t) => {
+  const cacheRoot = await temporaryCache(t);
+  const contents = "fixture executable\n";
+  const tool = fixtureTool("godot", "Godot_fixture", contents);
+  const sibling = join(cacheRoot, ".staging", "00000000-0000-4000-8000-000000000000");
+  await mkdir(sibling, { recursive: true, mode: 0o700 });
+
+  await expectDownloadFailure(
+    () => installPinnedToolchain("godot", {
+      cacheRoot,
+      tool,
+      download: fixtureDownloader(Buffer.from("digest mismatch")),
+      adapter: fixtureAdapter(tool.install.executableRelativePath, "different executable\n"),
+      processRunner: fixtureProcessRunner(tool),
+    }),
+    "executable_verification_failed",
+  );
+  await expectDownloadFailure(
+    () => installPinnedToolchain("godot", {
+      cacheRoot,
+      tool,
+      download: fixtureDownloader(Buffer.from("version mismatch")),
+      adapter: fixtureAdapter(tool.install.executableRelativePath, contents),
+      processRunner: async () => ({ code: 0, stdout: "not the locked version\n", stderr: "" }),
+    }),
+    "version_mismatch",
+  );
+
+  const destination = resolveCacheTarget("godot", { cacheRoot });
+  await mkdir(destination, { recursive: true, mode: 0o700 });
+  let downloads = 0;
+  await expectDownloadFailure(
+    () => installPinnedToolchain("godot", {
+      cacheRoot,
+      tool,
+      download: async (...argumentsList) => {
+        downloads += 1;
+        return fixtureDownloader(Buffer.from("must not download"))(...argumentsList);
+      },
+    }),
+    "destination_exists",
+  );
+  assert.equal(downloads, 0);
+  await rm(destination, { recursive: true, force: true });
+
+  await expectDownloadFailure(
+    () => installPinnedToolchain("godot", {
+      cacheRoot,
+      tool,
+      download: fixtureDownloader(Buffer.from("destination race")),
+      adapter: async (request) => {
+        await fixtureAdapter(tool.install.executableRelativePath, contents)(request);
+        await mkdir(destination, { recursive: true, mode: 0o700 });
+      },
+      processRunner: fixtureProcessRunner(tool),
+    }),
+    "destination_exists",
+  );
+  assert.deepEqual(await readdir(join(cacheRoot, ".staging")), ["00000000-0000-4000-8000-000000000000"]);
+});
+
 test("bootstrap module uses only the built-in HTTPS transport", () => {
   const source = readFileSync(scriptPath, "utf8");
   assert.match(source, /node:https/u);
-  assert.doesNotMatch(source, /node:http(?=["'])|node:(?:net|tls|dgram|dns|child_process)|\bfetch\s*\(/u);
+  assert.match(source, /node:child_process/u);
+  assert.doesNotMatch(source, /node:http(?=["'])|node:(?:net|tls|dgram|dns)|\bfetch\s*\(/u);
   assert.doesNotMatch(source, /\bgit\b/u);
 });

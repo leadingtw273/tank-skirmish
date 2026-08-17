@@ -1,6 +1,7 @@
+import { spawn } from "node:child_process";
 import { createHash, randomUUID } from "node:crypto";
-import { lstatSync, realpathSync, readFileSync, statSync } from "node:fs";
-import { chmod, mkdir, open as openFile, rm } from "node:fs/promises";
+import { createReadStream, lstatSync, realpathSync, readFileSync, statSync } from "node:fs";
+import { chmod, lstat, mkdir, open as openFile, rename, rm, stat } from "node:fs/promises";
 import { request as httpsRequest } from "node:https";
 import { homedir } from "node:os";
 import { basename, dirname, isAbsolute, join, relative, resolve, sep } from "node:path";
@@ -16,15 +17,15 @@ const toolchainLock = validateToolchainLock(JSON.parse(readFileSync(lockPath, "u
 const knownTools = new Set(toolchainLock.tools.map((tool) => tool.id));
 
 export class ToolCacheResolutionError extends Error {
-  constructor(code) {
-    super(code);
+  constructor(code, detail) {
+    super(detail === undefined ? code : `${code}: ${detail}`);
     this.name = "ToolCacheResolutionError";
     this.code = code;
   }
 }
 
-function fail(code) {
-  throw new ToolCacheResolutionError(code);
+function fail(code, detail) {
+  throw new ToolCacheResolutionError(code, detail);
 }
 
 function isSameOrInside(path, directory) {
@@ -214,9 +215,11 @@ async function streamAndVerifyArchive(body, archivePath, archive) {
     }
   }
 
-  if (size !== archive.sizeBytes || hash.digest("hex") !== archive.checksum.value) {
+  const digest = hash.digest("hex");
+  if (size !== archive.sizeBytes || digest !== archive.checksum.value) {
     downloadFail("verification_failed");
   }
+  return { sizeBytes: size, algorithm: archive.checksum.algorithm, digest };
 }
 
 export async function downloadPinnedArchive(
@@ -228,15 +231,15 @@ export async function downloadPinnedArchive(
   const stagingRoot = join(safeCacheRoot, ".staging", randomUUID());
   const downloadDirectory = join(stagingRoot, "download");
   const archivePath = join(downloadDirectory, "archive");
-  const treePath = join(downloadDirectory, "tree");
+  const treePath = join(stagingRoot, "tree");
 
   try {
     await mkdir(downloadDirectory, { recursive: true, mode: 0o700 });
     await chmod(stagingRoot, 0o700);
     await mkdir(treePath, { mode: 0o700 });
     const response = await openPinnedArchive(transport, tool);
-    await streamAndVerifyArchive(response.body, archivePath, tool.archive);
-    return { archivePath, treePath };
+    const archive = await streamAndVerifyArchive(response.body, archivePath, tool.archive);
+    return { archivePath, treePath, archive };
   } catch (error) {
     try {
       await rm(stagingRoot, { recursive: true, force: true });
@@ -247,6 +250,206 @@ export async function downloadPinnedArchive(
       throw error;
     }
     downloadFail("io_error");
+  }
+}
+
+function sanitizeAdapterError(value) {
+  return value.replace(/(?:[A-Za-z]:[\\/]|\/)[^\s"'`<>{}\[\]]*/gu, "<REDACTED_PATH>");
+}
+
+function runProcess(executable, argumentsList, input) {
+  return new Promise((resolveResult) => {
+    let child;
+    try {
+      child = spawn(executable, argumentsList, { stdio: ["pipe", "pipe", "pipe"] });
+    } catch {
+      resolveResult({ code: null, stdout: "", stderr: "" });
+      return;
+    }
+
+    let stdout = "";
+    let stderr = "";
+    child.stdout.setEncoding("utf8");
+    child.stderr.setEncoding("utf8");
+    child.stdout.on("data", (chunk) => { stdout += chunk; });
+    child.stderr.on("data", (chunk) => { stderr += chunk; });
+    child.once("error", () => resolveResult({ code: null, stdout, stderr }));
+    child.once("close", (code) => resolveResult({ code, stdout, stderr }));
+    child.stdin.end(input);
+  });
+}
+
+async function runArchiveAdapter({ archivePath, treePath, archive }, { processRunner = runProcess } = {}) {
+  const request = JSON.stringify({
+    operation: "extract",
+    archivePath,
+    format: archive.format,
+    contract: {
+      memberCount: archive.memberCount,
+      topLevelDirectory: archive.topLevelDirectory,
+      exactMemberNames: archive.exactMemberNames,
+      allowedEntryTypes: archive.allowedEntryTypes,
+    },
+    stagingRoot: treePath,
+  });
+  const result = await processRunner("python3", [join(moduleDirectory, "toolchain_archive.py")], request);
+  if (result.code !== 0) {
+    fail("adapter_failed", sanitizeAdapterError(result.stderr || result.stdout || "adapter_rejected"));
+  }
+
+  try {
+    const summary = JSON.parse(result.stdout);
+    if (summary?.ok !== true) {
+      fail("adapter_failed", "adapter_rejected");
+    }
+  } catch (error) {
+    if (error instanceof ToolCacheResolutionError) throw error;
+    fail("adapter_failed", "adapter_rejected");
+  }
+}
+
+async function assertDestinationMissing(destination) {
+  try {
+    await lstat(destination);
+  } catch (error) {
+    if (error?.code === "ENOENT") return;
+    fail("io_error");
+  }
+  fail("destination_exists");
+}
+
+function transactionRootFrom({ archivePath, treePath }, cacheRoot) {
+  const stagingRoot = dirname(treePath);
+  if (
+    basename(treePath) !== "tree" ||
+    basename(archivePath) !== "archive" ||
+    dirname(archivePath) !== join(stagingRoot, "download") ||
+    dirname(stagingRoot) !== join(cacheRoot, ".staging") ||
+    !/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/u.test(basename(stagingRoot))
+  ) {
+    fail("staging_invalid");
+  }
+  return stagingRoot;
+}
+
+function resolveExecutablePath(treePath, executableRelativePath) {
+  const executablePath = resolve(treePath, ...executableRelativePath.split("/"));
+  if (!isSameOrInside(executablePath, treePath)) {
+    fail("executable_invalid");
+  }
+  return executablePath;
+}
+
+async function verifyExecutable(executablePath, tool, processRunner = runProcess) {
+  let metadata;
+  try {
+    metadata = await lstat(executablePath);
+  } catch {
+    fail("executable_invalid");
+  }
+  if (!metadata.isFile()) fail("executable_invalid");
+
+  try {
+    await chmod(executablePath, (metadata.mode & 0o777) | 0o100);
+    metadata = await lstat(executablePath);
+  } catch {
+    fail("io_error");
+  }
+  if (!metadata.isFile() || (metadata.mode & 0o100) === 0) fail("executable_invalid");
+
+  const hash = createHash("sha256");
+  try {
+    for await (const chunk of createReadStream(executablePath)) {
+      hash.update(chunk);
+    }
+  } catch {
+    fail("io_error");
+  }
+  const digest = hash.digest("hex");
+  if (digest !== tool.install.executableChecksum.value) fail("executable_verification_failed");
+
+  const result = await processRunner(executablePath, ["--version"], "");
+  if (result.code !== 0) fail("version_mismatch");
+  const lines = result.stdout.replace(/\r\n/gu, "\n").split("\n");
+  const contract = tool.install.versionContract;
+  if (contract.mode === "exact_output") {
+    const output = result.stdout.replace(/\r\n/gu, "\n").replace(/\n$/u, "");
+    if (output !== contract.value) fail("version_mismatch");
+    return { algorithm: "sha256", digest, version: output };
+  }
+  if (
+    lines[0] !== contract.firstLine ||
+    !lines.some((line) => line.trim() === `build hash: ${contract.buildHash}`)
+  ) {
+    fail("version_mismatch");
+  }
+  return { algorithm: "sha256", digest, version: lines[0] };
+}
+
+async function publishTree(treePath, destination) {
+  const destinationParent = dirname(destination);
+  try {
+    await mkdir(destinationParent, { recursive: true, mode: 0o700 });
+    const [treeMetadata, destinationParentMetadata] = await Promise.all([
+      stat(treePath),
+      stat(destinationParent),
+    ]);
+    if (treeMetadata.dev !== destinationParentMetadata.dev) fail("cross_filesystem");
+    await assertDestinationMissing(destination);
+    await rename(treePath, destination);
+  } catch (error) {
+    if (error instanceof ToolCacheResolutionError) throw error;
+    if (error?.code === "EXDEV") fail("cross_filesystem");
+    if (new Set(["EEXIST", "ENOTEMPTY", "ENOTDIR"]).has(error?.code)) fail("destination_exists");
+    fail("publish_failed");
+  }
+}
+
+export async function installPinnedToolchain(
+  toolId,
+  {
+    cacheRoot = resolveToolCacheRoot(),
+    transport = createHttpsTransport(),
+    download = downloadPinnedArchive,
+    adapter = runArchiveAdapter,
+    processRunner = runProcess,
+    tool = toolById(toolId),
+  } = {},
+) {
+  const safeCacheRoot = assertSafeCacheRoot(cacheRoot);
+  const destination = resolveCacheTarget(toolId, { cacheRoot: safeCacheRoot });
+  let stagingRoot;
+
+  await assertDestinationMissing(destination);
+  try {
+    const staged = await download(toolId, { cacheRoot: safeCacheRoot, transport });
+    stagingRoot = transactionRootFrom(staged, safeCacheRoot);
+    await adapter(
+      { archivePath: staged.archivePath, treePath: staged.treePath, archive: tool.archive },
+      { processRunner },
+    );
+    const executable = await verifyExecutable(
+      resolveExecutablePath(staged.treePath, tool.install.executableRelativePath),
+      tool,
+      processRunner,
+    );
+    await publishTree(staged.treePath, destination);
+    return {
+      schemaVersion: 1,
+      tool: toolId,
+      state: "installed",
+      network: "used",
+      archive: staged.archive,
+      executable,
+    };
+  } finally {
+    if (stagingRoot !== undefined) {
+      try {
+        await rm(stagingRoot, { recursive: true, force: true });
+      } catch {
+        fail("io_error");
+      }
+    }
   }
 }
 

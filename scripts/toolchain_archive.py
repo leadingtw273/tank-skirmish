@@ -22,8 +22,8 @@ CONTRACT_FIELDS = {
     "allowedEntryTypes",
 }
 FORMAT_TYPES = {
-    "zip": {"regular"},
-    "tar.xz": {"regular", "directory", "symlink"},
+    "zip": {"regular_file"},
+    "tar.xz": {"regular_file", "directory", "symlink"},
 }
 
 
@@ -129,7 +129,7 @@ def inspect_zip(archive: Path) -> list[dict[str, Any]]:
                 file_type = stat.S_IFMT(mode)
                 if item.is_dir() or (file_type not in {0, stat.S_IFREG}):
                     fail("archive_invalid", path)
-                result.append({"path": path, "type": "regular", "linkTarget": None})
+                result.append({"path": path, "type": "regular_file", "linkTarget": None})
             return result
     except InspectionFailure:
         raise
@@ -205,7 +205,7 @@ def inspect_tar_xz(archive: Path) -> list[dict[str, Any]]:
                 if is_sparse(item) or item.mode & 0o6000:
                     fail("archive_invalid", path)
                 if item.isreg():
-                    entry_type, target = "regular", None
+                    entry_type, target = "regular_file", None
                 elif item.isdir():
                     entry_type, target = "directory", None
                 elif item.issym():

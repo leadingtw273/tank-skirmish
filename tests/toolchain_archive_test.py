@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 import io
+import importlib.util
 import json
+import os
 import subprocess
 import sys
 import tarfile
@@ -16,6 +18,10 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 ADAPTER = ROOT / "scripts" / "toolchain_archive.py"
+ADAPTER_SPEC = importlib.util.spec_from_file_location("toolchain_archive", ADAPTER)
+assert ADAPTER_SPEC is not None and ADAPTER_SPEC.loader is not None
+TOOLCHAIN_ARCHIVE = importlib.util.module_from_spec(ADAPTER_SPEC)
+ADAPTER_SPEC.loader.exec_module(TOOLCHAIN_ARCHIVE)
 
 
 class ToolchainArchiveTest(unittest.TestCase):
@@ -35,6 +41,21 @@ class ToolchainArchiveTest(unittest.TestCase):
             **extra,
         }
         return self.run_payload(request)
+
+    def staging_root(self, mode: int = 0o700) -> Path:
+        staging_root = self.directory / f"staging-{len(list(self.directory.iterdir()))}"
+        staging_root.mkdir()
+        staging_root.chmod(mode)
+        return staging_root
+
+    def extract(self, archive: Path, archive_format: str, contract_value: dict, staging_root: Path):
+        return self.request(
+            archive,
+            archive_format,
+            contract_value,
+            operation="extract",
+            stagingRoot=str(staging_root),
+        )
 
     def run_payload(self, request: object):
         return subprocess.run(
@@ -148,7 +169,8 @@ class ToolchainArchiveTest(unittest.TestCase):
     def test_rejects_invalid_request_schema_and_operation_fields(self) -> None:
         archive = self.make_zip([("pack/a.txt", b"a"), ("pack/b.txt", b"b")])
         for mutation, path in [
-            ({"operation": "extract"}, "operation"),
+            ({"operation": "extract"}, "stagingRoot"),
+            ({"operation": "extract", "stagingRoot": "relative-stage"}, "stagingRoot"),
             ({"stagingRoot": "/tmp/stage"}, "stagingRoot"),
             ({"unknown": True}, "unknown"),
             ({"contract": {"memberCount": 2}}, "contract"),
@@ -174,6 +196,79 @@ class ToolchainArchiveTest(unittest.TestCase):
         unknown_contract = dict(base)
         unknown_contract["contract"] = self.contract(extra=True)
         self.assert_failure(self.run_payload(unknown_contract), "request_invalid", "contract")
+
+    def test_extracts_safe_zip_and_tar_xz(self) -> None:
+        zip_staging = self.staging_root()
+        zip_result = self.extract(
+            self.make_zip([("pack/a.txt", b"a"), ("pack/b.txt", b"b")]),
+            "zip",
+            self.contract(),
+            zip_staging,
+        )
+        self.assertEqual(zip_result.returncode, 0, zip_result.stderr)
+        self.assertEqual((zip_staging / "pack/a.txt").read_bytes(), b"a")
+        self.assertEqual((zip_staging / "pack/b.txt").read_bytes(), b"b")
+
+        directory = tarfile.TarInfo("pack")
+        directory.type = tarfile.DIRTYPE
+        link = tarfile.TarInfo("pack/current")
+        link.type = tarfile.SYMTYPE
+        link.linkname = "a.txt"
+        tar_staging = self.staging_root()
+        tar_result = self.extract(
+            self.make_tar([directory, self.tar_regular("pack/a.txt"), link]),
+            "tar.xz",
+            self.contract(
+                memberCount=3,
+                exactMemberNames=["pack", "pack/a.txt", "pack/current"],
+                allowedEntryTypes=["regular_file", "directory", "symlink"],
+            ),
+            tar_staging,
+        )
+        self.assertEqual(tar_result.returncode, 0, tar_result.stderr)
+        self.assertEqual((tar_staging / "pack/a.txt").read_bytes(), b"x")
+        self.assertTrue((tar_staging / "pack/current").is_symlink())
+        self.assertEqual(os.readlink(tar_staging / "pack/current"), "a.txt")
+
+    def test_rejects_unsafe_staging_roots(self) -> None:
+        archive = self.make_zip([("pack/a.txt", b"a"), ("pack/b.txt", b"b")])
+        bad_mode = self.staging_root(0o755)
+        self.assert_failure(
+            self.extract(archive, "zip", self.contract(), bad_mode),
+            "unsafe_entry",
+            str(bad_mode),
+        )
+
+        nonempty = self.staging_root()
+        (nonempty / "preexisting.txt").write_text("already here")
+        self.assert_failure(
+            self.extract(archive, "zip", self.contract(), nonempty),
+            "unsafe_entry",
+            str(nonempty),
+        )
+
+        symlink_target = self.staging_root()
+        symlink_root = self.directory / "staging-symlink"
+        symlink_root.symlink_to(symlink_target, target_is_directory=True)
+        self.assert_failure(
+            self.extract(archive, "zip", self.contract(), symlink_root),
+            "unsafe_entry",
+            str(symlink_root),
+        )
+
+    def test_post_walk_rejects_uninspected_entries(self) -> None:
+        staging_root = self.staging_root()
+        pack = staging_root / "pack"
+        pack.mkdir()
+        (pack / "a.txt").write_bytes(b"a")
+        (staging_root / "extra.txt").write_bytes(b"extra")
+        with self.assertRaises(TOOLCHAIN_ARCHIVE.InspectionFailure) as raised:
+            TOOLCHAIN_ARCHIVE.post_validate_staging(
+                staging_root,
+                [{"path": "pack/a.txt", "type": "regular_file", "linkTarget": None}],
+            )
+        self.assertEqual(raised.exception.code, "unsafe_entry")
+        self.assertEqual(raised.exception.path, "extra.txt")
 
     def test_rejects_bad_zip_entries(self) -> None:
         cases = [

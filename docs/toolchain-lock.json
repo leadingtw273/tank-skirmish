@@ -1,0 +1,81 @@
+{
+  "schemaVersion": 1,
+  "target": "linux-x64",
+  "tools": [
+    {
+      "id": "godot",
+      "version": "4.7.1",
+      "channel": "stable",
+      "archive": {
+        "filename": "Godot_v4.7.1-stable_linux.x86_64.zip",
+        "format": "zip",
+        "sizeBytes": 76056717,
+        "memberCount": 1,
+        "topLevelDirectory": null,
+        "exactMemberNames": ["Godot_v4.7.1-stable_linux.x86_64"],
+        "allowedEntryTypes": ["regular_file"],
+        "url": "https://github.com/godotengine/godot-builds/releases/download/4.7.1-stable/Godot_v4.7.1-stable_linux.x86_64.zip",
+        "checksumSourceUrl": "https://github.com/godotengine/godot-builds/releases/download/4.7.1-stable/SHA512-SUMS.txt",
+        "checksum": {
+          "algorithm": "sha512",
+          "value": "4ccdab7a48eeccbe8819a2fc1f6262f8d72065d98601bcb3743fcbd7ebd39f373758a788ee3293a05ec5b2c48538266c437404312e372225cd2df273945a2de9"
+        }
+      },
+      "install": {
+        "cacheRelativePath": "godot/4.7.1-stable",
+        "executableRelativePath": "Godot_v4.7.1-stable_linux.x86_64",
+        "executableChecksum": {
+          "algorithm": "sha256",
+          "value": "32f8d7596c4b41185512b1c49d69f2da3be018fd784a53e349fa92a98a97bcde"
+        },
+        "versionContract": {
+          "mode": "exact_output",
+          "value": "4.7.1.stable.official.a13da4feb"
+        }
+      },
+      "provenance": {
+        "method": "archive-extracted",
+        "verifiedAt": "2026-08-17",
+        "verifiedBy": "team_lead"
+      }
+    },
+    {
+      "id": "blender",
+      "version": "4.5.12",
+      "channel": "lts",
+      "archive": {
+        "filename": "blender-4.5.12-linux-x64.tar.xz",
+        "format": "tar.xz",
+        "sizeBytes": 377902364,
+        "memberCount": 6510,
+        "topLevelDirectory": "blender-4.5.12-linux-x64",
+        "exactMemberNames": null,
+        "allowedEntryTypes": ["regular_file", "directory", "symlink"],
+        "url": "https://download.blender.org/release/Blender4.5/blender-4.5.12-linux-x64.tar.xz",
+        "checksumSourceUrl": "https://download.blender.org/release/Blender4.5/blender-4.5.12.sha256",
+        "checksum": {
+          "algorithm": "sha256",
+          "value": "95e3a2dfedba3bd32ca54fc355eac6b15a11986954ccb02815a07535d0120a25"
+        }
+      },
+      "install": {
+        "cacheRelativePath": "blender/4.5.12",
+        "executableRelativePath": "blender-4.5.12-linux-x64/blender",
+        "executableChecksum": {
+          "algorithm": "sha256",
+          "value": "33ac108ebce3c271f5357e5c664d0488717263bcf2145c80300edd0b12c31880"
+        },
+        "versionContract": {
+          "mode": "first_line_and_build_hash",
+          "firstLine": "Blender 4.5.12 LTS",
+          "buildHash": "84afd5f785f7"
+        }
+      },
+      "provenance": {
+        "method": "archive-extracted",
+        "verifiedAt": "2026-08-17",
+        "verifiedBy": "team_lead"
+      }
+    }
+  ]
+}

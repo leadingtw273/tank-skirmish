@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtemp, rm, symlink, writeFile } from "node:fs/promises";
+import { mkdtemp, mkdir, readdir, rm, stat, symlink, writeFile } from "node:fs/promises";
 import { readFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import { tmpdir } from "node:os";
@@ -9,6 +9,7 @@ import { fileURLToPath } from "node:url";
 
 import {
   ToolCacheResolutionError,
+  downloadPinnedArchive,
   resolveCacheTarget,
   resolveToolCacheRoot,
   runBootstrapToolchainCli,
@@ -27,6 +28,41 @@ function memoryStream() {
     stream: { write: (chunk) => { value += chunk; } },
     value: () => value,
   };
+}
+
+function response(status, { location, body = [] } = {}) {
+  return {
+    status,
+    headers: location === undefined ? {} : { location },
+    body: (async function* stream() {
+      yield* body;
+    })(),
+  };
+}
+
+function transportFrom(...responses) {
+  const requests = [];
+  return {
+    requests,
+    transport: {
+      async open(url) {
+        requests.push(url);
+        const next = responses.shift();
+        if (next instanceof Error) throw next;
+        return next;
+      },
+    },
+  };
+}
+
+async function expectDownloadFailure(action, code) {
+  await assert.rejects(action, (error) => error instanceof ToolCacheResolutionError && error.code === code);
+}
+
+async function temporaryCache(t) {
+  const directory = await mkdtemp(join(tmpdir(), "toolchain-download-"));
+  t.after(() => rm(directory, { recursive: true, force: true }));
+  return directory;
 }
 
 test("resolves configured and XDG cache roots without consulting git", async (t) => {
@@ -132,8 +168,99 @@ test("child process rejects unknown, missing, and duplicate arguments", (t) => {
   }
 });
 
-test("bootstrap module has no network dependencies", () => {
+test("rejects every Blender redirect without following it", async (t) => {
+  const cacheRoot = await temporaryCache(t);
+  const setup = transportFrom(response(302, { location: "https://release-assets.githubusercontent.com/github-production-release-asset/example" }));
+
+  await expectDownloadFailure(() => downloadPinnedArchive("blender", { cacheRoot, transport: setup.transport }), "network_rejected");
+  assert.equal(setup.requests.length, 1);
+});
+
+test("rejects Godot redirects with unpinned destinations or a second redirect", async (t) => {
+  const cacheRoot = await temporaryCache(t);
+  const permanentRedirect = transportFrom(response(301, { location: "https://release-assets.githubusercontent.com/github-production-release-asset/sample" }));
+  await expectDownloadFailure(() => downloadPinnedArchive("godot", { cacheRoot, transport: permanentRedirect.transport }), "network_rejected");
+  assert.equal(permanentRedirect.requests.length, 1);
+
+  const locations = [
+    "https://example.com/github-production-release-asset/sample",
+    "https://release-assets.githubusercontent.com/not-github-production-release-asset/sample",
+    "/github-production-release-asset/relative",
+  ];
+
+  for (const location of locations) {
+    const setup = transportFrom(response(302, { location }));
+    await expectDownloadFailure(() => downloadPinnedArchive("godot", { cacheRoot, transport: setup.transport }), "network_rejected");
+    assert.equal(setup.requests.length, 1);
+  }
+
+  const setup = transportFrom(
+    response(307, { location: "https://release-assets.githubusercontent.com/github-production-release-asset/sample" }),
+    response(302, { location: "https://release-assets.githubusercontent.com/github-production-release-asset/fake" }),
+  );
+  await expectDownloadFailure(() => downloadPinnedArchive("godot", { cacheRoot, transport: setup.transport }), "network_rejected");
+  assert.equal(setup.requests.length, 2);
+});
+
+test("permits one signed Godot CDN redirect without serializing its query", async (t) => {
+  const cacheRoot = await temporaryCache(t);
+  const signedLocation = "https://release-assets.githubusercontent.com/github-production-release-asset/sample?X-Amz-Credential=example-placeholder&X-Amz-Signature=fake";
+  const setup = transportFrom(response(303, { location: signedLocation }), response(503));
+
+  await assert.rejects(
+    () => downloadPinnedArchive("godot", { cacheRoot, transport: setup.transport }),
+    (error) => {
+      assert.equal(error.code, "network_rejected");
+      assert.doesNotMatch(error.message, /X-Amz-|example-placeholder|fake/u);
+      assert.doesNotMatch(JSON.stringify(error), /X-Amz-|example-placeholder|fake/u);
+      return true;
+    },
+  );
+  assert.deepEqual(setup.requests, [
+    "https://github.com/godotengine/godot-builds/releases/download/4.7.1-stable/Godot_v4.7.1-stable_linux.x86_64.zip",
+    signedLocation,
+  ]);
+});
+
+test("rejects incorrect archive sizes and digests", async (t) => {
+  const cacheRoot = await temporaryCache(t);
+  const shortBody = transportFrom(response(200, { body: [new Uint8Array([1])] }));
+  await expectDownloadFailure(() => downloadPinnedArchive("godot", { cacheRoot, transport: shortBody.transport }), "verification_failed");
+
+  const exactSizeWrongDigest = transportFrom(response(200, { body: [new Uint8Array(76056717)] }));
+  await expectDownloadFailure(() => downloadPinnedArchive("godot", { cacheRoot, transport: exactSizeWrongDigest.transport }), "verification_failed");
+});
+
+test("uses a private 0700 staging transaction and removes only its failed UUID", async (t) => {
+  const cacheRoot = await temporaryCache(t);
+  const sibling = join(cacheRoot, ".staging", "00000000-0000-4000-8000-000000000000");
+  await mkdir(sibling, { recursive: true, mode: 0o700 });
+  let snapshot;
+  const partialBody = {
+    async *[Symbol.asyncIterator]() {
+      yield new Uint8Array([1]);
+      const stagingRoot = join(cacheRoot, ".staging");
+      const entries = await readdir(stagingRoot);
+      const transactionId = entries.find((entry) => entry !== "00000000-0000-4000-8000-000000000000");
+      const transactionRoot = join(stagingRoot, transactionId);
+      snapshot = {
+        rootMode: (await stat(transactionRoot)).mode & 0o777,
+        archiveExists: (await stat(join(transactionRoot, "download", "archive"))).isFile(),
+        treeExists: (await stat(join(transactionRoot, "download", "tree"))).isDirectory(),
+      };
+      throw new Error("partial stream");
+    },
+  };
+  const setup = transportFrom({ status: 200, headers: {}, body: partialBody });
+
+  await expectDownloadFailure(() => downloadPinnedArchive("godot", { cacheRoot, transport: setup.transport }), "network_rejected");
+  assert.deepEqual(snapshot, { rootMode: 0o700, archiveExists: true, treeExists: true });
+  assert.deepEqual(await readdir(join(cacheRoot, ".staging")), ["00000000-0000-4000-8000-000000000000"]);
+});
+
+test("bootstrap module uses only the built-in HTTPS transport", () => {
   const source = readFileSync(scriptPath, "utf8");
-  assert.doesNotMatch(source, /node:(?:http|https|net|tls|dgram|dns|child_process)|\bfetch\s*\(/u);
+  assert.match(source, /node:https/u);
+  assert.doesNotMatch(source, /node:http(?=["'])|node:(?:net|tls|dgram|dns|child_process)|\bfetch\s*\(/u);
   assert.doesNotMatch(source, /\bgit\b/u);
 });

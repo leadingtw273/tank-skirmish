@@ -349,14 +349,6 @@ async function verifyExecutable(executablePath, tool, processRunner = runProcess
   }
   if (!metadata.isFile()) fail("executable_invalid");
 
-  try {
-    await chmod(executablePath, (metadata.mode & 0o777) | 0o100);
-    metadata = await lstat(executablePath);
-  } catch {
-    fail("io_error");
-  }
-  if (!metadata.isFile() || (metadata.mode & 0o100) === 0) fail("executable_invalid");
-
   const hash = createHash("sha256");
   try {
     for await (const chunk of createReadStream(executablePath)) {
@@ -384,6 +376,37 @@ async function verifyExecutable(executablePath, tool, processRunner = runProcess
     fail("version_mismatch");
   }
   return { algorithm: "sha256", digest, version: lines[0] };
+}
+
+async function makeExecutable(executablePath) {
+  try {
+    const metadata = await lstat(executablePath);
+    if (!metadata.isFile()) fail("executable_invalid");
+    await chmod(executablePath, (metadata.mode & 0o777) | 0o100);
+  } catch (error) {
+    if (error instanceof ToolCacheResolutionError) throw error;
+    fail("io_error");
+  }
+}
+
+async function revalidateExistingDestination(destination, tool, processRunner) {
+  try {
+    await lstat(destination);
+  } catch (error) {
+    if (error?.code === "ENOENT") return null;
+    fail("io_error");
+  }
+
+  try {
+    return await verifyExecutable(
+      resolveExecutablePath(destination, tool.install.executableRelativePath),
+      tool,
+      processRunner,
+    );
+  } catch (error) {
+    if (error instanceof ToolCacheResolutionError) fail("install_invalid");
+    fail("io_error");
+  }
 }
 
 async function publishTree(treePath, destination) {
@@ -420,7 +443,17 @@ export async function installPinnedToolchain(
   const destination = resolveCacheTarget(toolId, { cacheRoot: safeCacheRoot });
   let stagingRoot;
 
-  await assertDestinationMissing(destination);
+  const existingExecutable = await revalidateExistingDestination(destination, tool, processRunner);
+  if (existingExecutable !== null) {
+    return {
+      schemaVersion: 1,
+      tool: toolId,
+      state: "existing_valid",
+      network: "unused",
+      executable: existingExecutable,
+    };
+  }
+
   try {
     const staged = await download(toolId, { cacheRoot: safeCacheRoot, transport });
     stagingRoot = transactionRootFrom(staged, safeCacheRoot);
@@ -428,8 +461,10 @@ export async function installPinnedToolchain(
       { archivePath: staged.archivePath, treePath: staged.treePath, archive: tool.archive },
       { processRunner },
     );
+    const executablePath = resolveExecutablePath(staged.treePath, tool.install.executableRelativePath);
+    await makeExecutable(executablePath);
     const executable = await verifyExecutable(
-      resolveExecutablePath(staged.treePath, tool.install.executableRelativePath),
+      executablePath,
       tool,
       processRunner,
     );
@@ -474,15 +509,19 @@ function writeJsonLine(stream, value) {
 }
 
 function parseArguments(args) {
-  let checkCache = false;
+  let mode;
   let tool;
   let cacheDir;
 
   for (let index = 0; index < args.length; index += 1) {
     const argument = args[index];
-    if (argument === "--check-cache") {
-      if (checkCache) return null;
-      checkCache = true;
+    if (argument === "--help") {
+      if (args.length !== 1) return null;
+      return { mode: "help" };
+    }
+    if (argument === "--check-cache" || argument === "--install") {
+      if (mode !== undefined) return null;
+      mode = argument === "--check-cache" ? "check_cache" : "install";
       continue;
     }
     if (argument === "--tool" || argument === "--cache-dir") {
@@ -501,41 +540,60 @@ function parseArguments(args) {
     return null;
   }
 
-  if (!checkCache || !knownTools.has(tool) || (cacheDir !== undefined && !isAbsolute(cacheDir))) {
+  if (mode === undefined || !knownTools.has(tool) || (cacheDir !== undefined && !isAbsolute(cacheDir))) {
     return null;
   }
-  return { tool, cacheDir };
+  return { mode, tool, cacheDir };
 }
 
-export function runBootstrapToolchainCli(args, { stdout, stderr, environment = process.env }) {
+export async function runBootstrapToolchainCli(
+  args,
+  { stdout, stderr, environment = process.env, install = installPinnedToolchain },
+) {
   const parsed = parseArguments(args);
   if (parsed === null) {
     writeJsonLine(stderr, { ok: false, code: "usage_error" });
     return 2;
   }
 
-  try {
-    const cacheRoot = parsed.cacheDir ?? resolveToolCacheRoot(environment);
-    resolveCacheTarget(parsed.tool, { cacheRoot });
+  if (parsed.mode === "help") {
     writeJsonLine(stdout, {
-      tool: parsed.tool,
-      mode: "check_cache",
-      state: "cache_target_valid",
-      network: "unused",
+      schemaVersion: 1,
+      usage: "--help | --check-cache --tool <godot|blender> [--cache-dir <absolute-path>] | --install --tool <godot|blender> [--cache-dir <absolute-path>]",
     });
     return 0;
-  } catch (error) {
-    if (error instanceof ToolCacheResolutionError) {
-      writeJsonLine(stderr, { ok: false, code: "cache_target_error" });
-      return 3;
+  }
+
+  try {
+    const cacheRoot = parsed.cacheDir ?? resolveToolCacheRoot(environment);
+    if (parsed.mode === "check_cache") {
+      resolveCacheTarget(parsed.tool, { cacheRoot });
+      writeJsonLine(stdout, {
+        tool: parsed.tool,
+        mode: "check_cache",
+        state: "cache_target_valid",
+        network: "unused",
+      });
+      return 0;
     }
-    throw error;
+
+    const result = await install(parsed.tool, { cacheRoot });
+    writeJsonLine(stdout, result);
+    return 0;
+  } catch (error) {
+    const code = parsed.mode === "check_cache"
+      ? "cache_target_error"
+      : error instanceof ToolCacheResolutionError && error.code === "install_invalid"
+        ? "install_invalid"
+        : "install_error";
+    writeJsonLine(stderr, { ok: false, code });
+    return 3;
   }
 }
 
 const scriptPath = fileURLToPath(import.meta.url);
 if (process.argv[1] !== undefined && resolve(process.argv[1]) === scriptPath) {
-  process.exitCode = runBootstrapToolchainCli(process.argv.slice(2), {
+  process.exitCode = await runBootstrapToolchainCli(process.argv.slice(2), {
     stdout: process.stdout,
     stderr: process.stderr,
   });

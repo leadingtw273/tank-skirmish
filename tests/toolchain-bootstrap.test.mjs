@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { createHash, randomUUID } from "node:crypto";
-import { mkdtemp, mkdir, readdir, rm, stat, symlink, writeFile } from "node:fs/promises";
+import { mkdtemp, mkdir, readFile, readdir, rm, stat, symlink, writeFile } from "node:fs/promises";
 import { readFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import { tmpdir } from "node:os";
@@ -158,7 +158,7 @@ test("module CLI seam emits only sanitized JSON", async (t) => {
   const stdout = memoryStream();
   const stderr = memoryStream();
 
-  assert.equal(runBootstrapToolchainCli(["--check-cache", "--tool", "godot", "--cache-dir", directory], {
+  assert.equal(await runBootstrapToolchainCli(["--check-cache", "--tool", "godot", "--cache-dir", directory], {
     stdout: stdout.stream,
     stderr: stderr.stream,
   }), 0);
@@ -167,12 +167,100 @@ test("module CLI seam emits only sanitized JSON", async (t) => {
 
   const containedOut = memoryStream();
   const containedErr = memoryStream();
-  assert.equal(runBootstrapToolchainCli(["--check-cache", "--tool", "godot", "--cache-dir", projectRoot], {
+  assert.equal(await runBootstrapToolchainCli(["--check-cache", "--tool", "godot", "--cache-dir", projectRoot], {
     stdout: containedOut.stream,
     stderr: containedErr.stream,
   }), 3);
   assert.equal(containedOut.value(), "");
   assert.equal(containedErr.value(), `${JSON.stringify({ ok: false, code: "cache_target_error" })}\n`);
+});
+
+test("CLI accepts only help, cache-check, and install grammars without opening transport for usage", async (t) => {
+  const directory = await mkdtemp(join(tmpdir(), "toolchain-bootstrap-"));
+  t.after(() => rm(directory, { recursive: true, force: true }));
+  const helpOut = memoryStream();
+  const helpErr = memoryStream();
+
+  assert.equal(await runBootstrapToolchainCli(["--help"], {
+    stdout: helpOut.stream,
+    stderr: helpErr.stream,
+  }), 0);
+  assert.deepEqual(JSON.parse(helpOut.value()), {
+    schemaVersion: 1,
+    usage: "--help | --check-cache --tool <godot|blender> [--cache-dir <absolute-path>] | --install --tool <godot|blender> [--cache-dir <absolute-path>]",
+  });
+  assert.equal(helpErr.value(), "");
+
+  let installCalls = 0;
+  for (const argumentsList of [
+    [],
+    ["--help", "--install", "--tool", "godot"],
+    ["--check-cache", "--install", "--tool", "godot"],
+    ["--install", "--tool"],
+    ["--install", "--tool", "unknown"],
+    ["--install", "--tool", "godot", "--tool", "blender"],
+    ["--install", "--tool", "godot", "--unknown"],
+  ]) {
+    const stdout = memoryStream();
+    const stderr = memoryStream();
+    assert.equal(await runBootstrapToolchainCli(argumentsList, {
+      stdout: stdout.stream,
+      stderr: stderr.stream,
+      install: async () => { installCalls += 1; },
+    }), 2);
+    assert.equal(stdout.value(), "");
+    assert.equal(stderr.value(), `${JSON.stringify({ ok: false, code: "usage_error" })}\n`);
+  }
+  assert.equal(installCalls, 0);
+});
+
+test("CLI serializes the install primitive result once", async (t) => {
+  const directory = await mkdtemp(join(tmpdir(), "toolchain-bootstrap-"));
+  t.after(() => rm(directory, { recursive: true, force: true }));
+  const stdout = memoryStream();
+  const stderr = memoryStream();
+  const result = {
+    schemaVersion: 1,
+    tool: "godot",
+    state: "installed",
+    network: "used",
+    archive: { sizeBytes: 12, algorithm: "sha512", digest: "archive-digest" },
+    executable: { algorithm: "sha256", digest: "executable-digest", version: "4.7.1.stable.fixture" },
+  };
+  let request;
+
+  assert.equal(await runBootstrapToolchainCli(["--install", "--tool", "godot", "--cache-dir", directory], {
+    stdout: stdout.stream,
+    stderr: stderr.stream,
+    install: async (toolId, options) => {
+      request = { toolId, options };
+      return result;
+    },
+  }), 0);
+  assert.deepEqual(request, { toolId: "godot", options: { cacheRoot: directory } });
+  assert.equal(stdout.value(), `${JSON.stringify(result)}\n`);
+  assert.equal(stderr.value(), "");
+});
+
+test("CLI maps invalid and operational install failures to sanitized stderr JSON", async (t) => {
+  const directory = await mkdtemp(join(tmpdir(), "toolchain-bootstrap-"));
+  t.after(() => rm(directory, { recursive: true, force: true }));
+
+  for (const [failure, code] of [
+    [new ToolCacheResolutionError("install_invalid", join(directory, "corrupt-tool")), "install_invalid"],
+    [new Error(`transport failed for ${join(directory, "private-path")}`), "install_error"],
+  ]) {
+    const stdout = memoryStream();
+    const stderr = memoryStream();
+    assert.equal(await runBootstrapToolchainCli(["--install", "--tool", "godot", "--cache-dir", directory], {
+      stdout: stdout.stream,
+      stderr: stderr.stream,
+      install: async () => { throw failure; },
+    }), 3);
+    assert.equal(stdout.value(), "");
+    assert.equal(stderr.value(), `${JSON.stringify({ ok: false, code })}\n`);
+    assert.doesNotMatch(stderr.value(), new RegExp(directory.replaceAll("/", "\\/"), "u"));
+  }
 });
 
 test("child process validates default and explicit cache targets offline", async (t) => {
@@ -206,12 +294,15 @@ test("child process validates default and explicit cache targets offline", async
   }
 });
 
-test("child process rejects unknown, missing, and duplicate arguments", (t) => {
+test("child process rejects unknown, missing, mixed, and duplicate arguments", (t) => {
   for (const argumentsList of [
     ["--check-cache", "--tool"],
     ["--check-cache", "--tool", "unknown"],
     ["--check-cache", "--tool", "godot", "--tool", "blender"],
     ["--check-cache", "--tool", "godot", "--unknown"],
+    ["--help", "--check-cache", "--tool", "godot"],
+    ["--check-cache", "--install", "--tool", "godot"],
+    ["--install", "--tool", "godot", "--install"],
   ]) {
     const result = spawnSync(process.execPath, [scriptPath, ...argumentsList], { encoding: "utf8" });
     if (result.error?.code === "EPERM") {
@@ -354,6 +445,71 @@ test("single install publishes verified Godot and Blender fixture layouts", asyn
   }
 });
 
+test("single install revalidates an existing executable offline without modifying it", async (t) => {
+  const cacheRoot = await temporaryCache(t);
+  const contents = "fixture executable\n";
+  const tool = fixtureTool("godot", "Godot_fixture", contents);
+  const destination = resolveCacheTarget("godot", { cacheRoot });
+  const executablePath = join(destination, "Godot_fixture");
+  await mkdir(destination, { recursive: true, mode: 0o700 });
+  await writeFile(executablePath, contents);
+  const originalMode = (await stat(executablePath)).mode & 0o777;
+  let downloads = 0;
+  let transportOpens = 0;
+
+  const result = await installPinnedToolchain("godot", {
+    cacheRoot,
+    tool,
+    download: async () => {
+      downloads += 1;
+      throw new Error("download must not run");
+    },
+    transport: { open: async () => { transportOpens += 1; } },
+    processRunner: fixtureProcessRunner(tool),
+  });
+
+  assert.deepEqual(result, {
+    schemaVersion: 1,
+    tool: "godot",
+    state: "existing_valid",
+    network: "unused",
+    executable: {
+      algorithm: "sha256",
+      digest: tool.install.executableChecksum.value,
+      version: tool.install.versionContract.value,
+    },
+  });
+  assert.equal(downloads, 0);
+  assert.equal(transportOpens, 0);
+  assert.equal((await stat(executablePath)).mode & 0o777, originalMode);
+});
+
+test("single install rejects a corrupt existing executable without downloading or overwriting it", async (t) => {
+  const cacheRoot = await temporaryCache(t);
+  const contents = "fixture executable\n";
+  const tool = fixtureTool("godot", "Godot_fixture", contents);
+  const destination = resolveCacheTarget("godot", { cacheRoot });
+  const executablePath = join(destination, "Godot_fixture");
+  await mkdir(destination, { recursive: true, mode: 0o700 });
+  await writeFile(executablePath, "corrupt executable\n");
+  let downloads = 0;
+
+  await expectDownloadFailure(
+    () => installPinnedToolchain("godot", {
+      cacheRoot,
+      tool,
+      download: async () => {
+        downloads += 1;
+        throw new Error("download must not run");
+      },
+      processRunner: fixtureProcessRunner(tool),
+    }),
+    "install_invalid",
+  );
+  assert.equal(downloads, 0);
+  assert.equal((await readFile(executablePath, "utf8")), "corrupt executable\n");
+});
+
 test("single install calls the adapter by argv and stdin while redacting its failure", async (t) => {
   const cacheRoot = await temporaryCache(t);
   const contents = "fixture executable\n";
@@ -424,7 +580,7 @@ test("single install rejects bad executables and destinations without leaking st
         return fixtureDownloader(Buffer.from("must not download"))(...argumentsList);
       },
     }),
-    "destination_exists",
+    "install_invalid",
   );
   assert.equal(downloads, 0);
   await rm(destination, { recursive: true, force: true });

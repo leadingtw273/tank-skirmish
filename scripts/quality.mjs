@@ -1,21 +1,25 @@
 import { spawnSync } from "node:child_process";
-import { lstatSync, mkdirSync, writeFileSync } from "node:fs";
-import { homedir } from "node:os";
+import { createHash } from "node:crypto";
+import { lstatSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { loadAndValidateToolchainLock } from "./validate-toolchain-lock.mjs";
+
 const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const artifactDirectory = join(projectRoot, "artifacts", "ci");
-const toolCache =
-  process.env.TANK_SKIRMISH_TOOL_CACHE ??
-  join(process.env.XDG_CACHE_HOME ?? join(homedir(), ".cache"), "tank-skirmish", "toolchains");
-const defaultGodot = join(
-  toolCache,
-  "godot",
-  "4.7.1-stable",
-  "Godot_v4.7.1-stable_linux.x86_64",
+const lockPath = join(projectRoot, "docs", "toolchain-lock.json");
+const toolchainLock = await loadAndValidateToolchainLock(lockPath);
+const { resolveToolCacheRoot } = await import("./bootstrap-toolchain.mjs");
+const godotTool = toolchainLock.tools.find((tool) => tool.id === "godot");
+if (godotTool === undefined) {
+  throw new Error("toolchain lock is missing Godot");
+}
+const godot = process.env.GODOT_BIN ?? join(
+  resolveToolCacheRoot(),
+  ...godotTool.install.cacheRelativePath.split("/"),
+  ...godotTool.install.executableRelativePath.split("/"),
 );
-const godot = process.env.GODOT_BIN ?? defaultGodot;
 const godotDataRoot = join(projectRoot, ".godot", "xdg");
 const environment = {
   ...process.env,
@@ -30,7 +34,7 @@ mkdirSync(environment.XDG_DATA_HOME, { recursive: true });
 mkdirSync(environment.XDG_CACHE_HOME, { recursive: true });
 mkdirSync(environment.XDG_CONFIG_HOME, { recursive: true });
 
-function run(name, executable, argumentsList) {
+function run(name, executable, argumentsList, { scanGodotErrors = false } = {}) {
   const result = spawnSync(executable, argumentsList, {
     cwd: projectRoot,
     encoding: "utf8",
@@ -46,9 +50,11 @@ function run(name, executable, argumentsList) {
   if (result.status !== 0) {
     throw new Error(`${name} exited with status ${String(result.status)}`);
   }
-  if (godotError.test(output)) {
+  if (scanGodotErrors && godotError.test(output)) {
     throw new Error(`${name} reported a Godot error`);
   }
+
+  return output;
 }
 
 function assertRegularFile(path, description) {
@@ -64,13 +70,40 @@ function assertRegularFile(path, description) {
   }
 }
 
+function assertVerifiedGodotExecutable(executablePath, tool) {
+  assertRegularFile(executablePath, "Godot executable");
+  const digest = createHash("sha256").update(readFileSync(executablePath)).digest("hex");
+  if (digest !== tool.install.executableChecksum.value) {
+    throw new Error(`Godot executable SHA-256 does not match toolchain lock: ${executablePath}`);
+  }
+}
+
+function assertGodotVersionContract(output, tool) {
+  const contract = tool.install.versionContract;
+  if (contract.mode !== "exact_output") {
+    throw new Error(`unsupported Godot version contract: ${contract.mode}`);
+  }
+
+  const normalizedOutput = output.replace(/\r\n/gu, "\n").replace(/\n$/u, "");
+  if (normalizedOutput !== contract.value) {
+    throw new Error("Godot version does not match toolchain lock");
+  }
+}
+
+run("toolchain-lock-validation", process.execPath, ["scripts/validate-toolchain-lock.mjs", "--check"]);
+run("toolchain-lock-tests", process.execPath, ["--test", "tests/toolchain-lock.test.mjs"]);
+run("toolchain-archive-tests", "python3", ["tests/toolchain_archive_test.py"]);
+run("toolchain-bootstrap-tests", process.execPath, ["--test", "tests/toolchain-bootstrap.test.mjs"]);
+
+assertVerifiedGodotExecutable(godot, godotTool);
+
 const visualReview = join(projectRoot, "scripts", "visual-review.mjs");
 assertRegularFile(visualReview, "visual review entrypoint");
 const { runStaticSelfCheck } = await import("./visual-review.mjs");
 runStaticSelfCheck();
 
-run("version", godot, ["--version"]);
-run("import", godot, ["--headless", "--path", ".", "--import"]);
+assertGodotVersionContract(run("version", godot, ["--version"], { scanGodotErrors: true }), godotTool);
+run("import", godot, ["--headless", "--path", ".", "--import"], { scanGodotErrors: true });
 run("smoke", godot, [
   "--headless",
   "--audio-driver",
@@ -79,7 +112,7 @@ run("smoke", godot, [
   ".",
   "--script",
   "res://tests/smoke.gd",
-]);
+], { scanGodotErrors: true });
 
 run("protected-project-diff", "git", ["diff", "--exit-code", "--", "project.godot"]);
 console.log("Tank Skirmish quality gate passed.");

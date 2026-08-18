@@ -248,6 +248,7 @@ test("CLI maps invalid and operational install failures to sanitized stderr JSON
 
   for (const [failure, code] of [
     [new ToolCacheResolutionError("install_invalid", join(directory, "corrupt-tool")), "install_invalid"],
+    [new ToolCacheResolutionError("lock_timeout"), "lock_timeout"],
     [new Error(`transport failed for ${join(directory, "private-path")}`), "install_error"],
   ]) {
     const stdout = memoryStream();
@@ -482,6 +483,98 @@ test("single install revalidates an existing executable offline without modifyin
   assert.equal(downloads, 0);
   assert.equal(transportOpens, 0);
   assert.equal((await stat(executablePath)).mode & 0o777, originalMode);
+});
+
+test("competing installers use one exclusive per-tool directory lock and one transport open", async (t) => {
+  const cacheRoot = await temporaryCache(t);
+  const contents = "fixture executable\n";
+  const tool = fixtureTool("godot", "Godot_fixture", contents);
+  let transportOpens = 0;
+  let releaseDownload;
+  let releaseSchedule;
+  let signalDownloadOpen;
+  let signalSchedule;
+  const downloadOpened = new Promise((resolveDownloadOpen) => { signalDownloadOpen = resolveDownloadOpen; });
+  const scheduleStarted = new Promise((resolveScheduleStarted) => { signalSchedule = resolveScheduleStarted; });
+  const downloadMayFinish = new Promise((resolveDownload) => { releaseDownload = resolveDownload; });
+  const scheduleMayFinish = new Promise((resolveSchedule) => { releaseSchedule = resolveSchedule; });
+  const transport = {
+    async open() {
+      transportOpens += 1;
+      signalDownloadOpen();
+      await downloadMayFinish;
+      return response(200);
+    },
+  };
+  const download = async (_toolId, options) => {
+    await options.transport.open("https://fixture.invalid/archive");
+    return fixtureDownloader(Buffer.from("shared synthetic archive"))(_toolId, options);
+  };
+  let now = 0;
+  const schedule = async (delayMilliseconds) => {
+    signalSchedule();
+    await scheduleMayFinish;
+    now += delayMilliseconds;
+  };
+  const options = {
+    cacheRoot,
+    tool,
+    transport,
+    download,
+    adapter: fixtureAdapter(tool.install.executableRelativePath, contents),
+    processRunner: fixtureProcessRunner(tool),
+    clock: () => now,
+    schedule,
+  };
+
+  const first = installPinnedToolchain("godot", options);
+  await downloadOpened;
+  const lockDirectory = join(cacheRoot, ".locks", "godot");
+  const metadata = JSON.parse(await readFile(join(lockDirectory, "metadata.json"), "utf8"));
+  assert.deepEqual(Object.keys(metadata).sort(), ["createdAt", "token"]);
+  assert.doesNotMatch(JSON.stringify(metadata), new RegExp(cacheRoot.replaceAll("/", "\\\\/"), "u"));
+
+  const second = installPinnedToolchain("godot", options);
+  await scheduleStarted;
+  assert.equal(transportOpens, 1);
+  releaseDownload();
+  await first;
+  releaseSchedule();
+  const secondResult = await second;
+
+  assert.equal(transportOpens, 1);
+  assert.equal(secondResult.state, "existing_valid");
+  await assert.rejects(stat(lockDirectory), { code: "ENOENT" });
+});
+
+test("an unknown stale lock times out by fake clock without downloading or deleting it", async (t) => {
+  const cacheRoot = await temporaryCache(t);
+  const contents = "fixture executable\n";
+  const tool = fixtureTool("godot", "Godot_fixture", contents);
+  const lockDirectory = join(cacheRoot, ".locks", "godot");
+  await mkdir(lockDirectory, { recursive: true, mode: 0o700 });
+  await writeFile(join(lockDirectory, "metadata.json"), JSON.stringify({ createdAt: "1970-01-01T00:00:00.000Z", owner: "unknown" }));
+  let now = 0;
+  let downloads = 0;
+  const scheduleDelays = [];
+
+  await expectDownloadFailure(
+    () => installPinnedToolchain("godot", {
+      cacheRoot,
+      tool,
+      download: async () => { downloads += 1; },
+      clock: () => now,
+      schedule: async (delayMilliseconds) => {
+        scheduleDelays.push(delayMilliseconds);
+        now += delayMilliseconds;
+      },
+    }),
+    "lock_timeout",
+  );
+
+  assert.equal(downloads, 0);
+  assert.deepEqual(scheduleDelays, Array(120).fill(250));
+  assert.equal(await readFile(join(lockDirectory, "metadata.json"), "utf8"), JSON.stringify({ createdAt: "1970-01-01T00:00:00.000Z", owner: "unknown" }));
 });
 
 test("single install rejects a corrupt existing executable without downloading or overwriting it", async (t) => {

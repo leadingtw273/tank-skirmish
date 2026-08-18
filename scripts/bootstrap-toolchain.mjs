@@ -1,7 +1,7 @@
 import { spawn } from "node:child_process";
 import { createHash, randomUUID } from "node:crypto";
 import { createReadStream, lstatSync, realpathSync, readFileSync, statSync } from "node:fs";
-import { chmod, lstat, mkdir, open as openFile, rename, rm, stat } from "node:fs/promises";
+import { chmod, lstat, mkdir, open as openFile, readFile, rename, rm, stat, writeFile } from "node:fs/promises";
 import { request as httpsRequest } from "node:https";
 import { homedir } from "node:os";
 import { basename, dirname, isAbsolute, join, relative, resolve, sep } from "node:path";
@@ -15,6 +15,8 @@ const realProjectRoot = realpathSync(projectRoot);
 const lockPath = join(projectRoot, "docs", "toolchain-lock.json");
 const toolchainLock = validateToolchainLock(JSON.parse(readFileSync(lockPath, "utf8")));
 const knownTools = new Set(toolchainLock.tools.map((tool) => tool.id));
+const lockWaitMilliseconds = 30_000;
+const lockPollMilliseconds = 250;
 
 export class ToolCacheResolutionError extends Error {
   constructor(code, detail) {
@@ -428,6 +430,63 @@ async function publishTree(treePath, destination) {
   }
 }
 
+function defaultSchedule(delayMilliseconds) {
+  return new Promise((resolveSchedule) => setTimeout(resolveSchedule, delayMilliseconds));
+}
+
+async function acquireToolLock(
+  toolId,
+  cacheRoot,
+  { clock = Date.now, schedule = defaultSchedule } = {},
+) {
+  const lockRoot = join(cacheRoot, ".locks");
+  const lockDirectory = join(lockRoot, toolId);
+  const startedAt = clock();
+
+  try {
+    await mkdir(lockRoot, { recursive: true, mode: 0o700 });
+  } catch {
+    fail("io_error");
+  }
+
+  while (true) {
+    try {
+      await mkdir(lockDirectory, { mode: 0o700 });
+      const metadata = JSON.stringify({
+        createdAt: new Date(clock()).toISOString(),
+        token: randomUUID(),
+      });
+      try {
+        await writeFile(join(lockDirectory, "metadata.json"), metadata, { encoding: "utf8", flag: "wx", mode: 0o600 });
+      } catch {
+        try {
+          await rm(lockDirectory, { recursive: true, force: true });
+        } catch {
+          fail("io_error");
+        }
+        fail("io_error");
+      }
+
+      return async () => {
+        try {
+          const persistedMetadata = await readFile(join(lockDirectory, "metadata.json"), "utf8");
+          if (persistedMetadata !== metadata) return;
+          await rm(lockDirectory, { recursive: true, force: false });
+        } catch (error) {
+          if (error?.code === "ENOENT") return;
+          fail("io_error");
+        }
+      };
+    } catch (error) {
+      if (error?.code !== "EEXIST") fail("io_error");
+    }
+
+    const elapsed = clock() - startedAt;
+    if (elapsed >= lockWaitMilliseconds) fail("lock_timeout");
+    await schedule(Math.min(lockPollMilliseconds, lockWaitMilliseconds - elapsed));
+  }
+}
+
 export async function installPinnedToolchain(
   toolId,
   {
@@ -437,6 +496,8 @@ export async function installPinnedToolchain(
     adapter = runArchiveAdapter,
     processRunner = runProcess,
     tool = toolById(toolId),
+    clock = Date.now,
+    schedule = defaultSchedule,
   } = {},
 ) {
   const safeCacheRoot = assertSafeCacheRoot(cacheRoot);
@@ -454,7 +515,20 @@ export async function installPinnedToolchain(
     };
   }
 
+  let releaseLock;
   try {
+    releaseLock = await acquireToolLock(toolId, safeCacheRoot, { clock, schedule });
+    const revalidatedExecutable = await revalidateExistingDestination(destination, tool, processRunner);
+    if (revalidatedExecutable !== null) {
+      return {
+        schemaVersion: 1,
+        tool: toolId,
+        state: "existing_valid",
+        network: "unused",
+        executable: revalidatedExecutable,
+      };
+    }
+
     const staged = await download(toolId, { cacheRoot: safeCacheRoot, transport });
     stagingRoot = transactionRootFrom(staged, safeCacheRoot);
     await adapter(
@@ -484,6 +558,9 @@ export async function installPinnedToolchain(
       } catch {
         fail("io_error");
       }
+    }
+    if (releaseLock !== undefined) {
+      await releaseLock();
     }
   }
 }
@@ -583,6 +660,8 @@ export async function runBootstrapToolchainCli(
   } catch (error) {
     const code = parsed.mode === "check_cache"
       ? "cache_target_error"
+      : error instanceof ToolCacheResolutionError && error.code === "lock_timeout"
+        ? "lock_timeout"
       : error instanceof ToolCacheResolutionError && error.code === "install_invalid"
         ? "install_invalid"
         : "install_error";

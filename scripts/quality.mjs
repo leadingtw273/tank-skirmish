@@ -96,6 +96,7 @@ run("toolchain-archive-tests", "python3", ["tests/toolchain_archive_test.py"]);
 run("toolchain-bootstrap-tests", process.execPath, ["--test", "tests/toolchain-bootstrap.test.mjs"]);
 run("asset-lock-validation", process.execPath, ["scripts/validate-assets-lock.mjs", "--check"]);
 run("asset-lock-tests", process.execPath, ["--test", "tests/assets-lock.test.mjs"]);
+run("asset-conversion-staging-tests", process.execPath, ["--test", "tests/asset-conversion-staging.test.mjs"]);
 
 assertVerifiedGodotExecutable(godot, godotTool);
 

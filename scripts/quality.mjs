@@ -109,6 +109,15 @@ runStaticSelfCheck();
 
 assertGodotVersionContract(run("version", godot, ["--version"], { scanGodotErrors: true }), godotTool);
 run("import", godot, ["--headless", "--path", ".", "--import"], { scanGodotErrors: true });
+run("measure-converted-assets", godot, [
+  "--headless",
+  "--audio-driver",
+  "Dummy",
+  "--path",
+  ".",
+  "--script",
+  "res://tests/measure-converted-assets.test.gd",
+], { scanGodotErrors: true });
 run("smoke", godot, [
   "--headless",
   "--audio-driver",

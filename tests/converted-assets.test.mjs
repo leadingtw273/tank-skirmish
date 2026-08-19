@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import { chmod, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { chmod, mkdtemp, rm, unlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
@@ -87,9 +87,13 @@ test("parser accepts the supported GLB shape and rejects header, chunk, JSON, bu
   const length = Buffer.from(valid); length.writeUInt32LE(length.length - 1, 8); expectCode(() => parseGlb(length), "GLB_HEADER_INVALID");
   expectCode(() => parseGlb(valid.subarray(0, valid.length - 1)), "GLB_HEADER_INVALID");
   const chunk = Buffer.from(valid); chunk.writeUInt32LE(3, 12); expectCode(() => parseGlb(chunk), "GLB_CHUNK_INVALID");
+  const malformedJson = Buffer.from(valid); malformedJson[20] = 0x21; expectCode(() => parseGlb(malformedJson), "GLB_JSON_INVALID");
   expectCode(() => parseGlb(glb({ buffers: [{ byteLength: 4, uri: "data:bad" }] }, Buffer.from([1, 2, 3, 4]))), "GLB_STRUCTURE_INVALID");
   expectCode(() => parseGlb(glb({ buffers: [{ byteLength: 4 }], bufferViews: [{ buffer: 0, byteOffset: 3, byteLength: 2 }] }, Buffer.from([1, 2, 3, 4]))), "GLB_STRUCTURE_INVALID");
   expectCode(() => parseGlb(glb({ buffers: [{ byteLength: 4 }], bufferViews: [{ buffer: 0, byteOffset: 0, byteLength: 4 }], accessors: [{ bufferView: 0, componentType: 5126, type: "VEC3", count: 1 }] }, Buffer.from([1, 2, 3, 4]))), "GLB_STRUCTURE_INVALID");
+  expectCode(() => parseGlb(glb({ buffers: [{ byteLength: 4 }], bufferViews: [{ buffer: 0, byteOffset: Number.MAX_SAFE_INTEGER, byteLength: 1 }] }, Buffer.from([1, 2, 3, 4]))), "GLB_STRUCTURE_INVALID");
+  expectCode(() => parseGlb(glb({ buffers: [{ byteLength: 4 }], bufferViews: [{ buffer: 0, byteOffset: 0, byteLength: 4 }], accessors: [{ bufferView: 0, byteOffset: Number.MAX_SAFE_INTEGER, componentType: 5121, type: "SCALAR", count: 1 }] }, Buffer.from([1, 2, 3, 4]))), "GLB_STRUCTURE_INVALID");
+  expectCode(() => parseGlb(glb({ buffers: [{ byteLength: 4 }], bufferViews: [{ buffer: 0, byteOffset: 0, byteLength: 4 }], accessors: [{ bufferView: 0, componentType: 5121, type: "SCALAR", count: Number.MAX_SAFE_INTEGER }] }, Buffer.from([1, 2, 3, 4]))), "GLB_STRUCTURE_INVALID");
   expectCode(() => parseGlb(glb({ buffers: [{ byteLength: 4 }], images: [{ uri: "https://example.invalid/a.png" }] }, Buffer.from([1, 2, 3, 4]))), "GLB_STRUCTURE_INVALID");
   expectCode(() => parseGlb(glb({ buffers: [{ byteLength: 4 }], bufferViews: [{ buffer: 0, byteOffset: 0, byteLength: 4 }, { buffer: 0, byteOffset: 1, byteLength: 2 }], images: [{ bufferView: 0, mimeType: "image/png" }, { bufferView: 1, mimeType: "image/png" }] }, Buffer.from([1, 2, 3, 4]))), "GLB_STRUCTURE_INVALID");
 });
@@ -109,6 +113,9 @@ test("inspection produces a canonical report with sorted action names and exact 
 
 test("inspection fail-closes output trees, runner paths and model contracts", async (t) => {
   const badTree = await fixture(t); writeFileSync(join(badTree.root, "unexpected.txt"), "x"); expectCode(() => inspectConvertedAssets({ inputRoot: badTree.root, runnerManifest: badTree.path }), "OUTPUT_INVALID");
+  const missingOutput = await fixture(t); await unlink(join(missingOutput.root, ...logicalPath("1story").split("/"))); expectCode(() => inspectConvertedAssets({ inputRoot: missingOutput.root, runnerManifest: missingOutput.path }), "OUTPUT_INVALID");
+  const nonCanonical = await fixture(t); writeFileSync(nonCanonical.path, `${JSON.stringify(nonCanonical.value, null, 2)}\n`); expectCode(() => inspectConvertedAssets({ inputRoot: nonCanonical.root, runnerManifest: nonCanonical.path }), "CANONICAL_MANIFEST_INVALID");
+  const badId = await fixture(t); badId.value.models[1].id = "1STORY"; writeFileSync(badId.path, canonicalBytes(badId.value)); expectCode(() => inspectConvertedAssets({ inputRoot: badId.root, runnerManifest: badId.path }), "RUNNER_MANIFEST_INVALID");
   const badPath = await fixture(t); badPath.value.models[0].output.logicalPath = "assets/models/tank/../tank2.glb"; writeFileSync(badPath.path, canonicalBytes(badPath.value)); expectCode(() => inspectConvertedAssets({ inputRoot: badPath.root, runnerManifest: badPath.path }), "RUNNER_MANIFEST_INVALID");
   const badAction = await fixture(t, { glbs: { tank2: { actions: ["Other"] } } }); expectCode(() => inspectConvertedAssets({ inputRoot: badAction.root, runnerManifest: badAction.path }), "GLB_STRUCTURE_INVALID");
   const badBuilding = await fixture(t, { glbs: { "1story": { image: Buffer.from([9, 9, 9, 9]) } } }); badBuilding.value.models[1].output.digest = "0".repeat(64); writeFileSync(badBuilding.path, canonicalBytes(badBuilding.value)); expectCode(() => inspectConvertedAssets({ inputRoot: badBuilding.root, runnerManifest: badBuilding.path }), "DIGEST_MISMATCH");
@@ -129,6 +136,14 @@ test("check joins runner, static report, final manifest and present lock by mode
   assert.equal(checkConvertedAssets({ inputRoot: value.root, manifest, lock }).models.length, 9);
   const mismatch = structuredClone(report); mismatch.models[1].outputDigest = report.models[0].outputDigest; writeFileSync(manifest, canonicalBytes(mismatch));
   expectCode(() => checkConvertedAssets({ inputRoot: value.root, manifest, lock }), "DUPLICATE_DIGEST");
+  const joinMismatch = structuredClone(report); joinMismatch.runIdentity = "0".repeat(64); writeFileSync(manifest, canonicalBytes(joinMismatch));
+  expectCode(() => checkConvertedAssets({ inputRoot: value.root, manifest, lock }), "JOIN_MISMATCH");
+  const invalidLock = structuredClone(source); invalidLock.conversionManifest.state = "absent";
+  for (const model of invalidLock.models) {
+    model.outputDigest = null; model.embeddedImageDigest = null; model.measuredGodotXyz = null;
+  }
+  writeFileSync(manifest, canonicalBytes(report)); await writeFile(lock, JSON.stringify(invalidLock));
+  expectCode(() => checkConvertedAssets({ inputRoot: value.root, manifest, lock }), "LOCK_INVALID");
 });
 
 test("error surface remains closed and does not include private paths", async (t) => {

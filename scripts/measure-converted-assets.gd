@@ -221,7 +221,7 @@ static func verify_measurement_join(actual_models: Array, manifest_models: Array
 		for axis in range(3):
 			var actual_axis: float = canonical_round(float(current.measuredGodotXyz[axis]))
 			var expected_axis: float = float(locked.expectedGodotXyz[axis])
-			if absf(actual_axis - expected_axis) > maxf(0.01, absf(expected_axis) * 0.005):
+			if not within_measurement_tolerance(actual_axis, expected_axis):
 				return failure("TOLERANCE_MISMATCH")
 			if actual_axis != float(recorded.measuredGodotXyz[axis]) or actual_axis != float(locked.measuredGodotXyz[axis]):
 				return failure("MEASUREMENT_MISMATCH")
@@ -378,6 +378,13 @@ static func round_vector(value: Vector3) -> Array:
 static func canonical_round(value: float) -> float:
 	var rounded := roundf(value * ROUNDING_FACTOR) / ROUNDING_FACTOR
 	return 0.0 if rounded == 0.0 else rounded
+
+
+static func within_measurement_tolerance(actual_axis: float, expected_axis: float) -> bool:
+	var actual_units := roundf(actual_axis * ROUNDING_FACTOR)
+	var expected_units := expected_axis * ROUNDING_FACTOR
+	var tolerance_units := maxf(0.01 * ROUNDING_FACTOR, absf(expected_units) * 0.005)
+	return absf(actual_units - expected_units) <= tolerance_units + 0.000001
 
 
 static func sha256_bytes(bytes: PackedByteArray) -> String:

@@ -27,6 +27,9 @@ func check_cli() -> Dictionary:
 	var good := Verifier.parse_cli_args(["--emit", "--input-root", "/tmp/in", "--static-report", "/tmp/static", "--output-report", "/tmp/out"])
 	if not good.ok or good.value.mode != "--emit":
 		return failure()
+	var good_check := Verifier.parse_cli_args(["--check", "--input-root", "/tmp/in", "--manifest", "/tmp/report", "--lock", "/tmp/lock"])
+	if not good_check.ok or good_check.value.mode != "--check" or good_check.value.manifest != "/tmp/report" or good_check.value.lock != "/tmp/lock":
+		return failure()
 	for args in [[], ["--emit", "--input-root", "/tmp/in", "--input-root", "/tmp/other", "--static-report", "/tmp/static", "--output-report", "/tmp/out"], ["--check", "--input-root", "/tmp/in", "--manifest", "/tmp/report", "--lock", "/tmp/lock", "--unknown"], ["--check", "--input-root", "relative", "--manifest", "/tmp/report", "--lock", "/tmp/lock"], ["--emit", "--input-root", "/tmp/../tmp/in", "--static-report", "/tmp/static", "--output-report", "/tmp/out"]]:
 		if Verifier.parse_cli_args(args).ok:
 			return failure()
@@ -123,9 +126,25 @@ func check_join_cases() -> Dictionary:
 	wrong_expected[0].expectedGodotXyz[0] = 2.0
 	if Verifier.verify_measurement_join(actual, manifest, wrong_expected).ok:
 		return failure()
-	var tolerance_boundary := lock.duplicate(true)
-	tolerance_boundary[0].expectedGodotXyz[0] = 1.005
-	if not Verifier.verify_measurement_join(actual, manifest, tolerance_boundary).ok:
+	var floor_boundary := join_case(1.01, 1.0)
+	if not Verifier.verify_measurement_join(floor_boundary.actual, floor_boundary.manifest, floor_boundary.lock).ok:
+		return failure()
+	var past_floor_boundary := join_case(1.01001, 1.0)
+	if Verifier.verify_measurement_join(past_floor_boundary.actual, past_floor_boundary.manifest, past_floor_boundary.lock).code != "TOLERANCE_MISMATCH":
+		return failure()
+	var relative_boundary := join_case(10.05, 10.0)
+	if not Verifier.verify_measurement_join(relative_boundary.actual, relative_boundary.manifest, relative_boundary.lock).ok:
+		return failure()
+	var past_relative_boundary := join_case(10.05001, 10.0)
+	if Verifier.verify_measurement_join(past_relative_boundary.actual, past_relative_boundary.manifest, past_relative_boundary.lock).code != "TOLERANCE_MISMATCH":
+		return failure()
+	var manifest_digest_mismatch := manifest.duplicate(true)
+	manifest_digest_mismatch[0].outputDigest = "%064x" % 99
+	if Verifier.verify_measurement_join(actual, manifest_digest_mismatch, lock).code != "JOIN_MISMATCH":
+		return failure()
+	var manifest_measurement_mismatch := manifest.duplicate(true)
+	manifest_measurement_mismatch[0].measuredGodotXyz[0] = 1.1
+	if Verifier.verify_measurement_join(actual, manifest_measurement_mismatch, lock).code != "MEASUREMENT_MISMATCH":
 		return failure()
 	var wrong_join := manifest.duplicate(true)
 	wrong_join[1].id = "tank2"
@@ -151,6 +170,16 @@ func join_models(include_expected := false) -> Array:
 			item.expectedGodotXyz = [1.0, 1.0, 1.0]
 		models.append(item)
 	return models
+
+
+func join_case(actual_axis: float, expected_axis: float) -> Dictionary:
+	var actual := join_models()
+	var manifest := join_models()
+	var lock := join_models(true)
+	for models in [actual, manifest, lock]:
+		models[0].measuredGodotXyz[0] = actual_axis
+	lock[0].expectedGodotXyz[0] = expected_axis
+	return {"actual": actual, "manifest": manifest, "lock": lock}
 
 
 func success() -> Dictionary:

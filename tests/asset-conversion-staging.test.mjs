@@ -1,6 +1,10 @@
 import assert from "node:assert/strict";
+import { spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { chmod, lstat, mkdir, mkdtemp, readFile, rm, symlink, writeFile } from "node:fs/promises";
+import { watch } from "node:fs";
+import { chmod, lstat, mkdir, mkdtemp, readFile, readdir, rm, symlink, writeFile } from "node:fs/promises";
+import { once } from "node:events";
+import { createServer } from "node:net";
 import { homedir, tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import test from "node:test";
@@ -55,6 +59,10 @@ async function rejects(action, code) {
   await assert.rejects(action, (error) => error?.code === code && error.message === code);
 }
 
+async function assertNoStagingDirectory(parent) {
+  assert.deepEqual((await readdir(parent)).filter((name) => name.startsWith("asset-stage-")), []);
+}
+
 test("cache resolver uses explicit canonical root exclusively and otherwise follows XDG", async (t) => {
   const { root } = await fixture(t);
   const explicit = join(root, "cache");
@@ -70,7 +78,7 @@ test("locked source paths use only the closed two-segment cache layout", () => {
   assert.equal(resolveLockedSourcePath({ pack: "animated-tanks", filename: "Tank2.blend" }, root), join(root, "animated-tanks", "Tank2.blend"));
   for (const [pack, filename] of [
     ["/tmp", "Tank2.blend"], ["animated-tanks", "../Tank2.blend"], ["animated-tanks", "Tank2\\.blend"],
-    ["animated-tanks", "Tank\u00002.blend"], ["animated-tanks", "Ta\u006e\u0303k.blend"], ["animated-tanks", "tank2.blend"], ["other", "Tank2.blend"],
+    ["animated-tanks", "Tank\u00002.blend"], ["animated-tanks", "Tank\u00012.blend"], ["animated-tanks", "Ta\u006e\u0303k.blend"], ["animated-tanks", "tank2.blend"], ["other", "Tank2.blend"],
   ]) {
     assert.throws(() => resolveLockedSourcePath({ pack, filename }, root), { message: "INVALID_REQUEST" });
   }
@@ -126,6 +134,7 @@ test("rejects hardlinks, directories, unsafe modes, missing sources, wrong conte
   await makeHardlink(link, source);
   await rejects(() => stageLockedItem({ lock: data.lock, itemId: data.tank.id, cacheRoot: data.cacheRoot, stagingParent: data.stagingParent }), "SOURCE_MISMATCH");
   await rm(source);
+  await rejects(() => stageLockedItem({ lock: data.lock, itemId: data.tank.id, cacheRoot: data.cacheRoot, stagingParent: data.stagingParent }), "SOURCE_MISMATCH");
   await mkdir(source, { mode: 0o700 });
   await rejects(() => stageLockedItem({ lock: data.lock, itemId: data.tank.id, cacheRoot: data.cacheRoot, stagingParent: data.stagingParent }), "SOURCE_MISMATCH");
   await rm(source, { recursive: true });
@@ -135,7 +144,7 @@ test("rejects hardlinks, directories, unsafe modes, missing sources, wrong conte
   await chmod(source, 0o600);
   await writeFile(source, blendBytes("wrong"), { mode: 0o600 });
   await rejects(() => stageLockedItem({ lock: data.lock, itemId: data.tank.id, cacheRoot: data.cacheRoot, stagingParent: data.stagingParent }), "SOURCE_MISMATCH");
-  assert.deepEqual((await (await import("node:fs/promises")).readdir(data.stagingParent)).filter((name) => name.startsWith("asset-stage-")), []);
+  await assertNoStagingDirectory(data.stagingParent);
 });
 
 test("rejects missing and invalid atlas before returning a building success state", async (t) => {
@@ -147,4 +156,89 @@ test("rejects missing and invalid atlas before returning a building success stat
   data.atlas.sizeBytes = 9;
   data.atlas.sha256 = digest(Buffer.from("not a png"));
   await rejects(() => stageLockedItem({ lock: data.lock, itemId: data.building.id, cacheRoot: data.cacheRoot, stagingParent: data.stagingParent }), "ATLAS_INVALID");
+  await assertNoStagingDirectory(data.stagingParent);
+});
+
+test("rejects FIFO sources without blocking or preserving staging state", async (t) => {
+  const fifo = await fixture(t);
+  const fifoPath = join(fifo.cacheRoot, fifo.tank.pack, fifo.tank.source.filename);
+  await rm(fifoPath);
+  const mkfifo = spawnSync("mkfifo", [fifoPath], { encoding: "utf8" });
+  assert.equal(mkfifo.status, 0, mkfifo.stderr);
+  await rejects(() => stageLockedItem({ lock: fifo.lock, itemId: fifo.tank.id, cacheRoot: fifo.cacheRoot, stagingParent: fifo.stagingParent }), "SOURCE_MISMATCH");
+  await assertNoStagingDirectory(fifo.stagingParent);
+});
+
+test("rejects socket sources when the host permits Unix socket fixtures", async (t) => {
+  const socket = await fixture(t);
+  const socketPath = join(socket.cacheRoot, socket.tank.pack, socket.tank.source.filename);
+  await rm(socketPath);
+  const server = createServer();
+  try {
+    server.listen(socketPath);
+    await once(server, "listening");
+  } catch (error) {
+    if (error?.code === "EPERM" || error?.code === "EACCES") {
+      t.skip("Unix socket fixtures are blocked by this sandbox");
+      return;
+    }
+    throw error;
+  }
+  t.after(() => server.close());
+  await rejects(() => stageLockedItem({ lock: socket.lock, itemId: socket.tank.id, cacheRoot: socket.cacheRoot, stagingParent: socket.stagingParent }), "SOURCE_MISMATCH");
+  await assertNoStagingDirectory(socket.stagingParent);
+});
+
+test("rejects symlink ancestors and unsafe cache or staging parents", async (t) => {
+  const data = await fixture(t);
+  const cacheParent = join(data.root, "cache-parent");
+  await mkdir(cacheParent, { mode: 0o700 });
+  const linkedParent = join(data.root, "cache-parent-link");
+  await symlink(cacheParent, linkedParent);
+  await rejects(() => stageLockedItem({ lock: data.lock, itemId: data.tank.id, cacheRoot: join(linkedParent, "cache"), stagingParent: data.stagingParent }), "CACHE_ROOT_INVALID");
+
+  await chmod(data.cacheRoot, 0o777);
+  await rejects(() => stageLockedItem({ lock: data.lock, itemId: data.tank.id, cacheRoot: data.cacheRoot, stagingParent: data.stagingParent }), "CACHE_ROOT_INVALID");
+  await chmod(data.cacheRoot, 0o700);
+  await chmod(data.stagingParent, 0o770);
+  await rejects(() => stageLockedItem({ lock: data.lock, itemId: data.tank.id, cacheRoot: data.cacheRoot, stagingParent: data.stagingParent }), "STAGING_PARENT_INVALID");
+  await chmod(data.stagingParent, 0o700);
+  await assertNoStagingDirectory(data.stagingParent);
+});
+
+test("fails closed when release cannot remove the per-run staging directory", async (t) => {
+  const data = await fixture(t);
+  const staged = await stageLockedItem({ lock: data.lock, itemId: data.tank.id, cacheRoot: data.cacheRoot, stagingParent: data.stagingParent });
+  await chmod(data.stagingParent, 0o500);
+  await rejects(() => staged.release(), "CLEANUP_FAILED");
+  await chmod(data.stagingParent, 0o700);
+  const directory = resolve(staged.source.path, "..");
+  assert.notEqual((await lstat(directory)).nlink, 0);
+  await rm(directory, { recursive: true, force: true });
+  await assertNoStagingDirectory(data.stagingParent);
+});
+
+test("cleans an unexpected file injected while descriptor-bound copying is in progress", async (t) => {
+  const data = await fixture(t);
+  const sourcePath = join(data.cacheRoot, data.tank.pack, data.tank.source.filename);
+  const bytes = Buffer.concat([Buffer.from("BLENDER", "ascii"), Buffer.alloc(8 * 1024 * 1024, 0x61)]);
+  data.tank.source.sizeBytes = bytes.length;
+  data.tank.source.sha256 = digest(bytes);
+  await writeFile(sourcePath, bytes, { mode: 0o600 });
+
+  let inject;
+  const injected = new Promise((resolveInjection, rejectInjection) => { inject = { resolveInjection, rejectInjection }; });
+  let observed = false;
+  const watcher = watch(data.stagingParent, (_event, name) => {
+    if (observed || typeof name !== "string" || !name.startsWith("asset-stage-")) return;
+    observed = true;
+    watcher.close();
+    writeFile(join(data.stagingParent, name, "unexpected"), "synthetic", { mode: 0o600 })
+      .then(inject.resolveInjection, inject.rejectInjection);
+  });
+  t.after(() => watcher.close());
+  const staging = stageLockedItem({ lock: data.lock, itemId: data.tank.id, cacheRoot: data.cacheRoot, stagingParent: data.stagingParent });
+  await injected;
+  await rejects(() => staging, "STAGING_INVALID");
+  await assertNoStagingDirectory(data.stagingParent);
 });

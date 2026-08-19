@@ -180,7 +180,9 @@ async function stageOne({ sourcePath, directory, stagedBasename, entry, sourceCo
   let destinationHandle;
   try {
     assertExistingAncestorsNotSymlinks(dirname(sourcePath), sourceCode);
-    sourceHandle = await open(sourcePath, fsConstants.O_RDONLY | fsConstants.O_NOFOLLOW);
+    // O_NONBLOCK prevents a hostile FIFO at the locked path from hanging the
+    // staging operation before descriptor-bound type validation can reject it.
+    sourceHandle = await open(sourcePath, fsConstants.O_RDONLY | fsConstants.O_NOFOLLOW | fsConstants.O_NONBLOCK);
     await assertOpenedSource(sourcePath, sourceHandle, entry, sourceCode);
     const destinationPath = join(directory, stagedBasename);
     destinationHandle = await open(destinationPath, fsConstants.O_CREAT | fsConstants.O_EXCL | fsConstants.O_WRONLY | fsConstants.O_NOFOLLOW, 0o600);

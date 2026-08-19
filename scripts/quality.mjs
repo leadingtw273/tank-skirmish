@@ -98,6 +98,7 @@ run("asset-lock-validation", process.execPath, ["scripts/validate-assets-lock.mj
 run("asset-lock-tests", process.execPath, ["--test", "tests/assets-lock.test.mjs"]);
 run("asset-conversion-staging-tests", process.execPath, ["--test", "tests/asset-conversion-staging.test.mjs"]);
 run("asset-conversion-tests", process.execPath, ["--test", "tests/asset-conversion.test.mjs"]);
+run("converted-assets-tests", process.execPath, ["--test", "tests/converted-assets.test.mjs"]);
 
 assertVerifiedGodotExecutable(godot, godotTool);
 

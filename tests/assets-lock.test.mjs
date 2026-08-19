@@ -36,6 +36,16 @@ function present(value = lock()) {
   return value;
 }
 
+function absent(value = lock()) {
+  value.conversionManifest.state = "absent";
+  for (const model of value.models) {
+    model.outputDigest = null;
+    model.measuredGodotXyz = null;
+    model.embeddedImageDigest = null;
+  }
+  return value;
+}
+
 test("accepts the committed absent lock and a fully-populated present lock", () => {
   assert.equal(validateAssetLockText(sourceText).schemaVersion, 1);
   assert.equal(validateAssetLockValue(present()).conversionManifest.state, "present");
@@ -115,7 +125,11 @@ test("enforces absent and present conversion-state invariants", () => {
     [(value) => { building(value).measuredGodotXyz = [...building(value).expectedGodotXyz]; }, "models[1].measuredGodotXyz"],
     [(value) => { building(value).embeddedImageDigest = "a".repeat(64); }, "models[1].embeddedImageDigest"],
   ];
-  for (const [mutate, path] of absentCases) expectReject(mutate, path);
+  for (const [mutate, path] of absentCases) {
+    const value = absent();
+    mutate(value);
+    assert.throws(() => validateAssetLockValue(value), { message: path });
+  }
 
   for (const [mutate, path] of [
     [(value) => { building(value).outputDigest = null; }, "models[1].outputDigest"],

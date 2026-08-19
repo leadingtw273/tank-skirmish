@@ -16,10 +16,17 @@ const TOOLCHAIN_LOCK_PATH = join(PROJECT_ROOT, "docs/toolchain-lock.json");
 const EXPORTER_PATH = join(PROJECT_ROOT, "scripts/blender/export_selected_glb.py");
 const UID = typeof process.getuid === "function" ? process.getuid() : null;
 const CLOSED_IDS = new Set(["tank2", "1story", "1story-gable-roof", "2story", "2story-slim", "2story-wide", "3story-small", "4story", "6story-stack"]);
+const REQUEST_FIELDS = new Set(["atlasBasename", "atlasDigest", "category", "id", "outputPrivatePath", "policy", "resultPrivatePath", "scale", "sourceBasename"]);
 const HELP = "Usage: node scripts/convert-assets.mjs --help | --check | --output-root <absolute-path> (--item <model-id> | --all)\n";
+export const CONVERSION_ERROR_CODES = new Set([
+  "USAGE", "MODEL_ID_INVALID", "MODEL_CATEGORY_INVALID", "CANONICAL_VALUE_INVALID", "LOCK_IO", "LOCK_INVALID", "TOOLCHAIN_INVALID",
+  "BLENDER_INVALID", "BLENDER_DIGEST_MISMATCH", "BLENDER_VERSION_MISMATCH", "REQUEST_INVALID", "EXPORT_RESULT_INVALID",
+  "EXPORT_OUTPUT_INVALID", "STAGING_RELEASE_FAILED", "OUTPUT_ROOT_INVALID", "EXPORTER_MISSING", "OUTPUT_COLLISION", "PUBLISH_INVALID",
+  "EXPORT_FAILED", "CONVERSION_FAILED",
+]);
 
 export class ConversionError extends Error {
-  constructor(code) { super(code); this.name = "ConversionError"; this.code = code; }
+  constructor(code) { super(CONVERSION_ERROR_CODES.has(code) ? code : "CONVERSION_FAILED"); this.name = "ConversionError"; this.code = this.message; }
 }
 const fail = (code) => { throw new ConversionError(code); };
 const sha256 = (bytes) => createHash("sha256").update(bytes).digest("hex");
@@ -137,9 +144,24 @@ function requestFor(model, staged, outputPath, resultPath) {
     atlasDigest: staged.atlas?.digest ?? null,
   };
 }
-function assertNoSensitiveRequest(request) {
-  const text = JSON.stringify(request);
-  if (/cache|token|network|home|environment/iu.test(text)) fail("REQUEST_SENSITIVE");
+function isBasename(value) {
+  return typeof value === "string" && value.length > 0 && basename(value) === value && !value.includes("\\") && value !== "." && value !== "..";
+}
+function assertClosedRequest(request, model, directory) {
+  if (request === null || typeof request !== "object" || Array.isArray(request)
+    || Object.keys(request).length !== REQUEST_FIELDS.size || Object.keys(request).some((key) => !REQUEST_FIELDS.has(key))) fail("REQUEST_INVALID");
+  if (request.id !== model.id || request.category !== model.category || !CLOSED_IDS.has(request.id)
+    || request.scale !== model.scale || !Number.isFinite(request.scale)
+    || request.policy === null || typeof request.policy !== "object" || Array.isArray(request.policy)
+    || Object.keys(request.policy).length !== 2 || request.policy.animation !== model.animationPolicy || request.policy.texture !== model.texturePolicy
+    || !isBasename(request.sourceBasename) || request.sourceBasename !== model.source.filename
+    || (request.atlasBasename !== null && !isBasename(request.atlasBasename))
+    || (request.atlasBasename === null) !== (model.category === "tank")
+    || (request.atlasBasename !== null && request.atlasBasename !== "Texture.png")
+    || (request.atlasDigest !== null && (typeof request.atlasDigest !== "string" || !/^[0-9a-f]{64}$/u.test(request.atlasDigest)))
+    || (request.atlasDigest === null) !== (model.category === "tank")
+    || ![request.outputPrivatePath, request.resultPrivatePath].every((path) => typeof path === "string" && isAbsolute(path) && resolve(path) === path && dirname(path) === directory)
+    || request.outputPrivatePath === request.resultPrivatePath) fail("REQUEST_INVALID");
 }
 async function writePrivateJson(path, value) {
   await writeFile(path, canonicalBytes(value), { mode: 0o600, flag: "wx" });
@@ -149,7 +171,8 @@ async function readResult(path) {
   let value;
   try { value = JSON.parse(await readFile(path, "utf8")); } catch { fail("EXPORT_RESULT_INVALID"); }
   if (value === null || typeof value !== "object" || Array.isArray(value) || Object.keys(value).length !== 1 || !Array.isArray(value.sourceActionNames) || !value.sourceActionNames.every((name) => typeof name === "string")
-    || [...value.sourceActionNames].sort().some((name, index) => name !== value.sourceActionNames[index])) fail("EXPORT_RESULT_INVALID");
+    || [...value.sourceActionNames].sort().some((name, index) => name !== value.sourceActionNames[index])
+    || new Set(value.sourceActionNames).size !== value.sourceActionNames.length) fail("EXPORT_RESULT_INVALID");
   return value.sourceActionNames;
 }
 async function verifyItemOutput({ directory, outputPath, requestPath, resultPath, sourceBasename, atlasBasename }) {
@@ -164,8 +187,15 @@ export function computeRunIdentity({ assetLockDigest, toolchainLockDigest, expor
   return sha256(canonicalBytes({ assetLockDigest, exporterDigest, models: models.map(({ id, sourceDigest, scale, policy, sourceActionNames, outputLogicalPath }) => ({ id, outputLogicalPath, policy, scale, sourceActionNames, sourceDigest })), toolchainLockDigest }));
 }
 
+async function releaseStagedItems(stagedItems) {
+  const results = await Promise.allSettled(stagedItems.map((staged) => staged.release()));
+  if (results.some((result) => result.status === "rejected")) fail("STAGING_RELEASE_FAILED");
+}
+
 export async function runConversion({ assetLock, toolchainLock, assetLockDigest, toolchainLockDigest, outputRoot, itemIds, environment = process.env, stageItem = stageLockedItem, runProcess, exporterPath = EXPORTER_PATH, blenderPath, releaseRoot, read = readFileSync } = {}) {
   assertPrivateDirectory(outputRoot, "OUTPUT_ROOT_INVALID");
+  if (!Array.isArray(itemIds) || itemIds.length === 0 || itemIds.some((id) => typeof id !== "string" || !CLOSED_IDS.has(id))) fail("MODEL_ID_INVALID");
+  if ((await readdir(outputRoot)).length !== 0) fail("OUTPUT_COLLISION");
   let exporterBytes;
   try { exporterBytes = read(exporterPath); } catch { fail("EXPORTER_MISSING"); }
   const exporterDigest = sha256(exporterBytes);
@@ -182,6 +212,9 @@ export async function runConversion({ assetLock, toolchainLock, assetLockDigest,
   const records = [];
   const stagedItems = [];
   let publication;
+  let stagedItemsReleased = false;
+  let publishedAssets = false;
+  let publishedManifest = false;
   try {
     for (const model of selected) {
       const staged = await stageItem({ lock: assetLock, itemId: model.id, stagingParent: stageParent, environment });
@@ -191,7 +224,7 @@ export async function runConversion({ assetLock, toolchainLock, assetLockDigest,
       const privateResult = join(directory, "export-result.json");
       const requestPath = join(directory, "conversion-request.json");
       const request = requestFor(model, staged, privateOutput, privateResult);
-      assertNoSensitiveRequest(request);
+      assertClosedRequest(request, model, directory);
       await writePrivateJson(requestPath, request);
       const processResult = (runProcess ?? ((executablePath, args) => spawnSync(executablePath, args, { encoding: "utf8", shell: false })))(executable, ["--background", "--factory-startup", "--python", exporterPath, "--", requestPath]);
       if (processResult?.error !== undefined || processResult?.status !== 0) fail("EXPORT_FAILED");
@@ -209,6 +242,7 @@ export async function runConversion({ assetLock, toolchainLock, assetLockDigest,
     };
     publication = releaseRoot ?? await mkdtemp(join(outputRoot, ".conversion-publish-"));
     await chmod(publication, 0o700); assertPrivateDirectory(publication, "OUTPUT_ROOT_INVALID");
+    if ((await readdir(publication)).length !== 0) fail("PUBLISH_INVALID");
     const assetsRoot = join(publication, "assets");
     for (const record of records) {
       const destination = join(publication, record.outputLogicalPath);
@@ -217,14 +251,22 @@ export async function runConversion({ assetLock, toolchainLock, assetLockDigest,
     }
     await writeFile(join(publication, "conversion-run-manifest.json"), canonicalBytes(manifest), { mode: 0o600, flag: "wx" });
     if ((await readdir(publication)).length !== 2 || !lstatSync(assetsRoot).isDirectory()) fail("PUBLISH_INVALID");
+    await releaseStagedItems(stagedItems);
+    stagedItemsReleased = true;
     await rename(assetsRoot, join(outputRoot, "assets"));
+    publishedAssets = true;
     await rename(join(publication, "conversion-run-manifest.json"), join(outputRoot, "conversion-run-manifest.json"));
+    publishedManifest = true;
     await rm(publication, { recursive: true, force: false });
     return { manifest, manifestDigest: sha256(canonicalBytes(manifest)) };
   } catch (error) {
+    if (publishedManifest) await rm(join(outputRoot, "conversion-run-manifest.json"), { force: true }).catch(() => undefined);
+    if (publishedAssets) await rm(join(outputRoot, "assets"), { recursive: true, force: true }).catch(() => undefined);
     if (publication !== undefined) await rm(publication, { recursive: true, force: true }).catch(() => undefined);
     throw error instanceof ConversionError ? error : new ConversionError("CONVERSION_FAILED");
-  } finally { await Promise.allSettled(stagedItems.map((staged) => staged.release())); }
+  } finally {
+    if (!stagedItemsReleased) await Promise.allSettled(stagedItems.map((staged) => staged.release()));
+  }
 }
 
 export async function runCli(args, { stdout = process.stdout, stderr = process.stderr, environment = process.env } = {}) {

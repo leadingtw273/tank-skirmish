@@ -7,6 +7,14 @@ from pathlib import Path
 import bpy
 
 BUILDING_IMAGE_PATH = "//Texture.png"
+CLOSED_IDS = {
+    "tank2", "1story", "1story-gable-roof", "2story", "2story-slim",
+    "2story-wide", "3story-small", "4story", "6story-stack",
+}
+REQUEST_FIELDS = {
+    "atlasBasename", "atlasDigest", "category", "id", "outputPrivatePath",
+    "policy", "resultPrivatePath", "scale", "sourceBasename",
+}
 GLTF_OPTIONS = {
     "export_format": "GLB",
     "export_yup": True,
@@ -28,13 +36,18 @@ def load_request():
     require(len(sys.argv) == marker + 2, "exactly one request path is required")
     request_path = Path(sys.argv[marker + 1]).resolve()
     request = json.loads(request_path.read_text(encoding="utf-8"))
-    expected = {"category", "id", "outputPrivatePath", "policy", "resultPrivatePath", "scale", "sourceBasename", "atlasBasename", "atlasDigest"}
-    require(set(request) == expected, "closed request schema")
-    require(request["id"] in {"tank2", "1story", "1story-gable-roof", "2story", "2story-slim", "2story-wide", "3story-small", "4story", "6story-stack"}, "closed model id")
-    require(request["category"] in {"tank", "building"} and isinstance(request["scale"], (int, float)), "invalid identity")
+    require(set(request) == REQUEST_FIELDS, "closed request schema")
+    require(request["id"] in CLOSED_IDS and request["category"] in {"tank", "building"} and isinstance(request["scale"], (int, float)), "invalid identity")
+    require((request["id"] == "tank2") == (request["category"] == "tank"), "closed category mapping")
+    require(isinstance(request["policy"], dict) and set(request["policy"]) == {"animation", "texture"}, "closed policy")
     for key in ("sourceBasename", "atlasBasename"):
         value = request[key]
         require(value is None or (isinstance(value, str) and Path(value).name == value), "basename only")
+    require(isinstance(request["sourceBasename"], str), "source basename required")
+    require(request["atlasBasename"] is None or (request["atlasBasename"] == "Texture.png" and isinstance(request["atlasDigest"], str)), "atlas contract")
+    require(request["atlasBasename"] is not None or request["atlasDigest"] is None, "tank atlas contract")
+    for key in ("outputPrivatePath", "resultPrivatePath"):
+        require(isinstance(request[key], str) and Path(request[key]).is_absolute(), "private path required")
     return request_path.parent, request
 
 
@@ -84,11 +97,11 @@ def main():
     if request["category"] == "building":
         require(not source_action_names, "buildings must have no source actions")
     select_and_scale(request["scale"])
-    output = Path(request["outputPrivatePath"])
-    result = Path(request["resultPrivatePath"])
-    require(output.parent == request_dir and result.parent == request_dir, "private output must remain staged")
-    bpy.ops.export_scene.gltf(filepath=str(output), **GLTF_OPTIONS)
+    output = Path(request["outputPrivatePath"]).resolve()
+    result = Path(request["resultPrivatePath"]).resolve()
+    require(output.parent == request_dir and result.parent == request_dir and output != result, "private output must remain staged")
     result.write_text(json.dumps({"sourceActionNames": source_action_names}, separators=(",", ":"), sort_keys=True) + "\n", encoding="utf-8")
+    bpy.ops.export_scene.gltf(filepath=str(output), **GLTF_OPTIONS)
 
 
 if __name__ == "__main__":

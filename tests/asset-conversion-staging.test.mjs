@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { watch } from "node:fs";
-import { chmod, lstat, mkdir, mkdtemp, readFile, readdir, rm, symlink, writeFile } from "node:fs/promises";
+import { chmod, chown, lstat, mkdir, mkdtemp, readFile, readdir, rename, rm, symlink, writeFile } from "node:fs/promises";
 import { once } from "node:events";
 import { createServer } from "node:net";
 import { homedir, tmpdir } from "node:os";
@@ -142,7 +142,21 @@ test("rejects hardlinks, directories, unsafe modes, missing sources, wrong conte
   await chmod(source, 0o666);
   await rejects(() => stageLockedItem({ lock: data.lock, itemId: data.tank.id, cacheRoot: data.cacheRoot, stagingParent: data.stagingParent }), "SOURCE_MISMATCH");
   await chmod(source, 0o600);
+  await writeFile(source, blendBytes("tink"), { mode: 0o600 });
+  await rejects(() => stageLockedItem({ lock: data.lock, itemId: data.tank.id, cacheRoot: data.cacheRoot, stagingParent: data.stagingParent }), "SOURCE_MISMATCH");
   await writeFile(source, blendBytes("wrong"), { mode: 0o600 });
+  await rejects(() => stageLockedItem({ lock: data.lock, itemId: data.tank.id, cacheRoot: data.cacheRoot, stagingParent: data.stagingParent }), "SOURCE_MISMATCH");
+  await assertNoStagingDirectory(data.stagingParent);
+});
+
+test("rejects foreign-owned sources when the host permits a wrong-uid fixture", async (t) => {
+  if (typeof process.getuid !== "function" || process.getuid() !== 0) {
+    t.skip("wrong-uid fixtures require privilege to chown away from the test uid");
+    return;
+  }
+  const data = await fixture(t);
+  const source = join(data.cacheRoot, data.tank.pack, data.tank.source.filename);
+  await chown(source, 65534, process.getgid?.() ?? 65534);
   await rejects(() => stageLockedItem({ lock: data.lock, itemId: data.tank.id, cacheRoot: data.cacheRoot, stagingParent: data.stagingParent }), "SOURCE_MISMATCH");
   await assertNoStagingDirectory(data.stagingParent);
 });
@@ -234,6 +248,57 @@ test("cleans an unexpected file injected while descriptor-bound copying is in pr
     observed = true;
     watcher.close();
     writeFile(join(data.stagingParent, name, "unexpected"), "synthetic", { mode: 0o600 })
+      .then(inject.resolveInjection, inject.rejectInjection);
+  });
+  t.after(() => watcher.close());
+  const staging = stageLockedItem({ lock: data.lock, itemId: data.tank.id, cacheRoot: data.cacheRoot, stagingParent: data.stagingParent });
+  await injected;
+  await rejects(() => staging, "STAGING_INVALID");
+  await assertNoStagingDirectory(data.stagingParent);
+});
+
+test("rejects a source pathname replaced after its destination has opened", async (t) => {
+  const data = await fixture(t);
+  const sourcePath = join(data.cacheRoot, data.tank.pack, data.tank.source.filename);
+  const replacementPath = join(data.cacheRoot, data.tank.pack, "replacement-after-open.blend");
+  const bytes = Buffer.concat([Buffer.from("BLENDER", "ascii"), Buffer.alloc(16 * 1024 * 1024, 0x61)]);
+  const replacement = Buffer.concat([Buffer.from("BLENDER", "ascii"), Buffer.alloc(16 * 1024 * 1024, 0x62)]);
+  data.tank.source.sizeBytes = bytes.length;
+  data.tank.source.sha256 = digest(bytes);
+  await writeFile(sourcePath, bytes, { mode: 0o600 });
+  await writeFile(replacementPath, replacement, { mode: 0o600 });
+
+  let replace;
+  const replaced = new Promise((resolveReplacement, rejectReplacement) => { replace = { resolveReplacement, rejectReplacement }; });
+  let directoryWatcher;
+  const parentWatcher = watch(data.stagingParent, (_event, name) => {
+    if (typeof name !== "string" || !name.startsWith("asset-stage-") || directoryWatcher !== undefined) return;
+    directoryWatcher = watch(join(data.stagingParent, name), (_destinationEvent, destinationName) => {
+      if (destinationName !== data.tank.source.filename) return;
+      directoryWatcher.close();
+      rename(replacementPath, sourcePath).then(replace.resolveReplacement, replace.rejectReplacement);
+    });
+  });
+  t.after(() => {
+    parentWatcher.close();
+    directoryWatcher?.close();
+  });
+  const staging = stageLockedItem({ lock: data.lock, itemId: data.tank.id, cacheRoot: data.cacheRoot, stagingParent: data.stagingParent });
+  await replaced;
+  await rejects(() => staging, "SOURCE_MISMATCH");
+  await assertNoStagingDirectory(data.stagingParent);
+});
+
+test("rejects a pre-created staged destination collision and removes the run directory", async (t) => {
+  const data = await fixture(t);
+  let inject;
+  const injected = new Promise((resolveInjection, rejectInjection) => { inject = { resolveInjection, rejectInjection }; });
+  let observed = false;
+  const watcher = watch(data.stagingParent, (_event, name) => {
+    if (observed || typeof name !== "string" || !name.startsWith("asset-stage-")) return;
+    observed = true;
+    watcher.close();
+    writeFile(join(data.stagingParent, name, data.tank.source.filename), blendBytes("collision"), { mode: 0o600 })
       .then(inject.resolveInjection, inject.rejectInjection);
   });
   t.after(() => watcher.close());

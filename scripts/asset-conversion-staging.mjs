@@ -185,8 +185,15 @@ async function stageOne({ sourcePath, directory, stagedBasename, entry, sourceCo
     sourceHandle = await open(sourcePath, fsConstants.O_RDONLY | fsConstants.O_NOFOLLOW | fsConstants.O_NONBLOCK);
     await assertOpenedSource(sourcePath, sourceHandle, entry, sourceCode);
     const destinationPath = join(directory, stagedBasename);
-    destinationHandle = await open(destinationPath, fsConstants.O_CREAT | fsConstants.O_EXCL | fsConstants.O_WRONLY | fsConstants.O_NOFOLLOW, 0o600);
+    try {
+      destinationHandle = await open(destinationPath, fsConstants.O_CREAT | fsConstants.O_EXCL | fsConstants.O_WRONLY | fsConstants.O_NOFOLLOW, 0o600);
+    } catch {
+      fail(stagedCode);
+    }
     await copyAndDigest(sourceHandle, destinationHandle, entry, sourceCode);
+    // The source descriptor remains authoritative for bytes, but require that
+    // the locked pathname still identifies that descriptor before success.
+    await assertOpenedSource(sourcePath, sourceHandle, entry, sourceCode);
     await destinationHandle.sync();
     await destinationHandle.close();
     destinationHandle = undefined;

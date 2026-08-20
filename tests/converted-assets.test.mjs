@@ -1,9 +1,11 @@
 import assert from "node:assert/strict";
+import { spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { chmod, mkdtemp, rm, unlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import test from "node:test";
 
 import {
@@ -12,6 +14,7 @@ import {
 } from "../scripts/validate-converted-assets.mjs";
 
 const ids = ["tank2", "1story", "1story-gable-roof", "2story", "2story-slim", "2story-wide", "3story-small", "4story", "6story-stack"];
+const projectRoot = dirname(dirname(fileURLToPath(import.meta.url)));
 const sha = (value) => createHash("sha256").update(value).digest("hex");
 const logicalPath = (id) => id === "tank2" ? `assets/models/tank/${id}.glb` : `assets/models/buildings/${id}.glb`;
 
@@ -151,4 +154,41 @@ test("error surface remains closed and does not include private paths", async (t
   const result = await runCli(["--inspect", "--input-root", value.root, "--runner-manifest", value.path, "--output-report", join(value.root, "missing", "report.json")], { stdout: { write() {} }, stderr });
   assert.equal(result, 1); assert.equal(stderr.value, "OUTPUT_INVALID\n"); assert.equal(stderr.value.includes(value.root), false);
   assert.equal(CONVERTED_ASSET_ERROR_CODES.has(new ConvertedAssetError("not-closed").code), true);
+});
+
+test("production Godot CLI unwraps successful parse payloads and preserves closed failures", async (t) => {
+  const godot = process.env.GODOT_BIN;
+  if (godot === undefined) {
+    t.skip("GODOT_BIN is required for production Godot CLI coverage");
+    return;
+  }
+  const value = await fixture(t);
+  const staticReport = join(value.root, "static-report.json");
+  writeFileSync(staticReport, canonicalBytes(inspectConvertedAssets({ inputRoot: value.root, runnerManifest: value.path })));
+  const missingInput = join(value.root, "missing-input");
+  const emit = spawnSync(godot, ["--headless", "--audio-driver", "Dummy", "--path", ".", "--script", "res://scripts/measure-converted-assets.gd", "--", "--emit", "--input-root", missingInput, "--static-report", staticReport, "--output-report", join(value.root, "report.json")], { cwd: projectRoot, encoding: "utf8", timeout: 10_000, killSignal: "SIGKILL" });
+  assert.equal(emit.error, undefined);
+  assert.equal(emit.status, 1);
+  assert.equal(emit.stderr, "INPUT_ROOT_INVALID\n");
+  assert.equal(`${emit.stdout}${emit.stderr}`.includes("SCRIPT ERROR"), false);
+  const check = spawnSync(godot, ["--headless", "--audio-driver", "Dummy", "--path", ".", "--script", "res://scripts/measure-converted-assets.gd", "--", "--check", "--input-root", missingInput, "--manifest", join(value.root, "missing-manifest.json"), "--lock", join(value.root, "missing-lock.json")], { cwd: projectRoot, encoding: "utf8", timeout: 10_000, killSignal: "SIGKILL" });
+  assert.equal(check.error, undefined);
+  assert.equal(check.status, 1);
+  assert.equal(check.stderr, "INPUT_ROOT_INVALID\n");
+  assert.equal(`${check.stdout}${check.stderr}`.includes("SCRIPT ERROR"), false);
+  const usage = spawnSync(godot, ["--headless", "--audio-driver", "Dummy", "--path", ".", "--script", "res://scripts/measure-converted-assets.gd", "--", "--emit"], { cwd: projectRoot, encoding: "utf8", timeout: 10_000, killSignal: "SIGKILL" });
+  assert.equal(usage.error, undefined);
+  assert.equal(usage.status, 2);
+  assert.equal(usage.stderr, "USAGE\n");
+  assert.equal(`${usage.stdout}${usage.stderr}`.includes("SCRIPT ERROR"), false);
+  for (const imageCount of [-1, 1.5, "1"]) {
+    const invalid = structuredClone(inspectConvertedAssets({ inputRoot: value.root, runnerManifest: value.path }));
+    invalid.models[0].imageCount = imageCount;
+    writeFileSync(staticReport, canonicalBytes(invalid));
+    const result = spawnSync(godot, ["--headless", "--audio-driver", "Dummy", "--path", ".", "--script", "res://scripts/measure-converted-assets.gd", "--", "--emit", "--input-root", missingInput, "--static-report", staticReport, "--output-report", join(value.root, "report.json")], { cwd: projectRoot, encoding: "utf8", timeout: 10_000, killSignal: "SIGKILL" });
+    assert.equal(result.error, undefined);
+    assert.equal(result.status, 1);
+    assert.equal(result.stderr, "STATIC_REPORT_INVALID\n");
+    assert.equal(`${result.stdout}${result.stderr}`.includes("SCRIPT ERROR"), false);
+  }
 });

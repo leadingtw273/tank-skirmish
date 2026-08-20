@@ -16,7 +16,7 @@ func _run_cli() -> void:
 		quit(2)
 		return
 
-	var result := await run_command(parsed)
+	var result := await run_command(parsed.value)
 	if not result.ok:
 		printerr(result.code)
 		quit(1)
@@ -241,7 +241,7 @@ static func validate_static_report(value: Variant) -> Dictionary:
 	var digest_seen := {}
 	for id in IDS:
 		var model: Dictionary = models.value[id]
-		if model.category != ("tank" if id == "tank2" else "building") or model.outputRelativePath != logical_path(id) or not valid_sha256(model.outputDigest) or typeof(model.sourceActionNames) != TYPE_ARRAY or typeof(model.animationNames) != TYPE_ARRAY or not (model.imageCount is int) or model.imageCount < 0:
+		if model.category != ("tank" if id == "tank2" else "building") or model.outputRelativePath != logical_path(id) or not valid_sha256(model.outputDigest) or typeof(model.sourceActionNames) != TYPE_ARRAY or typeof(model.animationNames) != TYPE_ARRAY or not ((model.imageCount is int and model.imageCount >= 0) or (typeof(model.imageCount) == TYPE_FLOAT and is_finite(model.imageCount) and model.imageCount >= 0.0 and floor(model.imageCount) == model.imageCount)):
 			return failure("STATIC_REPORT_INVALID")
 		if digest_seen.has(model.outputDigest):
 			return failure("DUPLICATE_DIGEST")
@@ -329,8 +329,11 @@ static func canonical_json(value: Variant) -> String:
 				return ""
 			values.append(encoded)
 		return "[" + ",".join(values) + "]"
-	if typeof(value) == TYPE_FLOAT and not is_finite(value):
-		return ""
+	if typeof(value) == TYPE_FLOAT:
+		if not is_finite(value):
+			return ""
+		if floor(value) == value:
+			return str(int(value))
 	if typeof(value) != TYPE_NIL and typeof(value) != TYPE_BOOL and typeof(value) != TYPE_INT and typeof(value) != TYPE_FLOAT and typeof(value) != TYPE_STRING:
 		return ""
 	return JSON.stringify(value)

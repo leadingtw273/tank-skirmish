@@ -27,10 +27,9 @@ tonemap_mode = 2
 [node name="CameraRig" type="Node3D" parent="."]
 
 [node name="Camera3D" type="Camera3D" parent="CameraRig"]
-position = Vector3(40.558, 81.915, 48.558)
-rotation = Vector3(-0.959931, 0.785398, 0)
+transform = Transform3D(0.036683507, -0.5894746, 0.80695355, 0, 0.807497, 0.58987164, -0.99932694, -0.021638561, 0.029621825, 32.482655, 23.744362, 9.19238)
 projection = 1
-size = 55.0
+size = 61.211
 keep_aspect = 1
 current = true
 

@@ -78,6 +78,49 @@ def verify_images(request_dir, request):
         except Exception as error:
             raise RuntimeError("building image load failed") from error
         require(image.has_data, "building image data unavailable")
+    return tuple(images)
+
+
+def only(items, message):
+    require(len(items) == 1, message)
+    return items[0]
+
+
+def linked_from(socket, node, output_name, message):
+    require(socket.is_linked and len(socket.links) == 1, message)
+    link = socket.links[0]
+    require(link.from_node is node and link.from_socket is node.outputs[output_name], message)
+    return link
+
+
+def legacy_building_graphs(verified_images):
+    graphs = []
+    for material in bpy.data.materials:
+        require(material.use_nodes and material.node_tree, "building material nodes required")
+        node_tree = material.node_tree
+        nodes = list(node_tree.nodes)
+        require(len(nodes) == 3, "building material topology")
+        image = only([node for node in nodes if node.type == "TEX_IMAGE"], "building material image node")
+        diffuse = only([node for node in nodes if node.type == "BSDF_DIFFUSE"], "building material diffuse node")
+        output = only([node for node in nodes if node.type == "OUTPUT_MATERIAL"], "building material output node")
+        require(output.is_active_output, "building material active output")
+        require(image.image and any(image.image == verified_image for verified_image in verified_images), "building material verified image")
+        image_link = linked_from(diffuse.inputs["Color"], image, "Color", "building material image color link")
+        output_link = linked_from(output.inputs["Surface"], diffuse, "BSDF", "building material surface link")
+        require(len(node_tree.links) == 2 and image_link is not output_link, "building material topology")
+        graphs.append((node_tree, image, diffuse, output))
+    require(graphs, "building materials required")
+    return graphs
+
+
+def normalize_building_materials(verified_images):
+    graphs = legacy_building_graphs(verified_images)
+    for node_tree, image, diffuse, output in graphs:
+        principled = node_tree.nodes.new("ShaderNodeBsdfPrincipled")
+        principled.name = "Principled BSDF"
+        node_tree.links.new(image.outputs["Color"], principled.inputs["Base Color"])
+        node_tree.links.new(principled.outputs["BSDF"], output.inputs["Surface"])
+        node_tree.nodes.remove(diffuse)
 
 
 def select_and_scale(scale):
@@ -98,10 +141,11 @@ def main():
     source = (request_dir / request["sourceBasename"]).resolve()
     require(source.parent == request_dir.resolve() and source.is_file(), "source must be staged")
     bpy.ops.wm.open_mainfile(filepath=str(source))
-    verify_images(request_dir, request)
+    verified_images = verify_images(request_dir, request)
     source_action_names = sorted(action.name for action in bpy.data.actions)
     if request["category"] == "building":
         require(not source_action_names, "buildings must have no source actions")
+        normalize_building_materials(verified_images)
     select_and_scale(request["scale"])
     output = Path(request["outputPrivatePath"]).resolve()
     result = Path(request["resultPrivatePath"]).resolve()

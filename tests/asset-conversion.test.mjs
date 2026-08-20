@@ -257,6 +257,185 @@ with tempfile.TemporaryDirectory() as temporary:
   assert.equal(result.status, 0, result.stderr);
 });
 
+test("exporter normalizes only a verified closed building graph and leaves Tank2 untouched", async () => {
+  const probe = String.raw`
+import hashlib
+import importlib.util
+import sys
+import tempfile
+import types
+from pathlib import Path
+
+class Image:
+    def __init__(self, events):
+        self.filepath = "//Texture.png"
+        self.has_data = False
+        self.events = events
+    def reload(self):
+        self.events.append("reload")
+    @property
+    def pixels(self):
+        self.events.append("pixel")
+        self.has_data = True
+        return [0.0]
+
+class Socket:
+    def __init__(self, node, name):
+        self.node = node
+        self.name = name
+        self.links = []
+    @property
+    def is_linked(self):
+        return bool(self.links)
+
+class Link:
+    def __init__(self, from_socket, to_socket):
+        self.from_node = from_socket.node
+        self.from_socket = from_socket
+        self.to_socket = to_socket
+
+class Links(list):
+    def new(self, from_socket, to_socket):
+        link = Link(from_socket, to_socket)
+        self.append(link)
+        to_socket.links.append(link)
+        return link
+
+class Node:
+    def __init__(self, node_type, image=None):
+        self.type = node_type
+        self.image = image
+        self.name = node_type
+        self.is_active_output = node_type == "OUTPUT_MATERIAL"
+        self.inputs = {}
+        self.outputs = {}
+        if node_type == "TEX_IMAGE":
+            self.outputs["Color"] = Socket(self, "Color")
+        elif node_type == "BSDF_DIFFUSE":
+            self.inputs["Color"] = Socket(self, "Color")
+            self.outputs["BSDF"] = Socket(self, "BSDF")
+        elif node_type == "BSDF_PRINCIPLED":
+            self.inputs["Base Color"] = Socket(self, "Base Color")
+            self.outputs["BSDF"] = Socket(self, "BSDF")
+        elif node_type == "OUTPUT_MATERIAL":
+            self.inputs["Surface"] = Socket(self, "Surface")
+
+class Nodes(list):
+    def __init__(self, links, events):
+        super().__init__()
+        self.links = links
+        self.events = events
+    def new(self, type_name):
+        assert type_name == "ShaderNodeBsdfPrincipled"
+        node = Node("BSDF_PRINCIPLED")
+        self.append(node)
+        self.events.append("new-principled")
+        return node
+    def remove(self, node):
+        for link in list(self.links):
+            if link.from_node is node or link.to_socket.node is node:
+                self.links.remove(link)
+                link.to_socket.links.remove(link)
+        super().remove(node)
+        self.events.append("remove-diffuse")
+
+class Tree:
+    def __init__(self, events):
+        self.links = Links()
+        self.nodes = Nodes(self.links, events)
+
+class Material:
+    def __init__(self, tree):
+        self.use_nodes = True
+        self.node_tree = tree
+
+def graph(image, events):
+    tree = Tree(events)
+    image_node = Node("TEX_IMAGE", image)
+    diffuse = Node("BSDF_DIFFUSE")
+    output = Node("OUTPUT_MATERIAL")
+    tree.nodes.extend([image_node, diffuse, output])
+    tree.links.new(image_node.outputs["Color"], diffuse.inputs["Color"])
+    tree.links.new(diffuse.outputs["BSDF"], output.inputs["Surface"])
+    return tree, Material(tree), image_node, diffuse, output
+
+with tempfile.TemporaryDirectory() as temporary:
+    request_dir = Path(temporary)
+    atlas = request_dir / "Texture.png"
+    atlas.write_bytes(b"atlas")
+    events = []
+    bpy = types.SimpleNamespace(
+        path=types.SimpleNamespace(abspath=lambda _: str(atlas)),
+        data=types.SimpleNamespace(materials=[], actions=[]),
+        ops=types.SimpleNamespace(wm=types.SimpleNamespace(), export_scene=types.SimpleNamespace()),
+    )
+    sys.modules["bpy"] = bpy
+    spec = importlib.util.spec_from_file_location("exporter", sys.argv[1])
+    exporter = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(exporter)
+    request = {"category": "building", "id": "1story", "atlasBasename": "Texture.png", "atlasDigest": hashlib.sha256(atlas.read_bytes()).hexdigest()}
+
+    image = Image(events)
+    tree, material, image_node, diffuse, output = graph(image, events)
+    bpy.data.materials = [material]
+    exporter.used_images = lambda: [image]
+    verified = exporter.verify_images(request_dir, request)
+    assert events == ["reload", "pixel"], events
+    exporter.normalize_building_materials(verified)
+    assert events == ["reload", "pixel", "new-principled", "remove-diffuse"], events
+    assert diffuse not in tree.nodes
+    principled = [node for node in tree.nodes if node.type == "BSDF_PRINCIPLED"]
+    assert len(principled) == 1
+    assert principled[0].name == "Principled BSDF"
+    assert principled[0].inputs["Base Color"].links[0].from_node is image_node
+    assert output.inputs["Surface"].links[0].from_node is principled[0]
+    assert len(tree.links) == 2
+
+    valid_tree, valid_material, _, _, _ = graph(image, [])
+    multiple_tree, multiple_material, _, _, _ = graph(image, [])
+    multiple_tree.nodes.append(Node("TEX_IMAGE", image))
+    before = list(valid_tree.nodes)
+    bpy.data.materials = [valid_material, multiple_material]
+    try:
+        exporter.normalize_building_materials(verified)
+        raise AssertionError("multiple image nodes must fail")
+    except RuntimeError as error:
+        assert str(error) == "building material topology", str(error)
+    assert list(valid_tree.nodes) == before
+
+    wrong_tree, wrong_material, _, wrong_diffuse, _ = graph(image, [])
+    wrong_diffuse.inputs["Color"].links.clear()
+    bpy.data.materials = [wrong_material]
+    try:
+        exporter.normalize_building_materials(verified)
+        raise AssertionError("wrong image link must fail")
+    except RuntimeError as error:
+        assert str(error) == "building material image color link", str(error)
+    assert all(node.type != "BSDF_PRINCIPLED" for node in wrong_tree.nodes)
+
+    tank_events = []
+    source = request_dir / "Tank2.blend"
+    output_path = request_dir / "tank2.glb"
+    result_path = request_dir / "tank2.json"
+    source.write_bytes(b"blend")
+    tank_request = {"category": "tank", "id": "tank2", "sourceBasename": source.name, "outputPrivatePath": str(output_path), "resultPrivatePath": str(result_path), "scale": 0.45}
+    bpy.data.actions = [types.SimpleNamespace(name="Idle")]
+    bpy.ops.wm.open_mainfile = lambda filepath: tank_events.append("open")
+    bpy.ops.export_scene.gltf = lambda filepath, **kwargs: tank_events.append("export")
+    exporter.load_request = lambda: (request_dir, tank_request)
+    exporter.verify_images = lambda directory, request: tank_events.append("verify")
+    exporter.normalize_building_materials = lambda images: tank_events.append("normalize")
+    exporter.select_and_scale = lambda scale: tank_events.append("scale")
+    exporter.main()
+    assert tank_events == ["open", "verify", "scale", "export"], tank_events
+    assert result_path.read_text(encoding="utf-8") == '{"sourceActionNames":["Idle"]}\n'
+`;
+  const result = spawnSync("python3", ["-c", probe, exporterPath], {
+    encoding: "utf8", env: { ...process.env, PYTHONDONTWRITEBYTECODE: "1" },
+  });
+  assert.equal(result.status, 0, result.stderr);
+});
+
 test("the same fake output has stable GLB and consumer manifest digests across full conversions", async (t) => {
   const one = await runFakeConversion(t, { });
   const two = await runFakeConversion(t, { });

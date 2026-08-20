@@ -16,7 +16,7 @@ size = Vector3(120, 0.2, 120)
 [sub_resource type="Environment" id="SceneEnvironment"]
 background_mode = 1
 background_color = Color(0.24, 0.4, 0.56, 1)
-ambient_light_source = 3
+ambient_light_source = 2
 ambient_light_color = Color(0.96, 0.83, 0.65, 1)
 ambient_light_energy = 0.35
 reflected_light_source = 2

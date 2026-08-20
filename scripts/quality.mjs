@@ -108,6 +108,16 @@ const { runStaticSelfCheck } = await import("./visual-review.mjs");
 runStaticSelfCheck();
 
 assertGodotVersionContract(run("version", godot, ["--version"], { scanGodotErrors: true }), godotTool);
+run("converted-assets-production-static", process.execPath, [
+  "scripts/validate-converted-assets.mjs",
+  "--check",
+  "--input-root",
+  projectRoot,
+  "--manifest",
+  join(projectRoot, "docs", "assets", "conversion-manifest.json"),
+  "--lock",
+  join(projectRoot, "docs", "assets", "quaternius-lock.json"),
+]);
 run("import", godot, ["--headless", "--path", ".", "--import"], { scanGodotErrors: true });
 run("measure-converted-assets", godot, [
   "--headless",
@@ -117,6 +127,23 @@ run("measure-converted-assets", godot, [
   ".",
   "--script",
   "res://tests/measure-converted-assets.test.gd",
+], { scanGodotErrors: true });
+run("converted-assets-production-measurement", godot, [
+  "--headless",
+  "--audio-driver",
+  "Dummy",
+  "--path",
+  ".",
+  "--script",
+  "res://scripts/measure-converted-assets.gd",
+  "--",
+  "--check",
+  "--input-root",
+  projectRoot,
+  "--manifest",
+  join(projectRoot, "docs", "assets", "conversion-manifest.json"),
+  "--lock",
+  join(projectRoot, "docs", "assets", "quaternius-lock.json"),
 ], { scanGodotErrors: true });
 run("smoke", godot, [
   "--headless",

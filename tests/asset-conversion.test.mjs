@@ -445,9 +445,9 @@ with tempfile.TemporaryDirectory() as temporary:
     exporter.load_request = lambda: (request_dir, tank_request)
     exporter.verify_images = lambda directory, request: tank_events.append("verify")
     exporter.normalize_building_materials = lambda images: tank_events.append("normalize")
-    exporter.select_and_scale = lambda scale: tank_events.append("scale")
+    exporter.select_and_scale = lambda scale, category: tank_events.append(("scale", scale, category))
     exporter.main()
-    assert tank_events == ["open", "verify", "scale", "export"], tank_events
+    assert tank_events == ["open", "verify", ("scale", 0.45, "tank"), "export"], tank_events
     assert result_path.read_text(encoding="utf-8") == '{"sourceActionNames":["Idle"]}\n'
 `;
   const result = spawnSync("python3", ["-c", probe, exporterPath], {
@@ -487,6 +487,8 @@ test("exporter compiles outside the repository and pins source contracts without
   assert.match(exporter, /"outputPrivatePath",\s*\n\s*"policy", "resultPrivatePath", "scale", "sourceBasename"/u);
   assert.match(exporter, /CLOSED_IDS = \{/u);
   assert.match(exporter, /BUILDING_IMAGE_PATH = "\/\/Texture\.png"/u);
+  assert.match(exporter, /bpy\.data\.objects\.new\("AgentTeamScaleRoot", None\)/u);
+  assert.match(exporter, /root\.matrix_world = world/u);
   for (const [option, value] of [["export_format", '"GLB"'], ["export_yup", "True"], ["use_selection", "True"], ["export_apply", "True"], ["export_materials", '"EXPORT"'], ["export_draco_mesh_compression_enable", "False"]]) {
     assert.match(exporter, new RegExp(`"${option}": ${value}`, "u"));
   }

@@ -10,7 +10,7 @@
     }
   },
   "conversionManifest": {
-    "state": "absent",
+    "state": "present",
     "requiredModelFieldsWhenPresent": [
       "outputDigest",
       "measuredGodotXyz",
@@ -40,8 +40,8 @@
       "texturePolicy": "material_color_only",
       "sourceImagePath": null,
       "expectedImageCount": 0,
-      "outputDigest": null,
-      "measuredGodotXyz": null,
+      "outputDigest": "27727b9bf8e9b905cd43979688ecdf37e2481035c5cf4ac6eb93beb3e5b764a2",
+      "measuredGodotXyz": [7.95537, 2.07921, 4.54163],
       "embeddedImageDigest": null
     },
     {
@@ -61,9 +61,9 @@
       "texturePolicy": "embed_selected_atlas",
       "sourceImagePath": "//Texture.png",
       "expectedImageCount": 1,
-      "outputDigest": null,
-      "measuredGodotXyz": null,
-      "embeddedImageDigest": null
+      "outputDigest": "5212c685cbca004d7c23aabfdc5be801c35f6ee8c3a4637c6069ee86d09aa9bc",
+      "measuredGodotXyz": [7.75498, 6.02008, 7.82869],
+      "embeddedImageDigest": "ed8c7eea22f37be7ea98af3ed31078470e4cbb94a9724c0ce0f51ba5475899e8"
     },
     {
       "id": "1story-gable-roof",
@@ -82,9 +82,9 @@
       "texturePolicy": "embed_selected_atlas",
       "sourceImagePath": "//Texture.png",
       "expectedImageCount": 1,
-      "outputDigest": null,
-      "measuredGodotXyz": null,
-      "embeddedImageDigest": null
+      "outputDigest": "abab5b99583ca73894d741912c570dfcfbb63ce761d951889344ae32b5b47d6b",
+      "measuredGodotXyz": [7.5789, 7.28842, 8.56847],
+      "embeddedImageDigest": "ed8c7eea22f37be7ea98af3ed31078470e4cbb94a9724c0ce0f51ba5475899e8"
     },
     {
       "id": "2story",
@@ -103,9 +103,9 @@
       "texturePolicy": "embed_selected_atlas",
       "sourceImagePath": "//Texture.png",
       "expectedImageCount": 1,
-      "outputDigest": null,
-      "measuredGodotXyz": null,
-      "embeddedImageDigest": null
+      "outputDigest": "415a1c445af2cee69a60e29149e97b09fe72589f3ead05a6a381aa36bd844604",
+      "measuredGodotXyz": [7.77112, 9.8832, 9.11583],
+      "embeddedImageDigest": "ed8c7eea22f37be7ea98af3ed31078470e4cbb94a9724c0ce0f51ba5475899e8"
     },
     {
       "id": "2story-slim",
@@ -124,9 +124,9 @@
       "texturePolicy": "embed_selected_atlas",
       "sourceImagePath": "//Texture.png",
       "expectedImageCount": 1,
-      "outputDigest": null,
-      "measuredGodotXyz": null,
-      "embeddedImageDigest": null
+      "outputDigest": "2b634769fddecccfc4331c8c665e8e49ab904690a4ad6c2427ba049389832758",
+      "measuredGodotXyz": [4.01608, 9.92621, 7.75658],
+      "embeddedImageDigest": "ed8c7eea22f37be7ea98af3ed31078470e4cbb94a9724c0ce0f51ba5475899e8"
     },
     {
       "id": "2story-wide",
@@ -145,9 +145,9 @@
       "texturePolicy": "embed_selected_atlas",
       "sourceImagePath": "//Texture.png",
       "expectedImageCount": 1,
-      "outputDigest": null,
-      "measuredGodotXyz": null,
-      "embeddedImageDigest": null
+      "outputDigest": "1b9d792d2923f25fd4ce1e0cd00b94d5f3bf073ff8e761c01a5cea4192c67720",
+      "measuredGodotXyz": [13.77076, 9.8926, 8.11907],
+      "embeddedImageDigest": "ed8c7eea22f37be7ea98af3ed31078470e4cbb94a9724c0ce0f51ba5475899e8"
     },
     {
       "id": "3story-small",
@@ -160,15 +160,15 @@
         "sha256": "6c5ae8887b699bebc15f2b43eca5cf63d8f583663ab39174d4bb18755e2ef1c4"
       },
       "scale": 3.6,
-      "rawSourceXyz": [1.90887868, 2.05622429, 3.84853945],
-      "expectedGodotXyz": [6.87196, 13.85474, 7.40241],
+      "rawSourceXyz": [1.90887868, 1.97483665, 3.84853945],
+      "expectedGodotXyz": [6.87196, 13.85474, 7.10941],
       "animationPolicy": "no_source_clips",
       "texturePolicy": "embed_selected_atlas",
       "sourceImagePath": "//Texture.png",
       "expectedImageCount": 1,
-      "outputDigest": null,
-      "measuredGodotXyz": null,
-      "embeddedImageDigest": null
+      "outputDigest": "f894b5272b5da33eb222563ba7fe76ad52392a7a9c922932037079a8a12fe97d",
+      "measuredGodotXyz": [6.87196, 13.85474, 7.10941],
+      "embeddedImageDigest": "ed8c7eea22f37be7ea98af3ed31078470e4cbb94a9724c0ce0f51ba5475899e8"
     },
     {
       "id": "4story",
@@ -187,9 +187,9 @@
       "texturePolicy": "embed_selected_atlas",
       "sourceImagePath": "//Texture.png",
       "expectedImageCount": 1,
-      "outputDigest": null,
-      "measuredGodotXyz": null,
-      "embeddedImageDigest": null
+      "outputDigest": "dce8cc8bce38e82543a69f08f6b003e0e899ed87f068e8a268c6d2b8ee5add88",
+      "measuredGodotXyz": [8.71614, 18.33062, 9.11583],
+      "embeddedImageDigest": "ed8c7eea22f37be7ea98af3ed31078470e4cbb94a9724c0ce0f51ba5475899e8"
     },
     {
       "id": "6story-stack",
@@ -208,9 +208,9 @@
       "texturePolicy": "embed_selected_atlas",
       "sourceImagePath": "//Texture.png",
       "expectedImageCount": 1,
-      "outputDigest": null,
-      "measuredGodotXyz": null,
-      "embeddedImageDigest": null
+      "outputDigest": "7a5b2227afda467a0dbde991e0f278dd03d01a933c806aabd81703d0cd9c524f",
+      "measuredGodotXyz": [7.77113, 28.09212, 8.99462],
+      "embeddedImageDigest": "ed8c7eea22f37be7ea98af3ed31078470e4cbb94a9724c0ce0f51ba5475899e8"
     }
   ],
   "atlases": [

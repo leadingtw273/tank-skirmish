@@ -101,10 +101,10 @@ func emit_report(input_root: String, static_report_path: String, output_report: 
 func check_report(input_root: String, manifest_path: String, lock_path: String) -> Dictionary:
 	if not DirAccess.dir_exists_absolute(input_root):
 		return failure("INPUT_ROOT_INVALID")
-	var manifest_read := read_canonical_json(manifest_path, "MEASUREMENT_REPORT_INVALID")
+	var manifest_read := read_canonical_json(manifest_path, "FINAL_MANIFEST_INVALID")
 	if not manifest_read.ok:
 		return manifest_read
-	var manifest_validation := validate_measurement_report(manifest_read.value)
+	var manifest_validation := validate_composite_manifest(manifest_read.value)
 	if not manifest_validation.ok:
 		return manifest_validation
 	var lock_read := read_json(lock_path, "LOCK_INVALID")
@@ -124,7 +124,7 @@ func check_report(input_root: String, manifest_path: String, lock_path: String) 
 		if not measured.ok:
 			return measured
 		actual.append({"id": id, "outputDigest": sha256_bytes(bytes), "measuredGodotXyz": measured.value})
-	return verify_measurement_join(actual, manifest_read.value.models, lock_read.value.models)
+	return verify_composite_join(actual, manifest_read.value.models, lock_read.value.models)
 
 
 func measure_packed_scene(path: String) -> Dictionary:
@@ -228,6 +228,35 @@ static func verify_measurement_join(actual_models: Array, manifest_models: Array
 	return success()
 
 
+static func verify_composite_join(actual_models: Array, manifest_models: Array, lock_models: Array) -> Dictionary:
+	var actual := closed_model_map(actual_models, ["id", "outputDigest", "measuredGodotXyz"], true, "JOIN_MISMATCH")
+	var manifest := closed_model_map(manifest_models, ["id", "category", "sourceFileId", "sourceDigest", "scale", "sourceActionNames", "outputRelativePath", "outputDigest", "animationNames", "imageCount", "embeddedImageDigest", "measuredGodotXyz"], true, "JOIN_MISMATCH")
+	var lock := closed_model_map(lock_models, ["id", "category", "source", "scale", "expectedGodotXyz", "outputDigest", "measuredGodotXyz", "embeddedImageDigest"], false, "JOIN_MISMATCH")
+	if not actual.ok or not manifest.ok or not lock.ok:
+		return failure("JOIN_MISMATCH")
+	var digest_seen := {}
+	for id in IDS:
+		var current: Dictionary = actual.value[id]
+		var recorded: Dictionary = manifest.value[id]
+		var locked: Dictionary = lock.value[id]
+		if recorded.category != ("tank" if id == "tank2" else "building") or recorded.outputRelativePath != logical_path(id) or not valid_sha256(recorded.sourceDigest) or typeof(recorded.sourceFileId) != TYPE_STRING or recorded.sourceFileId.is_empty() or typeof(recorded.scale) != TYPE_FLOAT and typeof(recorded.scale) != TYPE_INT or float(recorded.scale) <= 0.0 or not valid_sha256(current.outputDigest) or current.outputDigest != recorded.outputDigest or current.outputDigest != locked.outputDigest:
+			return failure("JOIN_MISMATCH")
+		if typeof(locked.source) != TYPE_DICTIONARY or locked.source.get("fileId") != recorded.sourceFileId or locked.source.get("sha256") != recorded.sourceDigest or float(locked.get("scale", 0.0)) != float(recorded.scale):
+			return failure("JOIN_MISMATCH")
+		if digest_seen.has(current.outputDigest):
+			return failure("DUPLICATE_DIGEST")
+		digest_seen[current.outputDigest] = true
+		if not valid_vector_array(current.measuredGodotXyz, false) or not valid_vector_array(recorded.measuredGodotXyz, false) or not valid_vector_array(locked.measuredGodotXyz, false) or not valid_vector_array(locked.expectedGodotXyz, true):
+			return failure("JOIN_MISMATCH")
+		for axis in range(3):
+			var actual_axis: float = canonical_round(float(current.measuredGodotXyz[axis]))
+			if not within_measurement_tolerance(actual_axis, float(locked.expectedGodotXyz[axis])):
+				return failure("TOLERANCE_MISMATCH")
+			if actual_axis != float(recorded.measuredGodotXyz[axis]) or actual_axis != float(locked.measuredGodotXyz[axis]):
+				return failure("MEASUREMENT_MISMATCH")
+	return success()
+
+
 static func validate_static_report(value: Variant) -> Dictionary:
 	if not exact_dictionary(value, ["schemaVersion", "runIdentity", "runnerManifestDigest", "toolchain", "exporter", "models"]) or value.schemaVersion != 1 or not valid_sha256(value.runIdentity) or not valid_sha256(value.runnerManifestDigest):
 		return failure("STATIC_REPORT_INVALID")
@@ -255,10 +284,46 @@ static func validate_measurement_report(value: Variant) -> Dictionary:
 	return closed_model_map(value.models, ["id", "outputDigest", "measuredGodotXyz"], true, "MEASUREMENT_REPORT_INVALID")
 
 
+static func validate_composite_manifest(value: Variant) -> Dictionary:
+	if not exact_dictionary(value, ["schemaVersion", "runnerManifestDigest", "runnerRunIdentity", "toolchain", "exporterDigest", "models"]) or value.schemaVersion != 1 or not valid_sha256(value.runnerManifestDigest) or not valid_sha256(value.runnerRunIdentity) or not valid_sha256(value.exporterDigest):
+		return failure("FINAL_MANIFEST_INVALID")
+	if not exact_dictionary(value.toolchain, ["executableChecksum", "id", "version", "versionContract"]) or not valid_sha256(value.toolchain.executableChecksum) or typeof(value.toolchain.id) != TYPE_STRING or typeof(value.toolchain.version) != TYPE_STRING or typeof(value.toolchain.versionContract) != TYPE_DICTIONARY:
+		return failure("FINAL_MANIFEST_INVALID")
+	var models := closed_model_map(value.models, ["id", "category", "sourceFileId", "sourceDigest", "scale", "sourceActionNames", "outputRelativePath", "outputDigest", "animationNames", "imageCount", "embeddedImageDigest", "measuredGodotXyz"], true, "FINAL_MANIFEST_INVALID")
+	if not models.ok:
+		return models
+	var seen := {}
+	for id in IDS:
+		var model: Dictionary = models.value[id]
+		if model.category != ("tank" if id == "tank2" else "building") or model.outputRelativePath != logical_path(id) or typeof(model.sourceFileId) != TYPE_STRING or model.sourceFileId.is_empty() or not valid_sha256(model.sourceDigest) or (typeof(model.scale) != TYPE_INT and typeof(model.scale) != TYPE_FLOAT) or not is_finite(float(model.scale)) or float(model.scale) <= 0.0 or not valid_sha256(model.outputDigest) or typeof(model.sourceActionNames) != TYPE_ARRAY or typeof(model.animationNames) != TYPE_ARRAY or not valid_vector_array(model.measuredGodotXyz, false):
+			return failure("FINAL_MANIFEST_INVALID")
+		if seen.has(model.outputDigest):
+			return failure("DUPLICATE_DIGEST")
+		seen[model.outputDigest] = true
+		if id == "tank2":
+			if model.imageCount != 0 or model.embeddedImageDigest != null or model.animationNames.size() == 0 or model.animationNames != model.sourceActionNames:
+				return failure("FINAL_MANIFEST_INVALID")
+		elif model.imageCount != 1 or not valid_sha256(model.embeddedImageDigest) or model.sourceActionNames.size() != 0 or model.animationNames.size() != 0:
+			return failure("FINAL_MANIFEST_INVALID")
+	return success(models.value)
+
+
 static func validate_lock(value: Variant) -> Dictionary:
-	if typeof(value) != TYPE_DICTIONARY or not value.has("conversionManifest") or not value.has("models") or typeof(value.conversionManifest) != TYPE_DICTIONARY or value.conversionManifest.get("state") != "present":
+	if not exact_dictionary(value, ["schemaVersion", "coordinateContract", "conversionManifest", "models", "atlases"]) or value.schemaVersion != 1 or typeof(value.conversionManifest) != TYPE_DICTIONARY or value.conversionManifest.get("state") != "present":
 		return failure("LOCK_INVALID")
-	return closed_model_map(value.models, ["id", "outputDigest", "expectedGodotXyz", "measuredGodotXyz"], false, "LOCK_INVALID")
+	var models := closed_model_map(value.models, ["id", "category", "pack", "source", "scale", "rawSourceXyz", "expectedGodotXyz", "animationPolicy", "texturePolicy", "sourceImagePath", "expectedImageCount", "outputDigest", "measuredGodotXyz", "embeddedImageDigest"], true, "LOCK_INVALID")
+	if not models.ok:
+		return models
+	for id in IDS:
+		var model: Dictionary = models.value[id]
+		if model.category != ("tank" if id == "tank2" else "building") or typeof(model.source) != TYPE_DICTIONARY or not exact_dictionary(model.source, ["fileId", "filename", "sizeBytes", "sha256"]) or typeof(model.source.fileId) != TYPE_STRING or model.source.fileId.is_empty() or not valid_sha256(model.source.sha256) or (typeof(model.scale) != TYPE_INT and typeof(model.scale) != TYPE_FLOAT) or float(model.scale) <= 0.0 or not valid_sha256(model.outputDigest) or not valid_vector_array(model.expectedGodotXyz, true) or not valid_vector_array(model.measuredGodotXyz, false):
+			return failure("LOCK_INVALID")
+		if id == "tank2":
+			if model.embeddedImageDigest != null:
+				return failure("LOCK_INVALID")
+		elif not valid_sha256(model.embeddedImageDigest):
+			return failure("LOCK_INVALID")
+	return models
 
 
 static func closed_model_map(models: Variant, required_fields: Array, require_exact: bool, code: String) -> Dictionary:

@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { lstatSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
+import { existsSync, lstatSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { dirname, isAbsolute, join, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -16,11 +16,11 @@ const PROJECT_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const ASSET_LOCK_PATH = join(PROJECT_ROOT, "docs", "assets", "quaternius-lock.json");
 const TOOLCHAIN_LOCK_PATH = join(PROJECT_ROOT, "docs", "toolchain-lock.json");
 const EXPORTER_PATH = join(PROJECT_ROOT, "scripts", "blender", "export_selected_glb.py");
-const HELP = "Usage: node scripts/validate-converted-assets.mjs --help | --inspect --input-root <abs> --runner-manifest <abs> --output-report <abs> | --check --input-root <abs> --manifest <abs> --lock <abs>\n";
+const HELP = "Usage: node scripts/validate-converted-assets.mjs --help | --inspect --input-root <abs> --runner-manifest <abs> --output-report <abs> | --compose --input-root <abs> --runner-manifest <abs> --static-report <abs> --measurement-report <abs> --lock <abs> --output-manifest <abs> | --check --input-root <abs> --manifest <abs> --lock <abs>\n";
 
 export const CONVERTED_ASSET_ERROR_CODES = new Set([
   "USAGE", "IO", "PATH_INVALID", "CANONICAL_MANIFEST_INVALID", "RUNNER_MANIFEST_INVALID", "STATIC_MANIFEST_INVALID",
-  "FINAL_MANIFEST_INVALID", "LOCK_INVALID", "OUTPUT_INVALID", "GLB_HEADER_INVALID", "GLB_CHUNK_INVALID", "GLB_JSON_INVALID",
+  "FINAL_MANIFEST_INVALID", "MEASUREMENT_REPORT_INVALID", "LOCK_INVALID", "OUTPUT_INVALID", "GLB_HEADER_INVALID", "GLB_CHUNK_INVALID", "GLB_JSON_INVALID",
   "GLB_STRUCTURE_INVALID", "DIGEST_MISMATCH", "ID_SET_MISMATCH", "JOIN_MISMATCH", "DUPLICATE_DIGEST",
 ]);
 
@@ -114,10 +114,12 @@ function sameIdSet(models, code) {
 export function parseCliArgs(args) {
   if (!Array.isArray(args)) fail("USAGE");
   if (args.length === 1 && args[0] === "--help") return { mode: "help" };
-  const modes = args.filter((arg) => arg === "--inspect" || arg === "--check");
+  const modes = args.filter((arg) => arg === "--inspect" || arg === "--compose" || arg === "--check");
   if (modes.length !== 1) fail("USAGE");
-  const mode = modes[0] === "--inspect" ? "inspect" : "check";
-  const expected = mode === "inspect" ? ["--input-root", "--runner-manifest", "--output-report"] : ["--input-root", "--manifest", "--lock"];
+  const mode = modes[0].slice(2);
+  const expected = mode === "inspect" ? ["--input-root", "--runner-manifest", "--output-report"]
+    : mode === "compose" ? ["--input-root", "--runner-manifest", "--static-report", "--measurement-report", "--lock", "--output-manifest"]
+      : ["--input-root", "--manifest", "--lock"];
   if (args.length !== 1 + expected.length * 2) fail("USAGE");
   const result = { mode };
   for (const flag of expected) {
@@ -321,24 +323,127 @@ function validateStaticReport(value, code) {
   return value;
 }
 function readStatic(path, code) {
-  const { value } = readJsonCanonical(absolute(path), code); return validateStaticReport(value, code);
+  const { bytes, value } = readJsonCanonical(absolute(path), code); return { bytes, value: validateStaticReport(value, code) };
 }
 function modelMap(models) { return new Map(models.map((model) => [model.id, model])); }
-export function checkConvertedAssets({ inputRoot, manifest, lock } = {}) {
-  const staticReport = inspectConvertedAssets({ inputRoot, runnerManifest: join(absolute(inputRoot), "conversion-run-manifest.json") });
-  const finalManifest = readStatic(manifest, "FINAL_MANIFEST_INVALID");
-  let lockValue;
-  try { lockValue = validateAssetLockValue(JSON.parse(readFileSync(absolute(lock), "utf8"))); } catch { fail("LOCK_INVALID"); }
-  if (lockValue.conversionManifest.state !== "present") fail("LOCK_INVALID");
-  sameIdSet(lockValue.models, "ID_SET_MISMATCH");
-  const finalById = modelMap(finalManifest.models); const staticById = modelMap(staticReport.models); const lockById = modelMap(lockValue.models);
-  if (finalManifest.runIdentity !== staticReport.runIdentity || finalManifest.runnerManifestDigest !== staticReport.runnerManifestDigest || JSON.stringify(finalManifest.toolchain) !== JSON.stringify(staticReport.toolchain) || finalManifest.exporter.sourceDigest !== staticReport.exporter.sourceDigest) fail("JOIN_MISMATCH");
-  for (const id of IDS) {
-    const current = staticById.get(id); const final = finalById.get(id); const locked = lockById.get(id);
-    if (final === undefined || locked === undefined || current.outputDigest !== final.outputDigest || current.outputDigest !== locked.outputDigest || current.embeddedImageDigest !== locked.embeddedImageDigest) fail("JOIN_MISMATCH");
+function validateMeasurementReport(value, code) {
+  exact(value, ["schemaVersion", "staticReportDigest", "models"], code);
+  if (value.schemaVersion !== 1) fail(code); sha(value.staticReportDigest, code); sameIdSet(value.models, code);
+  for (const model of value.models) {
+    exact(model, ["id", "outputDigest", "measuredGodotXyz"], code);
+    if (!ID_SET.has(model.id)) fail(code); sha(model.outputDigest, code); validateMeasurement(model.measuredGodotXyz, code);
   }
-  uniqueDigests(lockValue.models, "DUPLICATE_DIGEST");
-  return staticReport;
+  uniqueDigests(value.models, "DUPLICATE_DIGEST");
+  return value;
+}
+function validateMeasurement(value, code) {
+  if (!Array.isArray(value) || value.length !== 3 || value.some((axis) => typeof axis !== "number" || !Number.isFinite(axis))) fail(code);
+}
+function validateCompositeManifest(value, code) {
+  exact(value, ["schemaVersion", "runnerManifestDigest", "runnerRunIdentity", "toolchain", "exporterDigest", "models"], code);
+  if (value.schemaVersion !== 1) fail(code);
+  sha(value.runnerManifestDigest, code); sha(value.runnerRunIdentity, code); sha(value.exporterDigest, code); validateBlender(value.toolchain, code); sameIdSet(value.models, code);
+  for (const model of value.models) {
+    exact(model, ["id", "category", "sourceFileId", "sourceDigest", "scale", "sourceActionNames", "outputRelativePath", "outputDigest", "animationNames", "imageCount", "embeddedImageDigest", "measuredGodotXyz"], code);
+    if (!ID_SET.has(model.id) || (model.id === "tank2" ? model.category !== "tank" : model.category !== "building")) fail(code);
+    string(model.sourceFileId, code); sha(model.sourceDigest, code);
+    if (typeof model.scale !== "number" || !Number.isFinite(model.scale) || model.scale <= 0) fail(code);
+    if (model.outputRelativePath !== logicalPath(model.id, model.category)) fail(code);
+    sha(model.outputDigest, code); uniqueStrings(model.sourceActionNames, code); uniqueStrings(model.animationNames, code); if (!safe(model.imageCount)) fail(code); validateMeasurement(model.measuredGodotXyz, code);
+    if (model.id === "tank2") {
+      if (model.imageCount !== 0 || model.embeddedImageDigest !== null || model.animationNames.length === 0 || canonicalJson(sortCodePoints(model.animationNames)) !== canonicalJson(sortCodePoints(model.sourceActionNames))) fail(code);
+    } else if (model.imageCount !== 1 || !SHA256.test(model.embeddedImageDigest ?? "") || model.sourceActionNames.length !== 0 || model.animationNames.length !== 0) fail(code);
+  }
+  uniqueDigests(value.models, "DUPLICATE_DIGEST");
+  return value;
+}
+function readComposite(path, code = "FINAL_MANIFEST_INVALID") {
+  const { value } = readJsonCanonical(absolute(path), code); return validateCompositeManifest(value, code);
+}
+function readLock(path) {
+  let value;
+  try { value = validateAssetLockValue(JSON.parse(readFileSync(absolute(path), "utf8"))); } catch { fail("LOCK_INVALID"); }
+  sameIdSet(value.models, "ID_SET_MISMATCH");
+  return value;
+}
+function assertLockMatchesRunner(lockValue, runnerModels) {
+  const lockedById = modelMap(lockValue.models);
+  for (const runner of runnerModels) {
+    const locked = lockedById.get(runner.id);
+    if (locked === undefined || runner.source.fileId !== locked.source.fileId || runner.source.digest !== locked.source.sha256 || runner.scale !== locked.scale
+      || runner.policy.animation !== locked.animationPolicy || runner.policy.texture !== locked.texturePolicy) fail("JOIN_MISMATCH");
+  }
+}
+function assertAbsentLock(lockValue) {
+  if (lockValue.conversionManifest.state !== "absent") return;
+  for (const model of lockValue.models) {
+    if (model.outputDigest !== null || model.measuredGodotXyz !== null || model.embeddedImageDigest !== null) fail("LOCK_INVALID");
+  }
+}
+function assertPresentLock(lockValue, composite) {
+  if (lockValue.conversionManifest.state !== "present") fail("LOCK_INVALID");
+  const byId = modelMap(composite.models);
+  for (const locked of lockValue.models) {
+    const actual = byId.get(locked.id);
+    if (actual === undefined || locked.source.fileId !== actual.sourceFileId || locked.source.sha256 !== actual.sourceDigest || locked.scale !== actual.scale
+      || locked.outputDigest !== actual.outputDigest || locked.embeddedImageDigest !== actual.embeddedImageDigest
+      || canonicalJson(locked.measuredGodotXyz) !== canonicalJson(actual.measuredGodotXyz)) fail("JOIN_MISMATCH");
+  }
+}
+export function composeConvertedAssets({ inputRoot, runnerManifest, staticReport, measurementReport, lock } = {}) {
+  inputRoot = absolute(inputRoot); runnerManifest = absolute(runnerManifest);
+  assertInputTree(inputRoot);
+  if (runnerManifest !== join(inputRoot, "conversion-run-manifest.json")) fail("OUTPUT_INVALID");
+  const runner = readRunnerManifest(runnerManifest);
+  const inspected = inspectConvertedAssets({ inputRoot, runnerManifest });
+  const staticRead = readStatic(staticReport, "STATIC_MANIFEST_INVALID");
+  if (!staticRead.bytes.equals(canonicalBytes(inspected)) || canonicalJson(staticRead.value) !== canonicalJson(inspected)) fail("JOIN_MISMATCH");
+  const measurementRead = readJsonCanonical(absolute(measurementReport), "MEASUREMENT_REPORT_INVALID");
+  const measurement = validateMeasurementReport(measurementRead.value, "MEASUREMENT_REPORT_INVALID");
+  if (measurement.staticReportDigest !== digest(staticRead.bytes)) fail("DIGEST_MISMATCH");
+  const lockValue = readLock(lock); assertLockMatchesRunner(lockValue, runner.models); assertAbsentLock(lockValue);
+  const staticById = modelMap(staticRead.value.models); const measuredById = modelMap(measurement.models);
+  const models = IDS.map((id) => {
+    const source = runner.models.find((model) => model.id === id); const stat = staticById.get(id); const measured = measuredById.get(id);
+    if (source === undefined || stat === undefined || measured === undefined || source.output.digest !== stat.outputDigest || stat.outputDigest !== measured.outputDigest) fail("JOIN_MISMATCH");
+    return { id, category: source.category, sourceFileId: source.source.fileId, sourceDigest: source.source.digest, scale: source.scale, sourceActionNames: sortCodePoints(source.sourceActionNames), outputRelativePath: stat.outputRelativePath, outputDigest: stat.outputDigest, animationNames: stat.animationNames, imageCount: stat.imageCount, embeddedImageDigest: stat.embeddedImageDigest, measuredGodotXyz: measured.measuredGodotXyz };
+  });
+  const composite = { schemaVersion: 1, runnerManifestDigest: staticRead.value.runnerManifestDigest, runnerRunIdentity: staticRead.value.runIdentity, toolchain: staticRead.value.toolchain, exporterDigest: staticRead.value.exporter.sourceDigest, models };
+  validateCompositeManifest(composite, "FINAL_MANIFEST_INVALID");
+  if (composite.runnerManifestDigest !== runner.digest || composite.runnerRunIdentity !== runner.value.runIdentity || canonicalJson(composite.toolchain) !== canonicalJson(runner.blender) || composite.exporterDigest !== runner.value.exporterSourceDigest) fail("JOIN_MISMATCH");
+  if (lockValue.conversionManifest.state === "present") assertPresentLock(lockValue, composite);
+  return composite;
+}
+function assertProductionGlbTree(root) {
+  directory(root, "OUTPUT_INVALID");
+  const models = join(root, "assets", "models"); const tank = join(models, "tank"); const buildings = join(models, "buildings");
+  for (const path of [models, tank, buildings]) directory(path, "OUTPUT_INVALID");
+  const expected = [[tank, new Set(["tank2.glb"])], [buildings, new Set(IDS.slice(1).map((id) => `${id}.glb`) )]];
+  for (const [path, names] of expected) {
+    const entries = readdirSync(path); const glbs = entries.filter((entry) => entry.endsWith(".glb"));
+    if (glbs.length !== names.size || glbs.some((entry) => !names.has(entry))) fail("OUTPUT_INVALID");
+  }
+}
+function inspectProductionAssets(inputRoot, composite) {
+  assertProductionGlbTree(inputRoot);
+  const models = IDS.map((id) => {
+    const model = modelMap(composite.models).get(id);
+    return inspectModel(inputRoot, { ...model, output: { digest: model.outputDigest } });
+  });
+  uniqueDigests(models, "DUPLICATE_DIGEST");
+  return models;
+}
+export function checkConvertedAssets({ inputRoot, manifest, lock } = {}) {
+  inputRoot = absolute(inputRoot);
+  const composite = readComposite(manifest); const lockValue = readLock(lock); assertPresentLock(lockValue, composite);
+  const current = inspectProductionAssets(inputRoot, composite); const byId = modelMap(composite.models);
+  for (const item of current) {
+    const recorded = byId.get(item.id);
+    if (recorded === undefined || item.outputDigest !== recorded.outputDigest || item.outputRelativePath !== recorded.outputRelativePath || item.category !== recorded.category
+      || canonicalJson(item.sourceActionNames) !== canonicalJson(recorded.sourceActionNames) || canonicalJson(item.animationNames) !== canonicalJson(recorded.animationNames)
+      || item.imageCount !== recorded.imageCount || item.embeddedImageDigest !== recorded.embeddedImageDigest) fail("JOIN_MISMATCH");
+  }
+  return composite;
 }
 export async function runCli(args, { stdout = process.stdout, stderr = process.stderr } = {}) {
   let parsed;
@@ -348,6 +453,12 @@ export async function runCli(args, { stdout = process.stdout, stderr = process.s
     if (parsed.mode === "inspect") {
       const report = inspectConvertedAssets({ inputRoot: parsed.inputRoot, runnerManifest: parsed.runnerManifest });
       writeFileSync(parsed.outputReport, canonicalBytes(report), { flag: "wx" });
+      return 0;
+    }
+    if (parsed.mode === "compose") {
+      if (existsSync(parsed.outputManifest)) fail("OUTPUT_INVALID");
+      const composite = composeConvertedAssets(parsed);
+      writeFileSync(parsed.outputManifest, canonicalBytes(composite), { flag: "wx" });
       return 0;
     }
     checkConvertedAssets(parsed); return 0;

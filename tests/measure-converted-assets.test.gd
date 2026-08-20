@@ -11,7 +11,7 @@ func _init() -> void:
 func run() -> void:
 	var checks := [
 		check_cli, check_good_mesh, check_multiple_and_nested_transforms, check_local_hidden, check_ancestor_hidden,
-		check_no_mesh, check_non_finite, check_join_cases,
+		check_no_mesh, check_non_finite, check_join_cases, check_composite_cases,
 	]
 	for check in checks:
 		var result: Dictionary = await check.call()
@@ -153,6 +153,32 @@ func check_join_cases() -> Dictionary:
 	return success()
 
 
+func check_composite_cases() -> Dictionary:
+	var actual := join_models()
+	var manifest := composite_models()
+	var lock := composite_lock_models()
+	if not Verifier.validate_composite_manifest(composite_manifest(manifest)).ok:
+		return failure()
+	if not Verifier.verify_composite_join(actual, manifest, lock).ok:
+		return failure()
+	var wrong_output := manifest.duplicate(true)
+	wrong_output[0].outputDigest = "%064x" % 99
+	if Verifier.verify_composite_join(actual, wrong_output, lock).code != "JOIN_MISMATCH":
+		return failure()
+	var wrong_measurement := manifest.duplicate(true)
+	wrong_measurement[0].measuredGodotXyz[0] = 1.1
+	if Verifier.verify_composite_join(actual, wrong_measurement, lock).code != "MEASUREMENT_MISMATCH":
+		return failure()
+	var unknown := composite_manifest(manifest)
+	unknown.unexpected = true
+	if Verifier.validate_composite_manifest(unknown).ok:
+		return failure()
+	var old_measurement_only := {"schemaVersion": 1, "staticReportDigest": "%064x" % 1, "models": join_models()}
+	if Verifier.validate_composite_manifest(old_measurement_only).ok:
+		return failure()
+	return success()
+
+
 func box(size: Vector3, position: Vector3) -> MeshInstance3D:
 	var mesh := BoxMesh.new()
 	mesh.size = size
@@ -180,6 +206,25 @@ func join_case(actual_axis: float, expected_axis: float) -> Dictionary:
 		models[0].measuredGodotXyz[0] = actual_axis
 	lock[0].expectedGodotXyz[0] = expected_axis
 	return {"actual": actual, "manifest": manifest, "lock": lock}
+
+
+func composite_manifest(models: Array) -> Dictionary:
+	return {"schemaVersion": 1, "runnerManifestDigest": "%064x" % 1, "runnerRunIdentity": "%064x" % 2, "toolchain": {"executableChecksum": "%064x" % 3, "id": "blender", "version": "4.3.0", "versionContract": {}}, "exporterDigest": "%064x" % 4, "models": models}
+
+
+func composite_models() -> Array:
+	var models: Array = []
+	for index in range(IDS.size()):
+		var id: String = IDS[index]
+		models.append({"id": id, "category": "tank" if id == "tank2" else "building", "sourceFileId": "file-%s" % id, "sourceDigest": "%064x" % (index + 10), "scale": 1.0, "sourceActionNames": ["Drive"] if id == "tank2" else [], "outputRelativePath": "assets/models/tank/tank2.glb" if id == "tank2" else "assets/models/buildings/%s.glb" % id, "outputDigest": "%064x" % (index + 1), "animationNames": ["Drive"] if id == "tank2" else [], "imageCount": 0 if id == "tank2" else 1, "embeddedImageDigest": null if id == "tank2" else "%064x" % (index + 30), "measuredGodotXyz": [1.0, 1.0, 1.0]})
+	return models
+
+
+func composite_lock_models() -> Array:
+	var models: Array = []
+	for model in composite_models():
+		models.append({"id": model.id, "category": model.category, "source": {"fileId": model.sourceFileId, "sha256": model.sourceDigest}, "scale": model.scale, "expectedGodotXyz": [1.0, 1.0, 1.0], "outputDigest": model.outputDigest, "measuredGodotXyz": model.measuredGodotXyz, "embeddedImageDigest": model.embeddedImageDigest})
+	return models
 
 
 func success() -> Dictionary:

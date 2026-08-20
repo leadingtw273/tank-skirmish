@@ -9,7 +9,7 @@ import { fileURLToPath } from "node:url";
 import test from "node:test";
 
 import {
-  CONVERTED_ASSET_ERROR_CODES, ConvertedAssetError, canonicalBytes, checkConvertedAssets, inspectConvertedAssets,
+  CONVERTED_ASSET_ERROR_CODES, ConvertedAssetError, canonicalBytes, checkConvertedAssets, composeConvertedAssets, inspectConvertedAssets,
   computeRunIdentity, parseCliArgs, parseGlb, runCli,
 } from "../scripts/validate-converted-assets.mjs";
 
@@ -74,12 +74,55 @@ async function fixture(t, options = {}) {
   return { root, files, ...run };
 }
 function expectCode(action, code) { assert.throws(action, (error) => error instanceof ConvertedAssetError && error.code === code); }
+async function compositeFixture(t, { present = false } = {}) {
+  const value = await fixture(t);
+  const metadata = await mkdtemp(join(tmpdir(), "converted-assets-metadata-")); t.after(() => rm(metadata, { recursive: true, force: true }));
+  const staticReport = inspectConvertedAssets({ inputRoot: value.root, runnerManifest: value.path });
+  const staticPath = join(metadata, "static.json"); writeFileSync(staticPath, canonicalBytes(staticReport));
+  const measurement = { schemaVersion: 1, staticReportDigest: sha(canonicalBytes(staticReport)), models: staticReport.models.map((model) => ({ id: model.id, outputDigest: model.outputDigest, measuredGodotXyz: [...lockValueForId(idToLock(), model.id).expectedGodotXyz] })) };
+  const measurementPath = join(metadata, "measurement.json"); writeFileSync(measurementPath, canonicalBytes(measurement));
+  const lockValue = idToLock();
+  if (present) {
+    lockValue.conversionManifest.state = "present";
+    for (const model of lockValue.models) {
+      const actual = staticReport.models.find((candidate) => candidate.id === model.id);
+      model.outputDigest = actual.outputDigest; model.embeddedImageDigest = actual.embeddedImageDigest; model.measuredGodotXyz = [...model.expectedGodotXyz];
+    }
+  }
+  const lock = join(metadata, "lock.json"); writeFileSync(lock, JSON.stringify(lockValue));
+  const output = join(metadata, "composite.json");
+  return { ...value, metadata, staticReport, staticPath, measurement, measurementPath, lock, lockValue, output };
+}
+function idToLock() { return JSON.parse(readFileSync(new URL("../docs/assets/quaternius-lock.json", import.meta.url), "utf8")); }
+function lockValueForId(lockValue, id) { return lockValue.models.find((model) => model.id === id); }
+function expectedCompositeFromInputs(value) {
+  const runnerById = new Map(value.value.models.map((model) => [model.id, model]));
+  const staticById = new Map(value.staticReport.models.map((model) => [model.id, model]));
+  const measurementById = new Map(value.measurement.models.map((model) => [model.id, model]));
+  return {
+    schemaVersion: 1,
+    runnerManifestDigest: value.staticReport.runnerManifestDigest,
+    runnerRunIdentity: value.staticReport.runIdentity,
+    toolchain: value.staticReport.toolchain,
+    exporterDigest: value.staticReport.exporter.sourceDigest,
+    models: ids.map((id) => {
+      const runnerModel = runnerById.get(id); const staticModel = staticById.get(id); const measurementModel = measurementById.get(id);
+      return {
+        id, category: runnerModel.category, sourceFileId: runnerModel.source.fileId, sourceDigest: runnerModel.source.digest,
+        scale: runnerModel.scale, sourceActionNames: [...runnerModel.sourceActionNames].sort(), outputRelativePath: staticModel.outputRelativePath,
+        outputDigest: staticModel.outputDigest, animationNames: [...staticModel.animationNames].sort(), imageCount: staticModel.imageCount,
+        embeddedImageDigest: staticModel.embeddedImageDigest, measuredGodotXyz: measurementModel.measuredGodotXyz,
+      };
+    }),
+  };
+}
 
 test("closed CLI accepts only the documented modes and absolute argument values", () => {
   assert.deepEqual(parseCliArgs(["--help"]), { mode: "help" });
   assert.equal(parseCliArgs(["--inspect", "--input-root", "/tmp/root", "--runner-manifest", "/tmp/run", "--output-report", "/tmp/report"]).mode, "inspect");
+  assert.equal(parseCliArgs(["--compose", "--input-root", "/tmp/root", "--runner-manifest", "/tmp/run", "--static-report", "/tmp/static", "--measurement-report", "/tmp/measurement", "--lock", "/tmp/lock", "--output-manifest", "/tmp/output"]).mode, "compose");
   assert.equal(parseCliArgs(["--check", "--input-root", "/tmp/root", "--manifest", "/tmp/report", "--lock", "/tmp/lock"]).mode, "check");
-  for (const args of [[], ["--help", "--check"], ["--inspect", "--input-root", "/tmp/root", "--input-root", "/tmp/two", "--runner-manifest", "/tmp/run", "--output-report", "/tmp/r"], ["--check", "--input-root", "/tmp/root", "--manifest", "/tmp/report", "--lock", "/tmp/lock", "--unknown"]]) expectCode(() => parseCliArgs(args), "USAGE");
+  for (const args of [[], ["--help", "--check"], ["--inspect", "--input-root", "/tmp/root", "--input-root", "/tmp/two", "--runner-manifest", "/tmp/run", "--output-report", "/tmp/r"], ["--compose", "--input-root", "/tmp/root", "--runner-manifest", "/tmp/run", "--static-report", "/tmp/static", "--measurement-report", "/tmp/measurement", "--lock", "/tmp/lock", "--output-manifest", "/tmp/output", "--lock", "/tmp/two"], ["--check", "--input-root", "/tmp/root", "--manifest", "/tmp/report", "--lock", "/tmp/lock", "--unknown"]]) expectCode(() => parseCliArgs(args), "USAGE");
   expectCode(() => parseCliArgs(["--inspect", "--input-root", "relative", "--runner-manifest", "/tmp/run", "--output-report", "/tmp/r"]), "PATH_INVALID");
 });
 
@@ -124,29 +167,93 @@ test("inspection fail-closes output trees, runner paths and model contracts", as
   const badBuilding = await fixture(t, { glbs: { "1story": { image: Buffer.from([9, 9, 9, 9]) } } }); badBuilding.value.models[1].output.digest = "0".repeat(64); writeFileSync(badBuilding.path, canonicalBytes(badBuilding.value)); expectCode(() => inspectConvertedAssets({ inputRoot: badBuilding.root, runnerManifest: badBuilding.path }), "DIGEST_MISMATCH");
 });
 
-test("check joins runner, static report, final manifest and present lock by model id", async (t) => {
-  const value = await fixture(t);
-  const report = inspectConvertedAssets({ inputRoot: value.root, runnerManifest: value.path });
-  const metadata = await mkdtemp(join(tmpdir(), "converted-assets-metadata-")); t.after(() => rm(metadata, { recursive: true, force: true }));
-  const manifest = join(metadata, "final.json"); writeFileSync(manifest, canonicalBytes(report));
-  const source = JSON.parse(readFileSync(new URL("../docs/assets/quaternius-lock.json", import.meta.url), "utf8"));
-  source.conversionManifest.state = "present";
-  for (const model of source.models) {
-    const measured = report.models.find((item) => item.id === model.id);
-    model.outputDigest = measured.outputDigest; model.embeddedImageDigest = measured.embeddedImageDigest; model.measuredGodotXyz = [...model.expectedGodotXyz];
+test("compose writes independently-derived canonical bytes, accepts absent and matching-present locks, and production check has no private runner dependency", async (t) => {
+  const value = await compositeFixture(t);
+  const args = ["--compose", "--input-root", value.root, "--runner-manifest", value.path, "--static-report", value.staticPath, "--measurement-report", value.measurementPath, "--lock", value.lock, "--output-manifest", value.output];
+  assert.equal(await runCli(args), 0);
+  const expected = expectedCompositeFromInputs(value); const bytes = readFileSync(value.output);
+  assert.deepEqual(bytes, canonicalBytes(expected));
+  assert.equal(bytes.toString("utf8").endsWith("\n\n"), false);
+  const composite = JSON.parse(bytes);
+  const matchingPresent = await compositeFixture(t, { present: true });
+  assert.deepEqual(composeConvertedAssets({ inputRoot: matchingPresent.root, runnerManifest: matchingPresent.path, staticReport: matchingPresent.staticPath, measurementReport: matchingPresent.measurementPath, lock: matchingPresent.lock }), expectedCompositeFromInputs(matchingPresent));
+  const present = structuredClone(value.lockValue); present.conversionManifest.state = "present";
+  for (const model of present.models) {
+    const actual = composite.models.find((candidate) => candidate.id === model.id);
+    model.outputDigest = actual.outputDigest; model.embeddedImageDigest = actual.embeddedImageDigest; model.measuredGodotXyz = actual.measuredGodotXyz;
   }
-  const lock = join(metadata, "lock.json"); await writeFile(lock, JSON.stringify(source));
-  assert.equal(checkConvertedAssets({ inputRoot: value.root, manifest, lock }).models.length, 9);
-  const mismatch = structuredClone(report); mismatch.models[1].outputDigest = report.models[0].outputDigest; writeFileSync(manifest, canonicalBytes(mismatch));
-  expectCode(() => checkConvertedAssets({ inputRoot: value.root, manifest, lock }), "DUPLICATE_DIGEST");
-  const joinMismatch = structuredClone(report); joinMismatch.runIdentity = "0".repeat(64); writeFileSync(manifest, canonicalBytes(joinMismatch));
-  expectCode(() => checkConvertedAssets({ inputRoot: value.root, manifest, lock }), "JOIN_MISMATCH");
-  const invalidLock = structuredClone(source); invalidLock.conversionManifest.state = "absent";
-  for (const model of invalidLock.models) {
-    model.outputDigest = null; model.embeddedImageDigest = null; model.measuredGodotXyz = null;
-  }
-  writeFileSync(manifest, canonicalBytes(report)); await writeFile(lock, JSON.stringify(invalidLock));
-  expectCode(() => checkConvertedAssets({ inputRoot: value.root, manifest, lock }), "LOCK_INVALID");
+  writeFileSync(value.lock, JSON.stringify(present));
+  assert.equal(checkConvertedAssets({ inputRoot: value.root, manifest: value.output, lock: value.lock }).models.length, 9);
+  await unlink(value.path);
+  assert.equal(checkConvertedAssets({ inputRoot: value.root, manifest: value.output, lock: value.lock }).models.length, 9);
+});
+
+test("compose rejects static, measurement, runner and lock drift without exposing private paths", async (t) => {
+  const composeArgs = (value) => ({ inputRoot: value.root, runnerManifest: value.path, staticReport: value.staticPath, measurementReport: value.measurementPath, lock: value.lock });
+  const staticContent = await compositeFixture(t); const changedStatic = structuredClone(staticContent.staticReport); changedStatic.models[0].outputDigest = "0".repeat(64); writeFileSync(staticContent.staticPath, canonicalBytes(changedStatic));
+  expectCode(() => composeConvertedAssets(composeArgs(staticContent)), "JOIN_MISMATCH");
+  const staticId = await compositeFixture(t); const invalidStaticId = structuredClone(staticId.staticReport); invalidStaticId.models[0].id = "unknown"; writeFileSync(staticId.staticPath, canonicalBytes(invalidStaticId));
+  expectCode(() => composeConvertedAssets(composeArgs(staticId)), "STATIC_MANIFEST_INVALID");
+  const staticDuplicate = await compositeFixture(t); const duplicateStatic = structuredClone(staticDuplicate.staticReport); duplicateStatic.models[1].outputDigest = duplicateStatic.models[0].outputDigest; writeFileSync(staticDuplicate.staticPath, canonicalBytes(duplicateStatic));
+  expectCode(() => composeConvertedAssets(composeArgs(staticDuplicate)), "DUPLICATE_DIGEST");
+  const measurementDigest = await compositeFixture(t); const changedMeasurementDigest = structuredClone(measurementDigest.measurement); changedMeasurementDigest.models[0].outputDigest = "0".repeat(64); writeFileSync(measurementDigest.measurementPath, canonicalBytes(changedMeasurementDigest));
+  expectCode(() => composeConvertedAssets(composeArgs(measurementDigest)), "JOIN_MISMATCH");
+  const measurementId = await compositeFixture(t); const invalidMeasurementId = structuredClone(measurementId.measurement); invalidMeasurementId.models[0].id = "unknown"; writeFileSync(measurementId.measurementPath, canonicalBytes(invalidMeasurementId));
+  expectCode(() => composeConvertedAssets(composeArgs(measurementId)), "MEASUREMENT_REPORT_INVALID");
+  const runnerId = await compositeFixture(t); runnerId.value.models[0].id = "unknown"; writeFileSync(runnerId.path, canonicalBytes(runnerId.value));
+  expectCode(() => composeConvertedAssets(composeArgs(runnerId)), "RUNNER_MANIFEST_INVALID");
+  const lockId = await compositeFixture(t); const invalidLockId = structuredClone(lockId.lockValue); invalidLockId.models[0].id = "unknown"; writeFileSync(lockId.lock, JSON.stringify(invalidLockId));
+  expectCode(() => composeConvertedAssets(composeArgs(lockId)), "LOCK_INVALID");
+  const lockScale = await compositeFixture(t); const invalidLockScale = structuredClone(lockScale.lockValue); invalidLockScale.models[0].scale = 1; writeFileSync(lockScale.lock, JSON.stringify(invalidLockScale));
+  expectCode(() => composeConvertedAssets(composeArgs(lockScale)), "LOCK_INVALID");
+  const presentMismatch = await compositeFixture(t, { present: true }); const invalidPresent = structuredClone(presentMismatch.lockValue); invalidPresent.models[0].outputDigest = "0".repeat(64); writeFileSync(presentMismatch.lock, JSON.stringify(invalidPresent));
+  expectCode(() => composeConvertedAssets(composeArgs(presentMismatch)), "JOIN_MISMATCH");
+  const privatePath = await compositeFixture(t); const privateStatic = structuredClone(privatePath.staticReport); privateStatic.privatePath = privatePath.root; writeFileSync(privatePath.staticPath, canonicalBytes(privateStatic));
+  const stderr = { value: "", write(text) { this.value += text; } };
+  assert.equal(await runCli(["--compose", "--input-root", privatePath.root, "--runner-manifest", privatePath.path, "--static-report", privatePath.staticPath, "--measurement-report", privatePath.measurementPath, "--lock", privatePath.lock, "--output-manifest", privatePath.output], { stdout: { write() {} }, stderr }), 1);
+  assert.equal(stderr.value, "STATIC_MANIFEST_INVALID\n"); assert.equal(stderr.value.includes(privatePath.root), false);
+});
+
+test("check rejects legacy static-only and measurement-only manifests, then fails closed for production-tree drift", async (t) => {
+  const value = await compositeFixture(t);
+  const args = { inputRoot: value.root, runnerManifest: value.path, staticReport: value.staticPath, measurementReport: value.measurementPath, lock: value.lock };
+  const badDigest = structuredClone(value.measurement); badDigest.staticReportDigest = "0".repeat(64); writeFileSync(value.measurementPath, canonicalBytes(badDigest));
+  expectCode(() => composeConvertedAssets(args), "DIGEST_MISMATCH");
+  writeFileSync(value.measurementPath, canonicalBytes(value.measurement));
+  const badSource = JSON.parse(readFileSync(value.lock, "utf8")); badSource.models[0].source.sha256 = "0".repeat(64); writeFileSync(value.lock, JSON.stringify(badSource));
+  expectCode(() => composeConvertedAssets(args), "JOIN_MISMATCH");
+  writeFileSync(value.lock, JSON.stringify(value.lockValue));
+  const composite = composeConvertedAssets(args); const manifest = join(value.metadata, "manifest.json"); writeFileSync(manifest, canonicalBytes(composite));
+  const present = structuredClone(value.lockValue); present.conversionManifest.state = "present";
+  for (const model of present.models) { const actual = composite.models.find((candidate) => candidate.id === model.id); model.outputDigest = actual.outputDigest; model.embeddedImageDigest = actual.embeddedImageDigest; model.measuredGodotXyz = actual.measuredGodotXyz; }
+  writeFileSync(value.lock, JSON.stringify(present));
+  expectCode(() => checkConvertedAssets({ inputRoot: value.root, manifest: value.staticPath, lock: value.lock }), "FINAL_MANIFEST_INVALID");
+  expectCode(() => checkConvertedAssets({ inputRoot: value.root, manifest: value.measurementPath, lock: value.lock }), "FINAL_MANIFEST_INVALID");
+  const unknown = structuredClone(composite); unknown.privatePath = value.root; writeFileSync(manifest, canonicalBytes(unknown));
+  expectCode(() => checkConvertedAssets({ inputRoot: value.root, manifest, lock: value.lock }), "FINAL_MANIFEST_INVALID");
+  writeFileSync(manifest, canonicalBytes(composite));
+  writeFileSync(join(value.root, "assets", "models", "buildings", "extra.glb"), modelGlb("1story"));
+  expectCode(() => checkConvertedAssets({ inputRoot: value.root, manifest, lock: value.lock }), "OUTPUT_INVALID");
+  await unlink(join(value.root, "assets", "models", "buildings", "extra.glb"));
+  await unlink(join(value.root, ...logicalPath("1story").split("/")));
+  expectCode(() => checkConvertedAssets({ inputRoot: value.root, manifest, lock: value.lock }), "OUTPUT_INVALID");
+  writeFileSync(join(value.root, ...logicalPath("1story").split("/")), value.files.get("1story"));
+  const staticDrift = structuredClone(composite); staticDrift.models[1].embeddedImageDigest = "0".repeat(64); writeFileSync(manifest, canonicalBytes(staticDrift));
+  expectCode(() => checkConvertedAssets({ inputRoot: value.root, manifest, lock: value.lock }), "JOIN_MISMATCH");
+  const duplicate = structuredClone(composite); duplicate.models[1].outputDigest = duplicate.models[0].outputDigest; writeFileSync(manifest, canonicalBytes(duplicate));
+  expectCode(() => checkConvertedAssets({ inputRoot: value.root, manifest, lock: value.lock }), "DUPLICATE_DIGEST");
+});
+
+test("compose rejects pre-existing output and never copies lock expected measurements into actuals", async (t) => {
+  const value = await compositeFixture(t);
+  const output = value.output; writeFileSync(output, "old");
+  const stderr = { value: "", write(text) { this.value += text; } };
+  const result = await runCli(["--compose", "--input-root", value.root, "--runner-manifest", value.path, "--static-report", value.staticPath, "--measurement-report", value.measurementPath, "--lock", value.lock, "--output-manifest", output], { stdout: { write() {} }, stderr });
+  assert.equal(result, 1); assert.equal(stderr.value, "OUTPUT_INVALID\n"); assert.equal(readFileSync(output, "utf8"), "old");
+  await unlink(output);
+  const composite = composeConvertedAssets({ inputRoot: value.root, runnerManifest: value.path, staticReport: value.staticPath, measurementReport: value.measurementPath, lock: value.lock });
+  const changed = structuredClone(value.lockValue); changed.models[0].rawSourceXyz[0] += 0.01; changed.models[0].expectedGodotXyz[0] = Math.round(changed.models[0].rawSourceXyz[0] * changed.models[0].scale * 100000) / 100000; writeFileSync(value.lock, JSON.stringify(changed));
+  assert.deepEqual(composeConvertedAssets({ inputRoot: value.root, runnerManifest: value.path, staticReport: value.staticPath, measurementReport: value.measurementPath, lock: value.lock }).models[0].measuredGodotXyz, composite.models[0].measuredGodotXyz);
 });
 
 test("error surface remains closed and does not include private paths", async (t) => {

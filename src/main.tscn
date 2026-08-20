@@ -1,3 +1,70 @@
-[gd_scene format=3]
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="PackedScene" path="res://assets/models/tank/tank2.glb" id="1_tank"]
+[ext_resource type="PackedScene" path="res://assets/models/buildings/1story.glb" id="2_building_a"]
+[ext_resource type="PackedScene" path="res://assets/models/buildings/2story-wide.glb" id="3_building_b"]
+[ext_resource type="PackedScene" path="res://assets/models/buildings/3story-small.glb" id="4_building_c"]
+
+[sub_resource type="StandardMaterial3D" id="GroundMaterial"]
+albedo_color = Color(0.42, 0.26, 0.12, 1)
+roughness = 0.92
+
+[sub_resource type="BoxMesh" id="GroundMesh"]
+material = SubResource("GroundMaterial")
+size = Vector3(120, 0.2, 120)
+
+[sub_resource type="Environment" id="SceneEnvironment"]
+background_mode = 1
+background_color = Color(0.24, 0.4, 0.56, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.96, 0.83, 0.65, 1)
+ambient_light_energy = 0.35
+reflected_light_source = 2
+tonemap_mode = 2
 
 [node name="TankSkirmish" type="Node3D"]
+
+[node name="CameraRig" type="Node3D" parent="."]
+
+[node name="Camera3D" type="Camera3D" parent="CameraRig"]
+position = Vector3(40.558, 81.915, 48.558)
+rotation = Vector3(-0.959931, 0.785398, 0)
+projection = 1
+size = 55.0
+keep_aspect = 1
+current = true
+
+[node name="Tank" type="Node3D" parent="."]
+position = Vector3(0, 0, 8)
+
+[node name="Tank2" parent="Tank" instance=ExtResource("1_tank")]
+rotation = Vector3(0, -0.35, 0)
+
+[node name="Ground" type="MeshInstance3D" parent="."]
+position = Vector3(0, -0.1, 8)
+mesh = SubResource("GroundMesh")
+
+[node name="Buildings" type="Node3D" parent="."]
+
+[node name="OneStory" parent="Buildings" instance=ExtResource("2_building_a")]
+position = Vector3(-17, 0, -5)
+rotation = Vector3(0, 0.35, 0)
+
+[node name="TwoStoryWide" parent="Buildings" instance=ExtResource("3_building_b")]
+position = Vector3(17, 0, -4)
+rotation = Vector3(0, -0.5, 0)
+
+[node name="ThreeStorySmall" parent="Buildings" instance=ExtResource("4_building_c")]
+position = Vector3(-12, 0, 23)
+rotation = Vector3(0, 0.8, 0)
+
+[node name="Lighting" type="Node3D" parent="."]
+
+[node name="Sun" type="DirectionalLight3D" parent="Lighting"]
+rotation = Vector3(-0.959931, -0.610865, 0)
+light_color = Color(1, 0.9, 0.78, 1)
+light_energy = 0.8
+shadow_enabled = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Lighting"]
+environment = SubResource("SceneEnvironment")

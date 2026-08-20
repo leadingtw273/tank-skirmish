@@ -164,7 +164,8 @@ test("production Godot CLI unwraps successful parse payloads and preserves close
   }
   const value = await fixture(t);
   const staticReport = join(value.root, "static-report.json");
-  writeFileSync(staticReport, canonicalBytes(inspectConvertedAssets({ inputRoot: value.root, runnerManifest: value.path })));
+  const validStaticReport = inspectConvertedAssets({ inputRoot: value.root, runnerManifest: value.path });
+  writeFileSync(staticReport, canonicalBytes(validStaticReport));
   const missingInput = join(value.root, "missing-input");
   const emit = spawnSync(godot, ["--headless", "--audio-driver", "Dummy", "--path", ".", "--script", "res://scripts/measure-converted-assets.gd", "--", "--emit", "--input-root", missingInput, "--static-report", staticReport, "--output-report", join(value.root, "report.json")], { cwd: projectRoot, encoding: "utf8", timeout: 10_000, killSignal: "SIGKILL" });
   assert.equal(emit.error, undefined);
@@ -182,7 +183,7 @@ test("production Godot CLI unwraps successful parse payloads and preserves close
   assert.equal(usage.stderr, "USAGE\n");
   assert.equal(`${usage.stdout}${usage.stderr}`.includes("SCRIPT ERROR"), false);
   for (const imageCount of [-1, 1.5, "1"]) {
-    const invalid = structuredClone(inspectConvertedAssets({ inputRoot: value.root, runnerManifest: value.path }));
+    const invalid = structuredClone(validStaticReport);
     invalid.models[0].imageCount = imageCount;
     writeFileSync(staticReport, canonicalBytes(invalid));
     const result = spawnSync(godot, ["--headless", "--audio-driver", "Dummy", "--path", ".", "--script", "res://scripts/measure-converted-assets.gd", "--", "--emit", "--input-root", missingInput, "--static-report", staticReport, "--output-report", join(value.root, "report.json")], { cwd: projectRoot, encoding: "utf8", timeout: 10_000, killSignal: "SIGKILL" });

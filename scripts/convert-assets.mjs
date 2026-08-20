@@ -226,7 +226,7 @@ export async function runConversion({ assetLock, toolchainLock, assetLockDigest,
       const request = requestFor(model, staged, privateOutput, privateResult);
       assertClosedRequest(request, model, directory);
       await writePrivateJson(requestPath, request);
-      const processResult = (runProcess ?? ((executablePath, args) => spawnSync(executablePath, args, { encoding: "utf8", shell: false })))(executable, ["--background", "--factory-startup", "--python", exporterPath, "--", requestPath]);
+      const processResult = (runProcess ?? ((executablePath, args) => spawnSync(executablePath, args, { encoding: "utf8", shell: false })))(executable, ["--background", "--factory-startup", "--python-exit-code", "1", "--python", exporterPath, "--", requestPath]);
       if (processResult?.error !== undefined || processResult?.status !== 0) fail("EXPORT_FAILED");
       const outputDigest = await verifyItemOutput({ directory, outputPath: privateOutput, requestPath, resultPath: privateResult, sourceBasename: staged.source.basename, atlasBasename: staged.atlas?.basename ?? null });
       const sourceActionNames = await readResult(privateResult);

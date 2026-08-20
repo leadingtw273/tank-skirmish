@@ -89,8 +89,7 @@ def only(items, message):
 def linked_from(socket, node, output_name, message):
     require(socket.is_linked and len(socket.links) == 1, message)
     link = socket.links[0]
-    require(link.from_node is node and link.from_socket is node.outputs[output_name], message)
-    return link
+    require(link.from_node == node and link.from_socket == node.outputs[output_name], message)
 
 
 def legacy_building_graphs(verified_images):
@@ -105,9 +104,9 @@ def legacy_building_graphs(verified_images):
         output = only([node for node in nodes if node.type == "OUTPUT_MATERIAL"], "building material output node")
         require(output.is_active_output, "building material active output")
         require(image.image and any(image.image == verified_image for verified_image in verified_images), "building material verified image")
-        image_link = linked_from(diffuse.inputs["Color"], image, "Color", "building material image color link")
-        output_link = linked_from(output.inputs["Surface"], diffuse, "BSDF", "building material surface link")
-        require(len(node_tree.links) == 2 and image_link is not output_link, "building material topology")
+        linked_from(diffuse.inputs["Color"], image, "Color", "building material image color link")
+        linked_from(output.inputs["Surface"], diffuse, "BSDF", "building material surface link")
+        require(len(node_tree.links) == 2, "building material topology")
         graphs.append((node_tree, image, diffuse, output))
     require(graphs, "building materials required")
     return graphs

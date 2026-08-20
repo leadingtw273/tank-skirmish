@@ -290,12 +290,27 @@ class Socket:
 
 class Link:
     def __init__(self, from_socket, to_socket):
-        self.from_node = from_socket.node
-        self.from_socket = from_socket
+        self._from_node = from_socket.node
+        self._from_socket = from_socket
         self.to_socket = to_socket
+    @property
+    def from_node(self):
+        return RnaRef(self._from_node)
+    @property
+    def from_socket(self):
+        return RnaRef(self._from_socket)
+
+class RnaRef:
+    def __init__(self, target):
+        self.target = target
+    def __eq__(self, other):
+        return self.target is (other.target if isinstance(other, RnaRef) else other)
 
 class Links(list):
     def new(self, from_socket, to_socket):
+        for old in list(to_socket.links):
+            self.remove(old)
+            to_socket.links.remove(old)
         link = Link(from_socket, to_socket)
         self.append(link)
         to_socket.links.append(link)
@@ -333,7 +348,7 @@ class Nodes(list):
         return node
     def remove(self, node):
         for link in list(self.links):
-            if link.from_node is node or link.to_socket.node is node:
+            if link.from_node == node or link.to_socket.node is node:
                 self.links.remove(link)
                 link.to_socket.links.remove(link)
         super().remove(node)
@@ -387,20 +402,25 @@ with tempfile.TemporaryDirectory() as temporary:
     principled = [node for node in tree.nodes if node.type == "BSDF_PRINCIPLED"]
     assert len(principled) == 1
     assert principled[0].name == "Principled BSDF"
-    assert principled[0].inputs["Base Color"].links[0].from_node is image_node
-    assert output.inputs["Surface"].links[0].from_node is principled[0]
+    assert principled[0].inputs["Base Color"].links[0].from_node == image_node
+    assert output.inputs["Surface"].links[0].from_node == principled[0]
     assert len(tree.links) == 2
 
     valid_tree, valid_material, _, _, _ = graph(image, [])
-    multiple_tree, multiple_material, _, _, _ = graph(image, [])
-    multiple_tree.nodes.append(Node("TEX_IMAGE", image))
+    multiple_tree = Tree([])
+    multiple_tree.nodes.extend([
+        Node("TEX_IMAGE", image),
+        Node("TEX_IMAGE", image),
+        Node("OUTPUT_MATERIAL"),
+    ])
+    multiple_material = Material(multiple_tree)
     before = list(valid_tree.nodes)
     bpy.data.materials = [valid_material, multiple_material]
     try:
         exporter.normalize_building_materials(verified)
         raise AssertionError("multiple image nodes must fail")
     except RuntimeError as error:
-        assert str(error) == "building material topology", str(error)
+        assert str(error) == "building material image node", str(error)
     assert list(valid_tree.nodes) == before
 
     wrong_tree, wrong_material, _, wrong_diffuse, _ = graph(image, [])

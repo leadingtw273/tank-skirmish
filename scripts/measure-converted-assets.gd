@@ -16,7 +16,7 @@ func _run_cli() -> void:
 		quit(2)
 		return
 
-	var result := await run_command(parsed)
+	var result := await run_command(parsed.value)
 	if not result.ok:
 		printerr(result.code)
 		quit(1)

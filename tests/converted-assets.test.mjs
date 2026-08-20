@@ -1,10 +1,12 @@
 import assert from "node:assert/strict";
+import { spawn } from "node:child_process";
 import { createHash } from "node:crypto";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { chmod, mkdtemp, rm, unlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
+import { fileURLToPath } from "node:url";
 
 import {
   CONVERTED_ASSET_ERROR_CODES, ConvertedAssetError, canonicalBytes, checkConvertedAssets, inspectConvertedAssets,
@@ -12,8 +14,39 @@ import {
 } from "../scripts/validate-converted-assets.mjs";
 
 const ids = ["tank2", "1story", "1story-gable-roof", "2story", "2story-slim", "2story-wide", "3story-small", "4story", "6story-stack"];
+const projectRoot = fileURLToPath(new URL("..", import.meta.url));
 const sha = (value) => createHash("sha256").update(value).digest("hex");
 const logicalPath = (id) => id === "tank2" ? `assets/models/tank/${id}.glb` : `assets/models/buildings/${id}.glb`;
+
+function runProductionMeasurementCli(godot, argumentsList, environment) {
+  return new Promise((resolve, reject) => {
+    const child = spawn(godot, ["--headless", "--audio-driver", "Dummy", "--path", projectRoot, "--script", "res://scripts/measure-converted-assets.gd", "--", ...argumentsList], { cwd: projectRoot, env: environment });
+    let stdout = "";
+    let stderr = "";
+    let settled = false;
+    let timedOut = false;
+    const finish = (callback, value) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timeout);
+      callback(value);
+    };
+    const timeout = setTimeout(() => {
+      timedOut = true;
+      child.kill("SIGKILL");
+    }, 10_000);
+    child.stdout.on("data", (chunk) => { stdout += chunk; });
+    child.stderr.on("data", (chunk) => { stderr += chunk; });
+    child.once("error", (error) => finish(reject, error));
+    child.once("close", (status, signal) => {
+      if (timedOut) {
+        finish(reject, new Error("production measurement CLI timed out"));
+        return;
+      }
+      finish(resolve, { status, signal, stdout, stderr });
+    });
+  });
+}
 
 function glb(json, bin = Buffer.alloc(0)) {
   const source = Buffer.from(JSON.stringify(json), "utf8");
@@ -151,4 +184,28 @@ test("error surface remains closed and does not include private paths", async (t
   const result = await runCli(["--inspect", "--input-root", value.root, "--runner-manifest", value.path, "--output-report", join(value.root, "missing", "report.json")], { stdout: { write() {} }, stderr });
   assert.equal(result, 1); assert.equal(stderr.value, "OUTPUT_INVALID\n"); assert.equal(stderr.value.includes(value.root), false);
   assert.equal(CONVERTED_ASSET_ERROR_CODES.has(new ConvertedAssetError("not-closed").code), true);
+});
+
+test("production Godot measurement CLI unwraps successful parse payloads", async (t) => {
+  const godot = process.env.GODOT_BIN;
+  if (godot === undefined || godot === "") {
+    t.skip("GODOT_BIN is required for production GDScript CLI coverage");
+    return;
+  }
+  const root = await mkdtemp(join(tmpdir(), "converted-assets-production-cli-"));
+  t.after(() => rm(root, { recursive: true, force: true }));
+  const environment = {
+    ...process.env,
+    XDG_CACHE_HOME: join(root, "xdg", "cache"),
+    XDG_CONFIG_HOME: join(root, "xdg", "config"),
+    XDG_DATA_HOME: join(root, "xdg", "data"),
+  };
+  const emit = await runProductionMeasurementCli(godot, ["--emit", "--input-root", join(root, "missing-input"), "--static-report", join(root, "missing-static-report.json"), "--output-report", join(root, "missing-output-report.json")], environment);
+  assert.deepEqual({ status: emit.status, signal: emit.signal, stderr: emit.stderr }, { status: 1, signal: null, stderr: "STATIC_REPORT_INVALID\n" });
+  assert.equal(`${emit.stdout}${emit.stderr}`.includes("SCRIPT ERROR"), false);
+  const check = await runProductionMeasurementCli(godot, ["--check", "--input-root", join(root, "missing-input"), "--manifest", join(root, "missing-manifest.json"), "--lock", join(root, "missing-lock.json")], environment);
+  assert.deepEqual({ status: check.status, signal: check.signal, stderr: check.stderr }, { status: 1, signal: null, stderr: "INPUT_ROOT_INVALID\n" });
+  assert.equal(`${check.stdout}${check.stderr}`.includes("SCRIPT ERROR"), false);
+  const invalid = await runProductionMeasurementCli(godot, ["--emit"], environment);
+  assert.deepEqual({ status: invalid.status, signal: invalid.signal, stderr: invalid.stderr }, { status: 2, signal: null, stderr: "USAGE\n" });
 });

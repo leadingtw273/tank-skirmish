@@ -70,8 +70,14 @@ def verify_images(request_dir, request):
     require(atlas.parent == request_dir.resolve() and atlas.is_file(), "atlas must be staged")
     require(hashlib.sha256(atlas.read_bytes()).hexdigest() == request["atlasDigest"], "atlas digest mismatch")
     for image in images:
-        require(image.filepath == BUILDING_IMAGE_PATH and image.has_data, "building image contract")
+        require(image.filepath == BUILDING_IMAGE_PATH, "building image path contract")
         require(Path(bpy.path.abspath(image.filepath)).resolve() == atlas, "building image escaped staging")
+        try:
+            image.reload()
+            image.pixels[0]
+        except Exception as error:
+            raise RuntimeError("building image load failed") from error
+        require(image.has_data, "building image data unavailable")
 
 
 def select_and_scale(scale):

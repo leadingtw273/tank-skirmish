@@ -75,7 +75,7 @@ async function runFakeConversion(t, { onExport, fixture: existingFixture } = {})
     blenderPath: fixture.fakeBlender, exporterPath,
     runProcess: versionOrExport(fixture.fakeBlender, (args) => {
       observed.push(args);
-      const request = JSON.parse(readFileSync(args[5], "utf8"));
+      const request = JSON.parse(readFileSync(args.at(-1), "utf8"));
       if (onExport !== undefined) return onExport({ args, request });
       writeFileSync(request.outputPrivatePath, "deterministic glb");
       writeFileSync(request.resultPrivatePath, '{"sourceActionNames":["Idle"]}\n');
@@ -130,15 +130,16 @@ test("explicit Blender path is exclusive and identity failures are closed", asyn
 test("fake Blender receives exact argv and a closed request without path keyword false positives", async (t) => {
   let invocation;
   const { outputRoot, fakeBlender, observed, result } = await runFakeConversion(t, { onExport: ({ args, request }) => {
-    invocation = { args: [...args], request, mode: statSync(args[5]).mode & 0o777 };
+    invocation = { args: [...args], request, mode: statSync(args.at(-1)).mode & 0o777 };
     writeFileSync(request.outputPrivatePath, "deterministic glb");
     writeFileSync(request.resultPrivatePath, '{"sourceActionNames":["Idle"]}\n');
     return { status: 0, stdout: "" };
   } });
   assert.equal(observed.length, 1);
-  assert.deepEqual(invocation.args, ["--background", "--factory-startup", "--python", exporterPath, "--", invocation.args[5]]);
+  assert.deepEqual(invocation.args, ["--background", "--factory-startup", "--python-exit-code", "1", "--python", exporterPath, "--", invocation.args.at(-1)]);
+  assert.equal(invocation.args.filter((argument) => argument === "--").length, 1);
   assert.equal(invocation.mode, 0o600);
-  assert.equal(dirname(invocation.args[5]).startsWith(outputRoot), true);
+  assert.equal(dirname(invocation.args.at(-1)).startsWith(outputRoot), true);
   assert.deepEqual(Object.keys(invocation.request).sort(), ["atlasBasename", "atlasDigest", "category", "id", "outputPrivatePath", "policy", "resultPrivatePath", "scale", "sourceBasename"]);
   assert.match(invocation.request.outputPrivatePath, /home-cache/u);
   assert.equal(Object.hasOwn(invocation.request, "cache"), false);
@@ -176,6 +177,84 @@ test("partial, unexpected, and caller-output collisions fail without published a
   await writeFile(join(fixture.outputRoot, "existing"), "collision");
   await assert.rejects(runConversion({ assetLock: { models: [fixture.model] }, toolchainLock: fixture.toolchainLock, assetLockDigest: "d", toolchainLockDigest: "e", outputRoot: fixture.outputRoot, itemIds: ["tank2"], stageItem: fixture.stageItem, blenderPath: fixture.fakeBlender, exporterPath, runProcess: versionOrExport(fixture.fakeBlender, () => { throw new Error("must not start Blender"); }) }), { message: "OUTPUT_COLLISION" });
   assert.equal(await readFile(join(fixture.outputRoot, "existing"), "utf8"), "collision");
+});
+
+test("a non-zero exporter result is classified as EXPORT_FAILED before output validation", async (t) => {
+  const fixture = await createFixture(t, { rootSuffix: "conversion-export-failure" });
+  await assert.rejects(runFakeConversion(t, { fixture, onExport: ({ request }) => {
+    writeFileSync(request.outputPrivatePath, "glb");
+    writeFileSync(request.resultPrivatePath, '{"sourceActionNames":["Idle"]}\\n');
+    return { status: 1, stdout: "Traceback (most recent call last):" };
+  } }), { name: "ConversionError", message: "EXPORT_FAILED" });
+  assert.deepEqual(await readdir(fixture.outputRoot), []);
+});
+
+test("exporter loads a valid lazy building image only after its strict staging checks", async () => {
+  const probe = String.raw`
+import hashlib
+import importlib.util
+import sys
+import tempfile
+import types
+from pathlib import Path
+
+class Image:
+    def __init__(self, filepath, behavior):
+        self.filepath = filepath
+        self.behavior = behavior
+        self.has_data = False
+        self.events = []
+    def reload(self):
+        self.events.append("reload")
+        if self.behavior == "failed-load":
+            raise ValueError("simulated Blender load failure")
+    @property
+    def pixels(self):
+        self.events.append("pixel")
+        if self.behavior == "lazy":
+            self.has_data = True
+        return [0.0]
+
+with tempfile.TemporaryDirectory() as temporary:
+    request_dir = Path(temporary)
+    atlas = request_dir / "Texture.png"
+    atlas.write_bytes(b"atlas")
+    bpy = types.SimpleNamespace(path=types.SimpleNamespace(abspath=lambda _: str(atlas)))
+    sys.modules["bpy"] = bpy
+    spec = importlib.util.spec_from_file_location("exporter", sys.argv[1])
+    exporter = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(exporter)
+    request = {"category": "building", "id": "1story", "atlasBasename": "Texture.png", "atlasDigest": hashlib.sha256(atlas.read_bytes()).hexdigest()}
+    for behavior, filepath, expected in [
+        ("lazy", "//Texture.png", None),
+        ("missing", "//Texture.png", "atlas must be staged"),
+        ("escaped", "//Texture.png", "building image escaped staging"),
+        ("wrong-path", "//Other.png", "building image path contract"),
+        ("failed-load", "//Texture.png", "building image load failed"),
+    ]:
+        image = Image(filepath, behavior)
+        exporter.used_images = lambda: [image]
+        if behavior == "missing":
+            atlas.unlink()
+        elif behavior == "escaped":
+            bpy.path.abspath = lambda _: str(request_dir / "outside" / "Texture.png")
+        try:
+            exporter.verify_images(request_dir, request)
+            assert expected is None, behavior
+            assert image.events == ["reload", "pixel"], image.events
+            assert image.has_data
+        except RuntimeError as error:
+            assert str(error) == expected, (behavior, str(error))
+            assert image.events == ([] if behavior in {"missing", "escaped", "wrong-path"} else ["reload"]), (behavior, image.events)
+        finally:
+            if behavior == "missing":
+                atlas.write_bytes(b"atlas")
+            bpy.path.abspath = lambda _: str(atlas)
+`;
+  const result = spawnSync("python3", ["-c", probe, exporterPath], {
+    encoding: "utf8", env: { ...process.env, PYTHONDONTWRITEBYTECODE: "1" },
+  });
+  assert.equal(result.status, 0, result.stderr);
 });
 
 test("the same fake output has stable GLB and consumer manifest digests across full conversions", async (t) => {

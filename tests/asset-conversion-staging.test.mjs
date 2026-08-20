@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { watch } from "node:fs";
-import { chmod, chown, lstat, mkdir, mkdtemp, readFile, readdir, rename, rm, symlink, writeFile } from "node:fs/promises";
+import { renameSync, watch } from "node:fs";
+import { chmod, chown, lstat, mkdir, mkdtemp, readFile, readdir, rm, symlink, writeFile } from "node:fs/promises";
 import { once } from "node:events";
 import { createServer } from "node:net";
 import { homedir, tmpdir } from "node:os";
@@ -276,7 +276,12 @@ test("rejects a source pathname replaced after its destination has opened", asyn
     directoryWatcher = watch(join(data.stagingParent, name), (_destinationEvent, destinationName) => {
       if (destinationName !== data.tank.source.filename) return;
       directoryWatcher.close();
-      rename(replacementPath, sourcePath).then(replace.resolveReplacement, replace.rejectReplacement);
+      try {
+        renameSync(replacementPath, sourcePath);
+        replace.resolveReplacement();
+      } catch (error) {
+        replace.rejectReplacement(error);
+      }
     });
   });
   t.after(() => {

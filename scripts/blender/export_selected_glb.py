@@ -122,13 +122,25 @@ def normalize_building_materials(verified_images):
         node_tree.nodes.remove(diffuse)
 
 
-def select_and_scale(scale):
+def select_and_scale(scale, category):
     bpy.context.scene.frame_set(0)
     for armature in (obj for obj in bpy.context.scene.objects if obj.type == "ARMATURE"):
         armature.data.pose_position = "REST"
     bpy.ops.object.select_all(action="SELECT")
     roots = [obj for obj in bpy.context.selected_objects if obj.parent is None]
     require(roots, "source must contain an object hierarchy")
+    if category == "tank":
+        require(bpy.data.objects.get("AgentTeamScaleRoot") is None, "reserved scale root already exists")
+        scaled_root = bpy.data.objects.new("AgentTeamScaleRoot", None)
+        bpy.context.scene.collection.objects.link(scaled_root)
+        for root in roots:
+            world = root.matrix_world.copy()
+            root.parent = scaled_root
+            root.matrix_world = world
+        scaled_root.scale = (scale, scale, scale)
+        bpy.ops.object.select_all(action="SELECT")
+        bpy.context.view_layer.objects.active = scaled_root
+        return
     for root in roots:
         root.scale = tuple(component * scale for component in root.scale)
     bpy.context.view_layer.objects.active = roots[0]
@@ -145,7 +157,7 @@ def main():
     if request["category"] == "building":
         require(not source_action_names, "buildings must have no source actions")
         normalize_building_materials(verified_images)
-    select_and_scale(request["scale"])
+    select_and_scale(request["scale"], request["category"])
     output = Path(request["outputPrivatePath"]).resolve()
     result = Path(request["resultPrivatePath"]).resolve()
     require(output.parent == request_dir and result.parent == request_dir and output != result, "private output must remain staged")

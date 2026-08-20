@@ -88,6 +88,11 @@ async function compositeFixture(t, { present = false } = {}) {
       const actual = staticReport.models.find((candidate) => candidate.id === model.id);
       model.outputDigest = actual.outputDigest; model.embeddedImageDigest = actual.embeddedImageDigest; model.measuredGodotXyz = [...model.expectedGodotXyz];
     }
+  } else {
+    lockValue.conversionManifest.state = "absent";
+    for (const model of lockValue.models) {
+      model.outputDigest = null; model.embeddedImageDigest = null; model.measuredGodotXyz = null;
+    }
   }
   const lock = join(metadata, "lock.json"); writeFileSync(lock, JSON.stringify(lockValue));
   const output = join(metadata, "composite.json");

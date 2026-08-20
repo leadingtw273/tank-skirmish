@@ -161,25 +161,81 @@ static func collect_mesh_bounds(model_root: Node3D, node: Node, extrema: Diction
 	if node is MeshInstance3D:
 		var mesh_instance := node as MeshInstance3D
 		if mesh_instance.is_visible_in_tree() and mesh_instance.mesh != null:
-			var local := mesh_instance.mesh.get_aabb()
-			if not valid_local_aabb(local):
-				return failure("AABB_INVALID")
-			var relative := model_root.global_transform.affine_inverse() * mesh_instance.global_transform
-			for corner in aabb_corners(local):
-				var point: Vector3 = relative * corner
-				if not valid_vector(point):
-					return failure("AABB_INVALID")
-				if not extrema.has_mesh:
-					extrema.minimum = point
-					extrema.maximum = point
-					extrema.has_mesh = true
-				else:
-					extrema.minimum = extrema.minimum.min(point)
-					extrema.maximum = extrema.maximum.max(point)
+			var skeleton := mesh_instance.get_node_or_null(mesh_instance.skeleton) as Skeleton3D
+			var result := collect_skinned_surface_bounds(model_root, mesh_instance, skeleton, extrema) if skeleton != null and mesh_instance.skin != null else collect_static_mesh_bounds(model_root, mesh_instance, extrema)
+			if not result.ok:
+				return result
 	for child in node.get_children():
 		var result := collect_mesh_bounds(model_root, child, extrema)
 		if not result.ok:
 			return result
+	return success()
+
+
+static func collect_static_mesh_bounds(model_root: Node3D, mesh_instance: MeshInstance3D, extrema: Dictionary) -> Dictionary:
+	var local := mesh_instance.mesh.get_aabb()
+	if not valid_local_aabb(local):
+		return failure("AABB_INVALID")
+	var relative := model_root.global_transform.affine_inverse() * mesh_instance.global_transform
+	for corner in aabb_corners(local):
+		var result := include_point(relative * corner, extrema)
+		if not result.ok:
+			return result
+	return success()
+
+
+static func collect_skinned_surface_bounds(model_root: Node3D, mesh_instance: MeshInstance3D, skeleton: Skeleton3D, extrema: Dictionary) -> Dictionary:
+	var root_inverse := model_root.global_transform.affine_inverse()
+	var skin := mesh_instance.skin
+	for surface in range(mesh_instance.mesh.get_surface_count()):
+		var arrays := mesh_instance.mesh.surface_get_arrays(surface)
+		if arrays.size() != Mesh.ARRAY_MAX:
+			return failure("AABB_INVALID")
+		var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
+		var bones: Variant = arrays[Mesh.ARRAY_BONES]
+		var weights: Variant = arrays[Mesh.ARRAY_WEIGHTS]
+		var influence_count := 8 if (mesh_instance.mesh.surface_get_format(surface) & Mesh.ARRAY_FLAG_USE_8_BONE_WEIGHTS) != 0 else 4
+		if vertices.is_empty() or bones == null or weights == null or bones.size() != vertices.size() * influence_count or weights.size() != vertices.size() * influence_count:
+			return failure("AABB_INVALID")
+		for vertex_index in range(vertices.size()):
+			var point := Vector3.ZERO
+			var total_weight := 0.0
+			for slot in range(influence_count):
+				var array_index := vertex_index * influence_count + slot
+				var weight: float = float(weights[array_index])
+				if not is_finite(weight) or weight < 0.0:
+					return failure("AABB_INVALID")
+				if weight == 0.0:
+					continue
+				var bind_index: int = int(bones[array_index])
+				if bind_index < 0 or bind_index >= skin.get_bind_count():
+					return failure("AABB_INVALID")
+				var bone_index := skin.get_bind_bone(bind_index)
+				if bone_index == -1:
+					bone_index = skeleton.find_bone(skin.get_bind_name(bind_index))
+				if bone_index < 0 or bone_index >= skeleton.get_bone_count():
+					return failure("AABB_INVALID")
+				var transform := root_inverse * skeleton.global_transform * skeleton.get_bone_global_pose(bone_index) * skin.get_bind_pose(bind_index)
+				point += (transform * vertices[vertex_index]) * weight
+				total_weight += weight
+			if total_weight <= 0.0 or not is_equal_approx(total_weight, 1.0):
+				return failure("AABB_INVALID")
+			var result := include_point(point, extrema)
+			if not result.ok:
+				return result
+	return success()
+
+
+static func include_point(point: Vector3, extrema: Dictionary) -> Dictionary:
+	if not valid_vector(point):
+		return failure("AABB_INVALID")
+	if not extrema.has_mesh:
+		extrema.minimum = point
+		extrema.maximum = point
+		extrema.has_mesh = true
+	else:
+		extrema.minimum = extrema.minimum.min(point)
+		extrema.maximum = extrema.maximum.max(point)
 	return success()
 
 

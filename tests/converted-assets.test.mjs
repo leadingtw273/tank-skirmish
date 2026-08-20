@@ -203,6 +203,30 @@ test("production Godot measurement CLI unwraps successful parse payloads", async
   const emit = await runProductionMeasurementCli(godot, ["--emit", "--input-root", join(root, "missing-input"), "--static-report", join(root, "missing-static-report.json"), "--output-report", join(root, "missing-output-report.json")], environment);
   assert.deepEqual({ status: emit.status, signal: emit.signal, stderr: emit.stderr }, { status: 1, signal: null, stderr: "STATIC_REPORT_INVALID\n" });
   assert.equal(`${emit.stdout}${emit.stderr}`.includes("SCRIPT ERROR"), false);
+  const staticReport = {
+    schemaVersion: 1,
+    runIdentity: "0".repeat(64),
+    runnerManifestDigest: "a".repeat(64),
+    toolchain: { executableChecksum: "b".repeat(64), id: "blender", version: "4.5.12", versionContract: {} },
+    exporter: { sourceDigest: "c".repeat(64) },
+    models: ids.map((id, index) => ({
+      id,
+      category: id === "tank2" ? "tank" : "building",
+      outputRelativePath: logicalPath(id),
+      outputDigest: (index + 1).toString(16).repeat(64),
+      sourceActionNames: [],
+      animationNames: [],
+      imageCount: id === "tank2" ? 0 : 1,
+      embeddedImageDigest: id === "tank2" ? null : "d".repeat(64),
+    })),
+  };
+  const staticReportPath = join(root, "valid-static-report.json");
+  const emptyInputRoot = join(root, "empty-input");
+  writeFileSync(staticReportPath, canonicalBytes(staticReport));
+  mkdirSync(emptyInputRoot);
+  const validStatic = await runProductionMeasurementCli(godot, ["--emit", "--input-root", emptyInputRoot, "--static-report", staticReportPath, "--output-report", join(root, "measurement.json")], environment);
+  assert.deepEqual({ status: validStatic.status, signal: validStatic.signal, stderr: validStatic.stderr }, { status: 1, signal: null, stderr: "DIGEST_MISMATCH\n" });
+  assert.equal(`${validStatic.stdout}${validStatic.stderr}`.includes("SCRIPT ERROR"), false);
   const check = await runProductionMeasurementCli(godot, ["--check", "--input-root", join(root, "missing-input"), "--manifest", join(root, "missing-manifest.json"), "--lock", join(root, "missing-lock.json")], environment);
   assert.deepEqual({ status: check.status, signal: check.signal, stderr: check.stderr }, { status: 1, signal: null, stderr: "INPUT_ROOT_INVALID\n" });
   assert.equal(`${check.stdout}${check.stderr}`.includes("SCRIPT ERROR"), false);

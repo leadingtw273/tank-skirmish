@@ -115,8 +115,9 @@ scale = Vector3(10, 1, 10)
 position = Vector3(-50, 0, -82)
 scale = Vector3(10, 1, 10)
 
-[node name="OuterNorthC" parent="Roads" instance=ExtResource("11_street_straight")]
+[node name="NorthWestEntrance" parent="Roads" instance=ExtResource("13_street_3way")]
 position = Vector3(-30, 0, -82)
+rotation = Vector3(0, 1.570796, 0)
 scale = Vector3(10, 1, 10)
 
 [node name="OuterNorthD" parent="Roads" instance=ExtResource("11_street_straight")]
@@ -143,8 +144,9 @@ scale = Vector3(10, 1, 10)
 position = Vector3(-50, 0, 98)
 scale = Vector3(10, 1, 10)
 
-[node name="OuterSouthC" parent="Roads" instance=ExtResource("11_street_straight")]
+[node name="SouthWestEntrance" parent="Roads" instance=ExtResource("13_street_3way")]
 position = Vector3(-30, 0, 98)
+rotation = Vector3(0, -1.570796, 0)
 scale = Vector3(10, 1, 10)
 
 [node name="OuterSouthD" parent="Roads" instance=ExtResource("11_street_straight")]
@@ -183,9 +185,9 @@ position = Vector3(-90, 0, 18)
 rotation = Vector3(0, 1.570796, 0)
 scale = Vector3(10, 1, 10)
 
-[node name="OuterWestF" parent="Roads" instance=ExtResource("11_street_straight")]
+[node name="WestSouthEntrance" parent="Roads" instance=ExtResource("13_street_3way")]
 position = Vector3(-90, 0, 38)
-rotation = Vector3(0, 1.570796, 0)
+rotation = Vector3(0, 3.141593, 0)
 scale = Vector3(10, 1, 10)
 
 [node name="OuterWestG" parent="Roads" instance=ExtResource("11_street_straight")]
@@ -218,9 +220,8 @@ position = Vector3(90, 0, 18)
 rotation = Vector3(0, 1.570796, 0)
 scale = Vector3(10, 1, 10)
 
-[node name="OuterEastF" parent="Roads" instance=ExtResource("11_street_straight")]
+[node name="EastSouthEntrance" parent="Roads" instance=ExtResource("13_street_3way")]
 position = Vector3(90, 0, 38)
-rotation = Vector3(0, 1.570796, 0)
 scale = Vector3(10, 1, 10)
 
 [node name="OuterEastG" parent="Roads" instance=ExtResource("11_street_straight")]
@@ -264,7 +265,7 @@ scale = Vector3(10, 1, 10)
 position = Vector3(-50, 0, -22)
 scale = Vector3(10, 1, 10)
 
-[node name="MainWestC" parent="Roads" instance=ExtResource("11_street_straight")]
+[node name="NorthWestCrossing" parent="Roads" instance=ExtResource("14_street_4way")]
 position = Vector3(-30, 0, -22)
 scale = Vector3(10, 1, 10)
 
@@ -304,9 +305,8 @@ position = Vector3(30, 0, 18)
 rotation = Vector3(0, 1.570796, 0)
 scale = Vector3(10, 1, 10)
 
-[node name="MainSouthC" parent="Roads" instance=ExtResource("11_street_straight")]
+[node name="SouthEastCrossing" parent="Roads" instance=ExtResource("14_street_4way")]
 position = Vector3(30, 0, 38)
-rotation = Vector3(0, 1.570796, 0)
 scale = Vector3(10, 1, 10)
 
 [node name="MainSouthD" parent="Roads" instance=ExtResource("11_street_straight")]
@@ -319,10 +319,68 @@ position = Vector3(30, 0, 78)
 rotation = Vector3(0, 1.570796, 0)
 scale = Vector3(10, 1, 10)
 
+[node name="WestNorthA" parent="Roads" instance=ExtResource("11_street_straight")]
+position = Vector3(-30, 0, -62)
+rotation = Vector3(0, 1.570796, 0)
+scale = Vector3(10, 1, 10)
+
+[node name="WestNorthB" parent="Roads" instance=ExtResource("11_street_straight")]
+position = Vector3(-30, 0, -42)
+rotation = Vector3(0, 1.570796, 0)
+scale = Vector3(10, 1, 10)
+
+[node name="WestSouthA" parent="Roads" instance=ExtResource("11_street_straight")]
+position = Vector3(-30, 0, -2)
+rotation = Vector3(0, 1.570796, 0)
+scale = Vector3(10, 1, 10)
+
+[node name="WestSouthB" parent="Roads" instance=ExtResource("11_street_straight")]
+position = Vector3(-30, 0, 18)
+rotation = Vector3(0, 1.570796, 0)
+scale = Vector3(10, 1, 10)
+
+[node name="SouthWestCrossing" parent="Roads" instance=ExtResource("14_street_4way")]
+position = Vector3(-30, 0, 38)
+scale = Vector3(10, 1, 10)
+
+[node name="WestSouthC" parent="Roads" instance=ExtResource("11_street_straight")]
+position = Vector3(-30, 0, 58)
+rotation = Vector3(0, 1.570796, 0)
+scale = Vector3(10, 1, 10)
+
+[node name="WestSouthD" parent="Roads" instance=ExtResource("11_street_straight")]
+position = Vector3(-30, 0, 78)
+rotation = Vector3(0, 1.570796, 0)
+scale = Vector3(10, 1, 10)
+
+[node name="SouthWestA" parent="Roads" instance=ExtResource("11_street_straight")]
+position = Vector3(-70, 0, 38)
+scale = Vector3(10, 1, 10)
+
+[node name="SouthWestB" parent="Roads" instance=ExtResource("11_street_straight")]
+position = Vector3(-50, 0, 38)
+scale = Vector3(10, 1, 10)
+
+[node name="SouthWestC" parent="Roads" instance=ExtResource("11_street_straight")]
+position = Vector3(-10, 0, 38)
+scale = Vector3(10, 1, 10)
+
+[node name="SouthWestD" parent="Roads" instance=ExtResource("11_street_straight")]
+position = Vector3(10, 0, 38)
+scale = Vector3(10, 1, 10)
+
+[node name="SouthEastA" parent="Roads" instance=ExtResource("11_street_straight")]
+position = Vector3(50, 0, 38)
+scale = Vector3(10, 1, 10)
+
+[node name="SouthEastB" parent="Roads" instance=ExtResource("11_street_straight")]
+position = Vector3(70, 0, 38)
+scale = Vector3(10, 1, 10)
+
 [node name="Buildings" type="Node3D" parent="."]
 
 [node name="OneStoryNorthWest" type="StaticBody3D" parent="Buildings"]
-position = Vector3(-70, 0, -58)
+position = Vector3(-70, 0, -66)
 
 [node name="Model" parent="Buildings/OneStoryNorthWest" instance=ExtResource("2_building_a")]
 
@@ -331,7 +389,7 @@ position = Vector3(0, 3.01004, 0)
 shape = SubResource("OneStoryCollisionShape")
 
 [node name="GableRoofNorthWest" type="StaticBody3D" parent="Buildings"]
-position = Vector3(-52, 0, -58)
+position = Vector3(-50, 0, -66)
 
 [node name="Model" parent="Buildings/GableRoofNorthWest" instance=ExtResource("6_building_d")]
 
@@ -340,7 +398,7 @@ position = Vector3(0, 3.64421, 0)
 shape = SubResource("GableRoofCollisionShape")
 
 [node name="TwoStoryWideNorthWest" type="StaticBody3D" parent="Buildings"]
-position = Vector3(-28, 0, -58)
+position = Vector3(-70, 0, -44)
 
 [node name="Model" parent="Buildings/TwoStoryWideNorthWest" instance=ExtResource("3_building_b")]
 
@@ -349,7 +407,7 @@ position = Vector3(0, 4.9463, 0)
 shape = SubResource("TwoStoryWideCollisionShape")
 
 [node name="TwoStorySlimNorthWest" type="StaticBody3D" parent="Buildings"]
-position = Vector3(-70, 0, -40)
+position = Vector3(-50, 0, -44)
 
 [node name="Model" parent="Buildings/TwoStorySlimNorthWest" instance=ExtResource("7_building_e")]
 
@@ -358,7 +416,7 @@ position = Vector3(0, 4.963105, 0)
 shape = SubResource("TwoStorySlimCollisionShape")
 
 [node name="ThreeStorySmallNorthWest" type="StaticBody3D" parent="Buildings"]
-position = Vector3(-54, 0, -40)
+position = Vector3(-10, 0, -66)
 
 [node name="Model" parent="Buildings/ThreeStorySmallNorthWest" instance=ExtResource("4_building_c")]
 
@@ -367,7 +425,7 @@ position = Vector3(0, 6.92737, 0)
 shape = SubResource("ThreeStorySmallCollisionShape")
 
 [node name="TwoStoryNorthWest" type="StaticBody3D" parent="Buildings"]
-position = Vector3(-30, 0, -40)
+position = Vector3(10, 0, -66)
 
 [node name="Model" parent="Buildings/TwoStoryNorthWest" instance=ExtResource("8_building_f")]
 
@@ -376,7 +434,7 @@ position = Vector3(0, 4.9416, 0)
 shape = SubResource("TwoStoryCollisionShape")
 
 [node name="FourStoryNorthEast" type="StaticBody3D" parent="Buildings"]
-position = Vector3(52, 0, -58)
+position = Vector3(-10, 0, -44)
 rotation = Vector3(0, 1.570796, 0)
 
 [node name="Model" parent="Buildings/FourStoryNorthEast" instance=ExtResource("9_building_g")]
@@ -386,7 +444,7 @@ position = Vector3(0, 9.16531, 0)
 shape = SubResource("FourStoryCollisionShape")
 
 [node name="SixStoryNorthEast" type="StaticBody3D" parent="Buildings"]
-position = Vector3(70, 0, -58)
+position = Vector3(10, 0, -44)
 rotation = Vector3(0, 1.570796, 0)
 
 [node name="Model" parent="Buildings/SixStoryNorthEast" instance=ExtResource("10_building_h")]
@@ -396,7 +454,7 @@ position = Vector3(0, 14.04606, 0)
 shape = SubResource("SixStoryCollisionShape")
 
 [node name="OneStoryNorthEast" type="StaticBody3D" parent="Buildings"]
-position = Vector3(52, 0, -40)
+position = Vector3(50, 0, -66)
 rotation = Vector3(0, 1.570796, 0)
 
 [node name="Model" parent="Buildings/OneStoryNorthEast" instance=ExtResource("2_building_a")]
@@ -406,7 +464,7 @@ position = Vector3(0, 3.01004, 0)
 shape = SubResource("OneStoryCollisionShape")
 
 [node name="GableRoofNorthEast" type="StaticBody3D" parent="Buildings"]
-position = Vector3(70, 0, -40)
+position = Vector3(70, 0, -66)
 rotation = Vector3(0, 1.570796, 0)
 
 [node name="Model" parent="Buildings/GableRoofNorthEast" instance=ExtResource("6_building_d")]
@@ -416,7 +474,7 @@ position = Vector3(0, 3.64421, 0)
 shape = SubResource("GableRoofCollisionShape")
 
 [node name="TwoStoryWideSouthWest" type="StaticBody3D" parent="Buildings"]
-position = Vector3(-70, 0, 34)
+position = Vector3(50, 0, -44)
 
 [node name="Model" parent="Buildings/TwoStoryWideSouthWest" instance=ExtResource("3_building_b")]
 
@@ -425,7 +483,7 @@ position = Vector3(0, 4.9463, 0)
 shape = SubResource("TwoStoryWideCollisionShape")
 
 [node name="TwoStorySlimSouthWest" type="StaticBody3D" parent="Buildings"]
-position = Vector3(-52, 0, 34)
+position = Vector3(70, 0, -44)
 
 [node name="Model" parent="Buildings/TwoStorySlimSouthWest" instance=ExtResource("7_building_e")]
 
@@ -434,7 +492,7 @@ position = Vector3(0, 4.963105, 0)
 shape = SubResource("TwoStorySlimCollisionShape")
 
 [node name="ThreeStorySmallSouthWest" type="StaticBody3D" parent="Buildings"]
-position = Vector3(-34, 0, 34)
+position = Vector3(-70, 0, -6)
 
 [node name="Model" parent="Buildings/ThreeStorySmallSouthWest" instance=ExtResource("4_building_c")]
 
@@ -443,7 +501,7 @@ position = Vector3(0, 6.92737, 0)
 shape = SubResource("ThreeStorySmallCollisionShape")
 
 [node name="TwoStorySouthWest" type="StaticBody3D" parent="Buildings"]
-position = Vector3(-70, 0, 52)
+position = Vector3(-50, 0, -6)
 
 [node name="Model" parent="Buildings/TwoStorySouthWest" instance=ExtResource("8_building_f")]
 
@@ -452,7 +510,7 @@ position = Vector3(0, 4.9416, 0)
 shape = SubResource("TwoStoryCollisionShape")
 
 [node name="FourStorySouthWest" type="StaticBody3D" parent="Buildings"]
-position = Vector3(-52, 0, 52)
+position = Vector3(-70, 0, 22)
 
 [node name="Model" parent="Buildings/FourStorySouthWest" instance=ExtResource("9_building_g")]
 
@@ -461,7 +519,7 @@ position = Vector3(0, 9.16531, 0)
 shape = SubResource("FourStoryCollisionShape")
 
 [node name="SixStorySouthWest" type="StaticBody3D" parent="Buildings"]
-position = Vector3(-34, 0, 52)
+position = Vector3(-50, 0, 22)
 
 [node name="Model" parent="Buildings/SixStorySouthWest" instance=ExtResource("10_building_h")]
 
@@ -470,7 +528,7 @@ position = Vector3(0, 14.04606, 0)
 shape = SubResource("SixStoryCollisionShape")
 
 [node name="OneStorySouthEast" type="StaticBody3D" parent="Buildings"]
-position = Vector3(52, 0, 34)
+position = Vector3(50, 0, -6)
 rotation = Vector3(0, 1.570796, 0)
 
 [node name="Model" parent="Buildings/OneStorySouthEast" instance=ExtResource("2_building_a")]
@@ -480,7 +538,7 @@ position = Vector3(0, 3.01004, 0)
 shape = SubResource("OneStoryCollisionShape")
 
 [node name="GableRoofSouthEast" type="StaticBody3D" parent="Buildings"]
-position = Vector3(70, 0, 34)
+position = Vector3(70, 0, -6)
 rotation = Vector3(0, 1.570796, 0)
 
 [node name="Model" parent="Buildings/GableRoofSouthEast" instance=ExtResource("6_building_d")]
@@ -490,7 +548,7 @@ position = Vector3(0, 3.64421, 0)
 shape = SubResource("GableRoofCollisionShape")
 
 [node name="TwoStoryWideSouthEast" type="StaticBody3D" parent="Buildings"]
-position = Vector3(52, 0, 52)
+position = Vector3(50, 0, 18)
 rotation = Vector3(0, 1.570796, 0)
 
 [node name="Model" parent="Buildings/TwoStoryWideSouthEast" instance=ExtResource("3_building_b")]
@@ -500,7 +558,7 @@ position = Vector3(0, 4.9463, 0)
 shape = SubResource("TwoStoryWideCollisionShape")
 
 [node name="TwoStorySlimSouthEast" type="StaticBody3D" parent="Buildings"]
-position = Vector3(70, 0, 52)
+position = Vector3(70, 0, 18)
 rotation = Vector3(0, 1.570796, 0)
 
 [node name="Model" parent="Buildings/TwoStorySlimSouthEast" instance=ExtResource("7_building_e")]
@@ -510,7 +568,7 @@ position = Vector3(0, 4.963105, 0)
 shape = SubResource("TwoStorySlimCollisionShape")
 
 [node name="ThreeStorySmallSouthEast" type="StaticBody3D" parent="Buildings"]
-position = Vector3(52, 0, 70)
+position = Vector3(-70, 0, 54)
 rotation = Vector3(0, 1.570796, 0)
 
 [node name="Model" parent="Buildings/ThreeStorySmallSouthEast" instance=ExtResource("4_building_c")]
@@ -520,7 +578,7 @@ position = Vector3(0, 6.92737, 0)
 shape = SubResource("ThreeStorySmallCollisionShape")
 
 [node name="TwoStorySouthEast" type="StaticBody3D" parent="Buildings"]
-position = Vector3(70, 0, 70)
+position = Vector3(-50, 0, 54)
 rotation = Vector3(0, 1.570796, 0)
 
 [node name="Model" parent="Buildings/TwoStorySouthEast" instance=ExtResource("8_building_f")]
@@ -528,6 +586,100 @@ rotation = Vector3(0, 1.570796, 0)
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Buildings/TwoStorySouthEast"]
 position = Vector3(0, 4.9416, 0)
 shape = SubResource("TwoStoryCollisionShape")
+
+[node name="OneStorySouthWestInner" type="StaticBody3D" parent="Buildings"]
+position = Vector3(-70, 0, 78)
+
+[node name="Model" parent="Buildings/OneStorySouthWestInner" instance=ExtResource("2_building_a")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Buildings/OneStorySouthWestInner"]
+position = Vector3(0, 3.01004, 0)
+shape = SubResource("OneStoryCollisionShape")
+
+[node name="GableRoofSouthWestInner" type="StaticBody3D" parent="Buildings"]
+position = Vector3(-50, 0, 78)
+
+[node name="Model" parent="Buildings/GableRoofSouthWestInner" instance=ExtResource("6_building_d")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Buildings/GableRoofSouthWestInner"]
+position = Vector3(0, 3.64421, 0)
+shape = SubResource("GableRoofCollisionShape")
+
+[node name="TwoStoryWideSouthMiddle" type="StaticBody3D" parent="Buildings"]
+position = Vector3(-10, 0, 54)
+
+[node name="Model" parent="Buildings/TwoStoryWideSouthMiddle" instance=ExtResource("3_building_b")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Buildings/TwoStoryWideSouthMiddle"]
+position = Vector3(0, 4.9463, 0)
+shape = SubResource("TwoStoryWideCollisionShape")
+
+[node name="TwoStorySlimSouthMiddle" type="StaticBody3D" parent="Buildings"]
+position = Vector3(10, 0, 54)
+
+[node name="Model" parent="Buildings/TwoStorySlimSouthMiddle" instance=ExtResource("7_building_e")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Buildings/TwoStorySlimSouthMiddle"]
+position = Vector3(0, 4.963105, 0)
+shape = SubResource("TwoStorySlimCollisionShape")
+
+[node name="ThreeStorySmallSouthMiddle" type="StaticBody3D" parent="Buildings"]
+position = Vector3(-10, 0, 78)
+
+[node name="Model" parent="Buildings/ThreeStorySmallSouthMiddle" instance=ExtResource("4_building_c")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Buildings/ThreeStorySmallSouthMiddle"]
+position = Vector3(0, 6.92737, 0)
+shape = SubResource("ThreeStorySmallCollisionShape")
+
+[node name="TwoStorySouthMiddle" type="StaticBody3D" parent="Buildings"]
+position = Vector3(10, 0, 78)
+
+[node name="Model" parent="Buildings/TwoStorySouthMiddle" instance=ExtResource("8_building_f")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Buildings/TwoStorySouthMiddle"]
+position = Vector3(0, 4.9416, 0)
+shape = SubResource("TwoStoryCollisionShape")
+
+[node name="FourStorySouthEastInner" type="StaticBody3D" parent="Buildings"]
+position = Vector3(50, 0, 54)
+rotation = Vector3(0, 1.570796, 0)
+
+[node name="Model" parent="Buildings/FourStorySouthEastInner" instance=ExtResource("9_building_g")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Buildings/FourStorySouthEastInner"]
+position = Vector3(0, 9.16531, 0)
+shape = SubResource("FourStoryCollisionShape")
+
+[node name="SixStorySouthEastInner" type="StaticBody3D" parent="Buildings"]
+position = Vector3(70, 0, 54)
+rotation = Vector3(0, 1.570796, 0)
+
+[node name="Model" parent="Buildings/SixStorySouthEastInner" instance=ExtResource("10_building_h")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Buildings/SixStorySouthEastInner"]
+position = Vector3(0, 14.04606, 0)
+shape = SubResource("SixStoryCollisionShape")
+
+[node name="OneStorySouthEastInner" type="StaticBody3D" parent="Buildings"]
+position = Vector3(50, 0, 78)
+rotation = Vector3(0, 1.570796, 0)
+
+[node name="Model" parent="Buildings/OneStorySouthEastInner" instance=ExtResource("2_building_a")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Buildings/OneStorySouthEastInner"]
+position = Vector3(0, 3.01004, 0)
+shape = SubResource("OneStoryCollisionShape")
+
+[node name="GableRoofSouthEastInner" type="StaticBody3D" parent="Buildings"]
+position = Vector3(70, 0, 78)
+rotation = Vector3(0, 1.570796, 0)
+
+[node name="Model" parent="Buildings/GableRoofSouthEastInner" instance=ExtResource("6_building_d")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Buildings/GableRoofSouthEastInner"]
+position = Vector3(0, 3.64421, 0)
+shape = SubResource("GableRoofCollisionShape")
 
 [node name="Lighting" type="Node3D" parent="."]
 

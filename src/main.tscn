@@ -78,147 +78,147 @@ scale = Vector3(10, 1, 10)
 
 [node name="OuterNorthA" parent="Roads" instance=ExtResource("11_street_straight")]
 position = Vector3(-70, 0, -82)
-rotation = Vector3(0, 1.570796, 0)
 scale = Vector3(10, 1, 10)
 
 [node name="OuterNorthB" parent="Roads" instance=ExtResource("11_street_straight")]
 position = Vector3(-50, 0, -82)
-rotation = Vector3(0, 1.570796, 0)
 scale = Vector3(10, 1, 10)
 
 [node name="OuterNorthC" parent="Roads" instance=ExtResource("11_street_straight")]
 position = Vector3(-30, 0, -82)
-rotation = Vector3(0, 1.570796, 0)
 scale = Vector3(10, 1, 10)
 
 [node name="OuterNorthD" parent="Roads" instance=ExtResource("11_street_straight")]
 position = Vector3(-10, 0, -82)
-rotation = Vector3(0, 1.570796, 0)
 scale = Vector3(10, 1, 10)
 
 [node name="OuterNorthE" parent="Roads" instance=ExtResource("11_street_straight")]
 position = Vector3(10, 0, -82)
-rotation = Vector3(0, 1.570796, 0)
 scale = Vector3(10, 1, 10)
 
 [node name="OuterNorthG" parent="Roads" instance=ExtResource("11_street_straight")]
 position = Vector3(50, 0, -82)
-rotation = Vector3(0, 1.570796, 0)
 scale = Vector3(10, 1, 10)
 
 [node name="OuterNorthH" parent="Roads" instance=ExtResource("11_street_straight")]
 position = Vector3(70, 0, -82)
-rotation = Vector3(0, 1.570796, 0)
 scale = Vector3(10, 1, 10)
 
 [node name="OuterSouthA" parent="Roads" instance=ExtResource("11_street_straight")]
 position = Vector3(-70, 0, 98)
-rotation = Vector3(0, 1.570796, 0)
 scale = Vector3(10, 1, 10)
 
 [node name="OuterSouthB" parent="Roads" instance=ExtResource("11_street_straight")]
 position = Vector3(-50, 0, 98)
-rotation = Vector3(0, 1.570796, 0)
 scale = Vector3(10, 1, 10)
 
 [node name="OuterSouthC" parent="Roads" instance=ExtResource("11_street_straight")]
 position = Vector3(-30, 0, 98)
-rotation = Vector3(0, 1.570796, 0)
 scale = Vector3(10, 1, 10)
 
 [node name="OuterSouthD" parent="Roads" instance=ExtResource("11_street_straight")]
 position = Vector3(-10, 0, 98)
-rotation = Vector3(0, 1.570796, 0)
 scale = Vector3(10, 1, 10)
 
 [node name="OuterSouthE" parent="Roads" instance=ExtResource("11_street_straight")]
 position = Vector3(10, 0, 98)
-rotation = Vector3(0, 1.570796, 0)
 scale = Vector3(10, 1, 10)
 
 [node name="OuterSouthG" parent="Roads" instance=ExtResource("11_street_straight")]
 position = Vector3(50, 0, 98)
-rotation = Vector3(0, 1.570796, 0)
 scale = Vector3(10, 1, 10)
 
 [node name="OuterSouthH" parent="Roads" instance=ExtResource("11_street_straight")]
 position = Vector3(70, 0, 98)
-rotation = Vector3(0, 1.570796, 0)
 scale = Vector3(10, 1, 10)
 
 [node name="OuterWestA" parent="Roads" instance=ExtResource("11_street_straight")]
 position = Vector3(-90, 0, -62)
+rotation = Vector3(0, 1.570796, 0)
 scale = Vector3(10, 1, 10)
 
 [node name="OuterWestB" parent="Roads" instance=ExtResource("11_street_straight")]
 position = Vector3(-90, 0, -42)
+rotation = Vector3(0, 1.570796, 0)
 scale = Vector3(10, 1, 10)
 
 [node name="OuterWestD" parent="Roads" instance=ExtResource("11_street_straight")]
 position = Vector3(-90, 0, -2)
+rotation = Vector3(0, 1.570796, 0)
 scale = Vector3(10, 1, 10)
 
 [node name="OuterWestE" parent="Roads" instance=ExtResource("11_street_straight")]
 position = Vector3(-90, 0, 18)
+rotation = Vector3(0, 1.570796, 0)
 scale = Vector3(10, 1, 10)
 
 [node name="OuterWestF" parent="Roads" instance=ExtResource("11_street_straight")]
 position = Vector3(-90, 0, 38)
+rotation = Vector3(0, 1.570796, 0)
 scale = Vector3(10, 1, 10)
 
 [node name="OuterWestG" parent="Roads" instance=ExtResource("11_street_straight")]
 position = Vector3(-90, 0, 58)
+rotation = Vector3(0, 1.570796, 0)
 scale = Vector3(10, 1, 10)
 
 [node name="OuterWestH" parent="Roads" instance=ExtResource("11_street_straight")]
 position = Vector3(-90, 0, 78)
+rotation = Vector3(0, 1.570796, 0)
 scale = Vector3(10, 1, 10)
 
 [node name="OuterEastA" parent="Roads" instance=ExtResource("11_street_straight")]
 position = Vector3(90, 0, -62)
+rotation = Vector3(0, 1.570796, 0)
 scale = Vector3(10, 1, 10)
 
 [node name="OuterEastB" parent="Roads" instance=ExtResource("11_street_straight")]
 position = Vector3(90, 0, -42)
+rotation = Vector3(0, 1.570796, 0)
 scale = Vector3(10, 1, 10)
 
 [node name="OuterEastD" parent="Roads" instance=ExtResource("11_street_straight")]
 position = Vector3(90, 0, -2)
+rotation = Vector3(0, 1.570796, 0)
 scale = Vector3(10, 1, 10)
 
 [node name="OuterEastE" parent="Roads" instance=ExtResource("11_street_straight")]
 position = Vector3(90, 0, 18)
+rotation = Vector3(0, 1.570796, 0)
 scale = Vector3(10, 1, 10)
 
 [node name="OuterEastF" parent="Roads" instance=ExtResource("11_street_straight")]
 position = Vector3(90, 0, 38)
+rotation = Vector3(0, 1.570796, 0)
 scale = Vector3(10, 1, 10)
 
 [node name="OuterEastG" parent="Roads" instance=ExtResource("11_street_straight")]
 position = Vector3(90, 0, 58)
+rotation = Vector3(0, 1.570796, 0)
 scale = Vector3(10, 1, 10)
 
 [node name="OuterEastH" parent="Roads" instance=ExtResource("11_street_straight")]
 position = Vector3(90, 0, 78)
+rotation = Vector3(0, 1.570796, 0)
 scale = Vector3(10, 1, 10)
 
 [node name="WestEntrance" parent="Roads" instance=ExtResource("13_street_3way")]
 position = Vector3(-90, 0, -22)
-rotation = Vector3(0, 1.570796, 0)
+rotation = Vector3(0, 3.141593, 0)
 scale = Vector3(10, 1, 10)
 
 [node name="EastEntrance" parent="Roads" instance=ExtResource("13_street_3way")]
 position = Vector3(90, 0, -22)
-rotation = Vector3(0, -1.570796, 0)
 scale = Vector3(10, 1, 10)
 
 [node name="NorthEntrance" parent="Roads" instance=ExtResource("13_street_3way")]
 position = Vector3(30, 0, -82)
-rotation = Vector3(0, 3.141593, 0)
+rotation = Vector3(0, 1.570796, 0)
 scale = Vector3(10, 1, 10)
 
 [node name="SouthEntrance" parent="Roads" instance=ExtResource("13_street_3way")]
 position = Vector3(30, 0, 98)
+rotation = Vector3(0, -1.570796, 0)
 scale = Vector3(10, 1, 10)
 
 [node name="MainCrossing" parent="Roads" instance=ExtResource("14_street_4way")]
@@ -227,65 +227,65 @@ scale = Vector3(10, 1, 10)
 
 [node name="MainWestA" parent="Roads" instance=ExtResource("11_street_straight")]
 position = Vector3(-70, 0, -22)
-rotation = Vector3(0, 1.570796, 0)
 scale = Vector3(10, 1, 10)
 
 [node name="MainWestB" parent="Roads" instance=ExtResource("11_street_straight")]
 position = Vector3(-50, 0, -22)
-rotation = Vector3(0, 1.570796, 0)
 scale = Vector3(10, 1, 10)
 
 [node name="MainWestC" parent="Roads" instance=ExtResource("11_street_straight")]
 position = Vector3(-30, 0, -22)
-rotation = Vector3(0, 1.570796, 0)
 scale = Vector3(10, 1, 10)
 
 [node name="MainWestD" parent="Roads" instance=ExtResource("11_street_straight")]
 position = Vector3(-10, 0, -22)
-rotation = Vector3(0, 1.570796, 0)
 scale = Vector3(10, 1, 10)
 
 [node name="MainWestE" parent="Roads" instance=ExtResource("11_street_straight")]
 position = Vector3(10, 0, -22)
-rotation = Vector3(0, 1.570796, 0)
 scale = Vector3(10, 1, 10)
 
 [node name="MainEastA" parent="Roads" instance=ExtResource("11_street_straight")]
 position = Vector3(50, 0, -22)
-rotation = Vector3(0, 1.570796, 0)
 scale = Vector3(10, 1, 10)
 
 [node name="MainEastB" parent="Roads" instance=ExtResource("11_street_straight")]
 position = Vector3(70, 0, -22)
-rotation = Vector3(0, 1.570796, 0)
 scale = Vector3(10, 1, 10)
 
 [node name="MainNorthA" parent="Roads" instance=ExtResource("11_street_straight")]
 position = Vector3(30, 0, -62)
+rotation = Vector3(0, 1.570796, 0)
 scale = Vector3(10, 1, 10)
 
 [node name="MainNorthB" parent="Roads" instance=ExtResource("11_street_straight")]
 position = Vector3(30, 0, -42)
+rotation = Vector3(0, 1.570796, 0)
 scale = Vector3(10, 1, 10)
 
 [node name="MainSouthA" parent="Roads" instance=ExtResource("11_street_straight")]
 position = Vector3(30, 0, -2)
+rotation = Vector3(0, 1.570796, 0)
 scale = Vector3(10, 1, 10)
 
 [node name="MainSouthB" parent="Roads" instance=ExtResource("11_street_straight")]
 position = Vector3(30, 0, 18)
+rotation = Vector3(0, 1.570796, 0)
 scale = Vector3(10, 1, 10)
 
 [node name="MainSouthC" parent="Roads" instance=ExtResource("11_street_straight")]
 position = Vector3(30, 0, 38)
+rotation = Vector3(0, 1.570796, 0)
 scale = Vector3(10, 1, 10)
 
 [node name="MainSouthD" parent="Roads" instance=ExtResource("11_street_straight")]
 position = Vector3(30, 0, 58)
+rotation = Vector3(0, 1.570796, 0)
 scale = Vector3(10, 1, 10)
 
 [node name="MainSouthE" parent="Roads" instance=ExtResource("11_street_straight")]
 position = Vector3(30, 0, 78)
+rotation = Vector3(0, 1.570796, 0)
 scale = Vector3(10, 1, 10)
 
 [node name="Buildings" type="Node3D" parent="."]

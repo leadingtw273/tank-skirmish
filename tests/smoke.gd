@@ -36,6 +36,22 @@ const BUILDING_MODELS := {
 	"SixStorySouthEastInner": "6story-stack",
 	"OneStorySouthEastInner": "1story",
 	"GableRoofSouthEastInner": "1story-gable-roof",
+	"OneStoryNorthWestWest": "1story",
+	"GableRoofNorthWestEast": "1story-gable-roof",
+	"OneStoryNorthMiddleWest": "1story",
+	"GableRoofNorthMiddleEast": "1story-gable-roof",
+	"OneStoryNorthEastWest": "1story",
+	"GableRoofNorthEastEast": "1story-gable-roof",
+	"OneStoryMiddleWestWest": "1story",
+	"GableRoofMiddleWestEast": "1story-gable-roof",
+	"OneStoryMiddleEastWest": "1story",
+	"GableRoofMiddleEastEast": "1story-gable-roof",
+	"OneStorySouthWestWest": "1story",
+	"GableRoofSouthWestEast": "1story-gable-roof",
+	"OneStorySouthMiddleWest": "1story",
+	"GableRoofSouthMiddleEast": "1story-gable-roof",
+	"OneStorySouthEastWest": "1story",
+	"GableRoofSouthEastEast": "1story-gable-roof",
 }
 
 const GRID_ROAD_TILES := {
@@ -61,17 +77,18 @@ const GRID_ROAD_TILES := {
 	"SouthEastB": {"scene": "street_straight.glb", "position": Vector3(70, 0, 38), "rotation_y": 0.0},
 }
 
-const BUILDING_X_COLUMNS := [-70.0, -50.0, -10.0, 10.0, 50.0, 70.0]
-const BUILDING_Z_ROWS := [-66.0, -44.0, -6.0, 18.0, 22.0, 54.0, 78.0]
+const BUILDING_X_COLUMNS := [-74.0, -70.0, -50.0, -46.0, -14.0, -10.0, 10.0, 14.0, 46.0, 50.0, 70.0, 74.0]
+const BUILDING_Z_ROWS := [-66.0, -52.0, -38.0, -6.0, 8.0, 22.0, 54.0, 68.0, 82.0]
+const MIN_ROAD_SETBACK := 1.0
 const BLOCK_BUILDING_COUNTS := {
-	"north_west": 4,
-	"north_middle": 4,
-	"north_east": 4,
-	"middle_west": 4,
-	"middle_east": 4,
-	"south_west": 4,
-	"south_middle": 4,
-	"south_east": 4,
+	"north_west": 6,
+	"north_middle": 6,
+	"north_east": 6,
+	"middle_west": 6,
+	"middle_east": 6,
+	"south_west": 6,
+	"south_middle": 6,
+	"south_east": 6,
 }
 
 
@@ -155,8 +172,10 @@ func _validate_grid_layout(instance: Node) -> bool:
 			return false
 
 	var block_counts := {}
+	var block_edge_counts := {}
 	for block_name: String in BLOCK_BUILDING_COUNTS:
 		block_counts[block_name] = 0
+		block_edge_counts[block_name] = {"north": 0, "south": 0, "west": 0, "east": 0}
 	for building in instance.get_node("Buildings").get_children():
 		var static_building := building as StaticBody3D
 		if static_building == null:
@@ -173,11 +192,19 @@ func _validate_grid_layout(instance: Node) -> bool:
 			push_error("The tank spawn block must remain clear")
 			return false
 		block_counts[block_name] += 1
+		for edge: String in _block_edges_for(static_building.position):
+			block_edge_counts[block_name][edge] += 1
 
 	for block_name: String in BLOCK_BUILDING_COUNTS:
 		if block_counts[block_name] != BLOCK_BUILDING_COUNTS[block_name]:
-			push_error("Block %s does not contain four aligned buildings" % block_name)
+			push_error("Block %s does not contain six aligned buildings" % block_name)
 			return false
+		for edge: String in ["north", "south", "west", "east"]:
+			if block_edge_counts[block_name][edge] == 0:
+				push_error("Block %s is missing buildings along its %s street edge" % [block_name, edge])
+				return false
+	if not _validate_building_footprints(instance.get_node("Buildings")):
+		return false
 	return true
 
 
@@ -195,12 +222,55 @@ func _clears_road_axes(building: StaticBody3D) -> bool:
 	if is_equal_approx(building.rotation.y, PI / 2.0):
 		footprint = Vector3(footprint.z, footprint.y, footprint.x)
 	for road_x: float in [-90.0, -30.0, 30.0, 90.0]:
-		if absf(building.position.x - road_x) <= 10.0 + footprint.x / 2.0:
+		if absf(building.position.x - road_x) - 10.0 - footprint.x / 2.0 < MIN_ROAD_SETBACK:
 			return false
 	for road_z: float in [-82.0, -22.0, 38.0, 98.0]:
-		if absf(building.position.z - road_z) <= 10.0 + footprint.z / 2.0:
+		if absf(building.position.z - road_z) - 10.0 - footprint.z / 2.0 < MIN_ROAD_SETBACK:
 			return false
 	return true
+
+
+func _block_edges_for(position: Vector3) -> Array[String]:
+	var edges: Array[String] = []
+	var x_near_west_road := is_equal_approx(fposmod(position.x + 14.0, 60.0), 0.0)
+	var x_near_east_road := is_equal_approx(fposmod(position.x - 14.0, 60.0), 0.0)
+	var z_near_north_road := is_equal_approx(fposmod(position.z + 66.0, 60.0), 0.0)
+	var z_near_south_road := is_equal_approx(fposmod(position.z + 38.0, 60.0), 0.0)
+	if x_near_west_road:
+		edges.append("west")
+	if x_near_east_road:
+		edges.append("east")
+	if z_near_north_road:
+		edges.append("north")
+	if z_near_south_road:
+		edges.append("south")
+	return edges
+
+
+func _validate_building_footprints(buildings: Node) -> bool:
+	var placed_buildings := buildings.get_children()
+	for first_index in range(placed_buildings.size()):
+		var first := placed_buildings[first_index] as StaticBody3D
+		for second_index in range(first_index + 1, placed_buildings.size()):
+			var second := placed_buildings[second_index] as StaticBody3D
+			if _footprints_overlap(first, second):
+				push_error("Building footprints overlap: %s and %s" % [first.name, second.name])
+				return false
+	return true
+
+
+func _footprints_overlap(first: StaticBody3D, second: StaticBody3D) -> bool:
+	var first_footprint := _footprint_for(first)
+	var second_footprint := _footprint_for(second)
+	return absf(first.position.x - second.position.x) < (first_footprint.x + second_footprint.x) / 2.0 and absf(first.position.z - second.position.z) < (first_footprint.z + second_footprint.z) / 2.0
+
+
+func _footprint_for(building: StaticBody3D) -> Vector3:
+	var shape := (building.get_node("CollisionShape3D") as CollisionShape3D).shape as BoxShape3D
+	var footprint := shape.size
+	if is_equal_approx(building.rotation.y, PI / 2.0):
+		footprint = Vector3(footprint.z, footprint.y, footprint.x)
+	return footprint
 
 
 func _town_block_for(position: Vector3) -> String:

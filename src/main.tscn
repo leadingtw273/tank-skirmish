@@ -1,9 +1,10 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene load_steps=9 format=3]
 
 [ext_resource type="PackedScene" path="res://assets/models/tank/tank2.glb" id="1_tank"]
 [ext_resource type="PackedScene" path="res://assets/models/buildings/1story.glb" id="2_building_a"]
 [ext_resource type="PackedScene" path="res://assets/models/buildings/2story-wide.glb" id="3_building_b"]
 [ext_resource type="PackedScene" path="res://assets/models/buildings/3story-small.glb" id="4_building_c"]
+[ext_resource type="Script" path="res://src/tank_controller.gd" id="5_controller"]
 
 [sub_resource type="StandardMaterial3D" id="GroundMaterial"]
 albedo_color = Color(0.42, 0.26, 0.12, 1)
@@ -23,6 +24,7 @@ reflected_light_source = 2
 tonemap_mode = 2
 
 [node name="TankSkirmish" type="Node3D"]
+script = ExtResource("5_controller")
 
 [node name="CameraRig" type="Node3D" parent="."]
 
@@ -35,9 +37,9 @@ current = true
 
 [node name="Tank" type="Node3D" parent="."]
 position = Vector3(0, 0, 8)
+rotation = Vector3(0, -0.35, 0)
 
 [node name="Tank2" parent="Tank" instance=ExtResource("1_tank")]
-rotation = Vector3(0, -0.35, 0)
 
 [node name="Ground" type="MeshInstance3D" parent="."]
 position = Vector3(0, -0.1, 8)

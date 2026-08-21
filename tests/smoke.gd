@@ -4,16 +4,28 @@ const MAIN_SCENE := "res://src/main.tscn"
 const CONVERSION_MANIFEST := "res://docs/assets/conversion-manifest.json"
 const TANK_VISUAL_SCALE := 1.965
 const BUILDING_MODELS := {
-	"OneStoryWest": "1story",
+	"OneStoryNorthWest": "1story",
 	"GableRoofNorthWest": "1story-gable-roof",
 	"TwoStoryWideNorthWest": "2story-wide",
+	"TwoStorySlimNorthWest": "2story-slim",
+	"ThreeStorySmallNorthWest": "3story-small",
+	"TwoStoryNorthWest": "2story",
+	"FourStoryNorthEast": "4story",
+	"SixStoryNorthEast": "6story-stack",
+	"OneStoryNorthEast": "1story",
+	"GableRoofNorthEast": "1story-gable-roof",
+	"TwoStoryWideSouthWest": "2story-wide",
 	"TwoStorySlimSouthWest": "2story-slim",
 	"ThreeStorySmallSouthWest": "3story-small",
-	"TwoStoryEast": "2story",
-	"FourStoryEast": "4story",
-	"SixStorySouthEast": "6story-stack",
+	"TwoStorySouthWest": "2story",
+	"FourStorySouthWest": "4story",
+	"SixStorySouthWest": "6story-stack",
 	"OneStorySouthEast": "1story",
-	"GableRoofSouthWest": "1story-gable-roof",
+	"GableRoofSouthEast": "1story-gable-roof",
+	"TwoStoryWideSouthEast": "2story-wide",
+	"TwoStorySlimSouthEast": "2story-slim",
+	"ThreeStorySmallSouthEast": "3story-small",
+	"TwoStorySouthEast": "2story",
 }
 
 
@@ -63,6 +75,13 @@ func _validate_collision_layout(instance: Node) -> bool:
 		if not _validate_box_collision(building, manifest[BUILDING_MODELS[building_name]]):
 			push_error("Building %s collision shape is missing, disabled, or incorrectly sized" % building_name)
 			return false
+		if not is_equal_approx(building.rotation.y, 0.0) and not is_equal_approx(building.rotation.y, PI / 2.0):
+			push_error("Building %s must use an orthogonal rotation" % building_name)
+			return false
+
+	if instance.get_node("Buildings").get_child_count() != BUILDING_MODELS.size():
+		push_error("Building count does not match the approved town layout")
+		return false
 
 	return true
 

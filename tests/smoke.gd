@@ -2,7 +2,7 @@ extends SceneTree
 
 const MAIN_SCENE := "res://src/main.tscn"
 const CONVERSION_MANIFEST := "res://docs/assets/conversion-manifest.json"
-const TANK_VISUAL_SCALE := 1.965
+const TANK_VISUAL_SCALE := 1.31
 const BUILDING_MODELS := {
 	"OneStoryNorthWest": "1story",
 	"GableRoofNorthWest": "1story-gable-roof",
@@ -129,7 +129,7 @@ func _validate_turret_aiming(instance: Node) -> bool:
 	if tank == null:
 		push_error("Tank must exist before turret aiming can be validated")
 		return false
-	if not is_equal_approx(tank.turret_turn_speed, 4.0):
+	if not is_equal_approx(tank.turret_turn_speed, 2.666667):
 		push_error("Tank turret turn speed does not match the approved value")
 		return false
 
@@ -178,7 +178,7 @@ func _validate_collision_layout(instance: Node) -> bool:
 	if tank == null:
 		push_error("Tank must be a CharacterBody3D")
 		return false
-	if not is_equal_approx(tank.movement_speed, 15.0) or not is_equal_approx(tank.turn_speed, 1.8):
+	if not is_equal_approx(tank.movement_speed, 15.0) or not is_equal_approx(tank.turn_speed, 1.2):
 		push_error("Tank movement exports do not match the approved values")
 		return false
 	if not _validate_box_collision(tank, manifest["tank2"] * TANK_VISUAL_SCALE):

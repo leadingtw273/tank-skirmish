@@ -33,7 +33,7 @@ reflected_light_source = 2
 tonemap_mode = 2
 
 [sub_resource type="BoxShape3D" id="TankCollisionShape"]
-size = Vector3(10.4215347, 2.7237653, 5.9495353)
+size = Vector3(6.9476898, 1.8158435, 3.9663569)
 
 [sub_resource type="BoxShape3D" id="OneStoryCollisionShape"]
 size = Vector3(7.75498, 6.02008, 7.82869)
@@ -76,10 +76,10 @@ rotation = Vector3(0, -0.35, 0)
 script = ExtResource("5_controller")
 
 [node name="Tank2" parent="Tank" instance=ExtResource("1_tank")]
-scale = Vector3(1.31, 1.31, 1.31)
+scale = Vector3(0.8733333, 0.8733333, 0.8733333)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Tank"]
-position = Vector3(0, 1.3618827, 0)
+position = Vector3(0, 0.9079218, 0)
 shape = SubResource("TankCollisionShape")
 
 [node name="Ground" type="MeshInstance3D" parent="."]

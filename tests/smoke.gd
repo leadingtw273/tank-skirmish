@@ -2,7 +2,7 @@ extends SceneTree
 
 const MAIN_SCENE := "res://src/main.tscn"
 const CONVERSION_MANIFEST := "res://docs/assets/conversion-manifest.json"
-const TANK_VISUAL_SCALE := 0.8733333
+const TANK_VISUAL_SCALE := 1.7466666
 const BUILDING_MODELS := {
 	"OneStoryNorthWest": "1story",
 	"GableRoofNorthWest": "1story-gable-roof",

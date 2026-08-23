@@ -5,7 +5,7 @@ extends CharacterBody3D
 @export var turn_speed := 1.8
 
 @export_category("Tank Turret")
-@export var turret_turn_speed := 6.0
+@export var turret_turn_speed := 4.0
 
 const MODEL_FORWARD_LOCAL_AXIS := Vector3.LEFT
 const TURRET_PIVOT_NAME := "TurretPivot"

@@ -106,6 +106,13 @@ func _init() -> void:
 		return
 
 	root.add_child(instance)
+	call_deferred("_validate_instance", instance)
+
+
+func _validate_instance(instance: Node) -> void:
+	if not _validate_turret_aiming(instance):
+		quit(1)
+		return
 	if not _validate_collision_layout(instance):
 		quit(1)
 		return
@@ -115,6 +122,51 @@ func _init() -> void:
 
 	print("Tank Skirmish smoke validation passed.")
 	quit(0)
+
+
+func _validate_turret_aiming(instance: Node) -> bool:
+	var tank := instance.get_node_or_null("Tank") as CharacterBody3D
+	if tank == null:
+		push_error("Tank must exist before turret aiming can be validated")
+		return false
+	if not is_equal_approx(tank.turret_turn_speed, 6.0):
+		push_error("Tank turret turn speed does not match the approved value")
+		return false
+
+	var scale_root := tank.get_node_or_null("Tank2/AgentTeamScaleRoot") as Node3D
+	var turret_pivot := scale_root.get_node_or_null("TurretPivot") as Node3D if scale_root != null else null
+	var turret := turret_pivot.get_node_or_null("Tank_Turret") as MeshInstance3D if turret_pivot != null else null
+	var gun := turret_pivot.get_node_or_null("Tank_Gun") as MeshInstance3D if turret_pivot != null else null
+	if turret_pivot == null or turret == null or gun == null:
+		push_error("Tank gun and turret must share a runtime TurretPivot")
+		return false
+	if turret.get_parent() != turret_pivot or gun.get_parent() != turret_pivot:
+		push_error("Tank gun and turret must remain attached to the same runtime pivot")
+		return false
+
+	var chassis_position := tank.global_position
+	var chassis_rotation := tank.global_rotation
+	var plus_z_target := turret_pivot.global_position + Vector3.BACK * 20.0
+	tank._aim_turret_at(plus_z_target, 10.0)
+	var muzzle_forward := -turret_pivot.global_transform.basis.x.normalized()
+	if muzzle_forward.dot(Vector3.BACK) < 0.999:
+		push_error("Tank local -X muzzle axis must rotate toward a +Z target")
+		return false
+	if not tank.global_position.is_equal_approx(chassis_position) or not tank.global_rotation.is_equal_approx(chassis_rotation):
+		push_error("Turret aiming must not move or rotate the tank chassis")
+		return false
+
+	var held_yaw := turret_pivot.global_rotation.y
+	tank._aim_turret_at(turret_pivot.global_position, 1.0)
+	if not is_equal_approx(turret_pivot.global_rotation.y, held_yaw) or is_nan(turret_pivot.global_rotation.y):
+		push_error("A near turret target must preserve the current yaw")
+		return false
+	var aim_plane := Plane(Vector3.UP, turret_pivot.global_position.y)
+	if aim_plane.intersects_ray(turret_pivot.global_position, Vector3.RIGHT) != null:
+		push_error("A ray parallel to the turret-height plane must not produce an aim target")
+		return false
+
+	return true
 
 
 func _validate_collision_layout(instance: Node) -> bool:

@@ -129,7 +129,7 @@ func _validate_turret_aiming(instance: Node) -> bool:
 	if tank == null:
 		push_error("Tank must exist before turret aiming can be validated")
 		return false
-	if not is_equal_approx(tank.turret_turn_speed, 6.0):
+	if not is_equal_approx(tank.turret_turn_speed, 4.0):
 		push_error("Tank turret turn speed does not match the approved value")
 		return false
 

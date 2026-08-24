@@ -45,6 +45,7 @@ const CAMERA_MAX_SIZE := 100.0
 @onready var tank_scale_root: Node3D = $Tank2/AgentTeamScaleRoot
 @onready var tank_turret: MeshInstance3D = $Tank2/AgentTeamScaleRoot/Tank_Turret
 @onready var tank_gun: MeshInstance3D = $Tank2/AgentTeamScaleRoot/Tank_Gun
+@onready var tank_collision: CollisionShape3D = $CollisionShape3D
 @onready var projectile_container: Node3D = $"../Projectiles"
 
 var camera_offset := Vector3.ZERO
@@ -276,14 +277,38 @@ func _set_aim_line_segment(line: MeshInstance3D, start: Vector3, end: Vector3) -
 	line.visible = true
 
 
-func _set_aim_line_path(line: MeshInstance3D, origin: Vector3, end: Vector3) -> void:
+func _set_aim_line_path(
+	line: MeshInstance3D,
+	origin: Vector3,
+	end: Vector3,
+	hidden_distance := AIM_LINE_NEAR_TANK_HIDDEN_DISTANCE,
+) -> void:
 	var path := end - origin
 	var length := path.length()
-	if length <= AIM_LINE_NEAR_TANK_HIDDEN_DISTANCE:
+	var safe_hidden_distance := maxf(hidden_distance, 0.0)
+	if length <= safe_hidden_distance:
 		line.visible = false
 		return
-	var visible_start := origin + path / length * AIM_LINE_NEAR_TANK_HIDDEN_DISTANCE
+	var visible_start := origin + path / length * safe_hidden_distance
 	_set_aim_line_segment(line, visible_start, end)
+
+
+func _tank_aim_line_clearance_distance(origin: Vector3) -> float:
+	var collision_box := tank_collision.shape as BoxShape3D
+	if collision_box == null:
+		return origin.distance_to(_muzzle_global_position()) + AIM_LINE_NEAR_TANK_HIDDEN_DISTANCE
+	var half_size := collision_box.size * 0.5
+	var farthest_corner_distance := 0.0
+	for x_sign in [-1.0, 1.0]:
+		for y_sign in [-1.0, 1.0]:
+			for z_sign in [-1.0, 1.0]:
+				var corner := tank_collision.global_transform * Vector3(
+					half_size.x * x_sign,
+					half_size.y * y_sign,
+					half_size.z * z_sign,
+				)
+				farthest_corner_distance = maxf(farthest_corner_distance, origin.distance_to(corner))
+	return farthest_corner_distance + AIM_LINE_NEAR_TANK_HIDDEN_DISTANCE
 
 
 func _update_aim_lines(world_target: Vector3) -> void:
@@ -312,6 +337,7 @@ func _update_aim_lines(world_target: Vector3) -> void:
 		mouse_aim_line,
 		mouse_line_origin,
 		_aim_line_end(mouse_line_origin, mouse_line_direction),
+		_tank_aim_line_clearance_distance(mouse_line_origin),
 	)
 
 

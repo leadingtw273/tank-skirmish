@@ -31,6 +31,8 @@ const AIM_MAX_DISTANCE := 180.0
 const AIM_COLLISION_MASK := 129
 const AIM_LINE_RADIUS := 0.04
 const AIM_LINE_MIN_LENGTH := 0.05
+const AIM_LINE_NEAR_TANK_HIDDEN_DISTANCE := 3.0
+const AIM_LINE_ALPHA := 0.7
 const AIM_ALIGNED_ANGLE_RADIANS := 0.004363323
 const AIM_VERTICAL_BASIS_THRESHOLD := 0.999
 const CAMERA_ZOOM_STEP := 5.0
@@ -237,7 +239,8 @@ func _create_aim_line(line_name: String, color: Color) -> MeshInstance3D:
 	line.mesh = cylinder
 	var material := StandardMaterial3D.new()
 	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	material.albedo_color = color
+	material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	material.albedo_color = Color(color.r, color.g, color.b, AIM_LINE_ALPHA)
 	line.material_override = material
 	line.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	line.visible = false
@@ -273,12 +276,22 @@ func _set_aim_line_segment(line: MeshInstance3D, start: Vector3, end: Vector3) -
 	line.visible = true
 
 
+func _set_aim_line_path(line: MeshInstance3D, origin: Vector3, end: Vector3) -> void:
+	var path := end - origin
+	var length := path.length()
+	if length <= AIM_LINE_NEAR_TANK_HIDDEN_DISTANCE:
+		line.visible = false
+		return
+	var visible_start := origin + path / length * AIM_LINE_NEAR_TANK_HIDDEN_DISTANCE
+	_set_aim_line_segment(line, visible_start, end)
+
+
 func _update_aim_lines(world_target: Vector3) -> void:
 	if actual_aim_line == null or mouse_aim_line == null:
 		return
 	var muzzle_position := _muzzle_global_position()
 	var actual_direction := _muzzle_global_direction()
-	_set_aim_line_segment(actual_aim_line, muzzle_position, _aim_line_end(muzzle_position, actual_direction))
+	_set_aim_line_path(actual_aim_line, muzzle_position, _aim_line_end(muzzle_position, actual_direction))
 
 	var firing_target_offset := world_target - muzzle_position
 	if firing_target_offset.length_squared() <= MIN_AIM_DISTANCE_SQUARED:
@@ -295,7 +308,7 @@ func _update_aim_lines(world_target: Vector3) -> void:
 		mouse_aim_line.visible = false
 		return
 	var mouse_line_direction := mouse_line_offset.normalized()
-	_set_aim_line_segment(
+	_set_aim_line_path(
 		mouse_aim_line,
 		mouse_line_origin,
 		_aim_line_end(mouse_line_origin, mouse_line_direction),

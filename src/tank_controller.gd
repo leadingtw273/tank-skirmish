@@ -7,8 +7,14 @@ extends CharacterBody3D
 @export_category("Tank Turret")
 @export var turret_turn_speed := 1.777778
 
+@export_category("Tank Gun")
+@export var gun_pitch_speed := 1.2
+@export_range(0.0, 45.0, 0.5) var gun_max_elevation_degrees := 20.0
+@export_range(0.0, 45.0, 0.5) var gun_max_depression_degrees := 8.0
+
 const MODEL_FORWARD_LOCAL_AXIS := Vector3.LEFT
 const TURRET_PIVOT_NAME := "TurretPivot"
+const GUN_PITCH_PIVOT_NAME := "GunPitchPivot"
 const MIN_AIM_DISTANCE_SQUARED := 0.001
 const TREAD_ANIMATION_BLEND_SECONDS := 0.12
 const TREAD_ANIMATION_CLIPS := {
@@ -27,6 +33,7 @@ const TREAD_ANIMATION_CLIPS := {
 
 var camera_offset := Vector3.ZERO
 var turret_pivot: Node3D
+var gun_pitch_pivot: Node3D
 var tread_animation_player: AnimationPlayer
 var active_tread_animation := &""
 var tread_animation_paused := true
@@ -36,21 +43,29 @@ var tread_animations_available := false
 func _ready() -> void:
 	# Tank2's gun sits on the model's local -X end, so -X is its visual forward axis.
 	camera_offset = camera_rig.position - position
-	# The imported gun and turret are sibling meshes. Keep their global transforms while
-	# regrouping them under one pivot at the turret center so they yaw as one assembly.
+	# The imported gun and turret are sibling meshes. The outer pivot yaws the assembly;
+	# the inner pivot sits at the authored gun origin so only the barrel pitches.
 	turret_pivot = Node3D.new()
 	turret_pivot.name = TURRET_PIVOT_NAME
 	tank_scale_root.add_child(turret_pivot)
 	turret_pivot.global_position = tank_turret.global_position
 	tank_turret.reparent(turret_pivot, true)
-	tank_gun.reparent(turret_pivot, true)
+	gun_pitch_pivot = Node3D.new()
+	gun_pitch_pivot.name = GUN_PITCH_PIVOT_NAME
+	turret_pivot.add_child(gun_pitch_pivot)
+	gun_pitch_pivot.global_position = tank_gun.global_position
+	tank_gun.reparent(gun_pitch_pivot, true)
 	_setup_tread_animations()
 
 
 func _process(delta: float) -> void:
+	var mouse_position := get_viewport().get_mouse_position()
+	var viewport_height := get_viewport().get_visible_rect().size.y
+	_aim_gun_pitch_at_mouse(mouse_position.y, viewport_height, delta)
+
 	var aim_plane := Plane(Vector3.UP, turret_pivot.global_position.y)
-	var ray_origin := camera.project_ray_origin(get_viewport().get_mouse_position())
-	var ray_direction := camera.project_ray_normal(get_viewport().get_mouse_position())
+	var ray_origin := camera.project_ray_origin(mouse_position)
+	var ray_direction := camera.project_ray_normal(mouse_position)
 	var target_position: Variant = aim_plane.intersects_ray(ray_origin, ray_direction)
 	if target_position == null:
 		return
@@ -137,3 +152,26 @@ func _aim_turret_at(target_position: Vector3, delta: float) -> void:
 		target_yaw,
 		turret_turn_speed * delta,
 	)
+
+
+func _target_gun_pitch_for_mouse_y(mouse_y: float, viewport_height: float) -> float:
+	if viewport_height <= 0.0:
+		return 0.0
+	var center_y := viewport_height * 0.5
+	var clamped_y := clampf(mouse_y, 0.0, viewport_height)
+	if clamped_y <= center_y:
+		var elevation_weight := 1.0 - clamped_y / center_y
+		return deg_to_rad(maxf(gun_max_elevation_degrees, 0.0)) * elevation_weight
+	var depression_weight := (clamped_y - center_y) / center_y
+	return -deg_to_rad(maxf(gun_max_depression_degrees, 0.0)) * depression_weight
+
+
+func _aim_gun_pitch_at_mouse(mouse_y: float, viewport_height: float, delta: float) -> void:
+	if gun_pitch_pivot == null or viewport_height <= 0.0:
+		return
+	var minimum_pitch := -deg_to_rad(maxf(gun_max_depression_degrees, 0.0))
+	var maximum_pitch := deg_to_rad(maxf(gun_max_elevation_degrees, 0.0))
+	var current_pitch := -gun_pitch_pivot.rotation.z
+	var target_pitch := _target_gun_pitch_for_mouse_y(mouse_y, viewport_height)
+	var next_pitch := move_toward(current_pitch, target_pitch, maxf(gun_pitch_speed, 0.0) * maxf(delta, 0.0))
+	gun_pitch_pivot.rotation.z = -clampf(next_pitch, minimum_pitch, maximum_pitch)

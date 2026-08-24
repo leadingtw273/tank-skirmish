@@ -10,15 +10,27 @@ extends CharacterBody3D
 const MODEL_FORWARD_LOCAL_AXIS := Vector3.LEFT
 const TURRET_PIVOT_NAME := "TurretPivot"
 const MIN_AIM_DISTANCE_SQUARED := 0.001
+const TREAD_ANIMATION_BLEND_SECONDS := 0.12
+const TREAD_ANIMATION_CLIPS := {
+	"forward": &"Tank_Forward",
+	"backwards": &"Tank_Backwards",
+	"turning_left": &"Tank_TurningLeft",
+	"turning_right": &"Tank_TurningRight",
+}
 
 @onready var camera_rig: Node3D = $"../CameraRig"
 @onready var camera: Camera3D = $"../CameraRig/Camera3D"
+@onready var tank_model: Node3D = $Tank2
 @onready var tank_scale_root: Node3D = $Tank2/AgentTeamScaleRoot
 @onready var tank_turret: MeshInstance3D = $Tank2/AgentTeamScaleRoot/Tank_Turret
 @onready var tank_gun: MeshInstance3D = $Tank2/AgentTeamScaleRoot/Tank_Gun
 
 var camera_offset := Vector3.ZERO
 var turret_pivot: Node3D
+var tread_animation_player: AnimationPlayer
+var active_tread_animation := &""
+var tread_animation_paused := true
+var tread_animations_available := false
 
 
 func _ready() -> void:
@@ -32,6 +44,7 @@ func _ready() -> void:
 	turret_pivot.global_position = tank_turret.global_position
 	tank_turret.reparent(turret_pivot, true)
 	tank_gun.reparent(turret_pivot, true)
+	_setup_tread_animations()
 
 
 func _process(delta: float) -> void:
@@ -48,11 +61,67 @@ func _physics_process(delta: float) -> void:
 	var movement_input := float(Input.is_physical_key_pressed(KEY_W)) - float(Input.is_physical_key_pressed(KEY_S))
 	var turn_input := float(Input.is_physical_key_pressed(KEY_A)) - float(Input.is_physical_key_pressed(KEY_D))
 
+	_update_tread_animation(_tread_animation_for_inputs(movement_input, turn_input))
 	rotate_y(turn_input * turn_speed * delta)
 	var forward_direction := transform.basis * MODEL_FORWARD_LOCAL_AXIS
 	velocity = forward_direction * movement_input * movement_speed
 	move_and_slide()
 	camera_rig.position = position + camera_offset
+
+
+func _setup_tread_animations() -> void:
+	tread_animation_player = _find_animation_player(tank_model)
+	if tread_animation_player == null:
+		push_error("Tank tread animation setup failed: no AnimationPlayer found beneath Tank2.")
+		return
+
+	for clip: StringName in TREAD_ANIMATION_CLIPS.values():
+		var animation: Animation = tread_animation_player.get_animation(clip)
+		if animation == null:
+			push_error("Tank tread animation setup failed: missing clip %s." % clip)
+			return
+		animation.loop_mode = Animation.LOOP_LINEAR
+
+	tread_animations_available = true
+
+
+func _find_animation_player(node: Node) -> AnimationPlayer:
+	if node is AnimationPlayer:
+		return node as AnimationPlayer
+	for child in node.get_children():
+		var player := _find_animation_player(child)
+		if player != null:
+			return player
+	return null
+
+
+func _tread_animation_for_inputs(movement_input: float, turn_input: float) -> StringName:
+	if not is_zero_approx(turn_input):
+		return TREAD_ANIMATION_CLIPS["turning_left"] if turn_input > 0.0 else TREAD_ANIMATION_CLIPS["turning_right"]
+	if movement_input > 0.0:
+		return TREAD_ANIMATION_CLIPS["forward"]
+	if movement_input < 0.0:
+		return TREAD_ANIMATION_CLIPS["backwards"]
+	return &""
+
+
+func _update_tread_animation(next_animation: StringName) -> void:
+	if not tread_animations_available or tread_animation_player == null:
+		return
+	if next_animation.is_empty():
+		if not tread_animation_paused:
+			tread_animation_player.pause()
+			tread_animation_paused = true
+		return
+	if next_animation == active_tread_animation:
+		if tread_animation_paused:
+			tread_animation_player.play()
+			tread_animation_paused = false
+		return
+
+	tread_animation_player.play(next_animation, TREAD_ANIMATION_BLEND_SECONDS)
+	active_tread_animation = next_animation
+	tread_animation_paused = false
 
 
 func _aim_turret_at(target_position: Vector3, delta: float) -> void:

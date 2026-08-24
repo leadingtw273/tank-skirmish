@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3]
+[gd_scene load_steps=27 format=3]
 
 [ext_resource type="PackedScene" path="res://assets/models/tank/tank2.glb" id="1_tank"]
 [ext_resource type="PackedScene" path="res://assets/models/buildings/1story.glb" id="2_building_a"]
@@ -21,6 +21,9 @@ roughness = 0.92
 
 [sub_resource type="BoxMesh" id="GroundMesh"]
 material = SubResource("GroundMaterial")
+size = Vector3(240, 0.2, 240)
+
+[sub_resource type="BoxShape3D" id="GroundCollisionShape"]
 size = Vector3(240, 0.2, 240)
 
 [sub_resource type="Environment" id="SceneEnvironment"]
@@ -85,6 +88,16 @@ shape = SubResource("TankCollisionShape")
 [node name="Ground" type="MeshInstance3D" parent="."]
 position = Vector3(0, -0.1, 8)
 mesh = SubResource("GroundMesh")
+
+[node name="GroundCollision" type="StaticBody3D" parent="."]
+position = Vector3(0, -0.1, 8)
+collision_layer = 128
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="GroundCollision"]
+shape = SubResource("GroundCollisionShape")
+
+[node name="Projectiles" type="Node3D" parent="."]
 
 [node name="Roads" type="Node3D" parent="."]
 

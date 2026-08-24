@@ -113,7 +113,7 @@ func _validate_instance(instance: Node) -> void:
 	if not _validate_tread_animations(instance):
 		quit(1)
 		return
-	if not _validate_turret_aiming(instance):
+	if not await _validate_turret_aiming(instance):
 		quit(1)
 		return
 	if not await _validate_projectile_firing(instance):
@@ -235,32 +235,35 @@ func _validate_turret_aiming(instance: Node) -> bool:
 		push_error("Tank gun must retain its authored origin when attached to the pitch pivot")
 		return false
 
-	if not is_equal_approx(tank._target_gun_pitch_for_mouse_y(0.0, 1000.0), deg_to_rad(20.0)) \
-		or not is_zero_approx(tank._target_gun_pitch_for_mouse_y(500.0, 1000.0)) \
-		or not is_equal_approx(tank._target_gun_pitch_for_mouse_y(1000.0, 1000.0), deg_to_rad(-8.0)) \
-		or not is_equal_approx(tank._target_gun_pitch_for_mouse_y(-100.0, 1000.0), deg_to_rad(20.0)) \
-		or not is_equal_approx(tank._target_gun_pitch_for_mouse_y(1100.0, 1000.0), deg_to_rad(-8.0)):
-		push_error("Mouse Y must map to bounded gun elevation, neutral, and depression angles")
+	await physics_frame
+	var muzzle_position: Vector3 = tank._muzzle_global_position()
+	if not is_zero_approx(tank._target_gun_pitch_for_world_target(muzzle_position + Vector3.LEFT * 20.0)) \
+		or not is_equal_approx(tank._target_gun_pitch_for_world_target(muzzle_position + Vector3.LEFT * 20.0 + Vector3.UP * 20.0), deg_to_rad(20.0)) \
+		or not is_equal_approx(tank._target_gun_pitch_for_world_target(muzzle_position + Vector3.LEFT * 20.0 + Vector3.DOWN * 20.0), deg_to_rad(-8.0)):
+		push_error("World-space targets must map to bounded gun elevation and depression angles")
 		return false
 
-	tank._aim_gun_pitch_at_mouse(0.0, 1000.0, 10.0)
+	var high_muzzle: Vector3 = tank._muzzle_global_position()
+	tank._aim_gun_pitch_at_target(high_muzzle + Vector3.LEFT * 20.0 + Vector3.UP * 20.0, 10.0)
 	var raised_muzzle_forward := -gun_pitch_pivot.global_transform.basis.x.normalized()
 	if not is_equal_approx(gun_pitch_pivot.rotation.z, deg_to_rad(-20.0)) or raised_muzzle_forward.y < 0.33:
-		push_error("Moving the mouse upward must elevate the gun without exceeding 20 degrees")
+		push_error("A high world target must elevate the gun without exceeding 20 degrees")
 		return false
-	tank._aim_gun_pitch_at_mouse(1000.0, 1000.0, 10.0)
+	var low_muzzle: Vector3 = tank._muzzle_global_position()
+	tank._aim_gun_pitch_at_target(low_muzzle + Vector3.LEFT * 20.0 + Vector3.DOWN * 20.0, 10.0)
 	var lowered_muzzle_forward := -gun_pitch_pivot.global_transform.basis.x.normalized()
 	if not is_equal_approx(gun_pitch_pivot.rotation.z, deg_to_rad(8.0)) or lowered_muzzle_forward.y > -0.13:
-		push_error("Moving the mouse downward must depress the gun without exceeding 8 degrees")
+		push_error("A low world target must depress the gun without exceeding 8 degrees")
 		return false
-	tank._aim_gun_pitch_at_mouse(500.0, 1000.0, 10.0)
+	var level_muzzle: Vector3 = tank._muzzle_global_position()
+	tank._aim_gun_pitch_at_target(level_muzzle + Vector3.LEFT * 20.0, 10.0)
 	if not is_zero_approx(gun_pitch_pivot.rotation.z):
-		push_error("The vertical center of the viewport must return the gun to neutral pitch")
+		push_error("A level world target must return the gun to neutral pitch")
 		return false
 
 	var chassis_position := tank.global_position
 	var chassis_rotation := tank.global_rotation
-	var plus_z_target := turret_pivot.global_position + Vector3.BACK * 20.0
+	var plus_z_target: Vector3 = tank._muzzle_global_position() + Vector3.BACK * 20.0
 	tank._aim_turret_at(plus_z_target, 10.0)
 	var muzzle_forward := -gun_pitch_pivot.global_transform.basis.x.normalized()
 	if muzzle_forward.dot(Vector3.BACK) < 0.999:
@@ -271,14 +274,64 @@ func _validate_turret_aiming(instance: Node) -> bool:
 		return false
 
 	var held_yaw := turret_pivot.global_rotation.y
-	tank._aim_turret_at(turret_pivot.global_position, 1.0)
+	tank._aim_turret_at(tank._muzzle_global_position(), 1.0)
 	if not is_equal_approx(turret_pivot.global_rotation.y, held_yaw) or is_nan(turret_pivot.global_rotation.y):
 		push_error("A near turret target must preserve the current yaw")
 		return false
-	var aim_plane := Plane(Vector3.UP, turret_pivot.global_position.y)
-	if aim_plane.intersects_ray(turret_pivot.global_position, Vector3.RIGHT) != null:
-		push_error("A ray parallel to the turret-height plane must not produce an aim target")
+
+	var fallback_origin := Vector3(1000.0, 1000.0, 1000.0)
+	var fallback_target: Vector3 = tank._resolve_world_target_from_ray(fallback_origin, Vector3.UP)
+	if not fallback_target.is_equal_approx(fallback_origin + Vector3.UP * 180.0):
+		push_error("A camera ray without a hit must fall back to its point 180m away")
 		return false
+	var ground_target: Vector3 = tank._resolve_world_target_from_ray(Vector3(110.0, 5.0, 110.0), Vector3.DOWN)
+	if not is_zero_approx(ground_target.y):
+		push_error("Mouse world targeting must use the first ground collision")
+		return false
+
+	var aim_target := StaticBody3D.new()
+	aim_target.name = "AimSmokeTarget"
+	aim_target.position = Vector3(1010.0, 5.0, 1000.0)
+	var aim_target_collision := CollisionShape3D.new()
+	var aim_target_shape := BoxShape3D.new()
+	aim_target_shape.size = Vector3(2.0, 2.0, 2.0)
+	aim_target_collision.shape = aim_target_shape
+	aim_target.add_child(aim_target_collision)
+	instance.add_child(aim_target)
+	await physics_frame
+	var building_target: Vector3 = tank._resolve_world_target_from_ray(Vector3(1000.0, 5.0, 1000.0), Vector3.RIGHT)
+	if building_target.distance_to(Vector3(1009.0, 5.0, 1000.0)) > 0.01:
+		push_error("Mouse world targeting must use the first building collision")
+		return false
+
+	var actual_line := tank.actual_aim_line as MeshInstance3D
+	var mouse_line := tank.mouse_aim_line as MeshInstance3D
+	if actual_line == null or mouse_line == null or actual_line.name != "ActualAimLine" or mouse_line.name != "MouseAimLine":
+		push_error("Tank must create white actual and red mouse aim line nodes")
+		return false
+	tank._set_aim_line_segment(actual_line, Vector3.ZERO, Vector3.ZERO)
+	if actual_line.visible:
+		push_error("A degenerate aim line shorter than 0.05m must be hidden")
+		return false
+	tank._set_aim_line_segment(actual_line, Vector3.ZERO, Vector3.UP * 10.0)
+	if not actual_line.visible or not actual_line.global_transform.is_finite():
+		push_error("A near-vertical aim line must keep a finite transform")
+		return false
+
+	gun_pitch_pivot.rotation.z = 0.0
+	var current_muzzle: Vector3 = tank._muzzle_global_position()
+	var current_direction: Vector3 = tank._muzzle_global_direction()
+	tank._update_aim_lines(current_muzzle + current_direction * 20.0)
+	if mouse_line.visible or not actual_line.visible:
+		push_error("Red mouse line must hide when it overlaps the white firing direction")
+		return false
+	tank._update_aim_lines(current_muzzle + Vector3.RIGHT * 20.0)
+	if not mouse_line.visible:
+		push_error("Red mouse line must show while the gun is still turning toward the target")
+		return false
+
+	aim_target.queue_free()
+	await physics_frame
 
 	return true
 
@@ -315,14 +368,14 @@ func _validate_projectile_firing(instance: Node) -> bool:
 	release_event.button_index = MOUSE_BUTTON_LEFT
 	release_event.pressed = false
 	tank._unhandled_input(release_event)
-	if projectiles.get_child_count() != 0:
+	if projectiles.get_child_count() != 2:
 		push_error("Mouse release must not fire a projectile")
 		return false
 	var right_click := InputEventMouseButton.new()
 	right_click.button_index = MOUSE_BUTTON_RIGHT
 	right_click.pressed = true
 	tank._unhandled_input(right_click)
-	if projectiles.get_child_count() != 0:
+	if projectiles.get_child_count() != 2:
 		push_error("Non-left mouse buttons must not fire a projectile")
 		return false
 

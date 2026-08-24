@@ -312,6 +312,15 @@ func _validate_turret_aiming(instance: Node) -> bool:
 	if actual_line == null or mouse_line == null or actual_line.name != "ActualAimLine" or mouse_line.name != "MouseAimLine":
 		push_error("Tank must create white actual and red mouse aim line nodes")
 		return false
+	var actual_material := actual_line.material_override as StandardMaterial3D
+	var mouse_material := mouse_line.material_override as StandardMaterial3D
+	if actual_material == null or mouse_material == null \
+			or not is_equal_approx(actual_material.albedo_color.a, 0.7) \
+			or not is_equal_approx(mouse_material.albedo_color.a, 0.7) \
+			or actual_material.transparency != BaseMaterial3D.TRANSPARENCY_ALPHA \
+			or mouse_material.transparency != BaseMaterial3D.TRANSPARENCY_ALPHA:
+		push_error("Both aim lines must use alpha transparency at 0.7 opacity")
+		return false
 	tank._set_aim_line_segment(actual_line, Vector3.ZERO, Vector3.ZERO)
 	if actual_line.visible:
 		push_error("A degenerate aim line shorter than 0.05m must be hidden")
@@ -319,6 +328,10 @@ func _validate_turret_aiming(instance: Node) -> bool:
 	tank._set_aim_line_segment(actual_line, Vector3.ZERO, Vector3.UP * 10.0)
 	if not actual_line.visible or not actual_line.global_transform.is_finite():
 		push_error("A near-vertical aim line must keep a finite transform")
+		return false
+	tank._set_aim_line_path(actual_line, Vector3.ZERO, Vector3.RIGHT * 3.0)
+	if actual_line.visible:
+		push_error("An aim path ending within the 3m tank clearance must be hidden")
 		return false
 
 	gun_pitch_pivot.rotation.z = 0.0
@@ -328,13 +341,18 @@ func _validate_turret_aiming(instance: Node) -> bool:
 	if mouse_line.visible or not actual_line.visible:
 		push_error("Red mouse line must hide when it overlaps the white firing direction")
 		return false
+	var actual_line_start := actual_line.global_transform.origin - actual_line.global_transform.basis.y * 0.5
+	if not actual_line_start.is_equal_approx(current_muzzle + current_direction * 3.0):
+		push_error("White aim line must hide its first 3m from the muzzle")
+		return false
 	tank._update_aim_lines(current_muzzle + Vector3.RIGHT * 20.0)
 	if not mouse_line.visible:
 		push_error("Red mouse line must show while the gun is still turning toward the target")
 		return false
 	var mouse_line_start := mouse_line.global_transform.origin - mouse_line.global_transform.basis.y * 0.5
-	if not mouse_line_start.is_equal_approx(turret_pivot.global_position):
-		push_error("Red mouse line must start at the turret pivot instead of the muzzle")
+	var mouse_line_direction := (current_muzzle + Vector3.RIGHT * 20.0 - turret_pivot.global_position).normalized()
+	if not mouse_line_start.is_equal_approx(turret_pivot.global_position + mouse_line_direction * 3.0):
+		push_error("Red mouse line must hide its first 3m from the turret pivot")
 		return false
 
 	aim_target.queue_free()

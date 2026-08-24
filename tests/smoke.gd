@@ -329,6 +329,10 @@ func _validate_turret_aiming(instance: Node) -> bool:
 	if not mouse_line.visible:
 		push_error("Red mouse line must show while the gun is still turning toward the target")
 		return false
+	var mouse_line_start := mouse_line.global_transform.origin - mouse_line.global_transform.basis.y * 0.5
+	if not mouse_line_start.is_equal_approx(turret_pivot.global_position):
+		push_error("Red mouse line must start at the turret pivot instead of the muzzle")
+		return false
 
 	aim_target.queue_free()
 	await physics_frame

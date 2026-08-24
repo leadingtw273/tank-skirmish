@@ -271,15 +271,26 @@ func _update_aim_lines(world_target: Vector3) -> void:
 	var actual_direction := _muzzle_global_direction()
 	_set_aim_line_segment(actual_aim_line, muzzle_position, _aim_line_end(muzzle_position, actual_direction))
 
-	var desired_offset := world_target - muzzle_position
-	if desired_offset.length_squared() <= MIN_AIM_DISTANCE_SQUARED:
+	var firing_target_offset := world_target - muzzle_position
+	if firing_target_offset.length_squared() <= MIN_AIM_DISTANCE_SQUARED:
 		mouse_aim_line.visible = false
 		return
-	var desired_direction := desired_offset.normalized()
-	if actual_direction.angle_to(desired_direction) <= AIM_ALIGNED_ANGLE_RADIANS:
+	var firing_target_direction := firing_target_offset.normalized()
+	if actual_direction.angle_to(firing_target_direction) <= AIM_ALIGNED_ANGLE_RADIANS:
 		mouse_aim_line.visible = false
 		return
-	_set_aim_line_segment(mouse_aim_line, muzzle_position, _aim_line_end(muzzle_position, desired_direction))
+
+	var mouse_line_origin := turret_pivot.global_position
+	var mouse_line_offset := world_target - mouse_line_origin
+	if mouse_line_offset.length_squared() <= MIN_AIM_DISTANCE_SQUARED:
+		mouse_aim_line.visible = false
+		return
+	var mouse_line_direction := mouse_line_offset.normalized()
+	_set_aim_line_segment(
+		mouse_aim_line,
+		mouse_line_origin,
+		_aim_line_end(mouse_line_origin, mouse_line_direction),
+	)
 
 
 func _muzzle_global_position() -> Vector3:

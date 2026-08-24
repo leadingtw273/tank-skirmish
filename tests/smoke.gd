@@ -116,6 +116,9 @@ func _validate_instance(instance: Node) -> void:
 	if not await _validate_turret_aiming(instance):
 		quit(1)
 		return
+	if not _validate_camera_zoom(instance):
+		quit(1)
+		return
 	if not await _validate_projectile_firing(instance):
 		quit(1)
 		return
@@ -337,6 +340,55 @@ func _validate_turret_aiming(instance: Node) -> bool:
 	aim_target.queue_free()
 	await physics_frame
 
+	return true
+
+
+func _validate_camera_zoom(instance: Node) -> bool:
+	var tank := instance.get_node_or_null("Tank") as CharacterBody3D
+	var projectiles := instance.get_node_or_null("Projectiles") as Node3D
+	if tank == null or tank.camera == null or projectiles == null:
+		push_error("Camera zoom validation requires Tank, Camera3D, and Projectiles nodes")
+		return false
+
+	var initial_size: float = tank.camera.size
+	var projectile_count := projectiles.get_child_count()
+	var wheel_up := InputEventMouseButton.new()
+	wheel_up.button_index = MOUSE_BUTTON_WHEEL_UP
+	wheel_up.pressed = true
+	tank._unhandled_input(wheel_up)
+	if not is_equal_approx(tank.camera.size, maxf(25.0, initial_size - 5.0)) or projectiles.get_child_count() != projectile_count:
+		push_error("Wheel-up press must zoom in by 5 without firing a projectile")
+		return false
+
+	var wheel_release := InputEventMouseButton.new()
+	wheel_release.button_index = MOUSE_BUTTON_WHEEL_UP
+	wheel_release.pressed = false
+	var size_before_release: float = tank.camera.size
+	tank._unhandled_input(wheel_release)
+	if not is_equal_approx(tank.camera.size, size_before_release) or projectiles.get_child_count() != projectile_count:
+		push_error("Wheel release must not change camera zoom or fire a projectile")
+		return false
+
+	var wheel_down := InputEventMouseButton.new()
+	wheel_down.button_index = MOUSE_BUTTON_WHEEL_DOWN
+	wheel_down.pressed = true
+	tank._unhandled_input(wheel_down)
+	if not is_equal_approx(tank.camera.size, minf(100.0, size_before_release + 5.0)) or projectiles.get_child_count() != projectile_count:
+		push_error("Wheel-down press must zoom out by 5 without firing a projectile")
+		return false
+
+	tank.camera.size = 25.0
+	tank._unhandled_input(wheel_up)
+	if not is_equal_approx(tank.camera.size, 25.0):
+		push_error("Wheel-up zoom must not go below the 25 camera-size minimum")
+		return false
+	tank.camera.size = 100.0
+	tank._unhandled_input(wheel_down)
+	if not is_equal_approx(tank.camera.size, 100.0):
+		push_error("Wheel-down zoom must not exceed the 100 camera-size maximum")
+		return false
+
+	tank.camera.size = initial_size
 	return true
 
 

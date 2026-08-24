@@ -116,6 +116,9 @@ func _validate_instance(instance: Node) -> void:
 	if not _validate_turret_aiming(instance):
 		quit(1)
 		return
+	if not await _validate_projectile_firing(instance):
+		quit(1)
+		return
 	if not _validate_collision_layout(instance):
 		quit(1)
 		return
@@ -277,6 +280,118 @@ func _validate_turret_aiming(instance: Node) -> bool:
 		push_error("A ray parallel to the turret-height plane must not produce an aim target")
 		return false
 
+	return true
+
+
+func _validate_projectile_firing(instance: Node) -> bool:
+	var tank := instance.get_node_or_null("Tank") as CharacterBody3D
+	var projectiles := instance.get_node_or_null("Projectiles") as Node3D
+	var ground_collision := instance.get_node_or_null("GroundCollision") as StaticBody3D
+	if tank == null or projectiles == null or ground_collision == null:
+		push_error("Tank firing requires Tank, Projectiles, and GroundCollision nodes")
+		return false
+	if ground_collision.collision_layer != 128 or ground_collision.collision_mask != 0:
+		push_error("Ground collision must stay isolated on physics layer 8")
+		return false
+	if tank.collision_layer != 1 or tank.collision_mask != 1:
+		push_error("Tank physics layers must remain unchanged")
+		return false
+
+	var gun := tank.tank_gun as MeshInstance3D
+	var gun_aabb := gun.get_aabb()
+	var expected_local_muzzle := gun_aabb.get_center()
+	expected_local_muzzle.x = gun_aabb.position.x
+	var expected_muzzle := gun.global_transform * expected_local_muzzle
+	var muzzle_position: Vector3 = tank._muzzle_global_position()
+	var muzzle_direction: Vector3 = tank._muzzle_global_direction()
+	if not muzzle_position.is_equal_approx(expected_muzzle):
+		push_error("Projectile origin must use the Tank_Gun local -X endpoint")
+		return false
+	if not is_equal_approx(muzzle_direction.length(), 1.0) or muzzle_direction.dot((-gun.global_transform.basis.x).normalized()) < 0.999:
+		push_error("Projectile direction must use the normalized Tank_Gun world -X axis")
+		return false
+
+	var release_event := InputEventMouseButton.new()
+	release_event.button_index = MOUSE_BUTTON_LEFT
+	release_event.pressed = false
+	tank._unhandled_input(release_event)
+	if projectiles.get_child_count() != 0:
+		push_error("Mouse release must not fire a projectile")
+		return false
+	var right_click := InputEventMouseButton.new()
+	right_click.button_index = MOUSE_BUTTON_RIGHT
+	right_click.pressed = true
+	tank._unhandled_input(right_click)
+	if projectiles.get_child_count() != 0:
+		push_error("Non-left mouse buttons must not fire a projectile")
+		return false
+
+	var press_event := InputEventMouseButton.new()
+	press_event.button_index = MOUSE_BUTTON_LEFT
+	press_event.pressed = true
+	tank._unhandled_input(press_event)
+	var projectile := projectiles.get_node_or_null("Projectile") as Node3D
+	var muzzle_flash := projectiles.get_node_or_null("MuzzleFlash") as Node3D
+	if projectile == null or muzzle_flash == null:
+		push_error("Left mouse press must create one projectile and one muzzle flash")
+		return false
+	if not projectile.global_position.is_equal_approx(muzzle_position) or not projectile.direction.is_equal_approx(muzzle_direction):
+		push_error("Projectile must start at the current muzzle transform")
+		return false
+	if not is_equal_approx(projectile.speed, 80.0) or not is_equal_approx(projectile.max_distance, 180.0) or projectile.collision_mask != 129:
+		push_error("Projectile MVP speed, range, or collision mask changed")
+		return false
+	if not projectile.excluded_rids.has(tank.get_rid()):
+		push_error("Projectile ray must exclude the firing tank RID")
+		return false
+	if not bool(muzzle_flash.get("one_shot")):
+		push_error("Muzzle flash must play once per shot")
+		return false
+
+	await physics_frame
+	var self_hit: Dictionary = projectile._collision_between(Vector3(-15.0, 1.8, 8.0), Vector3(15.0, 1.8, 8.0))
+	if not self_hit.is_empty():
+		push_error("Projectile sweep must not hit the firing tank")
+		return false
+	var ground_hit: Dictionary = projectile._collision_between(Vector3(110.0, 5.0, 110.0), Vector3(110.0, -5.0, 110.0))
+	if ground_hit.is_empty() or ground_hit.get("collider") != ground_collision:
+		push_error("Projectile sweep must detect the isolated ground collider")
+		return false
+
+	var target := StaticBody3D.new()
+	target.name = "ProjectileSmokeTarget"
+	target.position = Vector3(300.0, 2.0, 300.0)
+	var target_collision := CollisionShape3D.new()
+	var target_shape := BoxShape3D.new()
+	target_shape.size = Vector3(2.0, 2.0, 2.0)
+	target_collision.shape = target_shape
+	target.add_child(target_collision)
+	instance.add_child(target)
+	await physics_frame
+	projectile.global_position = Vector3(295.0, 2.0, 300.0)
+	projectile.direction = Vector3.RIGHT
+	projectile._physics_process(0.2)
+	if not projectile.is_queued_for_deletion() or projectiles.get_node_or_null("ImpactVFX") == null:
+		push_error("Building collision must remove the projectile and create impact VFX")
+		return false
+
+	var ranged_projectile := load("res://src/projectile.tscn").instantiate() as Node3D
+	ranged_projectile.name = "RangeTestProjectile"
+	ranged_projectile.initialize(Vector3.RIGHT, [tank.get_rid()], projectiles)
+	projectiles.add_child(ranged_projectile)
+	ranged_projectile.global_position = Vector3(500.0, 2.0, 500.0)
+	ranged_projectile._physics_process(10.0)
+	if not ranged_projectile.is_queued_for_deletion() or ranged_projectile.distance_travelled > 180.001:
+		push_error("Unobstructed projectiles must stop at the 180m range")
+		return false
+
+	target.queue_free()
+	await process_frame
+	await create_timer(1.0).timeout
+	await process_frame
+	if projectiles.get_node_or_null("MuzzleFlash") != null or projectiles.get_node_or_null("ImpactVFX") != null:
+		push_error("Transient firing VFX must clean themselves up")
+		return false
 	return true
 
 

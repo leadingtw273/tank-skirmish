@@ -1,7 +1,7 @@
 extends Node3D
 class_name TankProjectile
 
-@export var speed := 80.0
+@export var speed := 120.0
 @export var max_distance := 180.0
 @export_flags_3d_physics var collision_mask := 129
 

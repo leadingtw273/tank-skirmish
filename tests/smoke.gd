@@ -213,23 +213,53 @@ func _validate_turret_aiming(instance: Node) -> bool:
 	if not is_equal_approx(tank.turret_turn_speed, 1.777778):
 		push_error("Tank turret turn speed does not match the approved value")
 		return false
+	if not is_equal_approx(tank.gun_pitch_speed, 1.2) or not is_equal_approx(tank.gun_max_elevation_degrees, 20.0) or not is_equal_approx(tank.gun_max_depression_degrees, 8.0):
+		push_error("Tank gun pitch exports do not match the approved MVP values")
+		return false
 
 	var scale_root := tank.get_node_or_null("Tank2/AgentTeamScaleRoot") as Node3D
 	var turret_pivot := scale_root.get_node_or_null("TurretPivot") as Node3D if scale_root != null else null
+	var gun_pitch_pivot := turret_pivot.get_node_or_null("GunPitchPivot") as Node3D if turret_pivot != null else null
 	var turret := turret_pivot.get_node_or_null("Tank_Turret") as MeshInstance3D if turret_pivot != null else null
-	var gun := turret_pivot.get_node_or_null("Tank_Gun") as MeshInstance3D if turret_pivot != null else null
-	if turret_pivot == null or turret == null or gun == null:
-		push_error("Tank gun and turret must share a runtime TurretPivot")
+	var gun := gun_pitch_pivot.get_node_or_null("Tank_Gun") as MeshInstance3D if gun_pitch_pivot != null else null
+	if turret_pivot == null or gun_pitch_pivot == null or turret == null or gun == null:
+		push_error("Tank turret and gun must have separate runtime yaw and pitch pivots")
 		return false
-	if turret.get_parent() != turret_pivot or gun.get_parent() != turret_pivot:
-		push_error("Tank gun and turret must remain attached to the same runtime pivot")
+	if turret.get_parent() != turret_pivot or gun_pitch_pivot.get_parent() != turret_pivot or gun.get_parent() != gun_pitch_pivot:
+		push_error("Tank gun pitch pivot must remain attached beneath the turret yaw pivot")
+		return false
+	if not gun.position.is_zero_approx() or not gun.global_position.is_equal_approx(gun_pitch_pivot.global_position):
+		push_error("Tank gun must retain its authored origin when attached to the pitch pivot")
+		return false
+
+	if not is_equal_approx(tank._target_gun_pitch_for_mouse_y(0.0, 1000.0), deg_to_rad(20.0)) \
+		or not is_zero_approx(tank._target_gun_pitch_for_mouse_y(500.0, 1000.0)) \
+		or not is_equal_approx(tank._target_gun_pitch_for_mouse_y(1000.0, 1000.0), deg_to_rad(-8.0)) \
+		or not is_equal_approx(tank._target_gun_pitch_for_mouse_y(-100.0, 1000.0), deg_to_rad(20.0)) \
+		or not is_equal_approx(tank._target_gun_pitch_for_mouse_y(1100.0, 1000.0), deg_to_rad(-8.0)):
+		push_error("Mouse Y must map to bounded gun elevation, neutral, and depression angles")
+		return false
+
+	tank._aim_gun_pitch_at_mouse(0.0, 1000.0, 10.0)
+	var raised_muzzle_forward := -gun_pitch_pivot.global_transform.basis.x.normalized()
+	if not is_equal_approx(gun_pitch_pivot.rotation.z, deg_to_rad(-20.0)) or raised_muzzle_forward.y < 0.33:
+		push_error("Moving the mouse upward must elevate the gun without exceeding 20 degrees")
+		return false
+	tank._aim_gun_pitch_at_mouse(1000.0, 1000.0, 10.0)
+	var lowered_muzzle_forward := -gun_pitch_pivot.global_transform.basis.x.normalized()
+	if not is_equal_approx(gun_pitch_pivot.rotation.z, deg_to_rad(8.0)) or lowered_muzzle_forward.y > -0.13:
+		push_error("Moving the mouse downward must depress the gun without exceeding 8 degrees")
+		return false
+	tank._aim_gun_pitch_at_mouse(500.0, 1000.0, 10.0)
+	if not is_zero_approx(gun_pitch_pivot.rotation.z):
+		push_error("The vertical center of the viewport must return the gun to neutral pitch")
 		return false
 
 	var chassis_position := tank.global_position
 	var chassis_rotation := tank.global_rotation
 	var plus_z_target := turret_pivot.global_position + Vector3.BACK * 20.0
 	tank._aim_turret_at(plus_z_target, 10.0)
-	var muzzle_forward := -turret_pivot.global_transform.basis.x.normalized()
+	var muzzle_forward := -gun_pitch_pivot.global_transform.basis.x.normalized()
 	if muzzle_forward.dot(Vector3.BACK) < 0.999:
 		push_error("Tank local -X muzzle axis must rotate toward a +Z target")
 		return false

@@ -110,6 +110,9 @@ func _init() -> void:
 
 
 func _validate_instance(instance: Node) -> void:
+	if not _validate_tread_animations(instance):
+		quit(1)
+		return
 	if not _validate_turret_aiming(instance):
 		quit(1)
 		return
@@ -122,6 +125,38 @@ func _validate_instance(instance: Node) -> void:
 
 	print("Tank Skirmish smoke validation passed.")
 	quit(0)
+
+
+func _validate_tread_animations(instance: Node) -> bool:
+	var tank := instance.get_node_or_null("Tank") as CharacterBody3D
+	if tank == null:
+		push_error("Tank must exist before tread animations can be validated")
+		return false
+	if not tank.tread_animations_available or tank.tread_animation_player == null:
+		push_error("Tank tread AnimationPlayer and required clips must be available")
+		return false
+
+	for clip: StringName in [&"Tank_Forward", &"Tank_Backwards", &"Tank_TurningLeft", &"Tank_TurningRight"]:
+		var animation: Animation = tank.tread_animation_player.get_animation(clip)
+		if animation == null or animation.loop_mode != Animation.LOOP_LINEAR:
+			push_error("Tank tread clip %s must exist and loop" % clip)
+			return false
+	if tank._tread_animation_for_inputs(1.0, 1.0) != &"Tank_TurningLeft" or tank._tread_animation_for_inputs(-1.0, -1.0) != &"Tank_TurningRight":
+		push_error("Tank turning tread clips must take priority over movement clips")
+		return false
+	if tank._tread_animation_for_inputs(1.0, 0.0) != &"Tank_Forward" or tank._tread_animation_for_inputs(-1.0, 0.0) != &"Tank_Backwards" or not tank._tread_animation_for_inputs(0.0, 0.0).is_empty():
+		push_error("Tank tread clip selection does not match movement input")
+		return false
+
+	tank._update_tread_animation(&"Tank_Forward")
+	if tank.active_tread_animation != &"Tank_Forward" or tank.tread_animation_paused:
+		push_error("Tank forward tread animation did not start")
+		return false
+	tank._update_tread_animation(&"")
+	if not tank.tread_animation_paused:
+		push_error("Tank tread animation must pause when movement stops")
+		return false
+	return true
 
 
 func _validate_turret_aiming(instance: Node) -> bool:

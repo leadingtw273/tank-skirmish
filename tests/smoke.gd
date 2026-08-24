@@ -338,7 +338,7 @@ func _validate_projectile_firing(instance: Node) -> bool:
 	if not projectile.global_position.is_equal_approx(muzzle_position) or not projectile.direction.is_equal_approx(muzzle_direction):
 		push_error("Projectile must start at the current muzzle transform")
 		return false
-	if not is_equal_approx(projectile.speed, 80.0) or not is_equal_approx(projectile.max_distance, 180.0) or projectile.collision_mask != 129:
+	if not is_equal_approx(projectile.speed, 120.0) or not is_equal_approx(projectile.max_distance, 180.0) or projectile.collision_mask != 129:
 		push_error("Projectile MVP speed, range, or collision mask changed")
 		return false
 	if not projectile.excluded_rids.has(tank.get_rid()):
@@ -346,6 +346,9 @@ func _validate_projectile_firing(instance: Node) -> bool:
 		return false
 	if not bool(muzzle_flash.get("one_shot")):
 		push_error("Muzzle flash must play once per shot")
+		return false
+	if not muzzle_flash.scale.is_equal_approx(Vector3.ONE * 2.0):
+		push_error("Muzzle flash acceptance scale must remain 2x")
 		return false
 
 	await physics_frame

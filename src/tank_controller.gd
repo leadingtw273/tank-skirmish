@@ -26,6 +26,7 @@ const TREAD_ANIMATION_CLIPS := {
 const PROJECTILE_SCENE := preload("res://src/projectile.tscn")
 const MUZZLE_FLASH_SCENE := preload("res://assets/BinbunVFX/muzzle_flash/effects/big_flash/big_flash_01.tscn")
 const MUZZLE_FLASH_LIFETIME_SECONDS := 0.25
+const MUZZLE_FLASH_SCALE := 2.0
 
 @onready var camera_rig: Node3D = $"../CameraRig"
 @onready var camera: Camera3D = $"../CameraRig/Camera3D"
@@ -221,6 +222,7 @@ func _spawn_muzzle_flash(muzzle_position: Vector3, muzzle_direction: Vector3) ->
 	muzzle_flash.set("autoplay", true)
 	projectile_container.add_child(muzzle_flash, true)
 	muzzle_flash.global_transform = Transform3D(_basis_with_x_axis(muzzle_direction), muzzle_position)
+	muzzle_flash.scale = Vector3.ONE * MUZZLE_FLASH_SCALE
 	get_tree().create_timer(MUZZLE_FLASH_LIFETIME_SECONDS).timeout.connect(muzzle_flash.queue_free)
 
 

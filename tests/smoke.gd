@@ -141,6 +141,8 @@ func _validate_tread_animations(instance: Node) -> bool:
 		if animation == null or animation.loop_mode != Animation.LOOP_LINEAR:
 			push_error("Tank tread clip %s must exist and loop" % clip)
 			return false
+		if not _tread_clip_moves_track_bones(tank, animation, clip):
+			return false
 	if tank._tread_animation_for_inputs(1.0, 1.0) != &"Tank_TurningLeft" or tank._tread_animation_for_inputs(-1.0, -1.0) != &"Tank_TurningRight":
 		push_error("Tank turning tread clips must take priority over movement clips")
 		return false
@@ -157,6 +159,50 @@ func _validate_tread_animations(instance: Node) -> bool:
 		push_error("Tank tread animation must pause when movement stops")
 		return false
 	return true
+
+
+func _tread_clip_moves_track_bones(tank: Node, animation: Animation, clip: StringName) -> bool:
+	var skeleton := _find_skeleton(tank)
+	if skeleton == null:
+		push_error("Tank tread animation validation requires a Skeleton3D")
+		return false
+
+	var track_bones: Array[int] = []
+	for bone_id in range(skeleton.get_bone_count()):
+		if String(skeleton.get_bone_name(bone_id)).contains("Track"):
+			track_bones.append(bone_id)
+	if track_bones.is_empty():
+		push_error("Tank tread animation validation requires Track bones")
+		return false
+
+	tank.tread_animation_player.play(clip)
+	tank.tread_animation_player.seek(0.0, true)
+	tank.tread_animation_player.advance(0.0)
+	skeleton.force_update_all_bone_transforms()
+	var baseline: Array[Transform3D] = []
+	for bone_id in track_bones:
+		baseline.append(skeleton.get_bone_pose(bone_id))
+
+	for fraction in [0.25, 0.5, 0.75]:
+		tank.tread_animation_player.seek(animation.length * fraction, true)
+		tank.tread_animation_player.advance(0.0)
+		skeleton.force_update_all_bone_transforms()
+		for index in range(track_bones.size()):
+			if not baseline[index].is_equal_approx(skeleton.get_bone_pose(track_bones[index])):
+				return true
+
+	push_error("Tank tread clip %s contains no visible Track bone motion" % clip)
+	return false
+
+
+func _find_skeleton(node: Node) -> Skeleton3D:
+	if node is Skeleton3D:
+		return node as Skeleton3D
+	for child in node.get_children():
+		var found := _find_skeleton(child)
+		if found != null:
+			return found
+	return null
 
 
 func _validate_turret_aiming(instance: Node) -> bool:

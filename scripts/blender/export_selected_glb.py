@@ -125,7 +125,7 @@ def normalize_building_materials(verified_images):
 def select_and_scale(scale, category):
     bpy.context.scene.frame_set(0)
     for armature in (obj for obj in bpy.context.scene.objects if obj.type == "ARMATURE"):
-        armature.data.pose_position = "REST"
+        armature.data.pose_position = "POSE" if category == "tank" else "REST"
     bpy.ops.object.select_all(action="SELECT")
     roots = [obj for obj in bpy.context.selected_objects if obj.parent is None]
     require(roots, "source must contain an object hierarchy")

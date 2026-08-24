@@ -489,6 +489,7 @@ test("exporter compiles outside the repository and pins source contracts without
   assert.match(exporter, /BUILDING_IMAGE_PATH = "\/\/Texture\.png"/u);
   assert.match(exporter, /bpy\.data\.objects\.new\("AgentTeamScaleRoot", None\)/u);
   assert.match(exporter, /root\.matrix_world = world/u);
+  assert.match(exporter, /armature\.data\.pose_position = "POSE" if category == "tank" else "REST"/u);
   for (const [option, value] of [["export_format", '"GLB"'], ["export_yup", "True"], ["use_selection", "True"], ["export_apply", "True"], ["export_materials", '"EXPORT"'], ["export_draco_mesh_compression_enable", "False"]]) {
     assert.match(exporter, new RegExp(`"${option}": ${value}`, "u"));
   }

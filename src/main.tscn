@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=3]
+[gd_scene load_steps=32 format=3]
 
 [ext_resource type="PackedScene" path="res://assets/models/tank/tank2.glb" id="1_tank"]
 [ext_resource type="PackedScene" path="res://assets/models/buildings/1story.glb" id="2_building_a"]
@@ -14,6 +14,9 @@
 [ext_resource type="PackedScene" path="res://src/assets/models/roads/street_curve.glb" id="12_street_curve"]
 [ext_resource type="PackedScene" path="res://src/assets/models/roads/street_3way.glb" id="13_street_3way"]
 [ext_resource type="PackedScene" path="res://src/assets/models/roads/street_4way.glb" id="14_street_4way"]
+[ext_resource type="Shader" path="res://src/assets/binbun_skies/shader/main.gdshader" id="15_sky_shader"]
+[ext_resource type="Texture2D" path="res://src/assets/binbun_skies/textures/clouds/clouds_01.tres" id="16_clouds_01"]
+[ext_resource type="Texture2D" path="res://src/assets/binbun_skies/textures/clouds/clouds_02.tres" id="17_clouds_02"]
 
 [sub_resource type="StandardMaterial3D" id="GroundMaterial"]
 albedo_color = Color(0.42, 0.26, 0.12, 1)
@@ -23,12 +26,20 @@ roughness = 0.92
 material = SubResource("GroundMaterial")
 size = Vector3(240, 0.2, 240)
 
+[sub_resource type="ShaderMaterial" id="SkyShaderMaterial"]
+shader = ExtResource("15_sky_shader")
+shader_parameter/cloud_tex_01 = ExtResource("16_clouds_01")
+shader_parameter/cloud_tex_02 = ExtResource("17_clouds_02")
+
+[sub_resource type="Sky" id="SceneSky"]
+sky_material = SubResource("SkyShaderMaterial")
+
 [sub_resource type="BoxShape3D" id="GroundCollisionShape"]
 size = Vector3(240, 0.2, 240)
 
 [sub_resource type="Environment" id="SceneEnvironment"]
-background_mode = 1
-background_color = Color(0.24, 0.4, 0.56, 1)
+background_mode = 2
+sky = SubResource("SceneSky")
 ambient_light_source = 2
 ambient_light_color = Color(0.96, 0.83, 0.65, 1)
 ambient_light_energy = 0.35

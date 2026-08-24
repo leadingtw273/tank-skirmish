@@ -33,6 +33,9 @@ const AIM_LINE_RADIUS := 0.04
 const AIM_LINE_MIN_LENGTH := 0.05
 const AIM_ALIGNED_ANGLE_RADIANS := 0.004363323
 const AIM_VERTICAL_BASIS_THRESHOLD := 0.999
+const CAMERA_ZOOM_STEP := 5.0
+const CAMERA_MIN_SIZE := 25.0
+const CAMERA_MAX_SIZE := 100.0
 
 @onready var camera_rig: Node3D = $"../CameraRig"
 @onready var camera: Camera3D = $"../CameraRig/Camera3D"
@@ -83,8 +86,14 @@ func _process(delta: float) -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	var mouse_event := event as InputEventMouseButton
-	if mouse_event != null and mouse_event.button_index == MOUSE_BUTTON_LEFT and mouse_event.pressed:
+	if mouse_event == null or not mouse_event.pressed:
+		return
+	if mouse_event.button_index == MOUSE_BUTTON_LEFT:
 		_fire_projectile()
+	elif mouse_event.button_index == MOUSE_BUTTON_WHEEL_UP:
+		camera.size = maxf(CAMERA_MIN_SIZE, camera.size - CAMERA_ZOOM_STEP)
+	elif mouse_event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+		camera.size = minf(CAMERA_MAX_SIZE, camera.size + CAMERA_ZOOM_STEP)
 
 
 func _physics_process(delta: float) -> void:

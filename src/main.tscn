@@ -1,4 +1,4 @@
-[gd_scene load_steps=32 format=3]
+[gd_scene load_steps=42 format=3]
 
 [ext_resource type="PackedScene" path="res://assets/models/tank/tank2.glb" id="1_tank"]
 [ext_resource type="PackedScene" path="res://assets/models/buildings/1story.glb" id="2_building_a"]
@@ -17,6 +17,10 @@
 [ext_resource type="Shader" path="res://src/assets/binbun_skies/shader/main.gdshader" id="15_sky_shader"]
 [ext_resource type="Texture2D" path="res://src/assets/binbun_skies/textures/clouds/clouds_01.tres" id="16_clouds_01"]
 [ext_resource type="Texture2D" path="res://src/assets/binbun_skies/textures/clouds/clouds_02.tres" id="17_clouds_02"]
+[ext_resource type="Shader" path="res://src/assets/binbun_grass/shader/grass.gdshader" id="18_grass_shader"]
+[ext_resource type="Texture2D" path="res://src/assets/binbun_grass/texture/grass_basic_02.png" id="19_grass_shape"]
+[ext_resource type="Texture2D" path="res://src/assets/binbun_grass/palette/palette_01.tres" id="20_grass_palette"]
+[ext_resource type="Script" path="res://src/grass_field.gd" id="21_grass_field"]
 
 [sub_resource type="StandardMaterial3D" id="GroundMaterial"]
 albedo_color = Color(0.42, 0.26, 0.12, 1)
@@ -39,6 +43,43 @@ shader_parameter/sun_strength = 4.0
 
 [sub_resource type="Sky" id="SceneSky"]
 sky_material = SubResource("SkyShaderMaterial")
+
+[sub_resource type="FastNoiseLite" id="GrassColorNoise"]
+seed = 117
+frequency = 0.018
+
+[sub_resource type="NoiseTexture2D" id="GrassColorNoiseTexture"]
+width = 256
+height = 256
+seamless = true
+noise = SubResource("GrassColorNoise")
+
+[sub_resource type="FastNoiseLite" id="GrassWindNoise"]
+seed = 118
+noise_type = 0
+fractal_octaves = 3
+frequency = 0.55
+
+[sub_resource type="NoiseTexture2D" id="GrassWindNoiseTexture"]
+width = 256
+height = 256
+seamless = true
+noise = SubResource("GrassWindNoise")
+
+[sub_resource type="ShaderMaterial" id="GrassMaterial"]
+shader = ExtResource("18_grass_shader")
+shader_parameter/billboard = true
+shader_parameter/shape_texture = ExtResource("19_grass_shape")
+shader_parameter/shape_atlas = ExtResource("19_grass_shape")
+shader_parameter/use_atlas = false
+shader_parameter/noise_texture = SubResource("GrassColorNoiseTexture")
+shader_parameter/color_gradient = ExtResource("20_grass_palette")
+shader_parameter/random_variation = 0.0
+shader_parameter/wind_texture = SubResource("GrassWindNoiseTexture")
+shader_parameter/wind_velocity = Vector2(1.2, 0.65)
+shader_parameter/alpha_cut_start = 0.35
+shader_parameter/alpha_cut_end = 0.65
+shader_parameter/alpha_mode = 1
 
 [sub_resource type="BoxShape3D" id="GroundCollisionShape"]
 size = Vector3(240, 0.2, 240)
@@ -113,6 +154,11 @@ collision_mask = 0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="GroundCollision"]
 shape = SubResource("GroundCollisionShape")
+
+[node name="GrassField" type="MultiMeshInstance3D" parent="."]
+material_override = SubResource("GrassMaterial")
+cast_shadow = 0
+script = ExtResource("21_grass_field")
 
 [node name="Projectiles" type="Node3D" parent="."]
 

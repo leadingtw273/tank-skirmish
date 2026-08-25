@@ -351,8 +351,22 @@ func _validate_turret_aiming(instance: Node) -> bool:
 		return false
 	var mouse_line_start := mouse_line.global_transform.origin - mouse_line.global_transform.basis.y * 0.5
 	var mouse_line_direction := (current_muzzle + Vector3.RIGHT * 20.0 - turret_pivot.global_position).normalized()
-	if not mouse_line_start.is_equal_approx(turret_pivot.global_position + mouse_line_direction * 3.0):
-		push_error("Red mouse line must hide its first 3m from the turret pivot")
+	var tank_collision := tank.get_node("CollisionShape3D") as CollisionShape3D
+	var tank_collision_box := tank_collision.shape as BoxShape3D
+	var tank_collision_half_size := tank_collision_box.size * 0.5
+	var tank_corner_radius := 0.0
+	for x_sign in [-1.0, 1.0]:
+		for y_sign in [-1.0, 1.0]:
+			for z_sign in [-1.0, 1.0]:
+				var corner := tank_collision.global_transform * Vector3(
+					tank_collision_half_size.x * x_sign,
+					tank_collision_half_size.y * y_sign,
+					tank_collision_half_size.z * z_sign,
+				)
+				tank_corner_radius = maxf(tank_corner_radius, turret_pivot.global_position.distance_to(corner))
+	var mouse_clearance_distance := tank_corner_radius + 3.0
+	if not mouse_line_start.is_equal_approx(turret_pivot.global_position + mouse_line_direction * mouse_clearance_distance):
+		push_error("Red mouse line must clear the tank and another 3m before becoming visible")
 		return false
 
 	aim_target.queue_free()

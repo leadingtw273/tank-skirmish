@@ -90,6 +90,28 @@ const BLOCK_BUILDING_COUNTS := {
 	"south_middle": 6,
 	"south_east": 6,
 }
+const ROAD_SCENE_NAMES := [
+	"street_straight.glb",
+	"street_curve.glb",
+	"street_3way.glb",
+	"street_4way.glb",
+]
+const SATELLITE_LAYOUTS := {
+	"NorthDistrict": {"position": Vector3(0, 0, -292), "rotation_y": 0.0},
+	"SouthDistrict": {"position": Vector3(0, 0, 308), "rotation_y": PI},
+	"WestDistrict": {"position": Vector3(-300, 0, 8), "rotation_y": PI / 2.0},
+	"EastDistrict": {"position": Vector3(300, 0, 8), "rotation_y": -PI / 2.0},
+}
+const CORRIDOR_LAYOUTS := {
+	"NorthCorridor": {"position": Vector3(-30, 0, -102), "rotation_y": PI / 2.0},
+	"SouthCorridor": {"position": Vector3(-30, 0, 118), "rotation_y": -PI / 2.0},
+	"WestCorridor": {"position": Vector3(-110, 0, 38), "rotation_y": PI},
+	"EastCorridor": {"position": Vector3(110, 0, 38), "rotation_y": 0.0},
+}
+const APPROVED_CAMERA_BASIS_X := Vector3(0.71324474, 0, -0.7009151)
+const APPROVED_CAMERA_BASIS_Y := Vector3(-0.3791764, 0.8410397, -0.3858464)
+const APPROVED_CAMERA_BASIS_Z := Vector3(0.58949745, 0.5409734, 0.59986717)
+const APPROVED_CAMERA_ORIGIN := Vector3(78.46123, 72.81983, 88.0357)
 
 
 func _init() -> void:
@@ -123,6 +145,9 @@ func _validate_instance(instance: Node) -> void:
 		quit(1)
 		return
 	if not _validate_collision_layout(instance):
+		quit(1)
+		return
+	if not _validate_map_960(instance):
 		quit(1)
 		return
 	if not _validate_grid_layout(instance):
@@ -601,6 +626,89 @@ func _validate_collision_layout(instance: Node) -> bool:
 		return false
 
 	return true
+
+
+func _validate_map_960(instance: Node) -> bool:
+	var ground := instance.get_node_or_null("Ground") as MeshInstance3D
+	var ground_mesh := ground.mesh as BoxMesh if ground != null else null
+	var ground_collision := instance.get_node_or_null("GroundCollision/CollisionShape3D") as CollisionShape3D
+	var ground_shape := ground_collision.shape as BoxShape3D if ground_collision != null else null
+	if ground_mesh == null or not ground_mesh.size.is_equal_approx(Vector3(960, 0.2, 960)) \
+			or ground_shape == null or not ground_shape.size.is_equal_approx(Vector3(960, 0.2, 960)):
+		push_error("Ground mesh and GroundCollision must both be exactly 960m by 960m")
+		return false
+
+	var camera := instance.get_node_or_null("CameraRig/Camera3D") as Camera3D
+	if camera == null or not _has_approved_camera_transform(camera) \
+			or camera.projection != Camera3D.PROJECTION_ORTHOGONAL or camera.keep_aspect != Camera3D.KEEP_HEIGHT \
+			or not camera.current or not is_equal_approx(camera.size, 100.0):
+		push_error("Camera3D must retain the approved orthogonal gameplay transform and size")
+		return false
+
+	var roads := instance.get_node_or_null("Roads") as Node3D
+	if roads == null:
+		push_error("960m map requires the Roads root")
+		return false
+	for district_name: String in SATELLITE_LAYOUTS:
+		if not _validate_layout_instance(roads, district_name, SATELLITE_LAYOUTS[district_name], "satellite_district.tscn"):
+			return false
+	for corridor_name: String in CORRIDOR_LAYOUTS:
+		if not _validate_layout_instance(roads, corridor_name, CORRIDOR_LAYOUTS[corridor_name], "arterial_corridor.tscn"):
+			return false
+
+	var road_count := _collect_road_modules(instance).size()
+	if road_count < 220 or road_count > 280:
+		push_error("960m map road-module count must remain between 220 and 280, found %d" % road_count)
+		return false
+	var buildings := _collect_buildings(instance)
+	if buildings.size() != 144:
+		push_error("960m map must contain exactly 144 collision-enabled buildings, found %d" % buildings.size())
+		return false
+	for building in buildings:
+		if building.get_node_or_null("Model") == null or not _has_enabled_box_collision(building):
+			push_error("Building %s must retain its model and BoxShape3D collision" % building.name)
+			return false
+	return true
+
+
+func _validate_layout_instance(parent: Node3D, name: String, requirement: Dictionary, scene_name: String) -> bool:
+	var instance := parent.get_node_or_null(name) as Node3D
+	if instance == null or instance.scene_file_path.get_file() != scene_name \
+			or not instance.position.is_equal_approx(requirement["position"]) \
+			or not is_equal_approx(instance.rotation.y, requirement["rotation_y"]):
+		push_error("%s must keep its approved scene instance and transform" % name)
+		return false
+	return true
+
+
+func _collect_road_modules(node: Node) -> Array[Node3D]:
+	var roads: Array[Node3D] = []
+	if node is Node3D and ROAD_SCENE_NAMES.has((node as Node3D).scene_file_path.get_file()):
+		roads.append(node as Node3D)
+	for child in node.get_children():
+		roads.append_array(_collect_road_modules(child))
+	return roads
+
+
+func _collect_buildings(node: Node) -> Array[StaticBody3D]:
+	var buildings: Array[StaticBody3D] = []
+	if node is StaticBody3D and node.get_node_or_null("Model") != null:
+		buildings.append(node as StaticBody3D)
+	for child in node.get_children():
+		buildings.append_array(_collect_buildings(child))
+	return buildings
+
+
+func _has_enabled_box_collision(building: StaticBody3D) -> bool:
+	var collision := building.get_node_or_null("CollisionShape3D") as CollisionShape3D
+	return collision != null and not collision.disabled and collision.shape is BoxShape3D
+
+
+func _has_approved_camera_transform(camera: Camera3D) -> bool:
+	return camera.transform.basis.x.is_equal_approx(APPROVED_CAMERA_BASIS_X) \
+		and camera.transform.basis.y.is_equal_approx(APPROVED_CAMERA_BASIS_Y) \
+		and camera.transform.basis.z.is_equal_approx(APPROVED_CAMERA_BASIS_Z) \
+		and camera.transform.origin.is_equal_approx(APPROVED_CAMERA_ORIGIN)
 
 
 func _validate_grid_layout(instance: Node) -> bool:

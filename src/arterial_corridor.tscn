@@ -1,0 +1,54 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="PackedScene" path="res://src/assets/models/roads/street_straight.glb" id="1_straight"]
+
+[node name="ArterialCorridor" type="Node3D"]
+
+[node name="CentralEndpoint" parent="." instance=ExtResource("1_straight")]
+rotation = Vector3(0, 1.570796, 0)
+scale = Vector3(10, 1, 10)
+
+[node name="Segment01" parent="." instance=ExtResource("1_straight")]
+position = Vector3(0, 0, 20)
+rotation = Vector3(0, 1.570796, 0)
+scale = Vector3(10, 1, 10)
+
+[node name="Segment02" parent="." instance=ExtResource("1_straight")]
+position = Vector3(0, 0, 40)
+rotation = Vector3(0, 1.570796, 0)
+scale = Vector3(10, 1, 10)
+
+[node name="Segment03" parent="." instance=ExtResource("1_straight")]
+position = Vector3(0, 0, 60)
+rotation = Vector3(0, 1.570796, 0)
+scale = Vector3(10, 1, 10)
+
+[node name="Segment04" parent="." instance=ExtResource("1_straight")]
+position = Vector3(0, 0, 80)
+rotation = Vector3(0, 1.570796, 0)
+scale = Vector3(10, 1, 10)
+
+[node name="Segment05" parent="." instance=ExtResource("1_straight")]
+position = Vector3(0, 0, 100)
+rotation = Vector3(0, 1.570796, 0)
+scale = Vector3(10, 1, 10)
+
+[node name="Segment06" parent="." instance=ExtResource("1_straight")]
+position = Vector3(0, 0, 120)
+rotation = Vector3(0, 1.570796, 0)
+scale = Vector3(10, 1, 10)
+
+[node name="Segment07" parent="." instance=ExtResource("1_straight")]
+position = Vector3(0, 0, 140)
+rotation = Vector3(0, 1.570796, 0)
+scale = Vector3(10, 1, 10)
+
+[node name="Segment08" parent="." instance=ExtResource("1_straight")]
+position = Vector3(0, 0, 160)
+rotation = Vector3(0, 1.570796, 0)
+scale = Vector3(10, 1, 10)
+
+[node name="SatelliteEndpoint" parent="." instance=ExtResource("1_straight")]
+position = Vector3(0, 0, 180)
+rotation = Vector3(0, 1.570796, 0)
+scale = Vector3(10, 1, 10)

@@ -1,0 +1,211 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="PackedScene" path="res://src/assets/models/roads/street_straight.glb" id="1_straight"]
+[ext_resource type="PackedScene" path="res://src/assets/models/roads/street_curve.glb" id="2_curve"]
+[ext_resource type="PackedScene" path="res://src/assets/models/roads/street_3way.glb" id="3_three_way"]
+[ext_resource type="PackedScene" path="res://src/assets/models/roads/street_4way.glb" id="4_four_way"]
+
+[node name="SatelliteDistrict" type="Node3D"]
+
+[node name="OuterNorthWest" parent="." instance=ExtResource("2_curve")]
+position = Vector3(-80, 0, -80)
+scale = Vector3(10, 1, 10)
+
+[node name="OuterNorthEast" parent="." instance=ExtResource("2_curve")]
+position = Vector3(80, 0, -80)
+rotation = Vector3(0, -1.570796, 0)
+scale = Vector3(10, 1, 10)
+
+[node name="OuterSouthEast" parent="." instance=ExtResource("2_curve")]
+position = Vector3(80, 0, 80)
+rotation = Vector3(0, 3.141593, 0)
+scale = Vector3(10, 1, 10)
+
+[node name="OuterSouthWest" parent="." instance=ExtResource("2_curve")]
+position = Vector3(-80, 0, 80)
+rotation = Vector3(0, 1.570796, 0)
+scale = Vector3(10, 1, 10)
+
+[node name="NorthWestA" parent="." instance=ExtResource("1_straight")]
+position = Vector3(-60, 0, -80)
+scale = Vector3(10, 1, 10)
+
+[node name="NorthWestB" parent="." instance=ExtResource("1_straight")]
+position = Vector3(-40, 0, -80)
+scale = Vector3(10, 1, 10)
+
+[node name="NorthWestC" parent="." instance=ExtResource("1_straight")]
+position = Vector3(-20, 0, -80)
+scale = Vector3(10, 1, 10)
+
+[node name="CentralFacingEntrance" parent="." instance=ExtResource("4_four_way")]
+position = Vector3(0, 0, -80)
+rotation = Vector3(0, 1.570796, 0)
+scale = Vector3(10, 1, 10)
+
+[node name="NorthEastA" parent="." instance=ExtResource("1_straight")]
+position = Vector3(20, 0, -80)
+scale = Vector3(10, 1, 10)
+
+[node name="NorthEastB" parent="." instance=ExtResource("1_straight")]
+position = Vector3(40, 0, -80)
+scale = Vector3(10, 1, 10)
+
+[node name="NorthEastC" parent="." instance=ExtResource("1_straight")]
+position = Vector3(60, 0, -80)
+scale = Vector3(10, 1, 10)
+
+[node name="SouthWestA" parent="." instance=ExtResource("1_straight")]
+position = Vector3(-60, 0, 80)
+scale = Vector3(10, 1, 10)
+
+[node name="SouthWestB" parent="." instance=ExtResource("1_straight")]
+position = Vector3(-40, 0, 80)
+scale = Vector3(10, 1, 10)
+
+[node name="SouthWestC" parent="." instance=ExtResource("1_straight")]
+position = Vector3(-20, 0, 80)
+scale = Vector3(10, 1, 10)
+
+[node name="SouthCrossJunction" parent="." instance=ExtResource("3_three_way")]
+position = Vector3(0, 0, 80)
+rotation = Vector3(0, -1.570796, 0)
+scale = Vector3(10, 1, 10)
+
+[node name="SouthEastA" parent="." instance=ExtResource("1_straight")]
+position = Vector3(20, 0, 80)
+scale = Vector3(10, 1, 10)
+
+[node name="SouthEastB" parent="." instance=ExtResource("1_straight")]
+position = Vector3(40, 0, 80)
+scale = Vector3(10, 1, 10)
+
+[node name="SouthEastC" parent="." instance=ExtResource("1_straight")]
+position = Vector3(60, 0, 80)
+scale = Vector3(10, 1, 10)
+
+[node name="WestNorthA" parent="." instance=ExtResource("1_straight")]
+position = Vector3(-80, 0, -60)
+rotation = Vector3(0, 1.570796, 0)
+scale = Vector3(10, 1, 10)
+
+[node name="WestNorthB" parent="." instance=ExtResource("1_straight")]
+position = Vector3(-80, 0, -40)
+rotation = Vector3(0, 1.570796, 0)
+scale = Vector3(10, 1, 10)
+
+[node name="WestNorthC" parent="." instance=ExtResource("1_straight")]
+position = Vector3(-80, 0, -20)
+rotation = Vector3(0, 1.570796, 0)
+scale = Vector3(10, 1, 10)
+
+[node name="WestCrossJunction" parent="." instance=ExtResource("3_three_way")]
+position = Vector3(-80, 0, 0)
+rotation = Vector3(0, 3.141593, 0)
+scale = Vector3(10, 1, 10)
+
+[node name="WestSouthA" parent="." instance=ExtResource("1_straight")]
+position = Vector3(-80, 0, 20)
+rotation = Vector3(0, 1.570796, 0)
+scale = Vector3(10, 1, 10)
+
+[node name="WestSouthB" parent="." instance=ExtResource("1_straight")]
+position = Vector3(-80, 0, 40)
+rotation = Vector3(0, 1.570796, 0)
+scale = Vector3(10, 1, 10)
+
+[node name="WestSouthC" parent="." instance=ExtResource("1_straight")]
+position = Vector3(-80, 0, 60)
+rotation = Vector3(0, 1.570796, 0)
+scale = Vector3(10, 1, 10)
+
+[node name="EastNorthA" parent="." instance=ExtResource("1_straight")]
+position = Vector3(80, 0, -60)
+rotation = Vector3(0, 1.570796, 0)
+scale = Vector3(10, 1, 10)
+
+[node name="EastNorthB" parent="." instance=ExtResource("1_straight")]
+position = Vector3(80, 0, -40)
+rotation = Vector3(0, 1.570796, 0)
+scale = Vector3(10, 1, 10)
+
+[node name="EastNorthC" parent="." instance=ExtResource("1_straight")]
+position = Vector3(80, 0, -20)
+rotation = Vector3(0, 1.570796, 0)
+scale = Vector3(10, 1, 10)
+
+[node name="EastCrossJunction" parent="." instance=ExtResource("3_three_way")]
+position = Vector3(80, 0, 0)
+scale = Vector3(10, 1, 10)
+
+[node name="EastSouthA" parent="." instance=ExtResource("1_straight")]
+position = Vector3(80, 0, 20)
+rotation = Vector3(0, 1.570796, 0)
+scale = Vector3(10, 1, 10)
+
+[node name="EastSouthB" parent="." instance=ExtResource("1_straight")]
+position = Vector3(80, 0, 40)
+rotation = Vector3(0, 1.570796, 0)
+scale = Vector3(10, 1, 10)
+
+[node name="EastSouthC" parent="." instance=ExtResource("1_straight")]
+position = Vector3(80, 0, 60)
+rotation = Vector3(0, 1.570796, 0)
+scale = Vector3(10, 1, 10)
+
+[node name="CrossWestA" parent="." instance=ExtResource("1_straight")]
+position = Vector3(-60, 0, 0)
+scale = Vector3(10, 1, 10)
+
+[node name="CrossWestB" parent="." instance=ExtResource("1_straight")]
+position = Vector3(-40, 0, 0)
+scale = Vector3(10, 1, 10)
+
+[node name="CrossWestC" parent="." instance=ExtResource("1_straight")]
+position = Vector3(-20, 0, 0)
+scale = Vector3(10, 1, 10)
+
+[node name="CentralCrossing" parent="." instance=ExtResource("4_four_way")]
+scale = Vector3(10, 1, 10)
+
+[node name="CrossEastA" parent="." instance=ExtResource("1_straight")]
+position = Vector3(20, 0, 0)
+scale = Vector3(10, 1, 10)
+
+[node name="CrossEastB" parent="." instance=ExtResource("1_straight")]
+position = Vector3(40, 0, 0)
+scale = Vector3(10, 1, 10)
+
+[node name="CrossEastC" parent="." instance=ExtResource("1_straight")]
+position = Vector3(60, 0, 0)
+scale = Vector3(10, 1, 10)
+
+[node name="CrossNorthA" parent="." instance=ExtResource("1_straight")]
+position = Vector3(0, 0, -60)
+rotation = Vector3(0, 1.570796, 0)
+scale = Vector3(10, 1, 10)
+
+[node name="CrossNorthB" parent="." instance=ExtResource("1_straight")]
+position = Vector3(0, 0, -40)
+rotation = Vector3(0, 1.570796, 0)
+scale = Vector3(10, 1, 10)
+
+[node name="CrossNorthC" parent="." instance=ExtResource("1_straight")]
+position = Vector3(0, 0, -20)
+rotation = Vector3(0, 1.570796, 0)
+scale = Vector3(10, 1, 10)
+
+[node name="CrossSouthA" parent="." instance=ExtResource("1_straight")]
+position = Vector3(0, 0, 20)
+rotation = Vector3(0, 1.570796, 0)
+scale = Vector3(10, 1, 10)
+
+[node name="CrossSouthB" parent="." instance=ExtResource("1_straight")]
+position = Vector3(0, 0, 40)
+rotation = Vector3(0, 1.570796, 0)
+scale = Vector3(10, 1, 10)
+
+[node name="CrossSouthC" parent="." instance=ExtResource("1_straight")]
+position = Vector3(0, 0, 60)
+rotation = Vector3(0, 1.570796, 0)
+scale = Vector3(10, 1, 10)

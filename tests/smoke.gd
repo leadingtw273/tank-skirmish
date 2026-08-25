@@ -266,7 +266,7 @@ func _validate_turret_aiming(instance: Node) -> bool:
 
 	var chassis_position := tank.global_position
 	var chassis_rotation := tank.global_rotation
-	var plus_z_target: Vector3 = tank._muzzle_global_position() + Vector3.BACK * 20.0
+	var plus_z_target: Vector3 = turret_pivot.global_position + Vector3.BACK * 20.0
 	tank._aim_turret_at(plus_z_target, 10.0)
 	var muzzle_forward := -gun_pitch_pivot.global_transform.basis.x.normalized()
 	if muzzle_forward.dot(Vector3.BACK) < 0.999:
@@ -277,9 +277,18 @@ func _validate_turret_aiming(instance: Node) -> bool:
 		return false
 
 	var held_yaw := turret_pivot.global_rotation.y
-	tank._aim_turret_at(tank._muzzle_global_position(), 1.0)
+	tank._aim_turret_at(turret_pivot.global_position, 1.0)
 	if not is_equal_approx(turret_pivot.global_rotation.y, held_yaw) or is_nan(turret_pivot.global_rotation.y):
 		push_error("A near turret target must preserve the current yaw")
+		return false
+
+	var held_pitch := gun_pitch_pivot.rotation.z
+	var dead_zone_target := turret_pivot.global_position + Vector3(2.0, 10.0, 0.0)
+	tank._aim_turret_at(dead_zone_target, 10.0)
+	tank._aim_gun_pitch_at_target(dead_zone_target, 10.0)
+	if not is_equal_approx(turret_pivot.global_rotation.y, held_yaw) \
+			or not is_equal_approx(gun_pitch_pivot.rotation.z, held_pitch):
+		push_error("A target within the 3m turret-center dead zone must preserve yaw and pitch")
 		return false
 
 	var fallback_origin := Vector3(1000.0, 1000.0, 1000.0)
@@ -381,6 +390,14 @@ func _validate_camera_zoom(instance: Node) -> bool:
 	if tank == null or tank.camera == null or projectiles == null:
 		push_error("Camera zoom validation requires Tank, Camera3D, and Projectiles nodes")
 		return false
+	if ProjectSettings.get_setting("display/window/stretch/mode") != "canvas_items" \
+			or instance.get_window().content_scale_aspect != Window.CONTENT_SCALE_ASPECT_EXPAND:
+		push_error("The game window must use canvas-items scaling with runtime expand adaptation")
+		return false
+	if tank.camera.projection != Camera3D.PROJECTION_ORTHOGONAL \
+			or tank.camera.keep_aspect != Camera3D.KEEP_HEIGHT:
+		push_error("The orthogonal camera must preserve vertical framing across aspect ratios")
+		return false
 
 	var initial_size: float = tank.camera.size
 	var projectile_count := projectiles.get_child_count()
@@ -472,7 +489,7 @@ func _validate_projectile_firing(instance: Node) -> bool:
 	press_event.pressed = true
 	tank._unhandled_input(press_event)
 	var projectile := projectiles.get_node_or_null("Projectile") as Node3D
-	var muzzle_flash := projectiles.get_node_or_null("MuzzleFlash") as Node3D
+	var muzzle_flash := tank.gun_pitch_pivot.get_node_or_null("MuzzleFlash") as Node3D
 	if projectile == null or muzzle_flash == null:
 		push_error("Left mouse press must create one projectile and one muzzle flash")
 		return false
@@ -488,9 +505,21 @@ func _validate_projectile_firing(instance: Node) -> bool:
 	if not bool(muzzle_flash.get("one_shot")):
 		push_error("Muzzle flash must play once per shot")
 		return false
-	if not muzzle_flash.scale.is_equal_approx(Vector3.ONE * 2.0):
+	if not muzzle_flash.global_transform.basis.get_scale().is_equal_approx(Vector3.ONE * 2.0):
 		push_error("Muzzle flash acceptance scale must remain 2x")
 		return false
+	var flash_start := muzzle_flash.global_position
+	var projectile_start := projectile.global_position
+	var tank_start := tank.global_position
+	var tank_motion := Vector3(2.0, 0.0, -1.0)
+	tank.global_position += tank_motion
+	if not muzzle_flash.global_position.is_equal_approx(flash_start + tank_motion):
+		push_error("Muzzle flash must follow tank and gun movement during its lifetime")
+		return false
+	if not projectile.global_position.is_equal_approx(projectile_start):
+		push_error("A fired projectile must remain in world space when the tank moves")
+		return false
+	tank.global_position = tank_start
 
 	await physics_frame
 	var self_hit: Dictionary = projectile._collision_between(Vector3(-15.0, 1.8, 8.0), Vector3(15.0, 1.8, 8.0))
@@ -533,7 +562,7 @@ func _validate_projectile_firing(instance: Node) -> bool:
 	await process_frame
 	await create_timer(1.0).timeout
 	await process_frame
-	if projectiles.get_node_or_null("MuzzleFlash") != null or projectiles.get_node_or_null("ImpactVFX") != null:
+	if tank.gun_pitch_pivot.get_node_or_null("MuzzleFlash") != null or projectiles.get_node_or_null("ImpactVFX") != null:
 		push_error("Transient firing VFX must clean themselves up")
 		return false
 	return true

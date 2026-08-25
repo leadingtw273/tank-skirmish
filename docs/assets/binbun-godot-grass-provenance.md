@@ -31,7 +31,7 @@ atlas, XCF source, other textures, and full presets are excluded.
 `src/main.tscn` owns the material parameters and `GrassField` configuration. The
 project-local `src/grass_palette_dry.tres` supplies the muted yellow-brown palette
 without modifying the imported source palette. `src/grass_field.gd` creates at
-most 72,000 deterministic MultiMesh transforms with seed `117` across the playable
+most 144,000 deterministic MultiMesh transforms with seed `117` across the playable
 ground. Scene-specific road corridors and the existing building collision boxes
 plus a 0.5-meter clearance are excluded; other ground remains grass-covered and
 driveable. The source shader is used unmodified; its animated wind texture receives

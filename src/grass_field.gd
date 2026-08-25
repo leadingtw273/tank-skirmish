@@ -1,13 +1,13 @@
 extends MultiMeshInstance3D
 
-const INSTANCE_COUNT := 72000
+const INSTANCE_COUNT := 144000
 const DISTRIBUTION_SEED := 117
 const FIELD_BOUNDS := Rect2(-116.0, -116.0, 232.0, 232.0)
 const ROAD_X := [-90.0, -30.0, 30.0, 90.0]
 const ROAD_Z := [-82.0, -22.0, 38.0, 98.0]
 const ROAD_HALF_WIDTH := 11.0
 const BUILDING_CLEARANCE := 0.5
-const MAX_PLACEMENT_ATTEMPTS := 720000
+const MAX_PLACEMENT_ATTEMPTS := 1440000
 
 
 func _ready() -> void:

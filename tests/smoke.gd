@@ -352,8 +352,10 @@ func _validate_turret_aiming(instance: Node) -> bool:
 			or not is_equal_approx(actual_material.albedo_color.a, 0.7) \
 			or not is_equal_approx(mouse_material.albedo_color.a, 0.7) \
 			or actual_material.transparency != BaseMaterial3D.TRANSPARENCY_ALPHA \
-			or mouse_material.transparency != BaseMaterial3D.TRANSPARENCY_ALPHA:
-		push_error("Both aim lines must use alpha transparency at 0.7 opacity")
+			or mouse_material.transparency != BaseMaterial3D.TRANSPARENCY_ALPHA \
+			or not actual_material.no_depth_test \
+			or not mouse_material.no_depth_test:
+		push_error("Both aim lines must render above depth-prepass grass with alpha transparency at 0.7 opacity")
 		return false
 	tank._set_aim_line_segment(actual_line, Vector3.ZERO, Vector3.ZERO)
 	if actual_line.visible:

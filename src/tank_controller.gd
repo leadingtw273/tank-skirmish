@@ -251,6 +251,7 @@ func _create_aim_line(line_name: String, color: Color) -> MeshInstance3D:
 	var material := StandardMaterial3D.new()
 	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	material.no_depth_test = true
 	material.albedo_color = Color(color.r, color.g, color.b, AIM_LINE_ALPHA)
 	line.material_override = material
 	line.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF

@@ -1,4 +1,4 @@
-[gd_scene load_steps=43 format=3]
+[gd_scene load_steps=45 format=3]
 
 [ext_resource type="PackedScene" path="res://assets/models/tank/tank2.glb" id="1_tank"]
 [ext_resource type="PackedScene" path="res://assets/models/buildings/1story.glb" id="2_building_a"]
@@ -22,6 +22,8 @@
 [ext_resource type="Texture2D" path="res://src/grass_palette_dry.tres" id="20_grass_palette"]
 [ext_resource type="Script" path="res://src/grass_field.gd" id="21_grass_field"]
 [ext_resource type="Script" path="res://src/adaptive_viewport.gd" id="22_adaptive_viewport"]
+[ext_resource type="PackedScene" path="res://src/satellite_district.tscn" id="23_satellite_district"]
+[ext_resource type="PackedScene" path="res://src/arterial_corridor.tscn" id="24_arterial_corridor"]
 
 [sub_resource type="StandardMaterial3D" id="GroundMaterial"]
 albedo_color = Color(0.42, 0.26, 0.12, 1)
@@ -29,7 +31,7 @@ roughness = 0.92
 
 [sub_resource type="BoxMesh" id="GroundMesh"]
 material = SubResource("GroundMaterial")
-size = Vector3(240, 0.2, 240)
+size = Vector3(960, 0.2, 960)
 
 [sub_resource type="ShaderMaterial" id="SkyShaderMaterial"]
 shader = ExtResource("15_sky_shader")
@@ -83,7 +85,7 @@ shader_parameter/alpha_cut_end = 0.65
 shader_parameter/alpha_mode = 1
 
 [sub_resource type="BoxShape3D" id="GroundCollisionShape"]
-size = Vector3(240, 0.2, 240)
+size = Vector3(960, 0.2, 960)
 
 [sub_resource type="Environment" id="SceneEnvironment"]
 background_mode = 2
@@ -127,9 +129,9 @@ script = ExtResource("22_adaptive_viewport")
 [node name="CameraRig" type="Node3D" parent="."]
 
 [node name="Camera3D" type="Camera3D" parent="CameraRig"]
-transform = Transform3D(0.036683507, -0.5894746, 0.80695355, 0, 0.807497, 0.58987164, -0.99932694, -0.021638561, 0.029621825, 32.482655, 23.744362, 9.19238)
+transform = Transform3D(0.71324474, -0.3791764, 0.58949745, 0, 0.8410397, 0.5409734, -0.7009151, -0.3858464, 0.59986717, 78.46123, 72.81983, 88.0357)
 projection = 1
-size = 61.211
+size = 100.0
 keep_aspect = 1
 current = true
 
@@ -928,3 +930,38 @@ shadow_enabled = true
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="Lighting"]
 environment = SubResource("SceneEnvironment")
+
+[node name="NorthCorridor" parent="Roads" instance=ExtResource("24_arterial_corridor")]
+position = Vector3(-28.49157, 0.01, -88.53653)
+rotation = Vector3(0, 1.3439975, 0)
+scale = Vector3(0.75, 1, 1)
+
+[node name="SouthCorridor" parent="Roads" instance=ExtResource("24_arterial_corridor")]
+position = Vector3(-28.49157, 0.01, 104.53653)
+rotation = Vector3(0, -1.3439975, 0)
+scale = Vector3(0.75, 1, 1)
+
+[node name="WestCorridor" parent="Roads" instance=ExtResource("24_arterial_corridor")]
+position = Vector3(-96.53653, 0.01, 36.49157)
+rotation = Vector3(0, 2.9147937, 0)
+scale = Vector3(0.75, 1, 1)
+
+[node name="EastCorridor" parent="Roads" instance=ExtResource("24_arterial_corridor")]
+position = Vector3(96.53653, 0.01, 36.49157)
+rotation = Vector3(0, 0.22679885, 0)
+scale = Vector3(0.75, 1, 1)
+
+[node name="NorthDistrict" parent="Roads" instance=ExtResource("23_satellite_district")]
+position = Vector3(0, 0, -292)
+
+[node name="SouthDistrict" parent="Roads" instance=ExtResource("23_satellite_district")]
+position = Vector3(0, 0, 308)
+rotation = Vector3(0, 3.141593, 0)
+
+[node name="WestDistrict" parent="Roads" instance=ExtResource("23_satellite_district")]
+position = Vector3(-300, 0, 8)
+rotation = Vector3(0, 1.570796, 0)
+
+[node name="EastDistrict" parent="Roads" instance=ExtResource("23_satellite_district")]
+position = Vector3(300, 0, 8)
+rotation = Vector3(0, -1.570796, 0)

@@ -354,8 +354,10 @@ func _validate_turret_aiming(instance: Node) -> bool:
 			or actual_material.transparency != BaseMaterial3D.TRANSPARENCY_ALPHA \
 			or mouse_material.transparency != BaseMaterial3D.TRANSPARENCY_ALPHA \
 			or not actual_material.no_depth_test \
-			or not mouse_material.no_depth_test:
-		push_error("Both aim lines must render above depth-prepass grass with alpha transparency at 0.7 opacity")
+			or not mouse_material.no_depth_test \
+			or actual_material.render_priority != Material.RENDER_PRIORITY_MAX \
+			or mouse_material.render_priority != Material.RENDER_PRIORITY_MAX:
+		push_error("Both aim lines must use maximum render priority, disable depth testing, and use 0.7 alpha transparency")
 		return false
 	tank._set_aim_line_segment(actual_line, Vector3.ZERO, Vector3.ZERO)
 	if actual_line.visible:

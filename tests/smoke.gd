@@ -103,10 +103,10 @@ const SATELLITE_LAYOUTS := {
 	"EastDistrict": {"position": Vector3(300, 0, 8), "rotation_y": -PI / 2.0},
 }
 const CORRIDOR_LAYOUTS := {
-	"NorthCorridor": {"position": Vector3(-30, 0, -102), "rotation_y": PI / 2.0},
-	"SouthCorridor": {"position": Vector3(-30, 0, 118), "rotation_y": -PI / 2.0},
-	"WestCorridor": {"position": Vector3(-110, 0, 38), "rotation_y": PI},
-	"EastCorridor": {"position": Vector3(110, 0, 38), "rotation_y": 0.0},
+	"NorthCorridor": {"position": Vector3(-28.49157, 0.01, -88.53653), "rotation_y": 1.3439975, "scale": Vector3(0.75, 1, 1)},
+	"SouthCorridor": {"position": Vector3(-28.49157, 0.01, 104.53653), "rotation_y": -1.3439975, "scale": Vector3(0.75, 1, 1)},
+	"WestCorridor": {"position": Vector3(-96.53653, 0.01, 36.49157), "rotation_y": 2.9147937, "scale": Vector3(0.75, 1, 1)},
+	"EastCorridor": {"position": Vector3(96.53653, 0.01, 36.49157), "rotation_y": 0.22679885, "scale": Vector3(0.75, 1, 1)},
 }
 const APPROVED_CAMERA_BASIS_X := Vector3(0.71324474, 0, -0.7009151)
 const APPROVED_CAMERA_BASIS_Y := Vector3(-0.3791764, 0.8410397, -0.3858464)
@@ -668,6 +668,10 @@ func _validate_map_960(instance: Node) -> bool:
 		if building.get_node_or_null("Model") == null or not _has_enabled_box_collision(building):
 			push_error("Building %s must retain its model and BoxShape3D collision" % building.name)
 			return false
+	for corridor_name: String in CORRIDOR_LAYOUTS:
+		var corridor := roads.get_node(corridor_name) as Node3D
+		if not _corridor_clears_buildings(corridor, buildings):
+			return false
 	return true
 
 
@@ -678,6 +682,34 @@ func _validate_layout_instance(parent: Node3D, name: String, requirement: Dictio
 			or not is_equal_approx(instance.rotation.y, requirement["rotation_y"]):
 		push_error("%s must keep its approved scene instance and transform" % name)
 		return false
+	if requirement.has("scale") and not instance.scale.is_equal_approx(requirement["scale"]):
+		push_error("%s must keep its approved corridor scale" % name)
+		return false
+	return true
+
+
+func _corridor_clears_buildings(corridor: Node3D, buildings: Array[StaticBody3D]) -> bool:
+	var direction := corridor.global_transform.basis.x.normalized()
+	var lateral := Vector3(-direction.z, 0, direction.x)
+	var segment_length := 160.0 * corridor.global_transform.basis.x.length()
+	var road_half_length := 10.0 * corridor.global_transform.basis.x.length()
+	const ROAD_HALF_WIDTH := 10.0
+	for building in buildings:
+		var collision := building.get_node_or_null("CollisionShape3D") as CollisionShape3D
+		var shape := collision.shape as BoxShape3D if collision != null else null
+		if shape == null:
+			continue
+		var delta := collision.global_position - corridor.global_position
+		var along := delta.dot(direction)
+		if along < -road_half_length or along > segment_length + road_half_length:
+			continue
+		var half_size := shape.size * 0.5
+		var basis := collision.global_transform.basis
+		var lateral_radius: float = abs(basis.x.dot(lateral)) * half_size.x \
+				+ abs(basis.z.dot(lateral)) * half_size.z
+		if abs(delta.dot(lateral)) < ROAD_HALF_WIDTH + lateral_radius + MIN_ROAD_SETBACK:
+			push_error("Corridor %s overlaps building %s" % [corridor.name, building.name])
+			return false
 	return true
 
 

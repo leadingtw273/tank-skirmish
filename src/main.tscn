@@ -932,19 +932,24 @@ shadow_enabled = true
 environment = SubResource("SceneEnvironment")
 
 [node name="NorthCorridor" parent="Roads" instance=ExtResource("24_arterial_corridor")]
-position = Vector3(-30, 0, -102)
-rotation = Vector3(0, 1.570796, 0)
+position = Vector3(-28.49157, 0.01, -88.53653)
+rotation = Vector3(0, 1.3439975, 0)
+scale = Vector3(0.75, 1, 1)
 
 [node name="SouthCorridor" parent="Roads" instance=ExtResource("24_arterial_corridor")]
-position = Vector3(-30, 0, 118)
-rotation = Vector3(0, -1.570796, 0)
+position = Vector3(-28.49157, 0.01, 104.53653)
+rotation = Vector3(0, -1.3439975, 0)
+scale = Vector3(0.75, 1, 1)
 
 [node name="WestCorridor" parent="Roads" instance=ExtResource("24_arterial_corridor")]
-position = Vector3(-110, 0, 38)
-rotation = Vector3(0, 3.141593, 0)
+position = Vector3(-96.53653, 0.01, 36.49157)
+rotation = Vector3(0, 2.9147937, 0)
+scale = Vector3(0.75, 1, 1)
 
 [node name="EastCorridor" parent="Roads" instance=ExtResource("24_arterial_corridor")]
-position = Vector3(110, 0, 38)
+position = Vector3(96.53653, 0.01, 36.49157)
+rotation = Vector3(0, 0.22679885, 0)
+scale = Vector3(0.75, 1, 1)
 
 [node name="NorthDistrict" parent="Roads" instance=ExtResource("23_satellite_district")]
 position = Vector3(0, 0, -292)

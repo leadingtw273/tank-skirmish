@@ -1,9 +1,33 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=16 format=3]
 
 [ext_resource type="PackedScene" path="res://src/assets/models/roads/street_straight.glb" id="1_straight"]
 [ext_resource type="PackedScene" path="res://src/assets/models/roads/street_curve.glb" id="2_curve"]
 [ext_resource type="PackedScene" path="res://src/assets/models/roads/street_3way.glb" id="3_three_way"]
 [ext_resource type="PackedScene" path="res://src/assets/models/roads/street_4way.glb" id="4_four_way"]
+[ext_resource type="PackedScene" path="res://assets/models/buildings/1story.glb" id="5_one_story"]
+[ext_resource type="PackedScene" path="res://assets/models/buildings/1story-gable-roof.glb" id="6_gable_roof"]
+[ext_resource type="PackedScene" path="res://assets/models/buildings/2story-wide.glb" id="7_two_story_wide"]
+[ext_resource type="PackedScene" path="res://assets/models/buildings/2story-slim.glb" id="8_two_story_slim"]
+[ext_resource type="PackedScene" path="res://assets/models/buildings/3story-small.glb" id="9_three_story"]
+[ext_resource type="PackedScene" path="res://assets/models/buildings/2story.glb" id="10_two_story"]
+
+[sub_resource type="BoxShape3D" id="OneStoryCollisionShape"]
+size = Vector3(7.75498, 6.02008, 7.82869)
+
+[sub_resource type="BoxShape3D" id="GableRoofCollisionShape"]
+size = Vector3(7.5789, 7.28842, 8.56847)
+
+[sub_resource type="BoxShape3D" id="TwoStoryWideCollisionShape"]
+size = Vector3(13.77076, 9.8926, 8.11907)
+
+[sub_resource type="BoxShape3D" id="TwoStorySlimCollisionShape"]
+size = Vector3(4.01608, 9.92621, 7.75658)
+
+[sub_resource type="BoxShape3D" id="ThreeStorySmallCollisionShape"]
+size = Vector3(6.87196, 13.85474, 7.10941)
+
+[sub_resource type="BoxShape3D" id="TwoStoryCollisionShape"]
+size = Vector3(7.77112, 9.8832, 9.11583)
 
 [node name="SatelliteDistrict" type="Node3D"]
 
@@ -209,3 +233,239 @@ scale = Vector3(10, 1, 10)
 position = Vector3(0, 0, 60)
 rotation = Vector3(0, 1.570796, 0)
 scale = Vector3(10, 1, 10)
+
+[node name="Buildings" type="Node3D" parent="."]
+
+[node name="NorthOneStory" type="StaticBody3D" parent="Buildings"]
+position = Vector3(-58, 0, -64)
+
+[node name="Model" parent="Buildings/NorthOneStory" instance=ExtResource("5_one_story")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Buildings/NorthOneStory"]
+position = Vector3(0, 3.01004, 0)
+shape = SubResource("OneStoryCollisionShape")
+
+[node name="NorthGableRoof" type="StaticBody3D" parent="Buildings"]
+position = Vector3(-38, 0, -64)
+
+[node name="Model" parent="Buildings/NorthGableRoof" instance=ExtResource("6_gable_roof")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Buildings/NorthGableRoof"]
+position = Vector3(0, 3.64421, 0)
+shape = SubResource("GableRoofCollisionShape")
+
+[node name="NorthTwoStoryWide" type="StaticBody3D" parent="Buildings"]
+position = Vector3(-18, 0, -64)
+
+[node name="Model" parent="Buildings/NorthTwoStoryWide" instance=ExtResource("7_two_story_wide")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Buildings/NorthTwoStoryWide"]
+position = Vector3(0, 4.9463, 0)
+shape = SubResource("TwoStoryWideCollisionShape")
+
+[node name="NorthTwoStorySlim" type="StaticBody3D" parent="Buildings"]
+position = Vector3(18, 0, -64)
+
+[node name="Model" parent="Buildings/NorthTwoStorySlim" instance=ExtResource("8_two_story_slim")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Buildings/NorthTwoStorySlim"]
+position = Vector3(0, 4.963105, 0)
+shape = SubResource("TwoStorySlimCollisionShape")
+
+[node name="NorthThreeStorySmall" type="StaticBody3D" parent="Buildings"]
+position = Vector3(38, 0, -64)
+
+[node name="Model" parent="Buildings/NorthThreeStorySmall" instance=ExtResource("9_three_story")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Buildings/NorthThreeStorySmall"]
+position = Vector3(0, 6.92737, 0)
+shape = SubResource("ThreeStorySmallCollisionShape")
+
+[node name="NorthTwoStory" type="StaticBody3D" parent="Buildings"]
+position = Vector3(58, 0, -64)
+
+[node name="Model" parent="Buildings/NorthTwoStory" instance=ExtResource("10_two_story")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Buildings/NorthTwoStory"]
+position = Vector3(0, 4.9416, 0)
+shape = SubResource("TwoStoryCollisionShape")
+
+[node name="SouthOneStory" type="StaticBody3D" parent="Buildings"]
+position = Vector3(-58, 0, 64)
+rotation = Vector3(0, 3.141593, 0)
+
+[node name="Model" parent="Buildings/SouthOneStory" instance=ExtResource("5_one_story")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Buildings/SouthOneStory"]
+position = Vector3(0, 3.01004, 0)
+shape = SubResource("OneStoryCollisionShape")
+
+[node name="SouthGableRoof" type="StaticBody3D" parent="Buildings"]
+position = Vector3(-38, 0, 64)
+rotation = Vector3(0, 3.141593, 0)
+
+[node name="Model" parent="Buildings/SouthGableRoof" instance=ExtResource("6_gable_roof")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Buildings/SouthGableRoof"]
+position = Vector3(0, 3.64421, 0)
+shape = SubResource("GableRoofCollisionShape")
+
+[node name="SouthTwoStoryWide" type="StaticBody3D" parent="Buildings"]
+position = Vector3(-18, 0, 64)
+rotation = Vector3(0, 3.141593, 0)
+
+[node name="Model" parent="Buildings/SouthTwoStoryWide" instance=ExtResource("7_two_story_wide")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Buildings/SouthTwoStoryWide"]
+position = Vector3(0, 4.9463, 0)
+shape = SubResource("TwoStoryWideCollisionShape")
+
+[node name="SouthTwoStorySlim" type="StaticBody3D" parent="Buildings"]
+position = Vector3(18, 0, 64)
+rotation = Vector3(0, 3.141593, 0)
+
+[node name="Model" parent="Buildings/SouthTwoStorySlim" instance=ExtResource("8_two_story_slim")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Buildings/SouthTwoStorySlim"]
+position = Vector3(0, 4.963105, 0)
+shape = SubResource("TwoStorySlimCollisionShape")
+
+[node name="SouthThreeStorySmall" type="StaticBody3D" parent="Buildings"]
+position = Vector3(38, 0, 64)
+rotation = Vector3(0, 3.141593, 0)
+
+[node name="Model" parent="Buildings/SouthThreeStorySmall" instance=ExtResource("9_three_story")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Buildings/SouthThreeStorySmall"]
+position = Vector3(0, 6.92737, 0)
+shape = SubResource("ThreeStorySmallCollisionShape")
+
+[node name="SouthTwoStory" type="StaticBody3D" parent="Buildings"]
+position = Vector3(58, 0, 64)
+rotation = Vector3(0, 3.141593, 0)
+
+[node name="Model" parent="Buildings/SouthTwoStory" instance=ExtResource("10_two_story")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Buildings/SouthTwoStory"]
+position = Vector3(0, 4.9416, 0)
+shape = SubResource("TwoStoryCollisionShape")
+
+[node name="WestOneStory" type="StaticBody3D" parent="Buildings"]
+position = Vector3(-64, 0, -48)
+rotation = Vector3(0, 1.570796, 0)
+
+[node name="Model" parent="Buildings/WestOneStory" instance=ExtResource("5_one_story")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Buildings/WestOneStory"]
+position = Vector3(0, 3.01004, 0)
+shape = SubResource("OneStoryCollisionShape")
+
+[node name="WestGableRoof" type="StaticBody3D" parent="Buildings"]
+position = Vector3(-64, 0, -28)
+rotation = Vector3(0, 1.570796, 0)
+
+[node name="Model" parent="Buildings/WestGableRoof" instance=ExtResource("6_gable_roof")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Buildings/WestGableRoof"]
+position = Vector3(0, 3.64421, 0)
+shape = SubResource("GableRoofCollisionShape")
+
+[node name="WestTwoStoryWide" type="StaticBody3D" parent="Buildings"]
+position = Vector3(-64, 0, -14)
+rotation = Vector3(0, 1.570796, 0)
+
+[node name="Model" parent="Buildings/WestTwoStoryWide" instance=ExtResource("8_two_story_slim")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Buildings/WestTwoStoryWide"]
+position = Vector3(0, 4.963105, 0)
+shape = SubResource("TwoStorySlimCollisionShape")
+
+[node name="WestTwoStorySlim" type="StaticBody3D" parent="Buildings"]
+position = Vector3(-64, 0, 14)
+rotation = Vector3(0, 1.570796, 0)
+
+[node name="Model" parent="Buildings/WestTwoStorySlim" instance=ExtResource("8_two_story_slim")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Buildings/WestTwoStorySlim"]
+position = Vector3(0, 4.963105, 0)
+shape = SubResource("TwoStorySlimCollisionShape")
+
+[node name="WestThreeStorySmall" type="StaticBody3D" parent="Buildings"]
+position = Vector3(-64, 0, 28)
+rotation = Vector3(0, 1.570796, 0)
+
+[node name="Model" parent="Buildings/WestThreeStorySmall" instance=ExtResource("6_gable_roof")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Buildings/WestThreeStorySmall"]
+position = Vector3(0, 3.64421, 0)
+shape = SubResource("GableRoofCollisionShape")
+
+[node name="WestTwoStory" type="StaticBody3D" parent="Buildings"]
+position = Vector3(-64, 0, 48)
+rotation = Vector3(0, 1.570796, 0)
+
+[node name="Model" parent="Buildings/WestTwoStory" instance=ExtResource("5_one_story")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Buildings/WestTwoStory"]
+position = Vector3(0, 3.01004, 0)
+shape = SubResource("OneStoryCollisionShape")
+
+[node name="EastOneStory" type="StaticBody3D" parent="Buildings"]
+position = Vector3(64, 0, -48)
+rotation = Vector3(0, -1.570796, 0)
+
+[node name="Model" parent="Buildings/EastOneStory" instance=ExtResource("5_one_story")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Buildings/EastOneStory"]
+position = Vector3(0, 3.01004, 0)
+shape = SubResource("OneStoryCollisionShape")
+
+[node name="EastGableRoof" type="StaticBody3D" parent="Buildings"]
+position = Vector3(64, 0, -28)
+rotation = Vector3(0, -1.570796, 0)
+
+[node name="Model" parent="Buildings/EastGableRoof" instance=ExtResource("6_gable_roof")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Buildings/EastGableRoof"]
+position = Vector3(0, 3.64421, 0)
+shape = SubResource("GableRoofCollisionShape")
+
+[node name="EastTwoStoryWide" type="StaticBody3D" parent="Buildings"]
+position = Vector3(64, 0, -14)
+rotation = Vector3(0, -1.570796, 0)
+
+[node name="Model" parent="Buildings/EastTwoStoryWide" instance=ExtResource("8_two_story_slim")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Buildings/EastTwoStoryWide"]
+position = Vector3(0, 4.963105, 0)
+shape = SubResource("TwoStorySlimCollisionShape")
+
+[node name="EastTwoStorySlim" type="StaticBody3D" parent="Buildings"]
+position = Vector3(64, 0, 14)
+rotation = Vector3(0, -1.570796, 0)
+
+[node name="Model" parent="Buildings/EastTwoStorySlim" instance=ExtResource("8_two_story_slim")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Buildings/EastTwoStorySlim"]
+position = Vector3(0, 4.963105, 0)
+shape = SubResource("TwoStorySlimCollisionShape")
+
+[node name="EastThreeStorySmall" type="StaticBody3D" parent="Buildings"]
+position = Vector3(64, 0, 28)
+rotation = Vector3(0, -1.570796, 0)
+
+[node name="Model" parent="Buildings/EastThreeStorySmall" instance=ExtResource("6_gable_roof")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Buildings/EastThreeStorySmall"]
+position = Vector3(0, 3.64421, 0)
+shape = SubResource("GableRoofCollisionShape")
+
+[node name="EastTwoStory" type="StaticBody3D" parent="Buildings"]
+position = Vector3(64, 0, 48)
+rotation = Vector3(0, -1.570796, 0)
+
+[node name="Model" parent="Buildings/EastTwoStory" instance=ExtResource("5_one_story")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Buildings/EastTwoStory"]
+position = Vector3(0, 3.01004, 0)
+shape = SubResource("OneStoryCollisionShape")

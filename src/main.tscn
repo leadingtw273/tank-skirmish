@@ -1,4 +1,4 @@
-[gd_scene load_steps=42 format=3]
+[gd_scene load_steps=43 format=3]
 
 [ext_resource type="PackedScene" path="res://assets/models/tank/tank2.glb" id="1_tank"]
 [ext_resource type="PackedScene" path="res://assets/models/buildings/1story.glb" id="2_building_a"]
@@ -21,6 +21,7 @@
 [ext_resource type="Texture2D" path="res://src/assets/binbun_grass/texture/grass_basic_02.png" id="19_grass_shape"]
 [ext_resource type="Texture2D" path="res://src/grass_palette_dry.tres" id="20_grass_palette"]
 [ext_resource type="Script" path="res://src/grass_field.gd" id="21_grass_field"]
+[ext_resource type="Script" path="res://src/adaptive_viewport.gd" id="22_adaptive_viewport"]
 
 [sub_resource type="StandardMaterial3D" id="GroundMaterial"]
 albedo_color = Color(0.42, 0.26, 0.12, 1)
@@ -121,6 +122,7 @@ size = Vector3(8.71614, 18.33062, 9.11583)
 size = Vector3(7.77113, 28.09212, 8.99462)
 
 [node name="TankSkirmish" type="Node3D"]
+script = ExtResource("22_adaptive_viewport")
 
 [node name="CameraRig" type="Node3D" parent="."]
 

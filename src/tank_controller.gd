@@ -29,6 +29,7 @@ const MUZZLE_FLASH_LIFETIME_SECONDS := 0.25
 const MUZZLE_FLASH_SCALE := 2.0
 const AIM_MAX_DISTANCE := 180.0
 const AIM_COLLISION_MASK := 129
+const AIM_TARGET_DEAD_ZONE_DISTANCE_SQUARED := 9.0
 const AIM_LINE_RADIUS := 0.04
 const AIM_LINE_MIN_LENGTH := 0.05
 const AIM_LINE_NEAR_TANK_HIDDEN_DISTANCE := 3.0
@@ -167,7 +168,9 @@ func _update_tread_animation(next_animation: StringName) -> void:
 
 
 func _aim_turret_at(target_position: Vector3, delta: float) -> void:
-	var target_direction := target_position - _muzzle_global_position()
+	if _is_target_inside_turret_dead_zone(target_position):
+		return
+	var target_direction := target_position - turret_pivot.global_position
 	target_direction.y = 0.0
 	if target_direction.length_squared() <= MIN_AIM_DISTANCE_SQUARED:
 		return
@@ -182,6 +185,8 @@ func _aim_turret_at(target_position: Vector3, delta: float) -> void:
 
 
 func _target_gun_pitch_for_world_target(target_position: Vector3) -> float:
+	if _is_target_inside_turret_dead_zone(target_position):
+		return -gun_pitch_pivot.rotation.z if gun_pitch_pivot != null else 0.0
 	var target_direction := target_position - _muzzle_global_position()
 	var horizontal_distance := Vector2(target_direction.x, target_direction.z).length()
 	if horizontal_distance * horizontal_distance + target_direction.y * target_direction.y <= MIN_AIM_DISTANCE_SQUARED:
@@ -192,6 +197,11 @@ func _target_gun_pitch_for_world_target(target_position: Vector3) -> float:
 		-deg_to_rad(maxf(gun_max_depression_degrees, 0.0)),
 		deg_to_rad(maxf(gun_max_elevation_degrees, 0.0)),
 	)
+
+
+func _is_target_inside_turret_dead_zone(target_position: Vector3) -> bool:
+	var offset := target_position - turret_pivot.global_position
+	return Vector2(offset.x, offset.z).length_squared() <= AIM_TARGET_DEAD_ZONE_DISTANCE_SQUARED
 
 
 func _aim_gun_pitch_at_target(target_position: Vector3, delta: float) -> void:
@@ -373,9 +383,9 @@ func _spawn_muzzle_flash(muzzle_position: Vector3, muzzle_direction: Vector3) ->
 	muzzle_flash.name = "MuzzleFlash"
 	muzzle_flash.set("one_shot", true)
 	muzzle_flash.set("autoplay", true)
-	projectile_container.add_child(muzzle_flash, true)
-	muzzle_flash.global_transform = Transform3D(_basis_with_x_axis(muzzle_direction), muzzle_position)
-	muzzle_flash.scale = Vector3.ONE * MUZZLE_FLASH_SCALE
+	gun_pitch_pivot.add_child(muzzle_flash, true)
+	var flash_basis := _basis_with_x_axis(muzzle_direction).scaled(Vector3.ONE * MUZZLE_FLASH_SCALE)
+	muzzle_flash.global_transform = Transform3D(flash_basis, muzzle_position)
 	get_tree().create_timer(MUZZLE_FLASH_LIFETIME_SECONDS).timeout.connect(muzzle_flash.queue_free)
 
 

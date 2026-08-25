@@ -30,6 +30,12 @@ size = Vector3(240, 0.2, 240)
 shader = ExtResource("15_sky_shader")
 shader_parameter/cloud_tex_01 = ExtResource("16_clouds_01")
 shader_parameter/cloud_tex_02 = ExtResource("17_clouds_02")
+shader_parameter/horizon_sunset = Color(0.95, 0.42, 0.22, 1)
+shader_parameter/sky_sunset = Color(0.16, 0.12, 0.3, 1)
+shader_parameter/cloud_color = Color(0.48, 0.36, 0.46, 1)
+shader_parameter/cloud_density = 0.85
+shader_parameter/sun_color = Color(1, 0.66, 0.38, 1)
+shader_parameter/sun_strength = 4.0
 
 [sub_resource type="Sky" id="SceneSky"]
 sky_material = SubResource("SkyShaderMaterial")
@@ -41,8 +47,8 @@ size = Vector3(240, 0.2, 240)
 background_mode = 2
 sky = SubResource("SceneSky")
 ambient_light_source = 2
-ambient_light_color = Color(0.96, 0.83, 0.65, 1)
-ambient_light_energy = 0.35
+ambient_light_color = Color(0.38, 0.36, 0.5, 1)
+ambient_light_energy = 0.8
 reflected_light_source = 2
 tonemap_mode = 2
 
@@ -867,9 +873,9 @@ shape = SubResource("GableRoofCollisionShape")
 [node name="Lighting" type="Node3D" parent="."]
 
 [node name="Sun" type="DirectionalLight3D" parent="Lighting"]
-rotation = Vector3(-0.959931, -0.610865, 0)
-light_color = Color(1, 0.9, 0.78, 1)
-light_energy = 0.8
+rotation = Vector3(-0.523599, -0.610865, 0)
+light_color = Color(1, 0.72, 0.5, 1)
+light_energy = 0.55
 shadow_enabled = true
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="Lighting"]

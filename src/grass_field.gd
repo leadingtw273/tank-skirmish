@@ -1,14 +1,13 @@
 extends MultiMeshInstance3D
 
-const INSTANCE_COUNT := 6000
+const INSTANCE_COUNT := 24000
 const DISTRIBUTION_SEED := 117
 const FIELD_BOUNDS := Rect2(-116.0, -116.0, 232.0, 232.0)
 const ROAD_X := [-90.0, -30.0, 30.0, 90.0]
 const ROAD_Z := [-82.0, -22.0, 38.0, 98.0]
 const ROAD_HALF_WIDTH := 11.0
-const BUILDING_HALF_EXTENT := 8.0
-const CENTRAL_CLEAR := Rect2(-22.0, -14.0, 44.0, 44.0)
-const MAX_PLACEMENT_ATTEMPTS := 120000
+const BUILDING_CLEARANCE := 0.5
+const MAX_PLACEMENT_ATTEMPTS := 240000
 
 
 func _ready() -> void:
@@ -24,10 +23,7 @@ func _ready() -> void:
 
 	var random := RandomNumberGenerator.new()
 	random.seed = DISTRIBUTION_SEED
-	var building_positions: Array[Vector2] = []
-	for child in get_node("../Buildings").get_children():
-		if child is Node3D:
-			building_positions.append(Vector2(child.position.x, child.position.z))
+	var building_clearances := _collect_building_clearances()
 
 	var transforms: Array[Transform3D] = []
 	var attempts := 0
@@ -37,7 +33,7 @@ func _ready() -> void:
 			random.randf_range(FIELD_BOUNDS.position.x, FIELD_BOUNDS.end.x),
 			random.randf_range(FIELD_BOUNDS.position.y, FIELD_BOUNDS.end.y),
 		)
-		if not _is_grass_position(point, building_positions):
+		if not _is_grass_position(point, building_clearances):
 			continue
 		var position := Vector3(point.x, 0.01, point.y)
 		var transform := Transform3D(Basis(Vector3.UP, random.randf_range(0.0, TAU)), position)
@@ -51,16 +47,39 @@ func _ready() -> void:
 	multimesh = grass_multimesh
 
 
-func _is_grass_position(point: Vector2, building_positions: Array[Vector2]) -> bool:
-	if CENTRAL_CLEAR.has_point(point):
-		return false
+func _collect_building_clearances() -> Array[Rect2]:
+	var clearances: Array[Rect2] = []
+	for building in get_node("../Buildings").get_children():
+		var collision := building.get_node_or_null("CollisionShape3D") as CollisionShape3D
+		if collision == null:
+			continue
+		var box := collision.shape as BoxShape3D
+		if box == null:
+			continue
+
+		var basis := collision.global_transform.basis
+		var half_size := box.size * 0.5
+		var half_extent := Vector2(
+			absf(basis.x.x) * half_size.x
+				+ absf(basis.y.x) * half_size.y
+				+ absf(basis.z.x) * half_size.z,
+			absf(basis.x.z) * half_size.x
+				+ absf(basis.y.z) * half_size.y
+				+ absf(basis.z.z) * half_size.z,
+		) + Vector2.ONE * BUILDING_CLEARANCE
+		var center := Vector2(collision.global_position.x, collision.global_position.z)
+		clearances.append(Rect2(center - half_extent, half_extent * 2.0))
+	return clearances
+
+
+func _is_grass_position(point: Vector2, building_clearances: Array[Rect2]) -> bool:
 	for road_x in ROAD_X:
 		if absf(point.x - road_x) <= ROAD_HALF_WIDTH:
 			return false
 	for road_z in ROAD_Z:
 		if absf(point.y - road_z) <= ROAD_HALF_WIDTH:
 			return false
-	for building in building_positions:
-		if absf(point.x - building.x) <= BUILDING_HALF_EXTENT and absf(point.y - building.y) <= BUILDING_HALF_EXTENT:
+	for building in building_clearances:
+		if building.has_point(point):
 			return false
 	return true

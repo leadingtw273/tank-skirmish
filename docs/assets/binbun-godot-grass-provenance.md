@@ -28,10 +28,11 @@ atlas, XCF source, other textures, and full presets are excluded.
 | `src/assets/binbun_grass/texture/grass_basic_02.png` | `aba7c7bc5695cacd6a82b1a2e59fa36a6c96cacedd769bd9aec19502a6264e5f` |
 | `src/assets/binbun_grass/palette/palette_01.tres` | `9296a7ae2245560f067f0d6a460bb8d3cec11f7454f44f5cdc9869a5fea35c93` |
 
-`src/main.tscn` owns the material parameters and `GrassField` configuration.
-`src/grass_field.gd` creates at most 6,000 deterministic MultiMesh transforms
-with seed `117` inside the playable ground. Scene-specific road corridors,
-building footprints, the tank spawn, and the central operation area are excluded,
-so grass remains visible without covering gameplay surfaces. The source shader is
-used unmodified; its animated wind texture receives a non-zero velocity from the
-scene material.
+`src/main.tscn` owns the material parameters and `GrassField` configuration. The
+project-local `src/grass_palette_dry.tres` supplies the muted yellow-brown palette
+without modifying the imported source palette. `src/grass_field.gd` creates at
+most 24,000 deterministic MultiMesh transforms with seed `117` across the playable
+ground. Scene-specific road corridors and the existing building collision boxes
+plus a 0.5-meter clearance are excluded; other ground remains grass-covered and
+driveable. The source shader is used unmodified; its animated wind texture receives
+a non-zero velocity from the scene material.

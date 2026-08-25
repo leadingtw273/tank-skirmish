@@ -1,6 +1,7 @@
 extends SceneTree
 
 const MAIN_SCENE := "res://src/main.tscn"
+const GRASS_IMPORT := "res://src/assets/binbun_grass/texture/grass_basic_02.png.import"
 const CONVERSION_MANIFEST := "res://docs/assets/conversion-manifest.json"
 const TANK_VISUAL_SCALE := 1.7466666
 const BUILDING_MODELS := {
@@ -132,6 +133,9 @@ func _init() -> void:
 
 
 func _validate_instance(instance: Node) -> void:
+	if not _validate_world_structure(instance):
+		quit(1)
+		return
 	if not _validate_tread_animations(instance):
 		quit(1)
 		return
@@ -473,9 +477,9 @@ func _validate_camera_zoom(instance: Node) -> bool:
 func _validate_projectile_firing(instance: Node) -> bool:
 	var tank := instance.get_node_or_null("Tank") as CharacterBody3D
 	var projectiles := instance.get_node_or_null("Projectiles") as Node3D
-	var ground_collision := instance.get_node_or_null("GroundCollision") as StaticBody3D
+	var ground_collision := instance.get_node_or_null("World/Ground") as StaticBody3D
 	if tank == null or projectiles == null or ground_collision == null:
-		push_error("Tank firing requires Tank, Projectiles, and GroundCollision nodes")
+		push_error("Tank firing requires Tank, Projectiles, and World/Ground nodes")
 		return false
 	if ground_collision.collision_layer != 128 or ground_collision.collision_mask != 0:
 		push_error("Ground collision must stay isolated on physics layer 8")
@@ -559,6 +563,10 @@ func _validate_projectile_firing(instance: Node) -> bool:
 	if ground_hit.is_empty() or ground_hit.get("collider") != ground_collision:
 		push_error("Projectile sweep must detect the isolated ground collider")
 		return false
+	var ground_hit_position := ground_hit.get("position", Vector3.INF) as Vector3
+	if not is_equal_approx(ground_hit_position.y, 0.0) or not is_equal_approx(tank.global_position.y, 0.0):
+		push_error("Ground ray height and stationary tank height must remain unchanged")
+		return false
 
 	var target := StaticBody3D.new()
 	target.name = "ProjectileSmokeTarget"
@@ -614,7 +622,7 @@ func _validate_collision_layout(instance: Node) -> bool:
 		return false
 
 	for building_name: String in BUILDING_MODELS:
-		var building := instance.get_node_or_null("Buildings/%s" % building_name) as StaticBody3D
+		var building := instance.get_node_or_null("World/Buildings/%s" % building_name) as StaticBody3D
 		if building == null:
 			push_error("Building %s must be a StaticBody3D" % building_name)
 			return false
@@ -625,7 +633,7 @@ func _validate_collision_layout(instance: Node) -> bool:
 			push_error("Building %s must use an orthogonal rotation" % building_name)
 			return false
 
-	if instance.get_node("Buildings").get_child_count() != BUILDING_MODELS.size():
+	if instance.get_node("World/Buildings").get_child_count() != BUILDING_MODELS.size():
 		push_error("Building count does not match the approved town layout")
 		return false
 
@@ -633,13 +641,14 @@ func _validate_collision_layout(instance: Node) -> bool:
 
 
 func _validate_map_960(instance: Node) -> bool:
-	var ground := instance.get_node_or_null("Ground") as MeshInstance3D
-	var ground_mesh := ground.mesh as BoxMesh if ground != null else null
-	var ground_collision := instance.get_node_or_null("GroundCollision/CollisionShape3D") as CollisionShape3D
+	var ground := instance.get_node_or_null("World/Ground") as StaticBody3D
+	var ground_visual := ground.get_node_or_null("Visual") as MeshInstance3D if ground != null else null
+	var ground_mesh := ground_visual.mesh as BoxMesh if ground_visual != null else null
+	var ground_collision := instance.get_node_or_null("World/Ground/CollisionShape3D") as CollisionShape3D
 	var ground_shape := ground_collision.shape as BoxShape3D if ground_collision != null else null
 	if ground_mesh == null or not ground_mesh.size.is_equal_approx(Vector3(960, 0.2, 960)) \
 			or ground_shape == null or not ground_shape.size.is_equal_approx(Vector3(960, 0.2, 960)):
-		push_error("Ground mesh and GroundCollision must both be exactly 960m by 960m")
+		push_error("Ground visual and collision must both be exactly 960m by 960m")
 		return false
 
 	var camera := instance.get_node_or_null("CameraRig/Camera3D") as Camera3D
@@ -649,12 +658,12 @@ func _validate_map_960(instance: Node) -> bool:
 		push_error("Camera3D must retain the approved orthogonal gameplay transform and size")
 		return false
 
-	var grass_field := instance.get_node_or_null("GrassField") as MultiMeshInstance3D
+	var grass_field := instance.get_node_or_null("World/GrassField") as MultiMeshInstance3D
 	if grass_field == null or grass_field.multimesh == null or grass_field.multimesh.instance_count != 480000:
 		push_error("GrassField must contain the approved 480000 non-road, non-building instances")
 		return false
 
-	var roads := instance.get_node_or_null("Roads") as Node3D
+	var roads := instance.get_node_or_null("World/Roads") as Node3D
 	if roads == null:
 		push_error("960m map requires the Roads root")
 		return false
@@ -753,7 +762,7 @@ func _corridor_clears_buildings(corridor: Node3D, buildings: Array[StaticBody3D]
 
 
 func _validate_grid_layout(instance: Node) -> bool:
-	var roads := instance.get_node_or_null("Roads") as Node
+	var roads := instance.get_node_or_null("World/Roads") as Node
 	if roads == null:
 		push_error("Roads node is missing")
 		return false
@@ -776,7 +785,7 @@ func _validate_grid_layout(instance: Node) -> bool:
 	for block_name: String in BLOCK_BUILDING_COUNTS:
 		block_counts[block_name] = 0
 		block_edge_counts[block_name] = {"north": 0, "south": 0, "west": 0, "east": 0}
-	for building in instance.get_node("Buildings").get_children():
+	for building in instance.get_node("World/Buildings").get_children():
 		var static_building := building as StaticBody3D
 		if static_building == null:
 			push_error("Buildings may only contain StaticBody3D nodes")
@@ -803,7 +812,60 @@ func _validate_grid_layout(instance: Node) -> bool:
 			if block_edge_counts[block_name][edge] == 0:
 				push_error("Block %s is missing buildings along its %s street edge" % [block_name, edge])
 				return false
-	if not _validate_building_footprints(instance.get_node("Buildings")):
+	if not _validate_building_footprints(instance.get_node("World/Buildings")):
+		return false
+	return true
+
+
+func _validate_world_structure(instance: Node) -> bool:
+	var expected_root_children := [&"CameraRig", &"Tank", &"World", &"Projectiles"]
+	if instance.get_child_count() != expected_root_children.size():
+		push_error("Main scene must contain exactly CameraRig, Tank, World, and Projectiles")
+		return false
+	for index: int in expected_root_children.size():
+		if instance.get_child(index).name != expected_root_children[index]:
+			push_error("Main scene root child order must remain CameraRig, Tank, World, Projectiles")
+			return false
+
+	var world := instance.get_node_or_null("World") as Node3D
+	if world == null or world.scene_file_path.get_file() != "world.tscn":
+		push_error("World must be an instance of world.tscn")
+		return false
+	for child_name: StringName in [&"Ground", &"GrassField", &"Roads", &"Buildings", &"Lighting"]:
+		if world.get_node_or_null(NodePath(child_name)) == null:
+			push_error("World must contain %s" % child_name)
+			return false
+
+	var ground := world.get_node_or_null("Ground") as StaticBody3D
+	var visual := world.get_node_or_null("Ground/Visual") as MeshInstance3D
+	var collision := world.get_node_or_null("Ground/CollisionShape3D") as CollisionShape3D
+	var shape := collision.shape as BoxShape3D if collision != null else null
+	if ground == null or visual == null or collision == null or shape == null:
+		push_error("Ground must be a StaticBody3D with Visual and CollisionShape3D children")
+		return false
+	if ground.collision_layer != 128 or ground.collision_mask != 0 or ground.physics_material_override != null:
+		push_error("Ground physics properties must remain exactly equivalent")
+		return false
+	if not ground.global_transform.origin.is_equal_approx(Vector3(0, -0.1, 8)) or not visual.global_transform.is_equal_approx(ground.global_transform) \
+			or not collision.global_transform.basis.is_equal_approx(Basis.IDENTITY) \
+			or not collision.global_transform.origin.is_equal_approx(Vector3(0, -0.1, 8)) or not shape.size.is_equal_approx(Vector3(960, 0.2, 960)):
+		push_error("Ground transform and collision extents must remain exactly equivalent")
+		return false
+
+	var lighting := world.get_node_or_null("Lighting") as Node3D
+	var environment := lighting.get_node_or_null("WorldEnvironment") as WorldEnvironment if lighting != null else null
+	if lighting == null or (lighting.get_node_or_null("Sun") as DirectionalLight3D) == null or environment == null \
+			or environment.environment == null or not environment.environment.background_color.is_equal_approx(Color(0.24, 0.4, 0.56, 1)):
+		push_error("Lighting must retain Sun, WorldEnvironment, and the approved background color")
+		return false
+
+	var import_file := FileAccess.open(GRASS_IMPORT, FileAccess.READ)
+	if import_file == null:
+		push_error("Grass texture import metadata is missing")
+		return false
+	var import_text := import_file.get_as_text()
+	if not "\"vram_texture\": true" in import_text or not "mipmaps/generate=true" in import_text:
+		push_error("Grass texture import must retain VRAM compression and mipmaps")
 		return false
 	return true
 

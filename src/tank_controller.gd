@@ -12,6 +12,11 @@ extends CharacterBody3D
 @export_range(0.0, 45.0, 0.5) var gun_max_elevation_degrees := 20.0
 @export_range(0.0, 45.0, 0.5) var gun_max_depression_degrees := 8.0
 
+@export_category("Visual Recoil")
+@export var visual_recoil_distance := 0.12
+@export var visual_recoil_kick_seconds := 0.04
+@export var visual_recoil_return_seconds := 0.18
+
 @export_category("Camera")
 @export var max_camera_look_ahead_distance := 30.0
 
@@ -28,14 +33,15 @@ const MUZZLE_FLASH_SCENE := preload("res://assets/BinbunVFX/muzzle_flash/effects
 const MUZZLE_FLASH_LIFETIME_SECONDS := 0.25
 const MUZZLE_FLASH_SCALE := 2.0
 
-@onready var tank_model: Node3D = $Tank2
-@onready var tank_scale_root: Node3D = $Tank2/AgentTeamScaleRoot
-@onready var tank_turret: MeshInstance3D = $Tank2/AgentTeamScaleRoot/Tank_Turret
-@onready var tank_gun: MeshInstance3D = $Tank2/AgentTeamScaleRoot/Tank_Gun
+@onready var visual_recoil_pivot: Node3D = $VisualRecoilPivot
+@onready var tank_model: Node3D = $VisualRecoilPivot/Tank2
+@onready var tank_scale_root: Node3D = $VisualRecoilPivot/Tank2/AgentTeamScaleRoot
+@onready var tank_turret: MeshInstance3D = $VisualRecoilPivot/Tank2/AgentTeamScaleRoot/Tank_Turret
+@onready var tank_gun: MeshInstance3D = $VisualRecoilPivot/Tank2/AgentTeamScaleRoot/Tank_Gun
 @onready var tank_collision: CollisionShape3D = $CollisionShape3D
-@onready var turret_pivot: Node3D = $TurretPivot
-@onready var gun_pitch_pivot: Node3D = $TurretPivot/GunPitchPivot
-@onready var muzzle_point: Marker3D = $TurretPivot/GunPitchPivot/MuzzlePoint
+@onready var turret_pivot: Node3D = $VisualRecoilPivot/TurretPivot
+@onready var gun_pitch_pivot: Node3D = $VisualRecoilPivot/TurretPivot/GunPitchPivot
+@onready var muzzle_point: Marker3D = $VisualRecoilPivot/TurretPivot/GunPitchPivot/MuzzlePoint
 
 signal shot_fired(shot_event: Dictionary)
 
@@ -45,9 +51,12 @@ var tread_animation_player: AnimationPlayer
 var active_tread_animation := &""
 var tread_animation_paused := true
 var tread_animations_available := false
+var visual_recoil_rest_local_position := Vector3.ZERO
+var visual_recoil_tween: Tween
 
 
 func _ready() -> void:
+	visual_recoil_rest_local_position = visual_recoil_pivot.position
 	# The imported turret and gun remain intact. Permanent scene pivots take ownership
 	# at startup while preserving their authored world transforms.
 	turret_pivot.global_position = tank_turret.global_position
@@ -203,10 +212,31 @@ func request_fire() -> void:
 		return
 
 	_spawn_muzzle_flash(muzzle_position, muzzle_direction)
+	var shot_muzzle_transform := muzzle_point.global_transform
 	shot_fired.emit({
-		"muzzle_transform": muzzle_point.global_transform,
+		"muzzle_transform": shot_muzzle_transform,
 		"shooter_rid": get_rid(),
 	})
+	_play_visual_recoil(muzzle_direction)
+
+
+func _play_visual_recoil(muzzle_direction: Vector3) -> void:
+	if visual_recoil_pivot == null:
+		push_error("Tank visual recoil requires a VisualRecoilPivot.")
+		return
+	if visual_recoil_tween != null and visual_recoil_tween.is_valid():
+		visual_recoil_tween.kill()
+	visual_recoil_pivot.position = visual_recoil_rest_local_position
+	var local_recoil_direction := global_transform.basis.inverse() * -muzzle_direction.normalized()
+	var recoil_target := visual_recoil_rest_local_position + local_recoil_direction * maxf(visual_recoil_distance, 0.0)
+	visual_recoil_tween = create_tween()
+	visual_recoil_tween.tween_property(visual_recoil_pivot, "position", recoil_target, maxf(visual_recoil_kick_seconds, 0.0))
+	visual_recoil_tween.tween_property(visual_recoil_pivot, "position", visual_recoil_rest_local_position, maxf(visual_recoil_return_seconds, 0.0))
+	visual_recoil_tween.tween_callback(_reset_visual_recoil)
+
+
+func _reset_visual_recoil() -> void:
+	visual_recoil_pivot.position = visual_recoil_rest_local_position
 
 
 func _spawn_muzzle_flash(muzzle_position: Vector3, muzzle_direction: Vector3) -> void:

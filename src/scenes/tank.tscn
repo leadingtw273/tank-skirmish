@@ -9,15 +9,17 @@ size = Vector3(13.8953796, 3.631687, 7.9327138)
 [node name="Tank" type="CharacterBody3D"]
 script = ExtResource("2_controller")
 
-[node name="Tank2" parent="." instance=ExtResource("1_tank")]
+[node name="VisualRecoilPivot" type="Node3D" parent="."]
+
+[node name="Tank2" parent="VisualRecoilPivot" instance=ExtResource("1_tank")]
 scale = Vector3(1.7466666, 1.7466666, 1.7466666)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 position = Vector3(0, 1.8158436, 0)
 shape = SubResource("TankCollisionShape")
 
-[node name="TurretPivot" type="Node3D" parent="."]
+[node name="TurretPivot" type="Node3D" parent="VisualRecoilPivot"]
 
-[node name="GunPitchPivot" type="Node3D" parent="TurretPivot"]
+[node name="GunPitchPivot" type="Node3D" parent="VisualRecoilPivot/TurretPivot"]
 
-[node name="MuzzlePoint" type="Marker3D" parent="TurretPivot/GunPitchPivot"]
+[node name="MuzzlePoint" type="Marker3D" parent="VisualRecoilPivot/TurretPivot/GunPitchPivot"]

@@ -17,11 +17,20 @@ func set_camera(next_camera: Camera3D) -> void:
 
 
 func _process(delta: float) -> void:
-	if controlled_tank == null or camera == null:
+	if controlled_tank == null or not is_instance_valid(controlled_tank) or camera == null or not is_instance_valid(camera):
+		push_error("PlayerAimController requires an active controlled_tank and Camera3D.")
+		set_process(false)
 		return
-	var target_position := resolve_mouse_world_target(get_viewport().get_mouse_position())
-	controlled_tank.call("_aim_turret_at", target_position, delta)
-	controlled_tank.call("_aim_gun_pitch_at_target", target_position, delta)
+	apply_aim(resolve_mouse_world_target(get_viewport().get_mouse_position()), delta)
+
+
+func apply_aim(target_position: Vector3, delta: float) -> void:
+	if controlled_tank == null or not is_instance_valid(controlled_tank):
+		push_error("PlayerAimController requires an active controlled_tank.")
+		set_process(false)
+		return
+	controlled_tank.call("aim_turret_at", target_position, delta)
+	controlled_tank.call("aim_gun_pitch_at_target", target_position, delta)
 	if aim_presentation != null:
 		aim_presentation.call("set_world_target", target_position)
 

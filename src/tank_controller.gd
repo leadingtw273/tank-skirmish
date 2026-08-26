@@ -24,7 +24,6 @@ const TREAD_ANIMATION_CLIPS := {
 	"turning_left": &"Tank_TurningLeft",
 	"turning_right": &"Tank_TurningRight",
 }
-const PROJECTILE_SCENE := preload("res://src/projectile.tscn")
 const MUZZLE_FLASH_SCENE := preload("res://assets/BinbunVFX/muzzle_flash/effects/big_flash/big_flash_01.tscn")
 const MUZZLE_FLASH_LIFETIME_SECONDS := 0.25
 const MUZZLE_FLASH_SCALE := 2.0
@@ -38,7 +37,10 @@ const MUZZLE_FLASH_SCALE := 2.0
 @onready var gun_pitch_pivot: Node3D = $TurretPivot/GunPitchPivot
 @onready var muzzle_point: Marker3D = $TurretPivot/GunPitchPivot/MuzzlePoint
 
-var projectile_container: Node3D
+signal shot_fired(shot_event: Dictionary)
+
+var movement_command := 0.0
+var turn_command := 0.0
 var tread_animation_player: AnimationPlayer
 var active_tread_animation := &""
 var tread_animation_paused := true
@@ -62,26 +64,20 @@ func _ready() -> void:
 	_setup_tread_animations()
 
 
-func _unhandled_input(event: InputEvent) -> void:
-	var mouse_event := event as InputEventMouseButton
-	if mouse_event == null or not mouse_event.pressed or mouse_event.button_index != MOUSE_BUTTON_LEFT:
-		return
-	_fire_projectile()
-
-
 func _physics_process(delta: float) -> void:
-	var movement_input := float(Input.is_physical_key_pressed(KEY_W)) - float(Input.is_physical_key_pressed(KEY_S))
-	var turn_input := float(Input.is_physical_key_pressed(KEY_A)) - float(Input.is_physical_key_pressed(KEY_D))
-
-	_update_tread_animation(_tread_animation_for_inputs(movement_input, turn_input))
-	rotate_y(turn_input * turn_speed * delta)
+	_update_tread_animation(_tread_animation_for_inputs(movement_command, turn_command))
+	rotate_y(turn_command * turn_speed * delta)
 	var forward_direction := transform.basis * MODEL_FORWARD_LOCAL_AXIS
-	velocity = forward_direction * movement_input * movement_speed
+	velocity = forward_direction * movement_command * movement_speed
 	move_and_slide()
 
 
-func set_projectile_container(container: Node3D) -> void:
-	projectile_container = container
+func set_movement_input(input_value: float) -> void:
+	movement_command = clampf(input_value, -1.0, 1.0)
+
+
+func set_turn_input(input_value: float) -> void:
+	turn_command = clampf(input_value, -1.0, 1.0)
 
 
 func get_max_camera_look_ahead_distance() -> float:
@@ -143,7 +139,7 @@ func _update_tread_animation(next_animation: StringName) -> void:
 	tread_animation_paused = false
 
 
-func _aim_turret_at(target_position: Vector3, delta: float) -> void:
+func aim_turret_at(target_position: Vector3, delta: float) -> void:
 	if _is_target_inside_turret_dead_zone(target_position):
 		return
 	var target_direction := target_position - turret_pivot.global_position
@@ -179,7 +175,7 @@ func _is_target_inside_turret_dead_zone(target_position: Vector3) -> bool:
 	return Vector2(offset.x, offset.z).length_squared() <= 9.0
 
 
-func _aim_gun_pitch_at_target(target_position: Vector3, delta: float) -> void:
+func aim_gun_pitch_at_target(target_position: Vector3, delta: float) -> void:
 	var minimum_pitch := -deg_to_rad(maxf(gun_max_depression_degrees, 0.0))
 	var maximum_pitch := deg_to_rad(maxf(gun_max_elevation_degrees, 0.0))
 	var current_pitch := -gun_pitch_pivot.rotation.z
@@ -196,28 +192,21 @@ func muzzle_global_direction() -> Vector3:
 	return (-muzzle_point.global_transform.basis.x).normalized()
 
 
-func _muzzle_global_position() -> Vector3:
-	return muzzle_global_position()
-
-
-func _muzzle_global_direction() -> Vector3:
-	return muzzle_global_direction()
-
-
-func _fire_projectile() -> void:
-	if projectile_container == null or gun_pitch_pivot == null:
+func request_fire() -> void:
+	if gun_pitch_pivot == null or muzzle_point == null:
+		push_error("Tank cannot fire: MuzzlePoint wiring is missing.")
 		return
 	var muzzle_position := muzzle_global_position()
 	var muzzle_direction := muzzle_global_direction()
 	if muzzle_direction.is_zero_approx():
+		push_error("Tank cannot fire: MuzzlePoint has no valid forward direction.")
 		return
 
-	var projectile := PROJECTILE_SCENE.instantiate() as Node3D
-	projectile.name = "Projectile"
-	projectile.initialize(muzzle_direction, [get_rid()], projectile_container)
-	projectile_container.add_child(projectile, true)
-	projectile.global_transform = Transform3D(_basis_with_x_axis(muzzle_direction), muzzle_position)
 	_spawn_muzzle_flash(muzzle_position, muzzle_direction)
+	shot_fired.emit({
+		"muzzle_transform": muzzle_point.global_transform,
+		"shooter_rid": get_rid(),
+	})
 
 
 func _spawn_muzzle_flash(muzzle_position: Vector3, muzzle_direction: Vector3) -> void:
@@ -225,7 +214,7 @@ func _spawn_muzzle_flash(muzzle_position: Vector3, muzzle_direction: Vector3) ->
 	muzzle_flash.name = "MuzzleFlash"
 	muzzle_flash.set("one_shot", true)
 	muzzle_flash.set("autoplay", true)
-	gun_pitch_pivot.add_child(muzzle_flash, true)
+	muzzle_point.add_child(muzzle_flash, true)
 	var flash_basis := _basis_with_x_axis(muzzle_direction).scaled(Vector3.ONE * MUZZLE_FLASH_SCALE)
 	muzzle_flash.global_transform = Transform3D(flash_basis, muzzle_position)
 	get_tree().create_timer(MUZZLE_FLASH_LIFETIME_SECONDS).timeout.connect(muzzle_flash.queue_free)

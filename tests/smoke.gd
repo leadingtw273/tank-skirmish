@@ -271,27 +271,27 @@ func _validate_turret_aiming(instance: Node) -> bool:
 		return false
 
 	await physics_frame
-	var muzzle_position: Vector3 = tank._muzzle_global_position()
+	var muzzle_position: Vector3 = tank.muzzle_global_position()
 	if not is_zero_approx(tank._target_gun_pitch_for_world_target(muzzle_position + Vector3.LEFT * 20.0)) \
 		or not is_equal_approx(tank._target_gun_pitch_for_world_target(muzzle_position + Vector3.LEFT * 20.0 + Vector3.UP * 20.0), deg_to_rad(20.0)) \
 		or not is_equal_approx(tank._target_gun_pitch_for_world_target(muzzle_position + Vector3.LEFT * 20.0 + Vector3.DOWN * 20.0), deg_to_rad(-8.0)):
 		push_error("World-space targets must map to bounded gun elevation and depression angles")
 		return false
 
-	var high_muzzle: Vector3 = tank._muzzle_global_position()
-	tank._aim_gun_pitch_at_target(high_muzzle + Vector3.LEFT * 20.0 + Vector3.UP * 20.0, 10.0)
+	var high_muzzle: Vector3 = tank.muzzle_global_position()
+	tank.aim_gun_pitch_at_target(high_muzzle + Vector3.LEFT * 20.0 + Vector3.UP * 20.0, 10.0)
 	var raised_muzzle_forward := -gun_pitch_pivot.global_transform.basis.x.normalized()
 	if not is_equal_approx(gun_pitch_pivot.rotation.z, deg_to_rad(-20.0)) or raised_muzzle_forward.y < 0.33:
 		push_error("A high world target must elevate the gun without exceeding 20 degrees")
 		return false
-	var low_muzzle: Vector3 = tank._muzzle_global_position()
-	tank._aim_gun_pitch_at_target(low_muzzle + Vector3.LEFT * 20.0 + Vector3.DOWN * 20.0, 10.0)
+	var low_muzzle: Vector3 = tank.muzzle_global_position()
+	tank.aim_gun_pitch_at_target(low_muzzle + Vector3.LEFT * 20.0 + Vector3.DOWN * 20.0, 10.0)
 	var lowered_muzzle_forward := -gun_pitch_pivot.global_transform.basis.x.normalized()
 	if not is_equal_approx(gun_pitch_pivot.rotation.z, deg_to_rad(8.0)) or lowered_muzzle_forward.y > -0.13:
 		push_error("A low world target must depress the gun without exceeding 8 degrees")
 		return false
-	var level_muzzle: Vector3 = tank._muzzle_global_position()
-	tank._aim_gun_pitch_at_target(level_muzzle + Vector3.LEFT * 20.0, 10.0)
+	var level_muzzle: Vector3 = tank.muzzle_global_position()
+	tank.aim_gun_pitch_at_target(level_muzzle + Vector3.LEFT * 20.0, 10.0)
 	if not is_zero_approx(gun_pitch_pivot.rotation.z):
 		push_error("A level world target must return the gun to neutral pitch")
 		return false
@@ -299,7 +299,7 @@ func _validate_turret_aiming(instance: Node) -> bool:
 	var chassis_position: Vector3 = tank.global_position
 	var chassis_rotation: Vector3 = tank.global_rotation
 	var plus_z_target: Vector3 = turret_pivot.global_position + Vector3.BACK * 20.0
-	tank._aim_turret_at(plus_z_target, 10.0)
+	tank.aim_turret_at(plus_z_target, 10.0)
 	var muzzle_forward := -gun_pitch_pivot.global_transform.basis.x.normalized()
 	if muzzle_forward.dot(Vector3.BACK) < 0.999:
 		push_error("Tank local -X muzzle axis must rotate toward a +Z target")
@@ -309,23 +309,23 @@ func _validate_turret_aiming(instance: Node) -> bool:
 		return false
 
 	var held_yaw := turret_pivot.global_rotation.y
-	tank._aim_turret_at(turret_pivot.global_position, 1.0)
+	tank.aim_turret_at(turret_pivot.global_position, 1.0)
 	if not is_equal_approx(turret_pivot.global_rotation.y, held_yaw) or is_nan(turret_pivot.global_rotation.y):
 		push_error("A near turret target must preserve the current yaw")
 		return false
 
 	var held_pitch := gun_pitch_pivot.rotation.z
 	var dead_zone_target := turret_pivot.global_position + Vector3(2.0, 10.0, 0.0)
-	tank._aim_turret_at(dead_zone_target, 10.0)
-	tank._aim_gun_pitch_at_target(dead_zone_target, 10.0)
+	tank.aim_turret_at(dead_zone_target, 10.0)
+	tank.aim_gun_pitch_at_target(dead_zone_target, 10.0)
 	if not is_equal_approx(turret_pivot.global_rotation.y, held_yaw) \
 			or not is_equal_approx(gun_pitch_pivot.rotation.z, held_pitch):
 		push_error("A target within the 3m turret-center dead zone must preserve yaw and pitch")
 		return false
 
 	var fallback_origin := Vector3(1000.0, 1000.0, 1000.0)
-	var aim_controller = instance.get_node_or_null("PlayerAimController")
-	var presentation = instance.get_node_or_null("AimPresentation")
+	var aim_controller = instance.get_node_or_null("PlayerRuntime/PlayerAimController")
+	var presentation = instance.get_node_or_null("PlayerRuntime/AimPresentation")
 	if aim_controller == null or presentation == null:
 		push_error("Player aim controller and presentation must exist")
 		return false
@@ -385,8 +385,8 @@ func _validate_turret_aiming(instance: Node) -> bool:
 		return false
 
 	gun_pitch_pivot.rotation.z = 0.0
-	var current_muzzle: Vector3 = tank._muzzle_global_position()
-	var current_direction: Vector3 = tank._muzzle_global_direction()
+	var current_muzzle: Vector3 = tank.muzzle_global_position()
+	var current_direction: Vector3 = tank.muzzle_global_direction()
 	presentation.set_world_target(current_muzzle + current_direction * 20.0)
 	if mouse_line.visible or not actual_line.visible:
 		push_error("Red mouse line must hide when it overlaps the white firing direction")
@@ -427,7 +427,7 @@ func _validate_turret_aiming(instance: Node) -> bool:
 
 func _validate_camera_zoom(instance: Node) -> bool:
 	var camera_controller = instance.get_node_or_null("CameraRig")
-	var projectiles := instance.get_node_or_null("Projectiles") as Node3D
+	var projectiles := instance.get_node_or_null("CombatRuntime/Projectiles") as Node3D
 	if camera_controller == null or camera_controller.camera == null or projectiles == null:
 		push_error("Camera zoom validation requires CameraRig, Camera3D, and Projectiles nodes")
 		return false
@@ -486,12 +486,47 @@ func _validate_player_runtime_and_look_ahead(instance: Node) -> bool:
 	var runtime = instance.get_node_or_null("PlayerRuntime")
 	var tank = instance.get_node_or_null("Tank")
 	var camera_controller = instance.get_node_or_null("CameraRig")
-	var aim_controller = instance.get_node_or_null("PlayerAimController")
-	if runtime == null or tank == null or camera_controller == null or aim_controller == null:
-		push_error("PlayerRuntime, Tank, CameraRig, and PlayerAimController must exist")
+	var player_controller = instance.get_node_or_null("PlayerRuntime/PlayerController")
+	var aim_controller = instance.get_node_or_null("PlayerRuntime/PlayerAimController")
+	var presentation = instance.get_node_or_null("PlayerRuntime/AimPresentation")
+	var combat_runtime = instance.get_node_or_null("CombatRuntime")
+	if runtime == null or tank == null or camera_controller == null or player_controller == null or aim_controller == null or presentation == null or combat_runtime == null:
+		push_error("PlayerRuntime must contain player input, aim, and presentation while CombatRuntime owns world combat.")
 		return false
-	if runtime.controlled_tank != tank or camera_controller.follow_target != tank or aim_controller.controlled_tank != tank or aim_controller.camera != camera_controller.camera:
+	if runtime.controlled_tank != tank or camera_controller.follow_target != tank \
+			or player_controller.controlled_tank != tank or aim_controller.controlled_tank != tank \
+			or aim_controller.camera != camera_controller.camera or presentation.controlled_tank != tank:
 		push_error("PlayerRuntime must be the authoritative controlled_tank registration point")
+		return false
+	if instance.get_node_or_null("PlayerAimController") != null or instance.get_node_or_null("AimPresentation") != null:
+		push_error("Player aim and presentation must only exist beneath PlayerRuntime")
+		return false
+	if tank.has_method("set_projectile_container"):
+		push_error("Tank must not retain world projectile container dependencies")
+		return false
+	player_controller.apply_commands(1.0, -1.0, false)
+	if not is_equal_approx(tank.movement_command, 1.0) or not is_equal_approx(tank.turn_command, -1.0):
+		push_error("Composed PlayerController movement and turn commands must reach Tank unchanged")
+		return false
+	tank.set_movement_input(-1.0)
+	tank.set_turn_input(1.0)
+	if not is_equal_approx(tank.movement_command, -1.0) or not is_equal_approx(tank.turn_command, 1.0):
+		push_error("Direct Tank movement and turn commands must retain the same command contract")
+		return false
+	tank.set_movement_input(0.0)
+	tank.set_turn_input(0.0)
+	var aim_target: Vector3 = tank.turret_pivot.global_position + Vector3.BACK * 20.0 + Vector3.UP * 8.0
+	var yaw_before: float = tank.turret_pivot.global_rotation.y
+	var pitch_before: float = tank.gun_pitch_pivot.rotation.z
+	tank.aim_turret_at(aim_target, 10.0)
+	tank.aim_gun_pitch_at_target(aim_target, 10.0)
+	var direct_yaw: float = tank.turret_pivot.global_rotation.y
+	var direct_pitch: float = tank.gun_pitch_pivot.rotation.z
+	tank.turret_pivot.global_rotation.y = yaw_before
+	tank.gun_pitch_pivot.rotation.z = pitch_before
+	aim_controller.apply_aim(aim_target, 10.0)
+	if not is_equal_approx(tank.turret_pivot.global_rotation.y, direct_yaw) or not is_equal_approx(tank.gun_pitch_pivot.rotation.z, direct_pitch):
+		push_error("Composed PlayerAimController and direct Tank aim commands must have identical results")
 		return false
 	var center_offset: Vector3 = camera_controller.calculate_look_ahead_offset(Vector2(0.1, 0.1))
 	var right_offset: Vector3 = camera_controller.calculate_look_ahead_offset(Vector2.RIGHT)
@@ -516,10 +551,15 @@ func _validate_player_runtime_and_look_ahead(instance: Node) -> bool:
 
 func _validate_projectile_firing(instance: Node) -> bool:
 	var tank = instance.get_node_or_null("Tank")
-	var projectiles := instance.get_node_or_null("Projectiles") as Node3D
+	var player_controller = instance.get_node_or_null("PlayerRuntime/PlayerController")
+	var projectiles := instance.get_node_or_null("CombatRuntime/Projectiles") as Node3D
+	var effects := instance.get_node_or_null("CombatRuntime/Effects") as Node3D
 	var ground_collision := instance.get_node_or_null("World/Ground") as StaticBody3D
-	if tank == null or projectiles == null or ground_collision == null:
-		push_error("Tank firing requires Tank, Projectiles, and World/Ground nodes")
+	if tank == null or player_controller == null or projectiles == null or effects == null or ground_collision == null:
+		push_error("Tank firing requires PlayerController, CombatRuntime containers, and World/Ground nodes")
+		return false
+	if projectiles.get_child_count() != 0 or effects.get_child_count() != 0:
+		push_error("Projectiles and Effects must begin as separate, empty runtime containers")
 		return false
 	if ground_collision.collision_layer != 128 or ground_collision.collision_mask != 0:
 		push_error("Ground collision must stay isolated on physics layer 8")
@@ -528,10 +568,9 @@ func _validate_projectile_firing(instance: Node) -> bool:
 		push_error("Tank physics layers must remain unchanged")
 		return false
 
-	var gun := tank.tank_gun as MeshInstance3D
 	var expected_muzzle: Vector3 = tank.muzzle_point.global_position
-	var muzzle_position: Vector3 = tank._muzzle_global_position()
-	var muzzle_direction: Vector3 = tank._muzzle_global_direction()
+	var muzzle_position: Vector3 = tank.muzzle_global_position()
+	var muzzle_direction: Vector3 = tank.muzzle_global_direction()
 	if not muzzle_position.is_equal_approx(expected_muzzle):
 		push_error("Projectile origin must use the Tank_Gun local -X endpoint")
 		return false
@@ -542,24 +581,44 @@ func _validate_projectile_firing(instance: Node) -> bool:
 	var release_event := InputEventMouseButton.new()
 	release_event.button_index = MOUSE_BUTTON_LEFT
 	release_event.pressed = false
-	tank._unhandled_input(release_event)
-	if projectiles.get_child_count() != 2:
+	player_controller._unhandled_input(release_event)
+	if projectiles.get_child_count() != 0:
 		push_error("Mouse release must not fire a projectile")
 		return false
 	var right_click := InputEventMouseButton.new()
 	right_click.button_index = MOUSE_BUTTON_RIGHT
 	right_click.pressed = true
-	tank._unhandled_input(right_click)
-	if projectiles.get_child_count() != 2:
+	player_controller._unhandled_input(right_click)
+	if projectiles.get_child_count() != 0:
 		push_error("Non-left mouse buttons must not fire a projectile")
+		return false
+
+	var shot_events: Array[Dictionary] = []
+	tank.shot_fired.connect(func(shot_event: Dictionary) -> void: shot_events.append(shot_event))
+	tank.request_fire()
+	if shot_events.size() != 1 or projectiles.get_child_count() != 1:
+		push_error("Each valid direct Tank request_fire must emit one Shot Event and create one projectile")
+		return false
+	var first_shot: Dictionary = shot_events[0]
+	var shot_transform: Transform3D = first_shot.get("muzzle_transform", Transform3D.IDENTITY)
+	var shot_rid: RID = first_shot.get("shooter_rid", RID())
+	if not shot_transform.is_equal_approx(tank.muzzle_point.global_transform) or shot_rid != tank.get_rid():
+		push_error("Shot Event must carry the authoritative MuzzlePoint transform and shooter collision RID")
+		return false
+	var direct_projectile := projectiles.get_child(0) as TankProjectile
+	if direct_projectile == null:
+		push_error("Projectiles may only contain TankProjectile instances")
 		return false
 
 	var press_event := InputEventMouseButton.new()
 	press_event.button_index = MOUSE_BUTTON_LEFT
 	press_event.pressed = true
-	tank._unhandled_input(press_event)
-	var projectile := projectiles.get_node_or_null("Projectile") as Node3D
-	var muzzle_flash := tank.gun_pitch_pivot.get_node_or_null("MuzzleFlash") as Node3D
+	player_controller._unhandled_input(press_event)
+	if shot_events.size() != 2 or projectiles.get_child_count() != 2:
+		push_error("Each PlayerController fire request must emit one Shot Event and create one projectile")
+		return false
+	var projectile := projectiles.get_child(1) as TankProjectile
+	var muzzle_flash := tank.muzzle_point.get_node_or_null("MuzzleFlash") as Node3D
 	if projectile == null or muzzle_flash == null:
 		push_error("Left mouse press must create one projectile and one muzzle flash")
 		return false
@@ -591,7 +650,6 @@ func _validate_projectile_firing(instance: Node) -> bool:
 		return false
 	tank.global_position = tank_start
 
-	await physics_frame
 	var self_hit: Dictionary = projectile._collision_between(Vector3(-15.0, 1.8, 8.0), Vector3(15.0, 1.8, 8.0))
 	if not self_hit.is_empty():
 		push_error("Projectile sweep must not hit the firing tank")
@@ -604,6 +662,12 @@ func _validate_projectile_firing(instance: Node) -> bool:
 	if not is_equal_approx(ground_hit_position.y, 0.0) or not is_equal_approx(tank.global_position.y, 0.0):
 		push_error("Ground ray height and stationary tank height must remain unchanged")
 		return false
+	projectile.queue_free()
+	direct_projectile.queue_free()
+	await process_frame
+	if projectiles.get_child_count() != 0 or effects.get_child_count() != 0:
+		push_error("Queued shots must not create impact effects before a collision")
+		return false
 
 	var target := StaticBody3D.new()
 	target.name = "ProjectileSmokeTarget"
@@ -615,16 +679,29 @@ func _validate_projectile_firing(instance: Node) -> bool:
 	target.add_child(target_collision)
 	instance.add_child(target)
 	await physics_frame
-	projectile.global_position = Vector3(295.0, 2.0, 300.0)
-	projectile.direction = Vector3.RIGHT
-	projectile._physics_process(0.2)
-	if not projectile.is_queued_for_deletion() or projectiles.get_node_or_null("ImpactVFX") == null:
-		push_error("Building collision must remove the projectile and create impact VFX")
+	tank.request_fire()
+	if shot_events.size() != 3:
+		push_error("A later valid Tank request_fire must still emit exactly one additional Shot Event")
+		return false
+	var collision_projectile := projectiles.get_child(projectiles.get_child_count() - 1) as TankProjectile
+	if collision_projectile == null:
+		push_error("CombatRuntime must add every Shot Event projectile to Projectiles")
+		return false
+	var hit_events: Array[Vector3] = []
+	collision_projectile.hit_detected.connect(func(hit_position: Vector3, _hit_normal: Vector3) -> void: hit_events.append(hit_position))
+	collision_projectile.global_position = Vector3(295.0, 2.0, 300.0)
+	collision_projectile.direction = Vector3.RIGHT
+	collision_projectile._physics_process(0.2)
+	if hit_events.size() != 1 or not collision_projectile.is_queued_for_deletion() or effects.get_node_or_null("ImpactVFX") == null:
+		push_error("A projectile collision must emit one hit, remove itself, and create one Effect")
+		return false
+	if projectiles.get_node_or_null("ImpactVFX") != null:
+		push_error("Projectiles must never contain ImpactVFX nodes")
 		return false
 
 	var ranged_projectile := load("res://src/projectile.tscn").instantiate() as Node3D
 	ranged_projectile.name = "RangeTestProjectile"
-	ranged_projectile.initialize(Vector3.RIGHT, [tank.get_rid()], projectiles)
+	ranged_projectile.initialize(Vector3.RIGHT, [tank.get_rid()])
 	projectiles.add_child(ranged_projectile)
 	ranged_projectile.global_position = Vector3(500.0, 2.0, 500.0)
 	ranged_projectile._physics_process(10.0)
@@ -636,7 +713,7 @@ func _validate_projectile_firing(instance: Node) -> bool:
 	await process_frame
 	await create_timer(1.0).timeout
 	await process_frame
-	if tank.gun_pitch_pivot.get_node_or_null("MuzzleFlash") != null or projectiles.get_node_or_null("ImpactVFX") != null:
+	if tank.muzzle_point.get_node_or_null("MuzzleFlash") != null or effects.get_node_or_null("ImpactVFX") != null:
 		push_error("Transient firing VFX must clean themselves up")
 		return false
 	return true
@@ -855,14 +932,20 @@ func _validate_grid_layout(instance: Node) -> bool:
 
 
 func _validate_world_structure(instance: Node) -> bool:
-	var expected_root_children := [&"CameraRig", &"Tank", &"PlayerRuntime", &"PlayerAimController", &"AimPresentation", &"World", &"Projectiles"]
+	var expected_root_children := [&"CameraRig", &"Tank", &"PlayerRuntime", &"CombatRuntime", &"World"]
 	if instance.get_child_count() != expected_root_children.size():
-		push_error("Main scene must contain CameraRig, Tank, PlayerRuntime, aim nodes, World, and Projectiles")
+		push_error("Main scene must contain CameraRig, Tank, PlayerRuntime, CombatRuntime, and World")
 		return false
 	for index: int in expected_root_children.size():
 		if instance.get_child(index).name != expected_root_children[index]:
-			push_error("Main scene root child order must retain runtime ownership before World and Projectiles")
+			push_error("Main scene root child order must retain runtime ownership before World")
 			return false
+	var combat_runtime := instance.get_node_or_null("CombatRuntime") as Node3D
+	var projectiles := instance.get_node_or_null("CombatRuntime/Projectiles") as Node3D
+	var effects := instance.get_node_or_null("CombatRuntime/Effects") as Node3D
+	if combat_runtime == null or projectiles == null or effects == null:
+		push_error("CombatRuntime must inline separate Projectiles and Effects containers")
+		return false
 
 	var world := instance.get_node_or_null("World") as Node3D
 	if world == null or world.scene_file_path.get_file() != "world.tscn":

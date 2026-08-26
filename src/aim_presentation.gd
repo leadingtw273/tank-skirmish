@@ -10,7 +10,6 @@ const AIM_ALIGNED_ANGLE_RADIANS := 0.004363323
 const AIM_VERTICAL_BASIS_THRESHOLD := 0.999
 
 var controlled_tank: Node3D
-var effects_container: Node3D
 var actual_aim_line: MeshInstance3D
 var mouse_aim_line: MeshInstance3D
 var world_target := Vector3.ZERO
@@ -20,9 +19,8 @@ func set_controlled_tank(tank: Node3D) -> void:
 	controlled_tank = tank
 
 
-func set_effects_container(container: Node3D) -> void:
-	effects_container = container
-	if actual_aim_line == null and effects_container != null:
+func initialize_presentation() -> void:
+	if actual_aim_line == null:
 		actual_aim_line = _create_aim_line("ActualAimLine", Color.WHITE)
 		mouse_aim_line = _create_aim_line("MouseAimLine", Color.RED)
 
@@ -50,7 +48,7 @@ func _create_aim_line(line_name: String, color: Color) -> MeshInstance3D:
 	line.material_override = material
 	line.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	line.visible = false
-	effects_container.add_child(line)
+	add_child(line)
 	return line
 
 

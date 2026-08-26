@@ -151,6 +151,9 @@ func _validate_instance(instance: Node) -> void:
 	if not await _validate_projectile_firing(instance):
 		quit(1)
 		return
+	if not await _validate_visual_recoil(instance):
+		quit(1)
+		return
 	if not _validate_collision_layout(instance):
 		quit(1)
 		return
@@ -255,7 +258,7 @@ func _validate_turret_aiming(instance: Node) -> bool:
 		push_error("Tank gun pitch exports do not match the approved MVP values")
 		return false
 
-	var turret_pivot := tank.get_node_or_null("TurretPivot") as Node3D
+	var turret_pivot := tank.get_node_or_null("VisualRecoilPivot/TurretPivot") as Node3D
 	var gun_pitch_pivot := turret_pivot.get_node_or_null("GunPitchPivot") as Node3D if turret_pivot != null else null
 	var muzzle_point := gun_pitch_pivot.get_node_or_null("MuzzlePoint") as Marker3D if gun_pitch_pivot != null else null
 	var turret := turret_pivot.get_node_or_null("Tank_Turret") as MeshInstance3D if turret_pivot != null else null
@@ -546,6 +549,84 @@ func _validate_player_runtime_and_look_ahead(instance: Node) -> bool:
 		push_error("Tank follow must be immediate while only look-ahead smoothing is deferred")
 		return false
 	tank.global_position -= Vector3(4.0, 0.0, -3.0)
+	return true
+
+
+func _validate_visual_recoil(instance: Node) -> bool:
+	var tank := instance.get_node_or_null("Tank") as CharacterBody3D
+	var projectiles := instance.get_node_or_null("CombatRuntime/Projectiles") as Node3D
+	if tank == null or projectiles == null:
+		push_error("Visual recoil validation requires Tank and the Projectiles container")
+		return false
+	var recoil_pivot := tank.get_node_or_null("VisualRecoilPivot") as Node3D
+	var collision := tank.get_node_or_null("CollisionShape3D") as CollisionShape3D
+	if recoil_pivot == null or collision == null \
+			or recoil_pivot.get_node_or_null("Tank2") == null \
+			or recoil_pivot.get_node_or_null("TurretPivot/GunPitchPivot/MuzzlePoint") == null \
+			or collision.get_parent() != tank:
+		push_error("Tank visual recoil pivot must own all visible tank nodes while collision stays at the physics root")
+		return false
+	if not is_equal_approx(tank.visual_recoil_distance, 0.12) \
+			or not is_equal_approx(tank.visual_recoil_kick_seconds, 0.04) \
+			or not is_equal_approx(tank.visual_recoil_return_seconds, 0.18):
+		push_error("Tank visual recoil exports must retain the approved defaults")
+		return false
+
+	var rest_position := recoil_pivot.position
+	var root_transform := tank.global_transform
+	var collision_transform := collision.global_transform
+	var initial_velocity := tank.velocity
+	var first_direction: Vector3 = tank.muzzle_global_direction()
+	tank.request_fire()
+	if projectiles.get_child_count() != 1:
+		push_error("A valid Tank fire request must create exactly one projectile while starting visual recoil")
+		return false
+	await create_timer(tank.visual_recoil_kick_seconds + 0.01).timeout
+	await process_frame
+	var first_offset := recoil_pivot.global_position - tank.to_global(rest_position)
+	if first_offset.length() <= 0.001 or first_offset.normalized().dot(-first_direction) < 0.999 \
+			or first_offset.length() > tank.visual_recoil_distance + 0.001:
+		push_error("Visual recoil must move opposite the firing MuzzlePoint direction within its configured bound")
+		return false
+	if not tank.global_transform.is_equal_approx(root_transform) \
+			or not collision.global_transform.is_equal_approx(collision_transform) \
+			or not tank.velocity.is_equal_approx(initial_velocity):
+		push_error("Visual recoil must not move Tank physics, collision, or velocity")
+		return false
+	await create_timer(tank.visual_recoil_kick_seconds + tank.visual_recoil_return_seconds + 0.02).timeout
+	await process_frame
+	if not recoil_pivot.position.is_equal_approx(rest_position):
+		push_error("Visual recoil must return exactly to its original local position")
+		return false
+
+	tank.request_fire()
+	await create_timer(tank.visual_recoil_kick_seconds + 0.01).timeout
+	await process_frame
+	tank.turret_pivot.rotation.y += PI / 2.0
+	var latest_direction: Vector3 = tank.muzzle_global_direction()
+	tank.request_fire()
+	await create_timer(tank.visual_recoil_kick_seconds + 0.01).timeout
+	await process_frame
+	var latest_offset := recoil_pivot.global_position - tank.to_global(rest_position)
+	if latest_offset.length() <= 0.001 or latest_offset.normalized().dot(-latest_direction) < 0.999 \
+			or latest_offset.length() > tank.visual_recoil_distance + 0.001:
+		push_error("Repeated fire must restart bounded recoil using the latest MuzzlePoint direction")
+		return false
+	await create_timer(tank.visual_recoil_kick_seconds + tank.visual_recoil_return_seconds + 0.02).timeout
+	await process_frame
+	if not recoil_pivot.position.is_equal_approx(rest_position):
+		push_error("Repeated visual recoil must not accumulate local-position drift")
+		return false
+
+	for projectile in projectiles.get_children():
+		projectile.queue_free()
+	for child in tank.muzzle_point.get_children():
+		if child.name == "MuzzleFlash":
+			child.queue_free()
+	await process_frame
+	if projectiles.get_child_count() != 0:
+		push_error("Visual recoil validation must clean up its test projectiles")
+		return false
 	return true
 
 

@@ -1,0 +1,23 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="PackedScene" path="res://assets/models/tank/tank2.glb" id="1_tank"]
+[ext_resource type="Script" path="res://src/tank_controller.gd" id="2_controller"]
+
+[sub_resource type="BoxShape3D" id="TankCollisionShape"]
+size = Vector3(13.8953796, 3.631687, 7.9327138)
+
+[node name="Tank" type="CharacterBody3D"]
+script = ExtResource("2_controller")
+
+[node name="Tank2" parent="." instance=ExtResource("1_tank")]
+scale = Vector3(1.7466666, 1.7466666, 1.7466666)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+position = Vector3(0, 1.8158436, 0)
+shape = SubResource("TankCollisionShape")
+
+[node name="TurretPivot" type="Node3D" parent="."]
+
+[node name="GunPitchPivot" type="Node3D" parent="TurretPivot"]
+
+[node name="MuzzlePoint" type="Marker3D" parent="TurretPivot/GunPitchPivot"]

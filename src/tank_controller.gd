@@ -12,9 +12,10 @@ extends CharacterBody3D
 @export_range(0.0, 45.0, 0.5) var gun_max_elevation_degrees := 20.0
 @export_range(0.0, 45.0, 0.5) var gun_max_depression_degrees := 8.0
 
+@export_category("Camera")
+@export var max_camera_look_ahead_distance := 30.0
+
 const MODEL_FORWARD_LOCAL_AXIS := Vector3.LEFT
-const TURRET_PIVOT_NAME := "TurretPivot"
-const GUN_PITCH_PIVOT_NAME := "GunPitchPivot"
 const MIN_AIM_DISTANCE_SQUARED := 0.001
 const TREAD_ANIMATION_BLEND_SECONDS := 0.12
 const TREAD_ANIMATION_CLIPS := {
@@ -27,77 +28,45 @@ const PROJECTILE_SCENE := preload("res://src/projectile.tscn")
 const MUZZLE_FLASH_SCENE := preload("res://assets/BinbunVFX/muzzle_flash/effects/big_flash/big_flash_01.tscn")
 const MUZZLE_FLASH_LIFETIME_SECONDS := 0.25
 const MUZZLE_FLASH_SCALE := 2.0
-const AIM_MAX_DISTANCE := 180.0
-const AIM_COLLISION_MASK := 129
-const AIM_TARGET_DEAD_ZONE_DISTANCE_SQUARED := 9.0
-const AIM_LINE_RADIUS := 0.04
-const AIM_LINE_MIN_LENGTH := 0.05
-const AIM_LINE_NEAR_TANK_HIDDEN_DISTANCE := 3.0
-const AIM_LINE_ALPHA := 0.7
-const AIM_ALIGNED_ANGLE_RADIANS := 0.004363323
-const AIM_VERTICAL_BASIS_THRESHOLD := 0.999
-const CAMERA_ZOOM_STEP := 5.0
-const CAMERA_MIN_SIZE := 25.0
-const CAMERA_MAX_SIZE := 100.0
 
-@onready var camera_rig: Node3D = $"../CameraRig"
-@onready var camera: Camera3D = $"../CameraRig/Camera3D"
 @onready var tank_model: Node3D = $Tank2
 @onready var tank_scale_root: Node3D = $Tank2/AgentTeamScaleRoot
 @onready var tank_turret: MeshInstance3D = $Tank2/AgentTeamScaleRoot/Tank_Turret
 @onready var tank_gun: MeshInstance3D = $Tank2/AgentTeamScaleRoot/Tank_Gun
 @onready var tank_collision: CollisionShape3D = $CollisionShape3D
-@onready var projectile_container: Node3D = $"../Projectiles"
+@onready var turret_pivot: Node3D = $TurretPivot
+@onready var gun_pitch_pivot: Node3D = $TurretPivot/GunPitchPivot
+@onready var muzzle_point: Marker3D = $TurretPivot/GunPitchPivot/MuzzlePoint
 
-var camera_offset := Vector3.ZERO
-var turret_pivot: Node3D
-var gun_pitch_pivot: Node3D
+var projectile_container: Node3D
 var tread_animation_player: AnimationPlayer
 var active_tread_animation := &""
 var tread_animation_paused := true
 var tread_animations_available := false
-var actual_aim_line: MeshInstance3D
-var mouse_aim_line: MeshInstance3D
 
 
 func _ready() -> void:
-	# Tank2's gun sits on the model's local -X end, so -X is its visual forward axis.
-	camera_offset = camera_rig.position - position
-	# The imported gun and turret are sibling meshes. The outer pivot yaws the assembly;
-	# the inner pivot sits at the authored gun origin so only the barrel pitches.
-	turret_pivot = Node3D.new()
-	turret_pivot.name = TURRET_PIVOT_NAME
-	tank_scale_root.add_child(turret_pivot)
+	# The imported turret and gun remain intact. Permanent scene pivots take ownership
+	# at startup while preserving their authored world transforms.
 	turret_pivot.global_position = tank_turret.global_position
 	tank_turret.reparent(turret_pivot, true)
-	gun_pitch_pivot = Node3D.new()
-	gun_pitch_pivot.name = GUN_PITCH_PIVOT_NAME
-	turret_pivot.add_child(gun_pitch_pivot)
 	gun_pitch_pivot.global_position = tank_gun.global_position
 	tank_gun.reparent(gun_pitch_pivot, true)
+	var gun_aabb := tank_gun.get_aabb()
+	var local_muzzle := gun_aabb.get_center()
+	local_muzzle.x = gun_aabb.position.x
+	muzzle_point.global_transform = Transform3D(
+		tank_gun.global_transform.basis,
+		tank_gun.global_transform * local_muzzle,
+	)
 	_setup_tread_animations()
-	actual_aim_line = _create_aim_line("ActualAimLine", Color.WHITE)
-	mouse_aim_line = _create_aim_line("MouseAimLine", Color.RED)
-
-
-func _process(delta: float) -> void:
-	var mouse_position := get_viewport().get_mouse_position()
-	var target_position := _resolve_mouse_world_target(mouse_position)
-	_aim_turret_at(target_position, delta)
-	_aim_gun_pitch_at_target(target_position, delta)
-	_update_aim_lines(target_position)
 
 
 func _unhandled_input(event: InputEvent) -> void:
 	var mouse_event := event as InputEventMouseButton
-	if mouse_event == null or not mouse_event.pressed:
+	if mouse_event == null or not mouse_event.pressed or mouse_event.button_index != MOUSE_BUTTON_LEFT:
 		return
-	if mouse_event.button_index == MOUSE_BUTTON_LEFT:
-		_fire_projectile()
-	elif mouse_event.button_index == MOUSE_BUTTON_WHEEL_UP:
-		camera.size = maxf(CAMERA_MIN_SIZE, camera.size - CAMERA_ZOOM_STEP)
-	elif mouse_event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
-		camera.size = minf(CAMERA_MAX_SIZE, camera.size + CAMERA_ZOOM_STEP)
+	_fire_projectile()
 
 
 func _physics_process(delta: float) -> void:
@@ -109,7 +78,14 @@ func _physics_process(delta: float) -> void:
 	var forward_direction := transform.basis * MODEL_FORWARD_LOCAL_AXIS
 	velocity = forward_direction * movement_input * movement_speed
 	move_and_slide()
-	camera_rig.position = position + camera_offset
+
+
+func set_projectile_container(container: Node3D) -> void:
+	projectile_container = container
+
+
+func get_max_camera_look_ahead_distance() -> float:
+	return maxf(max_camera_look_ahead_distance, 0.0)
 
 
 func _setup_tread_animations() -> void:
@@ -175,7 +151,6 @@ func _aim_turret_at(target_position: Vector3, delta: float) -> void:
 	if target_direction.length_squared() <= MIN_AIM_DISTANCE_SQUARED:
 		return
 
-	# Godot's default forward is -Z, but this model's muzzle points along local -X.
 	var target_yaw := atan2(target_direction.z, -target_direction.x)
 	turret_pivot.global_rotation.y = rotate_toward(
 		turret_pivot.global_rotation.y,
@@ -186,11 +161,11 @@ func _aim_turret_at(target_position: Vector3, delta: float) -> void:
 
 func _target_gun_pitch_for_world_target(target_position: Vector3) -> float:
 	if _is_target_inside_turret_dead_zone(target_position):
-		return -gun_pitch_pivot.rotation.z if gun_pitch_pivot != null else 0.0
-	var target_direction := target_position - _muzzle_global_position()
+		return -gun_pitch_pivot.rotation.z
+	var target_direction := target_position - muzzle_global_position()
 	var horizontal_distance := Vector2(target_direction.x, target_direction.z).length()
 	if horizontal_distance * horizontal_distance + target_direction.y * target_direction.y <= MIN_AIM_DISTANCE_SQUARED:
-		return -gun_pitch_pivot.rotation.z if gun_pitch_pivot != null else 0.0
+		return -gun_pitch_pivot.rotation.z
 	var target_pitch := atan2(target_direction.y, horizontal_distance)
 	return clampf(
 		target_pitch,
@@ -201,12 +176,10 @@ func _target_gun_pitch_for_world_target(target_position: Vector3) -> float:
 
 func _is_target_inside_turret_dead_zone(target_position: Vector3) -> bool:
 	var offset := target_position - turret_pivot.global_position
-	return Vector2(offset.x, offset.z).length_squared() <= AIM_TARGET_DEAD_ZONE_DISTANCE_SQUARED
+	return Vector2(offset.x, offset.z).length_squared() <= 9.0
 
 
 func _aim_gun_pitch_at_target(target_position: Vector3, delta: float) -> void:
-	if gun_pitch_pivot == null:
-		return
 	var minimum_pitch := -deg_to_rad(maxf(gun_max_depression_degrees, 0.0))
 	var maximum_pitch := deg_to_rad(maxf(gun_max_elevation_degrees, 0.0))
 	var current_pitch := -gun_pitch_pivot.rotation.z
@@ -215,160 +188,27 @@ func _aim_gun_pitch_at_target(target_position: Vector3, delta: float) -> void:
 	gun_pitch_pivot.rotation.z = -clampf(next_pitch, minimum_pitch, maximum_pitch)
 
 
-func _resolve_mouse_world_target(screen_position: Vector2) -> Vector3:
-	return _resolve_world_target_from_ray(
-		camera.project_ray_origin(screen_position),
-		camera.project_ray_normal(screen_position),
-	)
+func muzzle_global_position() -> Vector3:
+	return muzzle_point.global_position
 
 
-func _resolve_world_target_from_ray(ray_origin: Vector3, ray_direction: Vector3) -> Vector3:
-	var normalized_direction := ray_direction.normalized()
-	if normalized_direction.is_zero_approx():
-		return ray_origin
-	var fallback_target := ray_origin + normalized_direction * AIM_MAX_DISTANCE
-	var collision := _aim_collision_between(ray_origin, fallback_target)
-	return collision.get("position", fallback_target) as Vector3
-
-
-func _aim_collision_between(from: Vector3, to: Vector3) -> Dictionary:
-	var query := PhysicsRayQueryParameters3D.create(from, to, AIM_COLLISION_MASK, [get_rid()])
-	query.collide_with_bodies = true
-	query.collide_with_areas = false
-	query.hit_from_inside = true
-	return get_world_3d().direct_space_state.intersect_ray(query)
-
-
-func _create_aim_line(line_name: String, color: Color) -> MeshInstance3D:
-	var line := MeshInstance3D.new()
-	line.name = line_name
-	var cylinder := CylinderMesh.new()
-	cylinder.top_radius = AIM_LINE_RADIUS
-	cylinder.bottom_radius = AIM_LINE_RADIUS
-	cylinder.height = 1.0
-	cylinder.radial_segments = 8
-	line.mesh = cylinder
-	var material := StandardMaterial3D.new()
-	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	material.no_depth_test = true
-	material.render_priority = Material.RENDER_PRIORITY_MAX
-	material.albedo_color = Color(color.r, color.g, color.b, AIM_LINE_ALPHA)
-	line.material_override = material
-	line.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	line.visible = false
-	projectile_container.add_child(line)
-	return line
-
-
-func _aim_line_end(origin: Vector3, direction: Vector3) -> Vector3:
-	var normalized_direction := direction.normalized()
-	if normalized_direction.is_zero_approx():
-		return origin
-	var fallback_end := origin + normalized_direction * AIM_MAX_DISTANCE
-	var collision := _aim_collision_between(origin, fallback_end)
-	return collision.get("position", fallback_end) as Vector3
-
-
-func _set_aim_line_segment(line: MeshInstance3D, start: Vector3, end: Vector3) -> void:
-	var segment := end - start
-	var length := segment.length()
-	if length < AIM_LINE_MIN_LENGTH:
-		line.visible = false
-		return
-	var direction := segment / length
-	var reference_axis := Vector3.UP
-	if absf(direction.dot(Vector3.UP)) >= AIM_VERTICAL_BASIS_THRESHOLD:
-		reference_axis = Vector3.FORWARD
-	var x_axis := reference_axis.cross(direction).normalized()
-	var z_axis := x_axis.cross(direction).normalized()
-	line.global_transform = Transform3D(
-		Basis(x_axis, direction * length, z_axis),
-		start + segment * 0.5,
-	)
-	line.visible = true
-
-
-func _set_aim_line_path(
-	line: MeshInstance3D,
-	origin: Vector3,
-	end: Vector3,
-	hidden_distance := AIM_LINE_NEAR_TANK_HIDDEN_DISTANCE,
-) -> void:
-	var path := end - origin
-	var length := path.length()
-	var safe_hidden_distance := maxf(hidden_distance, 0.0)
-	if length <= safe_hidden_distance:
-		line.visible = false
-		return
-	var visible_start := origin + path / length * safe_hidden_distance
-	_set_aim_line_segment(line, visible_start, end)
-
-
-func _tank_aim_line_clearance_distance(origin: Vector3) -> float:
-	var collision_box := tank_collision.shape as BoxShape3D
-	if collision_box == null:
-		return origin.distance_to(_muzzle_global_position()) + AIM_LINE_NEAR_TANK_HIDDEN_DISTANCE
-	var half_size := collision_box.size * 0.5
-	var farthest_corner_distance := 0.0
-	for x_sign in [-1.0, 1.0]:
-		for y_sign in [-1.0, 1.0]:
-			for z_sign in [-1.0, 1.0]:
-				var corner := tank_collision.global_transform * Vector3(
-					half_size.x * x_sign,
-					half_size.y * y_sign,
-					half_size.z * z_sign,
-				)
-				farthest_corner_distance = maxf(farthest_corner_distance, origin.distance_to(corner))
-	return farthest_corner_distance + AIM_LINE_NEAR_TANK_HIDDEN_DISTANCE
-
-
-func _update_aim_lines(world_target: Vector3) -> void:
-	if actual_aim_line == null or mouse_aim_line == null:
-		return
-	var muzzle_position := _muzzle_global_position()
-	var actual_direction := _muzzle_global_direction()
-	_set_aim_line_path(actual_aim_line, muzzle_position, _aim_line_end(muzzle_position, actual_direction))
-
-	var firing_target_offset := world_target - muzzle_position
-	if firing_target_offset.length_squared() <= MIN_AIM_DISTANCE_SQUARED:
-		mouse_aim_line.visible = false
-		return
-	var firing_target_direction := firing_target_offset.normalized()
-	if actual_direction.angle_to(firing_target_direction) <= AIM_ALIGNED_ANGLE_RADIANS:
-		mouse_aim_line.visible = false
-		return
-
-	var mouse_line_origin := turret_pivot.global_position
-	var mouse_line_offset := world_target - mouse_line_origin
-	if mouse_line_offset.length_squared() <= MIN_AIM_DISTANCE_SQUARED:
-		mouse_aim_line.visible = false
-		return
-	var mouse_line_direction := mouse_line_offset.normalized()
-	_set_aim_line_path(
-		mouse_aim_line,
-		mouse_line_origin,
-		_aim_line_end(mouse_line_origin, mouse_line_direction),
-		_tank_aim_line_clearance_distance(mouse_line_origin),
-	)
+func muzzle_global_direction() -> Vector3:
+	return (-muzzle_point.global_transform.basis.x).normalized()
 
 
 func _muzzle_global_position() -> Vector3:
-	var gun_aabb := tank_gun.get_aabb()
-	var local_muzzle := gun_aabb.get_center()
-	local_muzzle.x = gun_aabb.position.x
-	return tank_gun.global_transform * local_muzzle
+	return muzzle_global_position()
 
 
 func _muzzle_global_direction() -> Vector3:
-	return (-tank_gun.global_transform.basis.x).normalized()
+	return muzzle_global_direction()
 
 
 func _fire_projectile() -> void:
 	if projectile_container == null or gun_pitch_pivot == null:
 		return
-	var muzzle_position := _muzzle_global_position()
-	var muzzle_direction := _muzzle_global_direction()
+	var muzzle_position := muzzle_global_position()
+	var muzzle_direction := muzzle_global_direction()
 	if muzzle_direction.is_zero_approx():
 		return
 

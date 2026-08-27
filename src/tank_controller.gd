@@ -30,6 +30,7 @@ const TREAD_ANIMATION_CLIPS := {
 	"turning_right": &"Tank_TurningRight",
 }
 const MUZZLE_FLASH_SCENE := preload("res://assets/BinbunVFX/muzzle_flash/effects/big_flash/big_flash_01.tscn")
+const ShotEvent := preload("res://src/shot_event.gd")
 const MUZZLE_FLASH_LIFETIME_SECONDS := 0.25
 const MUZZLE_FLASH_SCALE := 2.0
 
@@ -43,7 +44,10 @@ const MUZZLE_FLASH_SCALE := 2.0
 @onready var gun_pitch_pivot: Node3D = $VisualRecoilPivot/TurretPivot/GunPitchPivot
 @onready var muzzle_point: Marker3D = $VisualRecoilPivot/TurretPivot/GunPitchPivot/MuzzlePoint
 
-signal shot_fired(shot_event: Dictionary)
+# The legacy signal is retained only so the pre-contract smoke test can observe
+# the same gameplay values. CombatRuntime listens only to shot_event_fired.
+signal shot_fired(legacy_shot: Dictionary)
+signal shot_event_fired(shot_event: ShotEvent)
 
 var movement_command := 0.0
 var turn_command := 0.0
@@ -213,10 +217,9 @@ func request_fire() -> void:
 
 	_spawn_muzzle_flash(muzzle_position, muzzle_direction)
 	var shot_muzzle_transform := muzzle_point.global_transform
-	shot_fired.emit({
-		"muzzle_transform": shot_muzzle_transform,
-		"shooter_rid": get_rid(),
-	})
+	var shot_event := ShotEvent.new(shot_muzzle_transform, muzzle_direction, get_rid())
+	shot_event_fired.emit(shot_event)
+	shot_fired.emit(shot_event.to_legacy_dictionary())
 	_play_visual_recoil(muzzle_direction)
 
 

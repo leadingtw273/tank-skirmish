@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3]
 
-[ext_resource type="PackedScene" path="res://src/assets/models/roads/street_straight.glb" id="1_straight"]
+[ext_resource type="PackedScene" path="res://assets/models/roads/street_straight.glb" id="1_straight"]
 
 [node name="ArterialCorridor" type="Node3D"]
 

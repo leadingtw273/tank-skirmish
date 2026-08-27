@@ -1,9 +1,9 @@
 [gd_scene load_steps=16 format=3]
 
-[ext_resource type="PackedScene" path="res://src/assets/models/roads/street_straight.glb" id="1_straight"]
-[ext_resource type="PackedScene" path="res://src/assets/models/roads/street_curve.glb" id="2_curve"]
-[ext_resource type="PackedScene" path="res://src/assets/models/roads/street_3way.glb" id="3_three_way"]
-[ext_resource type="PackedScene" path="res://src/assets/models/roads/street_4way.glb" id="4_four_way"]
+[ext_resource type="PackedScene" path="res://assets/models/roads/street_straight.glb" id="1_straight"]
+[ext_resource type="PackedScene" path="res://assets/models/roads/street_curve.glb" id="2_curve"]
+[ext_resource type="PackedScene" path="res://assets/models/roads/street_3way.glb" id="3_three_way"]
+[ext_resource type="PackedScene" path="res://assets/models/roads/street_4way.glb" id="4_four_way"]
 [ext_resource type="PackedScene" path="res://assets/models/buildings/1story.glb" id="5_one_story"]
 [ext_resource type="PackedScene" path="res://assets/models/buildings/1story-gable-roof.glb" id="6_gable_roof"]
 [ext_resource type="PackedScene" path="res://assets/models/buildings/2story-wide.glb" id="7_two_story_wide"]

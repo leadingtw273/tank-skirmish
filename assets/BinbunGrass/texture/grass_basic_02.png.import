@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dyx4ax3yequ86"
-path.s3tc="res://.godot/imported/grass_basic_02.png-1c6766ce266d8d79b13ae13afeaf48dd.s3tc.ctex"
+path.s3tc="res://.godot/imported/grass_basic_02.png-273c3e62ee5e8fa309d21880af77642d.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://src/assets/binbun_grass/texture/grass_basic_02.png"
-dest_files=["res://.godot/imported/grass_basic_02.png-1c6766ce266d8d79b13ae13afeaf48dd.s3tc.ctex"]
+source_file="res://assets/BinbunGrass/texture/grass_basic_02.png"
+dest_files=["res://.godot/imported/grass_basic_02.png-273c3e62ee5e8fa309d21880af77642d.s3tc.ctex"]
 
 [params]
 

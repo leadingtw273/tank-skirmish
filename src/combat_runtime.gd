@@ -1,5 +1,5 @@
-## Turns Tank shot events into projectiles and projectile impacts into transient world effects.
-## It owns only runtime combat children; it does not decide when a Tank fires or control player input.
+## 將坦克射擊事件轉為投射物，並將投射物命中轉為暫時性的世界特效。
+## 它只擁有執行期的戰鬥子節點；不會決定坦克的開火時機或控制玩家輸入。
 extends Node3D
 class_name CombatRuntime
 
@@ -8,18 +8,18 @@ const IMPACT_VFX_SCENE := preload("res://assets/BinbunVFX/impact_explosions/effe
 const TankProjectile := preload("res://src/projectile.gd")
 const ShotEvent := preload("res://src/shot_event.gd")
 const ImpactEvent := preload("res://src/impact_event.gd")
-@export_category("Scene Wiring")
-## Nodes that emit the public shot_event_fired signal for this combat runtime to consume.
+@export_category("場景連接")
+## 會發出公開 shot_event_fired signal、供此戰鬥執行期消費的節點。
 @export var shot_sources: Array[Node]
-## Parent that receives runtime TankProjectile nodes.
+## 接收執行期 TankProjectile 節點的父節點。
 @export var projectiles: Node3D
-## Parent that receives transient impact visual-effect nodes.
+## 接收暫時性命中特效節點的父節點。
 @export var effects: Node3D
 
-@export_category("Impact Presentation")
-## Lifetime in seconds before an instantiated impact visual effect is removed.
+@export_category("命中呈現")
+## 已實體化的命中特效在移除前的存活時間，單位為秒。
 @export var impact_vfx_lifetime_seconds := 0.9
-## Offset in metres along an impact normal to prevent the visual effect clipping into the surface.
+## 沿命中法線的偏移量，單位為公尺，用來避免視覺特效穿入表面。
 @export var impact_vfx_surface_offset := 0.05
 
 var _registered_shot_sources: Array[Node] = []
@@ -38,7 +38,7 @@ func _exit_tree() -> void:
 		unregister_shot_source(shot_source)
 
 
-## Connects one active shot_event_fired source; repeated registration is intentionally ignored.
+## 連接一個啟用中的 shot_event_fired 來源；刻意忽略重複註冊。
 func register_shot_source(shot_source: Node) -> void:
 	if shot_source == null or not is_instance_valid(shot_source) or not shot_source.has_signal("shot_event_fired"):
 		push_error("CombatRuntime requires an active shot_event_fired source.")
@@ -53,7 +53,7 @@ func register_shot_source(shot_source: Node) -> void:
 	_registered_shot_sources.append(shot_source)
 
 
-## Disconnects a previously registered shot source and releases its lifecycle callback.
+## 中斷先前註冊的射擊來源，並釋放其生命週期回呼。
 func unregister_shot_source(shot_source: Node) -> void:
 	if shot_source == null or not _registered_shot_sources.has(shot_source):
 		return

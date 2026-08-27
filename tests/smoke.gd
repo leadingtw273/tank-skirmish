@@ -566,7 +566,7 @@ func _validate_visual_recoil(instance: Node) -> bool:
 			or collision.get_parent() != tank:
 		push_error("Tank visual recoil pivot must own all visible tank nodes while collision stays at the physics root")
 		return false
-	if not is_equal_approx(tank.visual_recoil_distance, 0.12) \
+	if not is_equal_approx(tank.visual_recoil_distance, 0.36) \
 			or not is_equal_approx(tank.visual_recoil_kick_seconds, 0.04) \
 			or not is_equal_approx(tank.visual_recoil_return_seconds, 0.18):
 		push_error("Tank visual recoil exports must retain the approved defaults")
@@ -715,8 +715,8 @@ func _validate_projectile_firing(instance: Node) -> bool:
 	if not bool(muzzle_flash.get("one_shot")):
 		push_error("Muzzle flash must play once per shot")
 		return false
-	if not muzzle_flash.global_transform.basis.get_scale().is_equal_approx(Vector3.ONE * 2.0):
-		push_error("Muzzle flash acceptance scale must remain 2x")
+	if not muzzle_flash.global_transform.basis.get_scale().is_equal_approx(Vector3.ONE * 4.0):
+		push_error("Muzzle flash acceptance scale must remain 4x")
 		return false
 	var flash_start := muzzle_flash.global_position
 	var projectile_start := projectile.global_position

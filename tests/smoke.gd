@@ -715,8 +715,8 @@ func _validate_projectile_firing(instance: Node) -> bool:
 	if not bool(muzzle_flash.get("one_shot")):
 		push_error("Muzzle flash must play once per shot")
 		return false
-	if not muzzle_flash.global_transform.basis.get_scale().is_equal_approx(Vector3.ONE * 2.0):
-		push_error("Muzzle flash acceptance scale must remain 2x")
+	if not muzzle_flash.global_transform.basis.get_scale().is_equal_approx(Vector3.ONE * 4.0):
+		push_error("Muzzle flash acceptance scale must remain 4x")
 		return false
 	var flash_start := muzzle_flash.global_position
 	var projectile_start := projectile.global_position

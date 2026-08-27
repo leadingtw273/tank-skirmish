@@ -1,11 +1,20 @@
+## Follows the controlled Tank with cursor look-ahead and mouse-wheel orthographic zoom.
+## It frames the world only; it does not resolve aiming, player input commands, or Tank movement.
 extends Node3D
 
-@export var look_ahead_dead_zone := 0.18
+@export_category("Cursor Look-Ahead")
+## Normalized cursor radius with no look-ahead, from 0 at screen centre to 1 at the edge.
+@export_range(0.0, 1.0, 0.01) var look_ahead_dead_zone := 0.18
+## Exponential interpolation rate in inverse seconds for the look-ahead offset.
 @export var look_ahead_smoothing_speed := 8.0
 
-const CAMERA_ZOOM_STEP := 5.0
-const CAMERA_MIN_SIZE := 25.0
-const CAMERA_MAX_SIZE := 100.0
+@export_category("Orthographic Zoom")
+## Change to Camera3D size per mouse-wheel step, in world metres.
+@export var zoom_step := 5.0
+## Smallest permitted Camera3D size in world metres.
+@export var min_zoom_size := 25.0
+## Largest permitted Camera3D size in world metres.
+@export var max_zoom_size := 100.0
 
 @onready var camera: Camera3D = $Camera3D
 
@@ -14,6 +23,7 @@ var follow_target_offset := Vector3.ZERO
 var look_ahead_offset := Vector3.ZERO
 
 
+## Registers the node to follow immediately and resets any previous look-ahead offset.
 func set_follow_target(target: Node3D) -> void:
 	follow_target = target
 	follow_target_offset = global_position - target.global_position
@@ -34,9 +44,9 @@ func _unhandled_input(event: InputEvent) -> void:
 	if mouse_event == null or not mouse_event.pressed:
 		return
 	if mouse_event.button_index == MOUSE_BUTTON_WHEEL_UP:
-		camera.size = maxf(CAMERA_MIN_SIZE, camera.size - CAMERA_ZOOM_STEP)
+		camera.size = maxf(min_zoom_size, camera.size - zoom_step)
 	elif mouse_event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
-		camera.size = minf(CAMERA_MAX_SIZE, camera.size + CAMERA_ZOOM_STEP)
+		camera.size = minf(max_zoom_size, camera.size + zoom_step)
 
 
 func _desired_look_ahead_offset() -> Vector3:
@@ -51,6 +61,7 @@ func _desired_look_ahead_offset() -> Vector3:
 	return calculate_look_ahead_offset(normalized_cursor)
 
 
+## Converts a normalized cursor position into the bounded XZ follow offset for the current Tank.
 func calculate_look_ahead_offset(normalized_cursor: Vector2) -> Vector3:
 	var cursor_distance := normalized_cursor.length()
 	if cursor_distance <= look_ahead_dead_zone:

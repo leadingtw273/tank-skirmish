@@ -1,28 +1,41 @@
+## Owns Tank movement, turret pose, firing events, tread animation, and visual recoil.
+## It does not instantiate projectiles or own world combat containers; CombatRuntime consumes its events.
 extends CharacterBody3D
 
 @export_category("Tank Movement")
+## Maximum forward or reverse hull speed in metres per second at full input.
 @export var movement_speed := 15.0
+## Hull yaw speed in radians per second at full turn input.
 @export var turn_speed := 0.8
+## Seconds used to blend between authored tread-animation clips.
+@export var tread_animation_blend_seconds := 0.12
 
 @export_category("Tank Turret")
+## Turret yaw speed in radians per second while tracking a target.
 @export var turret_turn_speed := 1.777778
 
 @export_category("Tank Gun")
+## Gun elevation and depression tracking speed in radians per second.
 @export var gun_pitch_speed := 1.2
+## Maximum upward barrel elevation in degrees.
 @export_range(0.0, 45.0, 0.5) var gun_max_elevation_degrees := 20.0
+## Maximum downward barrel depression in degrees.
 @export_range(0.0, 45.0, 0.5) var gun_max_depression_degrees := 8.0
 
 @export_category("Visual Recoil")
+## Maximum visual-only recoil displacement in metres opposite the firing direction.
 @export var visual_recoil_distance := 0.36
+## Seconds for the visual Tank model to reach its recoil displacement.
 @export var visual_recoil_kick_seconds := 0.04
+## Seconds for the visual Tank model to return to its authored rest position.
 @export var visual_recoil_return_seconds := 0.18
 
 @export_category("Camera")
+## Maximum cursor look-ahead distance the CameraController may request, in metres.
 @export var max_camera_look_ahead_distance := 30.0
 
 const MODEL_FORWARD_LOCAL_AXIS := Vector3.LEFT
 const MIN_AIM_DISTANCE_SQUARED := 0.001
-const TREAD_ANIMATION_BLEND_SECONDS := 0.12
 const TREAD_ANIMATION_CLIPS := {
 	"forward": &"Tank_Forward",
 	"backwards": &"Tank_Backwards",
@@ -31,8 +44,11 @@ const TREAD_ANIMATION_CLIPS := {
 }
 const MUZZLE_FLASH_SCENE := preload("res://assets/BinbunVFX/muzzle_flash/effects/big_flash/big_flash_05.tscn")
 const ShotEvent := preload("res://src/shot_event.gd")
-const MUZZLE_FLASH_LIFETIME_SECONDS := 0.25
-const MUZZLE_FLASH_SCALE := 4.0
+@export_category("Muzzle Flash")
+## Lifetime in seconds before the spawned muzzle flash is removed.
+@export var muzzle_flash_lifetime_seconds := 0.25
+## Uniform scale multiplier applied to the authored muzzle-flash effect.
+@export var muzzle_flash_scale := 4.0
 
 @onready var visual_recoil_pivot: Node3D = $VisualRecoilPivot
 @onready var tank_model: Node3D = $VisualRecoilPivot/Tank2
@@ -44,9 +60,9 @@ const MUZZLE_FLASH_SCALE := 4.0
 @onready var gun_pitch_pivot: Node3D = $VisualRecoilPivot/TurretPivot/GunPitchPivot
 @onready var muzzle_point: Marker3D = $VisualRecoilPivot/TurretPivot/GunPitchPivot/MuzzlePoint
 
-# The legacy signal is retained only so the pre-contract smoke test can observe
-# the same gameplay values. CombatRuntime listens only to shot_event_fired.
+## Compatibility notification carrying the legacy Dictionary payload for the existing smoke test.
 signal shot_fired(legacy_shot: Dictionary)
+## Authoritative firing notification consumed by CombatRuntime for each valid fire request.
 signal shot_event_fired(shot_event: ShotEvent)
 
 var movement_command := 0.0
@@ -85,14 +101,17 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 
 
+## Stores a clamped forward/reverse command from -1 to 1 for the next physics step.
 func set_movement_input(input_value: float) -> void:
 	movement_command = clampf(input_value, -1.0, 1.0)
 
 
+## Stores a clamped hull turn command from -1 to 1 for the next physics step.
 func set_turn_input(input_value: float) -> void:
 	turn_command = clampf(input_value, -1.0, 1.0)
 
 
+## Returns the non-negative camera look-ahead limit in metres for CameraController.
 func get_max_camera_look_ahead_distance() -> float:
 	return maxf(max_camera_look_ahead_distance, 0.0)
 
@@ -147,11 +166,12 @@ func _update_tread_animation(next_animation: StringName) -> void:
 			tread_animation_paused = false
 		return
 
-	tread_animation_player.play(next_animation, TREAD_ANIMATION_BLEND_SECONDS)
+	tread_animation_player.play(next_animation, tread_animation_blend_seconds)
 	active_tread_animation = next_animation
 	tread_animation_paused = false
 
 
+## Turns only the turret yaw toward a world-space target during this frame.
 func aim_turret_at(target_position: Vector3, delta: float) -> void:
 	if _is_target_inside_turret_dead_zone(target_position):
 		return
@@ -188,6 +208,7 @@ func _is_target_inside_turret_dead_zone(target_position: Vector3) -> bool:
 	return Vector2(offset.x, offset.z).length_squared() <= 9.0
 
 
+## Turns only the gun pitch toward a world-space target within its elevation limits.
 func aim_gun_pitch_at_target(target_position: Vector3, delta: float) -> void:
 	var minimum_pitch := -deg_to_rad(maxf(gun_max_depression_degrees, 0.0))
 	var maximum_pitch := deg_to_rad(maxf(gun_max_elevation_degrees, 0.0))
@@ -197,14 +218,17 @@ func aim_gun_pitch_at_target(target_position: Vector3, delta: float) -> void:
 	gun_pitch_pivot.rotation.z = -clampf(next_pitch, minimum_pitch, maximum_pitch)
 
 
+## Returns the current world-space projectile origin at MuzzlePoint.
 func muzzle_global_position() -> Vector3:
 	return muzzle_point.global_position
 
 
+## Returns the normalized world-space firing direction along MuzzlePoint's local -X axis.
 func muzzle_global_direction() -> Vector3:
 	return (-muzzle_point.global_transform.basis.x).normalized()
 
 
+## Emits one ShotEvent, legacy compatibility payload, muzzle flash, and visual recoil when wiring is valid.
 func request_fire() -> void:
 	if gun_pitch_pivot == null or muzzle_point == null:
 		push_error("Tank cannot fire: MuzzlePoint wiring is missing.")
@@ -248,9 +272,9 @@ func _spawn_muzzle_flash(muzzle_position: Vector3, muzzle_direction: Vector3) ->
 	muzzle_flash.set("one_shot", true)
 	muzzle_flash.set("autoplay", true)
 	muzzle_point.add_child(muzzle_flash, true)
-	var flash_basis := _basis_with_x_axis(muzzle_direction).scaled(Vector3.ONE * MUZZLE_FLASH_SCALE)
+	var flash_basis := _basis_with_x_axis(muzzle_direction).scaled(Vector3.ONE * muzzle_flash_scale)
 	muzzle_flash.global_transform = Transform3D(flash_basis, muzzle_position)
-	get_tree().create_timer(MUZZLE_FLASH_LIFETIME_SECONDS).timeout.connect(muzzle_flash.queue_free)
+	get_tree().create_timer(muzzle_flash_lifetime_seconds).timeout.connect(muzzle_flash.queue_free)
 
 
 func _basis_with_x_axis(x_axis: Vector3) -> Basis:

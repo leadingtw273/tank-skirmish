@@ -172,6 +172,15 @@ run("combat-boundary-smoke", godot, [
   "--script",
   "res://tests/combat_boundary_smoke.gd",
 ], { scanGodotErrors: true });
+run("documentation-and-exports-smoke", godot, [
+  "--headless",
+  "--audio-driver",
+  "Dummy",
+  "--path",
+  ".",
+  "--script",
+  "res://tests/documentation_and_exports_smoke.gd",
+], { scanGodotErrors: true });
 
 run("protected-project-diff", "git", ["diff", "--exit-code", "--", "project.godot"]);
 console.log("Tank Skirmish quality gate passed.");

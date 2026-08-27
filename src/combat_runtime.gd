@@ -1,52 +1,87 @@
 extends Node3D
+class_name CombatRuntime
 
 const PROJECTILE_SCENE := preload("res://src/projectile.tscn")
 const IMPACT_VFX_SCENE := preload("res://assets/GodotImpactVFX/effects/hit/vfx_hit_01.tscn")
+const TankProjectile := preload("res://src/projectile.gd")
+const ShotEvent := preload("res://src/shot_event.gd")
+const ImpactEvent := preload("res://src/impact_event.gd")
 const IMPACT_VFX_LIFETIME_SECONDS := 0.9
 
+@export var shot_sources: Array[Node]
 @export var projectiles: Node3D
 @export var effects: Node3D
 
+var _registered_shot_sources: Array[Node] = []
 
-func set_shot_source(tank: Node3D) -> void:
-	if tank == null or not is_instance_valid(tank) or not tank.has_signal("shot_fired"):
-		push_error("CombatRuntime requires an active Tank shot_fired source.")
-		return
+
+func _ready() -> void:
 	if projectiles == null or effects == null:
-		push_error("CombatRuntime requires Projectiles and Effects containers.")
+		push_error("CombatRuntime requires injected Projectiles and Effects containers.")
 		return
-	if not tank.is_connected("shot_fired", _on_shot_fired):
-		tank.connect("shot_fired", _on_shot_fired)
+	for shot_source in shot_sources:
+		register_shot_source(shot_source)
 
 
-func _on_shot_fired(shot_event: Dictionary) -> void:
-	var muzzle_transform: Transform3D = shot_event.get("muzzle_transform", Transform3D.IDENTITY)
-	var shooter_rid: RID = shot_event.get("shooter_rid", RID())
-	if not shooter_rid.is_valid() or not muzzle_transform.is_finite():
-		push_error("CombatRuntime rejected an invalid Shot Event.")
+func _exit_tree() -> void:
+	for shot_source in _registered_shot_sources.duplicate():
+		unregister_shot_source(shot_source)
+
+
+func register_shot_source(shot_source: Node) -> void:
+	if shot_source == null or not is_instance_valid(shot_source) or not shot_source.has_signal("shot_event_fired"):
+		push_error("CombatRuntime requires an active shot_event_fired source.")
 		return
-	var direction := (-muzzle_transform.basis.x).normalized()
-	if direction.is_zero_approx():
-		push_error("CombatRuntime rejected a Shot Event without a muzzle direction.")
+	if _registered_shot_sources.has(shot_source):
+		return
+	if not shot_source.is_connected("shot_event_fired", _on_shot_fired):
+		shot_source.connect("shot_event_fired", _on_shot_fired)
+	var release_callback := _on_shot_source_tree_exiting.bind(shot_source)
+	if not shot_source.tree_exiting.is_connected(release_callback):
+		shot_source.tree_exiting.connect(release_callback)
+	_registered_shot_sources.append(shot_source)
+
+
+func unregister_shot_source(shot_source: Node) -> void:
+	if shot_source == null or not _registered_shot_sources.has(shot_source):
+		return
+	if is_instance_valid(shot_source):
+		if shot_source.is_connected("shot_event_fired", _on_shot_fired):
+			shot_source.disconnect("shot_event_fired", _on_shot_fired)
+		var release_callback := _on_shot_source_tree_exiting.bind(shot_source)
+		if shot_source.tree_exiting.is_connected(release_callback):
+			shot_source.tree_exiting.disconnect(release_callback)
+	_registered_shot_sources.erase(shot_source)
+
+
+func _on_shot_source_tree_exiting(shot_source: Node) -> void:
+	unregister_shot_source(shot_source)
+
+
+func _on_shot_fired(shot_event: ShotEvent) -> void:
+	if shot_event == null or not shot_event.is_valid():
+		push_error("CombatRuntime rejected an invalid ShotEvent.")
 		return
 	var projectile := PROJECTILE_SCENE.instantiate() as TankProjectile
 	if projectile == null:
 		push_error("CombatRuntime could not instantiate projectile.tscn.")
 		return
 	projectile.name = "Projectile"
-	projectile.initialize(direction, [shooter_rid])
-	projectile.hit_detected.connect(_on_projectile_hit)
+	projectile.initialize(shot_event)
+	projectile.impact_detected.connect(_on_projectile_impact)
 	projectiles.add_child(projectile, true)
-	projectile.global_transform = Transform3D(_basis_with_x_axis(direction), muzzle_transform.origin)
+	projectile.global_transform = Transform3D(_basis_with_x_axis(shot_event.direction), shot_event.muzzle_transform.origin)
 
 
-func _on_projectile_hit(hit_position: Vector3, hit_normal: Vector3) -> void:
+func _on_projectile_impact(impact_event: ImpactEvent) -> void:
+	if impact_event == null or not impact_event.is_valid():
+		return
 	var impact := IMPACT_VFX_SCENE.instantiate() as Node3D
 	impact.name = "ImpactVFX"
 	impact.set("one_shot", true)
 	impact.set("autoplay", true)
 	effects.add_child(impact, true)
-	impact.global_position = hit_position + hit_normal.normalized() * 0.05
+	impact.global_position = impact_event.position + impact_event.normal * 0.05
 	get_tree().create_timer(IMPACT_VFX_LIFETIME_SECONDS).timeout.connect(impact.queue_free)
 
 

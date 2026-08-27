@@ -27,14 +27,13 @@ current = true
 position = Vector3(0, 0, 8)
 rotation = Vector3(0, -0.35, 0)
 
-[node name="PlayerRuntime" type="Node" parent="." node_paths=PackedStringArray("controlled_tank", "camera_controller", "player_controller", "player_aim_controller", "aim_presentation", "combat_runtime")]
+[node name="PlayerRuntime" type="Node" parent="." node_paths=PackedStringArray("controlled_tank", "camera_controller", "player_controller", "player_aim_controller", "aim_presentation")]
 script = ExtResource("4_player_runtime")
 controlled_tank = NodePath("../Tank")
 camera_controller = NodePath("../CameraRig")
 player_controller = NodePath("PlayerController")
 player_aim_controller = NodePath("PlayerAimController")
 aim_presentation = NodePath("AimPresentation")
-combat_runtime = NodePath("../CombatRuntime")
 
 [node name="PlayerController" type="Node" parent="PlayerRuntime"]
 script = ExtResource("5_player_controller")
@@ -46,8 +45,9 @@ aim_presentation = NodePath("../AimPresentation")
 [node name="AimPresentation" type="Node" parent="PlayerRuntime"]
 script = ExtResource("7_aim_presentation")
 
-[node name="CombatRuntime" type="Node3D" parent="." node_paths=PackedStringArray("projectiles", "effects")]
+[node name="CombatRuntime" type="Node3D" parent="." node_paths=PackedStringArray("shot_sources", "projectiles", "effects")]
 script = ExtResource("8_combat_runtime")
+shot_sources = [NodePath("../Tank")]
 projectiles = NodePath("Projectiles")
 effects = NodePath("Effects")
 

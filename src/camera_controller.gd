@@ -1,19 +1,19 @@
-## Follows the controlled Tank with cursor look-ahead and mouse-wheel orthographic zoom.
-## It frames the world only; it does not resolve aiming, player input commands, or Tank movement.
+## 以游標前視與滑鼠滾輪正交投影縮放跟隨目前控制的坦克。
+## 它只負責框取世界畫面；不會處理瞄準、玩家輸入指令或坦克移動。
 extends Node3D
 
-@export_category("Cursor Look-Ahead")
-## Normalized cursor radius with no look-ahead, from 0 at screen centre to 1 at the edge.
+@export_category("游標前視")
+## 不套用前視的正規化游標半徑，畫面中心為 0，邊緣為 1。
 @export_range(0.0, 1.0, 0.01) var look_ahead_dead_zone := 0.18
-## Exponential interpolation rate in inverse seconds for the look-ahead offset.
+## 前視偏移量的指數插值速率，單位為每秒。
 @export var look_ahead_smoothing_speed := 8.0
 
-@export_category("Orthographic Zoom")
-## Change to Camera3D size per mouse-wheel step, in world metres.
+@export_category("正交投影縮放")
+## 每一格滑鼠滾輪對 Camera3D size 的變化量，單位為世界公尺。
 @export var zoom_step := 5.0
-## Smallest permitted Camera3D size in world metres.
+## 允許的最小 Camera3D size，單位為世界公尺。
 @export var min_zoom_size := 25.0
-## Largest permitted Camera3D size in world metres.
+## 允許的最大 Camera3D size，單位為世界公尺。
 @export var max_zoom_size := 100.0
 
 @onready var camera: Camera3D = $Camera3D
@@ -23,7 +23,7 @@ var follow_target_offset := Vector3.ZERO
 var look_ahead_offset := Vector3.ZERO
 
 
-## Registers the node to follow immediately and resets any previous look-ahead offset.
+## 立即註冊要跟隨的節點，並重設先前的前視偏移量。
 func set_follow_target(target: Node3D) -> void:
 	follow_target = target
 	follow_target_offset = global_position - target.global_position
@@ -61,7 +61,7 @@ func _desired_look_ahead_offset() -> Vector3:
 	return calculate_look_ahead_offset(normalized_cursor)
 
 
-## Converts a normalized cursor position into the bounded XZ follow offset for the current Tank.
+## 將正規化游標位置轉換為目前坦克受限的 XZ 跟隨偏移量。
 func calculate_look_ahead_offset(normalized_cursor: Vector2) -> Vector3:
 	var cursor_distance := normalized_cursor.length()
 	if cursor_distance <= look_ahead_dead_zone:

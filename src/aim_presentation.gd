@@ -1,23 +1,23 @@
-## Renders the Tank's current firing direction and pending mouse aim as world-space lines.
-## It only presents already-resolved aiming data; it does not read player input or rotate the Tank.
+## 將坦克目前的射擊方向與滑鼠瞄準目標繪製為世界座標線條。
+## 它只呈現已解析的瞄準資料；不會讀取玩家輸入或旋轉坦克。
 extends Node
 
-@export_category("Aim Raycast")
-## Furthest raycast and rendered aim-line endpoint in metres.
+@export_category("瞄準射線偵測")
+## 最遠的射線偵測與瞄準線繪製終點，單位為公尺。
 @export var max_aim_distance := 180.0
-## Physics layers that the aim ray can stop against.
+## 可阻擋瞄準射線的物理圖層。
 @export_flags_3d_physics var aim_collision_mask := 129
 
-@export_category("Aim Lines")
-## Radius of each cylindrical aim line in metres.
+@export_category("瞄準線")
+## 每條圓柱形瞄準線的半徑，單位為公尺。
 @export var aim_line_radius := 0.04
-## Segments shorter than this length in metres are hidden to avoid degenerate meshes.
+## 短於此長度的線段會隱藏，以避免退化的網格，單位為公尺。
 @export var aim_line_min_length := 0.05
-## Distance in metres hidden near the firing origin so the line clears the Tank.
+## 射擊起點附近要隱藏的距離，讓線條避開 Tank，單位為公尺。
 @export var aim_line_near_tank_hidden_distance := 3.0
-## Opacity from 0 (transparent) to 1 (opaque) for both aim lines.
+## 兩條瞄準線的不透明度，0 為透明，1 為不透明。
 @export_range(0.0, 1.0, 0.05) var aim_line_alpha := 0.7
-## Angular difference in radians below which the mouse line is hidden as aligned with the firing line.
+## 低於此弧度角差時，滑鼠線會因與射擊線對齊而隱藏。
 @export var aim_aligned_angle_radians := 0.004363323
 
 const AIM_VERTICAL_BASIS_THRESHOLD := 0.999
@@ -28,19 +28,19 @@ var mouse_aim_line: MeshInstance3D
 var world_target := Vector3.ZERO
 
 
-## Registers the Tank whose muzzle and collision shape this presentation follows.
+## 註冊此呈現要跟隨其砲口與碰撞形狀的坦克。
 func set_controlled_tank(tank: Node3D) -> void:
 	controlled_tank = tank
 
 
-## Creates the two reusable line meshes once after the presentation has a scene parent.
+## 在呈現節點擁有場景父節點後，一次建立兩個可重複使用的線條網格。
 func initialize_presentation() -> void:
 	if actual_aim_line == null:
 		actual_aim_line = _create_aim_line("ActualAimLine", Color.WHITE)
 		mouse_aim_line = _create_aim_line("MouseAimLine", Color.RED)
 
 
-## Updates the mouse-selected world target and redraws both aim lines.
+## 更新滑鼠選取的世界目標，並重繪兩條瞄準線。
 func set_world_target(target: Vector3) -> void:
 	world_target = target
 	_update_aim_lines()

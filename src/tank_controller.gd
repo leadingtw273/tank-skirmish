@@ -1,37 +1,37 @@
-## Owns Tank movement, turret pose, firing events, tread animation, and visual recoil.
-## It does not instantiate projectiles or own world combat containers; CombatRuntime consumes its events.
+## 管理坦克移動、砲塔姿態、射擊事件、履帶動畫與視覺後座。
+## 它不會實體化投射物或擁有世界戰鬥容器；CombatRuntime 消費其事件。
 extends CharacterBody3D
 
-@export_category("Tank Movement")
-## Maximum forward or reverse hull speed in metres per second at full input.
+@export_category("坦克移動")
+## 滿輸入時車身前進或倒退的最高速度，單位為公尺／秒。
 @export var movement_speed := 15.0
-## Hull yaw speed in radians per second at full turn input.
+## 滿轉向輸入時車身偏航速度，單位為弧度／秒。
 @export var turn_speed := 0.8
-## Seconds used to blend between authored tread-animation clips.
+## 在製作好的履帶動畫片段之間混合所用的秒數。
 @export var tread_animation_blend_seconds := 0.12
 
-@export_category("Tank Turret")
-## Turret yaw speed in radians per second while tracking a target.
+@export_category("坦克砲塔")
+## 追蹤目標時砲塔的偏航速度，單位為弧度／秒。
 @export var turret_turn_speed := 1.777778
 
-@export_category("Tank Gun")
-## Gun elevation and depression tracking speed in radians per second.
+@export_category("坦克砲管")
+## 砲管仰角與俯角的追蹤速度，單位為弧度／秒。
 @export var gun_pitch_speed := 1.2
-## Maximum upward barrel elevation in degrees.
+## 砲管向上的最大仰角，單位為度。
 @export_range(0.0, 45.0, 0.5) var gun_max_elevation_degrees := 20.0
-## Maximum downward barrel depression in degrees.
+## 砲管向下的最大俯角，單位為度。
 @export_range(0.0, 45.0, 0.5) var gun_max_depression_degrees := 8.0
 
-@export_category("Visual Recoil")
-## Maximum visual-only recoil displacement in metres opposite the firing direction.
+@export_category("視覺後座")
+## 僅供視覺呈現、與射擊方向相反的最大後座位移，單位為公尺。
 @export var visual_recoil_distance := 0.36
-## Seconds for the visual Tank model to reach its recoil displacement.
+## 視覺坦克模型到達後座位移所需的秒數。
 @export var visual_recoil_kick_seconds := 0.04
-## Seconds for the visual Tank model to return to its authored rest position.
+## 視覺坦克模型回到製作時靜止位置所需的秒數。
 @export var visual_recoil_return_seconds := 0.18
 
-@export_category("Camera")
-## Maximum cursor look-ahead distance the CameraController may request, in metres.
+@export_category("鏡頭")
+## CameraController 可要求的最大游標前視距離，單位為公尺。
 @export var max_camera_look_ahead_distance := 30.0
 
 const MODEL_FORWARD_LOCAL_AXIS := Vector3.LEFT
@@ -44,10 +44,10 @@ const TREAD_ANIMATION_CLIPS := {
 }
 const MUZZLE_FLASH_SCENE := preload("res://assets/BinbunVFX/muzzle_flash/effects/big_flash/big_flash_05.tscn")
 const ShotEvent := preload("res://src/shot_event.gd")
-@export_category("Muzzle Flash")
-## Lifetime in seconds before the spawned muzzle flash is removed.
+@export_category("砲口火焰")
+## 已生成的砲口火焰在移除前的存活時間，單位為秒。
 @export var muzzle_flash_lifetime_seconds := 0.25
-## Uniform scale multiplier applied to the authored muzzle-flash effect.
+## 套用至製作好的砲口火焰特效之等比縮放倍率。
 @export var muzzle_flash_scale := 4.0
 
 @onready var visual_recoil_pivot: Node3D = $VisualRecoilPivot
@@ -60,9 +60,9 @@ const ShotEvent := preload("res://src/shot_event.gd")
 @onready var gun_pitch_pivot: Node3D = $VisualRecoilPivot/TurretPivot/GunPitchPivot
 @onready var muzzle_point: Marker3D = $VisualRecoilPivot/TurretPivot/GunPitchPivot/MuzzlePoint
 
-## Compatibility notification carrying the legacy Dictionary payload for the existing smoke test.
+## 為既有冒煙測試承載舊版 Dictionary 資料載荷的相容性通知。
 signal shot_fired(legacy_shot: Dictionary)
-## Authoritative firing notification consumed by CombatRuntime for each valid fire request.
+## 每次有效開火請求時，供 CombatRuntime 消費的權威射擊通知。
 signal shot_event_fired(shot_event: ShotEvent)
 
 var movement_command := 0.0
@@ -101,17 +101,17 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 
 
-## Stores a clamped forward/reverse command from -1 to 1 for the next physics step.
+## 儲存介於 -1 到 1 的前進／倒退指令，供下一個物理步驟使用。
 func set_movement_input(input_value: float) -> void:
 	movement_command = clampf(input_value, -1.0, 1.0)
 
 
-## Stores a clamped hull turn command from -1 to 1 for the next physics step.
+## 儲存介於 -1 到 1 的車身轉向指令，供下一個物理步驟使用。
 func set_turn_input(input_value: float) -> void:
 	turn_command = clampf(input_value, -1.0, 1.0)
 
 
-## Returns the non-negative camera look-ahead limit in metres for CameraController.
+## 回傳供 CameraController 使用且不為負值的鏡頭前視上限，單位為公尺。
 func get_max_camera_look_ahead_distance() -> float:
 	return maxf(max_camera_look_ahead_distance, 0.0)
 
@@ -171,7 +171,7 @@ func _update_tread_animation(next_animation: StringName) -> void:
 	tread_animation_paused = false
 
 
-## Turns only the turret yaw toward a world-space target during this frame.
+## 在此影格中只將砲塔偏航轉向世界座標目標。
 func aim_turret_at(target_position: Vector3, delta: float) -> void:
 	if _is_target_inside_turret_dead_zone(target_position):
 		return
@@ -208,7 +208,7 @@ func _is_target_inside_turret_dead_zone(target_position: Vector3) -> bool:
 	return Vector2(offset.x, offset.z).length_squared() <= 9.0
 
 
-## Turns only the gun pitch toward a world-space target within its elevation limits.
+## 在仰角限制內，只將砲管俯仰轉向世界座標目標。
 func aim_gun_pitch_at_target(target_position: Vector3, delta: float) -> void:
 	var minimum_pitch := -deg_to_rad(maxf(gun_max_depression_degrees, 0.0))
 	var maximum_pitch := deg_to_rad(maxf(gun_max_elevation_degrees, 0.0))
@@ -218,17 +218,17 @@ func aim_gun_pitch_at_target(target_position: Vector3, delta: float) -> void:
 	gun_pitch_pivot.rotation.z = -clampf(next_pitch, minimum_pitch, maximum_pitch)
 
 
-## Returns the current world-space projectile origin at MuzzlePoint.
+## 回傳 MuzzlePoint 目前的世界座標投射物起點。
 func muzzle_global_position() -> Vector3:
 	return muzzle_point.global_position
 
 
-## Returns the normalized world-space firing direction along MuzzlePoint's local -X axis.
+## 回傳沿 MuzzlePoint 本地 -X 軸的正規化世界座標射擊方向。
 func muzzle_global_direction() -> Vector3:
 	return (-muzzle_point.global_transform.basis.x).normalized()
 
 
-## Emits one ShotEvent, legacy compatibility payload, muzzle flash, and visual recoil when wiring is valid.
+## 當連接有效時，發出一個 ShotEvent、舊版相容性資料載荷、砲口火焰與視覺後座。
 func request_fire() -> void:
 	if gun_pitch_pivot == null or muzzle_point == null:
 		push_error("Tank cannot fire: MuzzlePoint wiring is missing.")

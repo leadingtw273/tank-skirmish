@@ -1,5 +1,5 @@
-## Immutable firing data emitted by Tank and consumed by CombatRuntime.
-## It describes one muzzle state only; it does not instantiate projectiles or visual effects.
+## 由坦克發出、供 CombatRuntime 消費的不可變射擊資料。
+## 它只描述一次砲口狀態；不會實體化投射物或視覺特效。
 extends RefCounted
 class_name ShotEvent
 
@@ -7,17 +7,17 @@ var _muzzle_transform: Transform3D
 var _direction: Vector3
 var _shooter_rid: RID
 
-## World transform of the muzzle at the moment this shot was requested.
+## 請求這次射擊當下砲口的世界座標轉換。
 var muzzle_transform: Transform3D:
 	get:
 		return _muzzle_transform
 
-## Normalized world-space firing direction.
+## 正規化的世界座標射擊方向。
 var direction: Vector3:
 	get:
 		return _direction
 
-## Physics RID to exclude so the projectile cannot immediately hit its firing Tank.
+## 要排除的物理 RID，避免投射物立即命中發射它的坦克。
 var shooter_rid: RID:
 	get:
 		return _shooter_rid
@@ -29,12 +29,12 @@ func _init(new_muzzle_transform: Transform3D, new_direction: Vector3, new_shoote
 	_shooter_rid = new_shooter_rid
 
 
-## Returns whether this event contains a finite muzzle transform, direction, and shooter RID.
+## 回傳此事件是否包含有限的砲口座標轉換、方向與射手 RID。
 func is_valid() -> bool:
 	return _muzzle_transform.is_finite() and not _direction.is_zero_approx() and _shooter_rid.is_valid()
 
 
-## Produces the compatibility payload used only by the legacy shot_fired signal.
+## 產生僅供舊版 shot_fired signal 使用的相容性資料載荷。
 func to_legacy_dictionary() -> Dictionary:
 	return {
 		"muzzle_transform": _muzzle_transform,

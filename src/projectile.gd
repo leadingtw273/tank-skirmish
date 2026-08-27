@@ -1,19 +1,19 @@
-## Simulates one world-space Tank projectile and reports its first collision as an ImpactEvent.
-## It does not create visual effects, choose targets, or decide when a Tank fires.
+## 模擬一枚世界座標中的坦克投射物，並將第一次碰撞回報為 ImpactEvent。
+## 它不會建立視覺特效、選擇目標或決定坦克的開火時機。
 extends Node3D
 class_name TankProjectile
 
 const ShotEvent := preload("res://src/shot_event.gd")
 const ImpactEvent := preload("res://src/impact_event.gd")
 
-@export_category("Projectile Motion")
-## Projectile travel speed in metres per second.
+@export_category("投射物移動")
+## 投射物的移動速度，單位為公尺／秒。
 @export var speed := 120.0
-## Maximum unobstructed travel distance in metres.
+## 無阻礙時可移動的最長距離，單位為公尺。
 @export var max_distance := 180.0
 
-@export_category("Projectile Collision")
-## Physics layers the projectile ray can collide with.
+@export_category("投射物碰撞")
+## 投射物射線可碰撞的物理圖層。
 @export_flags_3d_physics var collision_mask := 129
 
 var shot_event: ShotEvent
@@ -22,13 +22,13 @@ var excluded_rids: Array[RID] = []
 var distance_travelled := 0.0
 var _impact_reported := false
 
-## Legacy collision notification retained for the existing compatibility smoke test.
+## 為既有相容性冒煙測試保留的舊版碰撞通知。
 signal hit_detected(hit_position: Vector3, hit_normal: Vector3)
-## Authoritative collision notification consumed by CombatRuntime.
+## 供 CombatRuntime 消費的權威碰撞通知。
 signal impact_detected(impact_event: ImpactEvent)
 
 
-## Configures this projectile from one ShotEvent; Vector3 input remains only for the legacy smoke test.
+## 以一個 ShotEvent 設定此投射物；Vector3 輸入僅為舊版冒煙測試保留。
 func initialize(new_shot_event: Variant, legacy_excluded_rids: Array = []) -> void:
 	if new_shot_event is ShotEvent:
 		shot_event = new_shot_event

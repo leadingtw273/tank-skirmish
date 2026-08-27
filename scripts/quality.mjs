@@ -163,6 +163,15 @@ run("map960-components-smoke", godot, [
   "--script",
   "res://tests/map960_components_smoke.gd",
 ], { scanGodotErrors: true });
+run("combat-boundary-smoke", godot, [
+  "--headless",
+  "--audio-driver",
+  "Dummy",
+  "--path",
+  ".",
+  "--script",
+  "res://tests/combat_boundary_smoke.gd",
+], { scanGodotErrors: true });
 
 run("protected-project-diff", "git", ["diff", "--exit-code", "--", "project.godot"]);
 console.log("Tank Skirmish quality gate passed.");

@@ -2,7 +2,7 @@ extends Node3D
 class_name CombatRuntime
 
 const PROJECTILE_SCENE := preload("res://src/projectile.tscn")
-const IMPACT_VFX_SCENE := preload("res://assets/GodotImpactVFX/effects/hit/vfx_hit_01.tscn")
+const IMPACT_VFX_SCENE := preload("res://assets/BinbunVFX/impact_explosions/effects/hit/vfx_hit_01.tscn")
 const TankProjectile := preload("res://src/projectile.gd")
 const ShotEvent := preload("res://src/shot_event.gd")
 const ImpactEvent := preload("res://src/impact_event.gd")

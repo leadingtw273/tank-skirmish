@@ -13,7 +13,7 @@ extends CharacterBody3D
 @export_range(0.0, 45.0, 0.5) var gun_max_depression_degrees := 8.0
 
 @export_category("Visual Recoil")
-@export var visual_recoil_distance := 0.12
+@export var visual_recoil_distance := 0.36
 @export var visual_recoil_kick_seconds := 0.04
 @export var visual_recoil_return_seconds := 0.18
 
@@ -29,10 +29,10 @@ const TREAD_ANIMATION_CLIPS := {
 	"turning_left": &"Tank_TurningLeft",
 	"turning_right": &"Tank_TurningRight",
 }
-const MUZZLE_FLASH_SCENE := preload("res://assets/BinbunVFX/muzzle_flash/effects/big_flash/big_flash_01.tscn")
+const MUZZLE_FLASH_SCENE := preload("res://assets/BinbunVFX/muzzle_flash/effects/big_flash/big_flash_05.tscn")
 const ShotEvent := preload("res://src/shot_event.gd")
 const MUZZLE_FLASH_LIFETIME_SECONDS := 0.25
-const MUZZLE_FLASH_SCALE := 2.0
+const MUZZLE_FLASH_SCALE := 4.0
 
 @onready var visual_recoil_pivot: Node3D = $VisualRecoilPivot
 @onready var tank_model: Node3D = $VisualRecoilPivot/Tank2

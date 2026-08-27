@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://c1lqmtrrx11x8"
-path="res://.godot/imported/street_curve.glb-fec00778f53d502f6e9519c486d29c6e.scn"
+uid="uid://cgj3j5rawfy0y"
+path="res://.godot/imported/street_4way.glb-3e9f39dea7508139d83e4396a4952f2d.scn"
 
 [deps]
 
-source_file="res://src/assets/models/roads/street_curve.glb"
-dest_files=["res://.godot/imported/street_curve.glb-fec00778f53d502f6e9519c486d29c6e.scn"]
+source_file="res://assets/models/roads/street_4way.glb"
+dest_files=["res://.godot/imported/street_4way.glb-3e9f39dea7508139d83e4396a4952f2d.scn"]
 
 [params]
 

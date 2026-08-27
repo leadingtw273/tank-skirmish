@@ -1,7 +1,7 @@
 extends SceneTree
 
 const MAIN_SCENE := "res://src/main.tscn"
-const GRASS_IMPORT := "res://src/assets/binbun_grass/texture/grass_basic_02.png.import"
+const GRASS_IMPORT := "res://assets/BinbunGrass/texture/grass_basic_02.png.import"
 const CONVERSION_MANIFEST := "res://docs/assets/conversion-manifest.json"
 const TANK_VISUAL_SCALE := 1.7466666
 const BUILDING_MODELS := {

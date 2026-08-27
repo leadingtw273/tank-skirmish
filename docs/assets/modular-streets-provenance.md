@@ -31,9 +31,9 @@ asset lock, conversion manifest, validators, or CI framework.
 
 | Repository output | SHA-256 |
 | --- | --- |
-| `src/assets/models/roads/street_3way.glb` | `0b24021f18e123deb397df0de79c4cdee942de33dec1784dbfa36bbaf240c15d` |
-| `src/assets/models/roads/street_4way.glb` | `f4d1bcbd5eca004edd380269fbd0ba7321b4074c2de0d21c340c17f230a50cb3` |
-| `src/assets/models/roads/street_curve.glb` | `263fc431211fde9a222246fd56609200dd92a0167bfeff8e6a8bf35c08b51257` |
-| `src/assets/models/roads/street_straight.glb` | `dc3cc244f7f104ef468e18af80e3ba29068f20672091128aa3598fa151535ad3` |
+| `assets/models/roads/street_3way.glb` | `0b24021f18e123deb397df0de79c4cdee942de33dec1784dbfa36bbaf240c15d` |
+| `assets/models/roads/street_4way.glb` | `f4d1bcbd5eca004edd380269fbd0ba7321b4074c2de0d21c340c17f230a50cb3` |
+| `assets/models/roads/street_curve.glb` | `263fc431211fde9a222246fd56609200dd92a0167bfeff8e6a8bf35c08b51257` |
+| `assets/models/roads/street_straight.glb` | `dc3cc244f7f104ef468e18af80e3ba29068f20672091128aa3598fa151535ad3` |
 
 Godot 4.7.1-stable generated and validated the corresponding `.glb.import` sidecars.

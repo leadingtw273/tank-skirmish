@@ -566,7 +566,7 @@ func _validate_visual_recoil(instance: Node) -> bool:
 			or collision.get_parent() != tank:
 		push_error("Tank visual recoil pivot must own all visible tank nodes while collision stays at the physics root")
 		return false
-	if not is_equal_approx(tank.visual_recoil_distance, 0.12) \
+	if not is_equal_approx(tank.visual_recoil_distance, 0.36) \
 			or not is_equal_approx(tank.visual_recoil_kick_seconds, 0.04) \
 			or not is_equal_approx(tank.visual_recoil_return_seconds, 0.18):
 		push_error("Tank visual recoil exports must retain the approved defaults")

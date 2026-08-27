@@ -1,3 +1,5 @@
+## Turns Tank shot events into projectiles and projectile impacts into transient world effects.
+## It owns only runtime combat children; it does not decide when a Tank fires or control player input.
 extends Node3D
 class_name CombatRuntime
 
@@ -6,11 +8,19 @@ const IMPACT_VFX_SCENE := preload("res://assets/BinbunVFX/impact_explosions/effe
 const TankProjectile := preload("res://src/projectile.gd")
 const ShotEvent := preload("res://src/shot_event.gd")
 const ImpactEvent := preload("res://src/impact_event.gd")
-const IMPACT_VFX_LIFETIME_SECONDS := 0.9
-
+@export_category("Scene Wiring")
+## Nodes that emit the public shot_event_fired signal for this combat runtime to consume.
 @export var shot_sources: Array[Node]
+## Parent that receives runtime TankProjectile nodes.
 @export var projectiles: Node3D
+## Parent that receives transient impact visual-effect nodes.
 @export var effects: Node3D
+
+@export_category("Impact Presentation")
+## Lifetime in seconds before an instantiated impact visual effect is removed.
+@export var impact_vfx_lifetime_seconds := 0.9
+## Offset in metres along an impact normal to prevent the visual effect clipping into the surface.
+@export var impact_vfx_surface_offset := 0.05
 
 var _registered_shot_sources: Array[Node] = []
 
@@ -28,6 +38,7 @@ func _exit_tree() -> void:
 		unregister_shot_source(shot_source)
 
 
+## Connects one active shot_event_fired source; repeated registration is intentionally ignored.
 func register_shot_source(shot_source: Node) -> void:
 	if shot_source == null or not is_instance_valid(shot_source) or not shot_source.has_signal("shot_event_fired"):
 		push_error("CombatRuntime requires an active shot_event_fired source.")
@@ -42,6 +53,7 @@ func register_shot_source(shot_source: Node) -> void:
 	_registered_shot_sources.append(shot_source)
 
 
+## Disconnects a previously registered shot source and releases its lifecycle callback.
 func unregister_shot_source(shot_source: Node) -> void:
 	if shot_source == null or not _registered_shot_sources.has(shot_source):
 		return
@@ -81,8 +93,8 @@ func _on_projectile_impact(impact_event: ImpactEvent) -> void:
 	impact.set("one_shot", true)
 	impact.set("autoplay", true)
 	effects.add_child(impact, true)
-	impact.global_position = impact_event.position + impact_event.normal * 0.05
-	get_tree().create_timer(IMPACT_VFX_LIFETIME_SECONDS).timeout.connect(impact.queue_free)
+	impact.global_position = impact_event.position + impact_event.normal * impact_vfx_surface_offset
+	get_tree().create_timer(impact_vfx_lifetime_seconds).timeout.connect(impact.queue_free)
 
 
 func _basis_with_x_axis(x_axis: Vector3) -> Basis:

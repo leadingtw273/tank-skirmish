@@ -1,11 +1,19 @@
+## Simulates one world-space Tank projectile and reports its first collision as an ImpactEvent.
+## It does not create visual effects, choose targets, or decide when a Tank fires.
 extends Node3D
 class_name TankProjectile
 
 const ShotEvent := preload("res://src/shot_event.gd")
 const ImpactEvent := preload("res://src/impact_event.gd")
 
+@export_category("Projectile Motion")
+## Projectile travel speed in metres per second.
 @export var speed := 120.0
+## Maximum unobstructed travel distance in metres.
 @export var max_distance := 180.0
+
+@export_category("Projectile Collision")
+## Physics layers the projectile ray can collide with.
 @export_flags_3d_physics var collision_mask := 129
 
 var shot_event: ShotEvent
@@ -14,12 +22,13 @@ var excluded_rids: Array[RID] = []
 var distance_travelled := 0.0
 var _impact_reported := false
 
-# hit_detected remains only for the existing legacy smoke test. CombatRuntime
-# consumes impact_detected exclusively.
+## Legacy collision notification retained for the existing compatibility smoke test.
 signal hit_detected(hit_position: Vector3, hit_normal: Vector3)
+## Authoritative collision notification consumed by CombatRuntime.
 signal impact_detected(impact_event: ImpactEvent)
 
 
+## Configures this projectile from one ShotEvent; Vector3 input remains only for the legacy smoke test.
 func initialize(new_shot_event: Variant, legacy_excluded_rids: Array = []) -> void:
 	if new_shot_event is ShotEvent:
 		shot_event = new_shot_event

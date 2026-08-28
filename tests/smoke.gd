@@ -880,7 +880,7 @@ func _validate_projectile_firing(instance: Node) -> bool:
 
 	target.queue_free()
 	await process_frame
-	await create_timer(1.0).timeout
+	await create_timer(1.3).timeout
 	await process_frame
 	if tank.muzzle_point.get_node_or_null("MuzzleFlash") != null or effects.get_node_or_null("ImpactVFX") != null:
 		push_error("Transient firing VFX must clean themselves up")

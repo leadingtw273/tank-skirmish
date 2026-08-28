@@ -4,6 +4,7 @@ const MAIN_SCENE := "res://src/main.tscn"
 const GRASS_IMPORT := "res://assets/BinbunGrass/texture/grass_basic_02.png.import"
 const CONVERSION_MANIFEST := "res://docs/assets/conversion-manifest.json"
 const TankProjectile := preload("res://src/projectile.gd")
+const ShotEvent := preload("res://src/shot_event.gd")
 const TANK_VISUAL_SCALE := 1.7466666
 const BUILDING_MODELS := {
 	"OneStoryNorthWest": "1story",
@@ -147,6 +148,9 @@ func _validate_instance(instance: Node) -> void:
 		quit(1)
 		return
 	if not _validate_player_runtime_and_look_ahead(instance):
+		quit(1)
+		return
+	if not await _validate_camera_shake(instance):
 		quit(1)
 		return
 	if not await _validate_projectile_firing(instance):
@@ -575,6 +579,60 @@ func _validate_player_runtime_and_look_ahead(instance: Node) -> bool:
 	return true
 
 
+func _validate_camera_shake(instance: Node) -> bool:
+	var tank := instance.get_node_or_null("Tank") as CharacterBody3D
+	var camera_controller := instance.get_node_or_null("CameraRig") as Node3D
+	var shake_pivot := instance.get_node_or_null("CameraRig/CameraShakePivot") as Node3D
+	var camera := instance.get_node_or_null("CameraRig/CameraShakePivot/Camera3D") as Camera3D
+	var projectiles := instance.get_node_or_null("CombatRuntime/Projectiles") as Node3D
+	if tank == null or camera_controller == null or shake_pivot == null or camera == null or projectiles == null:
+		push_error("Camera shake requires the CameraRig/CameraShakePivot/Camera3D wiring and Tank shot source")
+		return false
+	if not shake_pivot.position.is_zero_approx() or not shake_pivot.rotation.is_zero_approx() \
+			or not _has_approved_camera_transform(camera) or camera.projection != Camera3D.PROJECTION_ORTHOGONAL \
+			or not is_equal_approx(camera.size, 100.0) or camera.keep_aspect != Camera3D.KEEP_HEIGHT or not camera.current:
+		push_error("CameraShakePivot must begin at identity without changing Camera3D's approved local settings")
+		return false
+
+	var shot_events: Array[ShotEvent] = []
+	tank.shot_event_fired.connect(func(shot_event: ShotEvent) -> void: shot_events.append(shot_event))
+	tank.request_fire()
+	if shot_events.size() != 1 or shake_pivot.position.is_zero_approx() or is_zero_approx(shake_pivot.rotation.z):
+		push_error("Each valid controlled-tank ShotEvent must immediately start exactly one positional and roll camera shake")
+		return false
+	var expected_local_recoil := camera_controller.global_transform.basis.inverse() * -shot_events[0].direction
+	expected_local_recoil.y = 0.0
+	if expected_local_recoil.is_zero_approx() or shake_pivot.position.normalized().dot(expected_local_recoil.normalized()) < 0.999 \
+			or shake_pivot.position.length() > 0.451:
+		push_error("Camera shake must use the ShotEvent horizontal world-opposite direction within its local bound")
+		return false
+
+	camera_controller._process(0.08)
+	tank.turret_pivot.rotation.y += PI / 2.0
+	tank.request_fire()
+	if shot_events.size() != 2 or shake_pivot.position.length() > 0.451 or shake_pivot.rotation.length() > deg_to_rad(1.501):
+		push_error("Repeated controlled-tank shots must replace the prior bounded camera shake")
+		return false
+	for _frame in range(5):
+		camera_controller._process(0.05)
+	if not shake_pivot.position.is_zero_approx() or not shake_pivot.rotation.is_zero_approx():
+		push_error("Camera shake must return its pivot to identity without local drift")
+		return false
+
+	camera_controller.play_shot_recoil(ShotEvent.new(Transform3D.IDENTITY, Vector3.ZERO, tank.get_rid()))
+	camera_controller.play_shot_recoil(ShotEvent.new(Transform3D.IDENTITY, Vector3(INF, 0.0, 0.0), tank.get_rid()))
+	if not shake_pivot.position.is_zero_approx() or not shake_pivot.rotation.is_zero_approx():
+		push_error("Invalid, near-zero, or non-finite shot directions must not start camera shake")
+		return false
+	for projectile in projectiles.get_children():
+		projectile.queue_free()
+	for child in tank.muzzle_point.get_children():
+		if child.name == "MuzzleFlash":
+			child.queue_free()
+	await process_frame
+	return projectiles.get_child_count() == 0
+
+
 func _validate_visual_recoil(instance: Node) -> bool:
 	var tank := instance.get_node_or_null("Tank") as CharacterBody3D
 	var projectiles := instance.get_node_or_null("CombatRuntime/Projectiles") as Node3D
@@ -876,7 +934,7 @@ func _validate_map_960(instance: Node) -> bool:
 		push_error("Ground visual and collision must both be exactly 960m by 960m")
 		return false
 
-	var camera := instance.get_node_or_null("CameraRig/Camera3D") as Camera3D
+	var camera := instance.get_node_or_null("CameraRig/CameraShakePivot/Camera3D") as Camera3D
 	if camera == null or not _has_approved_camera_transform(camera) \
 			or camera.projection != Camera3D.PROJECTION_ORTHOGONAL or camera.keep_aspect != Camera3D.KEEP_HEIGHT \
 			or not camera.current or not is_equal_approx(camera.size, 100.0):

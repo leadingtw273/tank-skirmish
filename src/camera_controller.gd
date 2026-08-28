@@ -2,6 +2,11 @@
 ## 它只負責框取世界畫面；不會處理瞄準、玩家輸入指令或坦克移動。
 extends Node3D
 
+const ShotEvent := preload("res://src/shot_event.gd")
+const SHAKE_DURATION_SECONDS := 0.2
+const SHAKE_POSITION_DISTANCE := 0.45
+const SHAKE_ROLL_RADIANS := deg_to_rad(1.5)
+
 @export_category("游標前視")
 ## 不套用前視的正規化游標半徑，畫面中心為 0，邊緣為 1。
 @export_range(0.0, 1.0, 0.01) var look_ahead_dead_zone := 0.18
@@ -16,11 +21,15 @@ extends Node3D
 ## 允許的最大 Camera3D size，單位為世界公尺。
 @export var max_zoom_size := 100.0
 
-@onready var camera: Camera3D = $Camera3D
+@onready var camera: Camera3D = $CameraShakePivot/Camera3D
+@onready var camera_shake_pivot: Node3D = $CameraShakePivot
 
 var follow_target: Node3D
 var follow_target_offset := Vector3.ZERO
 var look_ahead_offset := Vector3.ZERO
+var _shake_elapsed_seconds := SHAKE_DURATION_SECONDS
+var _shake_local_recoil_direction := Vector3.ZERO
+var _shake_roll_direction := 1.0
 
 
 ## 立即註冊要跟隨的節點，並重設先前的前視偏移量。
@@ -32,12 +41,47 @@ func set_follow_target(target: Node3D) -> void:
 
 func _process(delta: float) -> void:
 	## 以與影格率無關的指數插值平滑前視，並保留註冊當下的相對高度與構圖偏移。
+	_update_shot_recoil(delta)
 	if follow_target == null or not is_instance_valid(follow_target):
 		return
 	var desired_offset := _desired_look_ahead_offset()
 	var interpolation := 1.0 - exp(-maxf(look_ahead_smoothing_speed, 0.0) * maxf(delta, 0.0))
 	look_ahead_offset = look_ahead_offset.lerp(desired_offset, interpolation)
 	global_position = follow_target.global_position + follow_target_offset + look_ahead_offset
+
+
+## 以一次有效的 ShotEvent 啟動 CameraRig 本地的後座與側傾，連發會取代尚未結束的震動。
+func play_shot_recoil(shot_event: ShotEvent) -> void:
+	if camera_shake_pivot == null or shot_event == null or not shot_event.is_valid():
+		return
+	var world_recoil_direction := -shot_event.direction
+	world_recoil_direction.y = 0.0
+	if not world_recoil_direction.is_finite() or world_recoil_direction.is_zero_approx():
+		return
+	var local_recoil_direction := global_transform.basis.inverse() * world_recoil_direction.normalized()
+	local_recoil_direction.y = 0.0
+	if not local_recoil_direction.is_finite() or local_recoil_direction.is_zero_approx():
+		return
+	_shake_local_recoil_direction = local_recoil_direction.normalized()
+	_shake_roll_direction = 1.0 if _shake_local_recoil_direction.x >= 0.0 else -1.0
+	_shake_elapsed_seconds = 0.0
+	_apply_shot_recoil(1.0)
+
+
+func _update_shot_recoil(delta: float) -> void:
+	if _shake_elapsed_seconds >= SHAKE_DURATION_SECONDS:
+		return
+	_shake_elapsed_seconds = minf(_shake_elapsed_seconds + maxf(delta, 0.0), SHAKE_DURATION_SECONDS)
+	var normalized_remaining := 1.0 - _shake_elapsed_seconds / SHAKE_DURATION_SECONDS
+	_apply_shot_recoil(normalized_remaining * normalized_remaining)
+	if _shake_elapsed_seconds >= SHAKE_DURATION_SECONDS:
+		camera_shake_pivot.position = Vector3.ZERO
+		camera_shake_pivot.rotation = Vector3.ZERO
+
+
+func _apply_shot_recoil(strength: float) -> void:
+	camera_shake_pivot.position = _shake_local_recoil_direction * SHAKE_POSITION_DISTANCE * strength
+	camera_shake_pivot.rotation = Vector3(0.0, 0.0, _shake_roll_direction * SHAKE_ROLL_RADIANS * strength)
 
 
 func _unhandled_input(event: InputEvent) -> void:

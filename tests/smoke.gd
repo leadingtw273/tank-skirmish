@@ -585,7 +585,8 @@ func _validate_camera_shake(instance: Node) -> bool:
 	var shake_pivot := instance.get_node_or_null("CameraRig/CameraShakePivot") as Node3D
 	var camera := instance.get_node_or_null("CameraRig/CameraShakePivot/Camera3D") as Camera3D
 	var projectiles := instance.get_node_or_null("CombatRuntime/Projectiles") as Node3D
-	if tank == null or camera_controller == null or shake_pivot == null or camera == null or projectiles == null:
+	var effects := instance.get_node_or_null("CombatRuntime/Effects") as Node3D
+	if tank == null or camera_controller == null or shake_pivot == null or camera == null or projectiles == null or effects == null:
 		push_error("Camera shake requires the CameraRig/CameraShakePivot/Camera3D wiring and Tank shot source")
 		return false
 	if not shake_pivot.position.is_zero_approx() or not shake_pivot.rotation.is_zero_approx() \
@@ -633,14 +634,17 @@ func _validate_camera_shake(instance: Node) -> bool:
 	for child in tank.muzzle_point.get_children():
 		if child.name == "MuzzleFlash":
 			child.queue_free()
+	for effect in effects.get_children():
+		effect.queue_free()
 	await process_frame
-	return projectiles.get_child_count() == 0
+	return projectiles.get_child_count() == 0 and effects.get_child_count() == 0
 
 
 func _validate_visual_recoil(instance: Node) -> bool:
 	var tank := instance.get_node_or_null("Tank") as CharacterBody3D
 	var projectiles := instance.get_node_or_null("CombatRuntime/Projectiles") as Node3D
-	if tank == null or projectiles == null:
+	var effects := instance.get_node_or_null("CombatRuntime/Effects") as Node3D
+	if tank == null or projectiles == null or effects == null:
 		push_error("Visual recoil validation requires Tank and the Projectiles container")
 		return false
 	var recoil_pivot := tank.get_node_or_null("VisualRecoilPivot") as Node3D
@@ -708,9 +712,11 @@ func _validate_visual_recoil(instance: Node) -> bool:
 	for child in tank.muzzle_point.get_children():
 		if child.name == "MuzzleFlash":
 			child.queue_free()
+	for effect in effects.get_children():
+		effect.queue_free()
 	await process_frame
-	if projectiles.get_child_count() != 0:
-		push_error("Visual recoil validation must clean up its test projectiles")
+	if projectiles.get_child_count() != 0 or effects.get_child_count() != 0:
+		push_error("Visual recoil validation must clean up its test projectiles and firing effects")
 		return false
 	return true
 
@@ -836,7 +842,7 @@ func _validate_projectile_firing(instance: Node) -> bool:
 	projectile.queue_free()
 	direct_projectile.queue_free()
 	await process_frame
-	if projectiles.get_child_count() != 0 or effects.get_child_count() != 0:
+	if projectiles.get_child_count() != 0 or effects.get_node_or_null("ImpactVFX") != null:
 		push_error("Queued shots must not create impact effects before a collision")
 		return false
 

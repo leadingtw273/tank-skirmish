@@ -794,11 +794,9 @@ func _validate_projectile_firing(instance: Node) -> bool:
 		push_error("Projectile ray must exclude the firing tank RID")
 		return false
 	var javelin_vfx := projectile.get_node_or_null("JavelinVFX") as Node3D
-	var javelin_head := javelin_vfx.get_node_or_null("Head") as Node3D if javelin_vfx != null else null
 	if javelin_vfx == null or javelin_vfx.scene_file_path != "res://assets/BinbunVFX/magic_projectiles/effects/mprojectile_javelin/mprojectile_javelin_vfx_01.tscn" \
-			or projectile.get_node_or_null("Mesh") != null or javelin_head == null \
-			or (javelin_head.global_position - projectile.global_position).dot(projectile.direction) <= 0.0:
-		push_error("Projectile must instance the forward-facing Javelin VFX without the legacy CapsuleMesh")
+			or projectile.get_node_or_null("Mesh") != null or not javelin_vfx.rotation.is_zero_approx():
+		push_error("Projectile must instance the unflipped Javelin VFX without the legacy CapsuleMesh")
 		return false
 	if not bool(muzzle_flash.get("one_shot")):
 		push_error("Muzzle flash must play once per shot")

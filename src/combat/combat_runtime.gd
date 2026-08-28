@@ -5,6 +5,7 @@ class_name CombatRuntime
 
 const PROJECTILE_SCENE := preload("res://src/combat/projectile.tscn")
 const IMPACT_VFX_SCENE := preload("res://assets/BinbunVFX/impact_explosions/effects/explosion/vfx_explosion_05.tscn")
+const MUZZLE_SMOKE_VFX_SCENE := preload("res://src/vfx/muzzle/muzzle_smoke_vfx.tscn")
 const TankProjectile := preload("res://src/combat/projectile.gd")
 const ShotEvent := preload("res://src/combat/shot_event.gd")
 const ImpactEvent := preload("res://src/combat/impact_event.gd")
@@ -21,6 +22,14 @@ const ImpactEvent := preload("res://src/combat/impact_event.gd")
 @export var impact_vfx_lifetime_seconds := 1.3
 ## 沿命中法線的偏移量，單位為公尺，用來避免視覺特效穿入表面。
 @export var impact_vfx_surface_offset := 0.05
+
+@export_category("砲口硝煙")
+## 砲口硝煙的均勻尺寸倍率，單位為原廠特效比例倍數。
+@export_range(0.1, 5.0, 0.05) var muzzle_smoke_scale := 0.65
+## 砲口硝煙沿 ShotEvent 射擊方向的前方偏移量，單位為公尺。
+@export var muzzle_smoke_forward_offset := 0.9
+## 已實體化砲口硝煙在釋放前的存活時間，單位為秒。
+@export var muzzle_smoke_lifetime_seconds := 1.2
 
 var _registered_shot_sources: Array[Node] = []
 
@@ -87,6 +96,23 @@ func _on_shot_fired(shot_event: ShotEvent) -> void:
 	projectile.impact_detected.connect(_on_projectile_impact)
 	projectiles.add_child(projectile, true)
 	projectile.global_transform = Transform3D(_basis_with_x_axis(shot_event.direction), shot_event.muzzle_transform.origin)
+	_spawn_muzzle_smoke(shot_event)
+
+
+func _spawn_muzzle_smoke(shot_event: ShotEvent) -> void:
+	## 以 ShotEvent 的世界座標快照建立一次性硝煙，使它由 Effects 擁有且不跟隨射擊坦克移動。
+	var muzzle_smoke := MUZZLE_SMOKE_VFX_SCENE.instantiate() as Node3D
+	if muzzle_smoke == null:
+		push_error("CombatRuntime could not instantiate muzzle_smoke_vfx.tscn.")
+		return
+	muzzle_smoke.name = "MuzzleSmokeVFX"
+	muzzle_smoke.set("one_shot", true)
+	muzzle_smoke.set("autoplay", true)
+	effects.add_child(muzzle_smoke, true)
+	var smoke_position := shot_event.muzzle_transform.origin + shot_event.direction * muzzle_smoke_forward_offset
+	var smoke_basis := _basis_with_x_axis(shot_event.direction).scaled(Vector3.ONE * muzzle_smoke_scale)
+	muzzle_smoke.global_transform = Transform3D(smoke_basis, smoke_position)
+	get_tree().create_timer(muzzle_smoke_lifetime_seconds).timeout.connect(muzzle_smoke.queue_free)
 
 
 func _on_projectile_impact(impact_event: ImpactEvent) -> void:

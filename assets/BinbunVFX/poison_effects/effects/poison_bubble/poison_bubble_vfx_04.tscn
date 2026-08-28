@@ -1,0 +1,297 @@
+[gd_scene load_steps=19 format=3 uid="uid://kqmu75lr11l"]
+
+[ext_resource type="Script" uid="uid://tb7n6ybv43ch" path="res://assets/BinbunVFX/shared/script/vfx_controller.gd" id="1_4pjr6"]
+[ext_resource type="Material" uid="uid://dk6nfcr1f5bfn" path="res://assets/BinbunVFX/poison_effects/src/material/poison_bubble/poison_bubble_04/poison_bubble_04_bubble.tres" id="1_dufgm"]
+[ext_resource type="Material" uid="uid://dhhwsq3releix" path="res://assets/BinbunVFX/poison_effects/src/material/poison_bubble/poison_bubble_04/poison_bubble_04_pop.tres" id="2_dufgm"]
+[ext_resource type="Material" uid="uid://clktrbxa0q68w" path="res://assets/BinbunVFX/poison_effects/src/material/poison_bubble/poison_bubble_04/poison_bubble_04_splats.tres" id="3_dufgm"]
+[ext_resource type="Script" uid="uid://bdk8hhttligw" path="res://assets/BinbunVFX/shared/script/vfx_light.gd" id="4_5dsga"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_ndyao"]
+radial_segments = 32
+rings = 16
+
+[sub_resource type="SphereMesh" id="SphereMesh_4pjr6"]
+radius = 0.4
+height = 0.8
+radial_segments = 32
+rings = 16
+
+[sub_resource type="Curve" id="Curve_gv3wo"]
+_data = [Vector2(0, 0), 0.0, 4.83371, 0, 0, Vector2(0.5, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_jdlno"]
+curve = SubResource("Curve_gv3wo")
+
+[sub_resource type="Gradient" id="Gradient_8rrwj"]
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_ukbgr"]
+gradient = SubResource("Gradient_8rrwj")
+
+[sub_resource type="Curve" id="Curve_g608t"]
+_data = [Vector2(0, 0.5), 0.0, 1.87164, 0, 0, Vector2(0.5, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.5), -1.82756, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_gnut6"]
+curve = SubResource("Curve_g608t")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_4pjr6"]
+spread = 180.0
+initial_velocity_min = 2.0
+initial_velocity_max = 6.0
+gravity = Vector3(0, 0, 0)
+scale_min = 0.5
+scale_max = 1.5
+scale_curve = SubResource("CurveTexture_gnut6")
+color_initial_ramp = SubResource("GradientTexture1D_ukbgr")
+alpha_curve = SubResource("CurveTexture_jdlno")
+
+[sub_resource type="QuadMesh" id="QuadMesh_ol13q"]
+size = Vector2(1.5, 4)
+subdivide_width = 32
+subdivide_depth = 32
+
+[sub_resource type="Animation" id="Animation_43hd2"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Bubble:material_override:shader_parameter/mask2_strength")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Bubble:material_override:shader_parameter/alpha_multiplier")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [1.0]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Bubble:material_override:shader_parameter/displacement_scale")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Splats:emitting")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Light:light_multiplier")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [1.0]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Pop:material_override:shader_parameter/mask2_strength")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("Pop:material_override:shader_parameter/displacement_scale")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("Pop:material_override:shader_parameter/alpha_multiplier")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [1.0]
+}
+
+[sub_resource type="Animation" id="Animation_0wmws"]
+resource_name = "main"
+length = 0.8
+step = 0.05
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Bubble:material_override:shader_parameter/mask2_strength")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.4, 0.8),
+"transitions": PackedFloat32Array(0.5, 0.5, 1, 1),
+"update": 0,
+"values": [0.0, 0.0, 1.0, 1.0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Bubble:material_override:shader_parameter/alpha_multiplier")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.55, 0.8),
+"transitions": PackedFloat32Array(1, 0.5, 1, 1),
+"update": 0,
+"values": [1.0, 1.0, 0.0, 0.0]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Bubble:material_override:shader_parameter/displacement_scale")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.55, 0.8),
+"transitions": PackedFloat32Array(1, 0.5, 1, 1),
+"update": 0,
+"values": [0.0, 0.0, 0.2, 0.2]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Splats:emitting")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Light:light_multiplier")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 0.8),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [1.0, 0.0]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Pop:material_override:shader_parameter/mask2_strength")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.55, 0.8),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [0.0, 0.0, 1.0, 1.0]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("Pop:material_override:shader_parameter/displacement_scale")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0, 0.55, 0.8),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [0.0, 0.2, 0.2]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("Pop:material_override:shader_parameter/alpha_multiplier")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0, 0.55, 0.8),
+"transitions": PackedFloat32Array(0.4, 1, 1),
+"update": 0,
+"values": [1.0, 0.0, 0.0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_43hd2"]
+_data = {
+&"RESET": SubResource("Animation_43hd2"),
+&"main": SubResource("Animation_0wmws")
+}
+
+[node name="PoisonBubbleVFX_04" type="Node3D"]
+script = ExtResource("1_4pjr6")
+primary_color = Color(1, 0.221697, 0.774739, 1)
+secondary_color = Color(0.437492, 0.000212112, 0.465908, 1)
+tertiary_color = Color(0.38708, 0.0517413, 0.64499, 1)
+light_color = Color(1, 0.223529, 0.776471, 1)
+
+[node name="Bubble" type="MeshInstance3D" parent="."]
+material_override = ExtResource("1_dufgm")
+mesh = SubResource("SphereMesh_ndyao")
+
+[node name="Pop" type="MeshInstance3D" parent="."]
+material_override = ExtResource("2_dufgm")
+mesh = SubResource("SphereMesh_4pjr6")
+
+[node name="Splats" type="GPUParticles3D" parent="."]
+sorting_offset = -0.5
+material_override = ExtResource("3_dufgm")
+emitting = false
+amount = 16
+lifetime = 0.3
+one_shot = true
+explosiveness = 1.0
+transform_align = 3
+process_material = SubResource("ParticleProcessMaterial_4pjr6")
+draw_pass_1 = SubResource("QuadMesh_ol13q")
+
+[node name="Light" type="OmniLight3D" parent="."]
+light_color = Color(1, 0.223529, 0.776471, 1)
+light_energy = 4.0
+script = ExtResource("4_5dsga")
+base_energy = 4.0
+metadata/_custom_type_script = "uid://bdk8hhttligw"
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_43hd2")
+}

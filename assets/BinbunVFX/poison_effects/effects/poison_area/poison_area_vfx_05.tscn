@@ -1,0 +1,244 @@
+[gd_scene format=3 uid="uid://bmo8r47bjvkkp"]
+
+[ext_resource type="Script" uid="uid://tb7n6ybv43ch" path="res://assets/BinbunVFX/shared/script/vfx_controller.gd" id="1_ouryr"]
+[ext_resource type="Material" uid="uid://dmyhwe4ao5wqp" path="res://assets/BinbunVFX/poison_effects/src/material/poison_area/poison_area_05/poison_area_05_glow.tres" id="2_twrsj"]
+[ext_resource type="Material" uid="uid://cig14aqqik22i" path="res://assets/BinbunVFX/poison_effects/src/material/poison_area/poison_area_05/poison_area_05_ground.tres" id="3_ouryr"]
+[ext_resource type="Material" uid="uid://qm3j2n1jsket" path="res://assets/BinbunVFX/poison_effects/src/material/poison_puddle/poison_puddle_05/poison_puddle_05_bubbles.tres" id="5_twrsj"]
+[ext_resource type="Script" uid="uid://bdk8hhttligw" path="res://assets/BinbunVFX/shared/script/vfx_light.gd" id="5_whyf3"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_dsnvd"]
+size = Vector2(3.5, 3.5)
+subdivide_width = 32
+subdivide_depth = 32
+center_offset = Vector3(0, 0.01, 0)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_u1kum"]
+size = Vector2(4, 4)
+subdivide_width = 32
+subdivide_depth = 32
+center_offset = Vector3(0, 0.01, 0)
+
+[sub_resource type="Curve" id="Curve_2udin"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.7, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), -9.47418, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_uwify"]
+curve = SubResource("Curve_2udin")
+
+[sub_resource type="Curve" id="Curve_gyde5"]
+_data = [Vector2(0, 0), 0.0, 2.49022, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_kjwb3"]
+curve = SubResource("Curve_gyde5")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_dsnvd"]
+emission_shape_scale = Vector3(1, 0, 1)
+emission_shape = 1
+emission_sphere_radius = 1.2
+gravity = Vector3(0, 0, 0)
+scale_curve = SubResource("CurveTexture_kjwb3")
+alpha_curve = SubResource("CurveTexture_uwify")
+
+[sub_resource type="SphereMesh" id="SphereMesh_u1kum"]
+radius = 0.2
+height = 0.3
+radial_segments = 32
+rings = 16
+
+[sub_resource type="Animation" id="Animation_ml5gv"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Glow:material_override:shader_parameter/alpha_multiplier")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [1.0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Ground_01:material_override:shader_parameter/alpha_multiplier")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [1.0]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Bubbles:emitting")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Light:light_multiplier")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [1.0]
+}
+
+[sub_resource type="Animation" id="Animation_gsf0b"]
+resource_name = "main"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Glow:material_override:shader_parameter/alpha_multiplier")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [1.0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Ground_01:material_override:shader_parameter/alpha_multiplier")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [1.0]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Bubbles:emitting")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Light:light_multiplier")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [1.0]
+}
+
+[sub_resource type="Animation" id="Animation_kjwb3"]
+resource_name = "oneshot"
+length = 2.0
+step = 0.05
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Glow:material_override:shader_parameter/alpha_multiplier")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5, 2),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [0.0, 1.0, 0.0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Ground_01:material_override:shader_parameter/alpha_multiplier")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.5, 2),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [0.0, 1.0, 0.0]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Bubbles:emitting")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Light:light_multiplier")
+tracks/3/interp = 2
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.5, 2),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [0.0, 1.0, 0.0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_kjwb3"]
+_data = {
+&"RESET": SubResource("Animation_ml5gv"),
+&"main": SubResource("Animation_gsf0b"),
+&"oneshot": SubResource("Animation_kjwb3")
+}
+
+[node name="PoisonAreaVFX_05" type="Node3D" unique_id=1622846946]
+script = ExtResource("1_ouryr")
+reset_particles = false
+primary_color = Color(1, 1, 1, 1)
+secondary_color = Color(0.6313726, 0.61960787, 0.41960785, 1)
+tertiary_color = Color(0.1764706, 0.2627451, 0.4392157, 1)
+light_color = Color(0.6313726, 0.61960787, 0.41960785, 1)
+
+[node name="Glow" type="MeshInstance3D" parent="." unique_id=1391736391]
+material_override = ExtResource("2_twrsj")
+mesh = SubResource("PlaneMesh_dsnvd")
+
+[node name="Ground_01" type="MeshInstance3D" parent="." unique_id=586532028]
+material_override = ExtResource("3_ouryr")
+mesh = SubResource("PlaneMesh_u1kum")
+
+[node name="Light" type="OmniLight3D" parent="." unique_id=716270508]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+light_color = Color(0.6313726, 0.61960787, 0.41960785, 1)
+light_energy = 4.0
+script = ExtResource("5_whyf3")
+base_energy = 4.0
+metadata/_custom_type_script = "uid://bdk8hhttligw"
+
+[node name="Bubbles" type="GPUParticles3D" parent="." unique_id=309293198]
+sorting_offset = 0.5
+material_override = ExtResource("5_twrsj")
+amount = 16
+lifetime = 2.0
+process_material = SubResource("ParticleProcessMaterial_dsnvd")
+draw_pass_1 = SubResource("SphereMesh_u1kum")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1908544269]
+libraries/ = SubResource("AnimationLibrary_kjwb3")

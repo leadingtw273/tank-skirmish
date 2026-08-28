@@ -1,0 +1,33 @@
+[gd_resource type="ShaderMaterial" format=3 uid="uid://bej5q0fyysnk3"]
+
+[ext_resource type="Shader" uid="uid://w5tmfpx1lqg1" path="res://assets/BinbunVFX/shared/shader/glow_fresnel.gdshader" id="1_itxq4"]
+[ext_resource type="Texture2D" uid="uid://caa3q1x4sy2r" path="res://assets/BinbunVFX/shared/texture/noise/warp/warp_blotch_01.tres" id="2_0a2q3"]
+
+[sub_resource type="Gradient" id="Gradient_n1b24"]
+colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_qpfas"]
+gradient = SubResource("Gradient_n1b24")
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_itxq4")
+shader_parameter/fresnel_amount = 0.5
+shader_parameter/fresnel_exponent = 3.0
+shader_parameter/fresnel_gradient = SubResource("GradientTexture1D_qpfas")
+shader_parameter/enable_mask = true
+shader_parameter/mask_texture = ExtResource("2_0a2q3")
+shader_parameter/mask_scroll = Vector2(0, 0.1)
+shader_parameter/mask_scale = Vector2(1, 1)
+shader_parameter/mask_blend_mode = 6
+shader_parameter/mask_blend = 0.5
+shader_parameter/emission_strength = 1.0
+shader_parameter/primary_color = Color(1, 0.221697, 0.774739, 1)
+shader_parameter/secondary_color = Color(0.437492, 0.000212112, 0.465908, 1)
+shader_parameter/tertiary_color = Color(0.38708, 0.0517413, 0.64499, 1)
+shader_parameter/proximity_fade = false
+shader_parameter/proximity_fade_distance = 1.0
+shader_parameter/alpha_multiplier = 1.0
+shader_parameter/alpha_mode = 0
+shader_parameter/alpha_cutoff = 0.02
+shader_parameter/dither_cutoff = 0.8

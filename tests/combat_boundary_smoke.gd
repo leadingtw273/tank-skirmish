@@ -61,6 +61,7 @@ func _validate(instance: Node) -> void:
 			or not projectile.excluded_rids.has(shot_event.shooter_rid):
 		_fail("CombatRuntime must create a projectile from the ShotEvent without consulting Tank.")
 		return
+	projectile.set_physics_process(false)
 
 	var source := TestShotSource.new()
 	instance.add_child(source)

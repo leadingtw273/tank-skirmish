@@ -172,6 +172,15 @@ run("combat-boundary-smoke", godot, [
   "--script",
   "res://tests/combat_boundary_smoke.gd",
 ], { scanGodotErrors: true });
+run("vfx-wrapper-smoke", godot, [
+  "--headless",
+  "--audio-driver",
+  "Dummy",
+  "--path",
+  ".",
+  "--script",
+  "res://tests/vfx_wrapper_smoke.gd",
+], { scanGodotErrors: true });
 run("documentation-and-exports-smoke", godot, [
   "--headless",
   "--audio-driver",

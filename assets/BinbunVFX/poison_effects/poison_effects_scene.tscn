@@ -1,0 +1,275 @@
+[gd_scene format=3 uid="uid://d1q1m0a020apm"]
+
+[ext_resource type="Texture2D" uid="uid://dq8jkeeag6vov" path="res://assets/BinbunVFX/shared/texture/placeholder.png" id="1_4cltr"]
+[ext_resource type="PackedScene" uid="uid://dw6qyre5g23cd" path="res://assets/BinbunVFX/poison_effects/effects/poison_cloud/poison_cloud_vfx_01.tscn" id="2_m038g"]
+[ext_resource type="PackedScene" uid="uid://qx62ju7kqejx" path="res://assets/BinbunVFX/poison_effects/effects/poison_cloud/poison_cloud_vfx_02.tscn" id="3_cjmq1"]
+[ext_resource type="PackedScene" uid="uid://c0l5vq1rdipxm" path="res://assets/BinbunVFX/poison_effects/effects/poison_cloud/poison_cloud_vfx_03.tscn" id="4_vciww"]
+[ext_resource type="PackedScene" uid="uid://dp0tljlog4c8p" path="res://assets/BinbunVFX/poison_effects/effects/poison_cloud/poison_cloud_vfx_04.tscn" id="5_3v3yq"]
+[ext_resource type="PackedScene" uid="uid://bswyxomjd8nsl" path="res://assets/BinbunVFX/poison_effects/effects/poison_cloud/poison_cloud_vfx_05.tscn" id="6_3v3yq"]
+[ext_resource type="PackedScene" uid="uid://wuhr3aqt74dq" path="res://assets/BinbunVFX/poison_effects/effects/stink_big/stink_big_vfx_01.tscn" id="6_lin1c"]
+[ext_resource type="PackedScene" uid="uid://c310rmkci874c" path="res://assets/BinbunVFX/poison_effects/effects/stink_big/stink_big_vfx_02.tscn" id="7_4qjfv"]
+[ext_resource type="PackedScene" uid="uid://c4mgiboprm084" path="res://assets/BinbunVFX/poison_effects/effects/stink_big/stink_big_vfx_03.tscn" id="8_5ihfg"]
+[ext_resource type="PackedScene" uid="uid://cshj340rh3er" path="res://assets/BinbunVFX/poison_effects/effects/stink_big/stink_big_vfx_04.tscn" id="9_km0ow"]
+[ext_resource type="PackedScene" uid="uid://br07e3hli2tqf" path="res://assets/BinbunVFX/poison_effects/effects/stink_small/stink_small_vfx_01.tscn" id="10_qvukr"]
+[ext_resource type="PackedScene" uid="uid://cjaycdiq01x52" path="res://assets/BinbunVFX/poison_effects/effects/stink_small/stink_small_vfx_02.tscn" id="11_ecbjs"]
+[ext_resource type="PackedScene" uid="uid://cl7uo1t5e4e5e" path="res://assets/BinbunVFX/poison_effects/effects/stink_big/stink_big_vfx_05.tscn" id="11_lin1c"]
+[ext_resource type="PackedScene" uid="uid://dtkmu7m7yyv1y" path="res://assets/BinbunVFX/poison_effects/effects/stink_small/stink_small_vfx_03.tscn" id="12_gouyb"]
+[ext_resource type="PackedScene" uid="uid://b4artgaftpm7" path="res://assets/BinbunVFX/poison_effects/effects/stink_small/stink_small_vfx_04.tscn" id="13_nqw5q"]
+[ext_resource type="PackedScene" uid="uid://c1ci67141636m" path="res://assets/BinbunVFX/poison_effects/effects/poison_puddle/poison_puddle_vfx_01.tscn" id="14_va877"]
+[ext_resource type="PackedScene" uid="uid://clvkwbqjh3xq0" path="res://assets/BinbunVFX/poison_effects/effects/poison_puddle/poison_puddle_vfx_02.tscn" id="15_tnkan"]
+[ext_resource type="PackedScene" uid="uid://cwykrcv28x2uo" path="res://assets/BinbunVFX/poison_effects/effects/stink_small/stink_small_vfx_05.tscn" id="16_4qjfv"]
+[ext_resource type="PackedScene" uid="uid://d3o57lbgvak0n" path="res://assets/BinbunVFX/poison_effects/effects/poison_puddle/poison_puddle_vfx_03.tscn" id="16_xrpux"]
+[ext_resource type="PackedScene" uid="uid://kwbw6ajxgmrr" path="res://assets/BinbunVFX/poison_effects/effects/poison_puddle/poison_puddle_vfx_04.tscn" id="17_r3jen"]
+[ext_resource type="PackedScene" uid="uid://bxvu24qhutgfu" path="res://assets/BinbunVFX/poison_effects/effects/poison_area/poison_area_vfx_01.tscn" id="18_0pjtk"]
+[ext_resource type="PackedScene" uid="uid://yle1agvr5hpu" path="res://assets/BinbunVFX/poison_effects/effects/poison_puddle/poison_puddle_vfx_05.tscn" id="18_m038g"]
+[ext_resource type="PackedScene" uid="uid://cgdmlyrw7lcfb" path="res://assets/BinbunVFX/poison_effects/effects/poison_area/poison_area_vfx_02.tscn" id="19_f0r2s"]
+[ext_resource type="PackedScene" uid="uid://cppaeifnfc3ik" path="res://assets/BinbunVFX/poison_effects/effects/poison_area/poison_area_vfx_03.tscn" id="20_hxpmw"]
+[ext_resource type="PackedScene" uid="uid://cypfq8lin1w5p" path="res://assets/BinbunVFX/poison_effects/effects/poison_area/poison_area_vfx_04.tscn" id="21_bo3ow"]
+[ext_resource type="PackedScene" uid="uid://dr0kh52asfy4m" path="res://assets/BinbunVFX/poison_effects/effects/poison_bubble/poison_bubble_vfx_01.tscn" id="22_wa8ua"]
+[ext_resource type="PackedScene" uid="uid://ro3ji5po6cb" path="res://assets/BinbunVFX/poison_effects/effects/poison_bubble/poison_bubble_vfx_02.tscn" id="23_0kovd"]
+[ext_resource type="PackedScene" uid="uid://bmo8r47bjvkkp" path="res://assets/BinbunVFX/poison_effects/effects/poison_area/poison_area_vfx_05.tscn" id="23_cjmq1"]
+[ext_resource type="PackedScene" uid="uid://dq2e7awlkh8kj" path="res://assets/BinbunVFX/poison_effects/effects/poison_bubble/poison_bubble_vfx_03.tscn" id="24_wphm2"]
+[ext_resource type="PackedScene" uid="uid://kqmu75lr11l" path="res://assets/BinbunVFX/poison_effects/effects/poison_bubble/poison_bubble_vfx_04.tscn" id="25_jphjt"]
+[ext_resource type="PackedScene" uid="uid://bbdn52d1gwo6r" path="res://assets/BinbunVFX/poison_effects/effects/poison_bubble/poison_bubble_vfx_05.tscn" id="28_vciww"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_7dm0k"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_h2yge"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_lquwl"]
+
+[sub_resource type="Sky" id="Sky_lquwl"]
+sky_material = SubResource("ProceduralSkyMaterial_lquwl")
+
+[sub_resource type="Environment" id="Environment_0xm2m"]
+background_mode = 2
+background_color = Color(0.266667, 0, 0, 1)
+background_energy_multiplier = 0.8
+sky = SubResource("Sky_lquwl")
+ambient_light_source = 3
+ambient_light_color = Color(1, 1, 1, 1)
+ambient_light_energy = 2.0
+ssao_enabled = true
+ssao_intensity = 4.0
+glow_enabled = true
+glow_normalized = true
+glow_intensity = 1.0
+glow_bloom = 0.05
+glow_map_strength = 0.0
+fog_enabled = true
+fog_light_color = Color(0, 0.0751667, 0.11, 1)
+fog_light_energy = 2.0
+fog_density = 0.02
+volumetric_fog_enabled = true
+volumetric_fog_density = 0.02
+volumetric_fog_albedo = Color(0.263949, 0.0869683, 0.248756, 1)
+volumetric_fog_emission_energy = 0.0
+adjustment_enabled = true
+adjustment_contrast = 1.1
+adjustment_saturation = 1.1
+
+[sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_0xm2m"]
+dof_blur_far_enabled = true
+dof_blur_far_distance = 30.0
+dof_blur_far_transition = 64.0
+dof_blur_near_transition = -1.0
+
+[sub_resource type="BoxMesh" id="BoxMesh_ig7tw"]
+size = Vector3(1000, 6, 1000)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1bvp3"]
+albedo_color = Color(0.866489, 0.931253, 0.944994, 1)
+albedo_texture = ExtResource("1_4cltr")
+uv1_triplanar = true
+
+[node name="Node3D" type="Node3D" unique_id=1307485622]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1483175627]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+visible = false
+mesh = SubResource("CapsuleMesh_7dm0k")
+surface_material_override/0 = SubResource("ShaderMaterial_h2yge")
+
+[node name="Environment" type="Node3D" parent="." unique_id=201870154]
+metadata/_edit_lock_ = true
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="Environment" unique_id=1673063885]
+transform = Transform3D(-0.5, -0.663414, -0.55667, -5.61943e-08, -0.642788, 0.766044, -0.866025, 0.383022, 0.321394, 0, 2.19112, 0)
+light_color = Color(1, 0.992157, 0.956863, 1)
+light_energy = 1.5
+shadow_enabled = true
+shadow_opacity = 0.5
+shadow_blur = 9.219
+metadata/_edit_lock_ = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Environment" unique_id=740652512]
+environment = SubResource("Environment_0xm2m")
+camera_attributes = SubResource("CameraAttributesPractical_0xm2m")
+
+[node name="Ground" type="MeshInstance3D" parent="Environment" unique_id=190693896]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3, 0)
+mesh = SubResource("BoxMesh_ig7tw")
+skeleton = NodePath("../..")
+surface_material_override/0 = SubResource("StandardMaterial3D_1bvp3")
+metadata/_edit_lock_ = true
+
+[node name="Lights" type="Node3D" parent="Environment" unique_id=1461658726]
+metadata/_edit_lock_ = true
+
+[node name="SpotLight3D1" type="SpotLight3D" parent="Environment/Lights" unique_id=600382233]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 10, 1)
+light_energy = 20.0
+spot_range = 18.188
+spot_angle = 40.0
+metadata/_edit_lock_ = true
+
+[node name="SpotLight3D2" type="SpotLight3D" parent="Environment/Lights" unique_id=1222833064]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 10, 10, 1)
+light_energy = 20.0
+spot_range = 18.188
+spot_angle = 40.0
+metadata/_edit_lock_ = true
+
+[node name="SpotLight3D3" type="SpotLight3D" parent="Environment/Lights" unique_id=1681816544]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 20, 10, 1)
+light_energy = 20.0
+spot_range = 18.188
+spot_angle = 40.0
+metadata/_edit_lock_ = true
+
+[node name="SpotLight3D4" type="SpotLight3D" parent="Environment/Lights" unique_id=1645922408]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 10, 9)
+light_energy = 20.0
+spot_range = 18.188
+spot_angle = 40.0
+metadata/_edit_lock_ = true
+
+[node name="SpotLight3D5" type="SpotLight3D" parent="Environment/Lights" unique_id=1967282602]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 10, 10, 9)
+light_energy = 20.0
+spot_range = 18.188
+spot_angle = 40.0
+metadata/_edit_lock_ = true
+
+[node name="SpotLight3D6" type="SpotLight3D" parent="Environment/Lights" unique_id=381877169]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 20, 10, 9)
+light_energy = 20.0
+spot_range = 18.188
+spot_angle = 40.0
+metadata/_edit_lock_ = true
+
+[node name="MainCamera" type="Camera3D" parent="." unique_id=148221156]
+transform = Transform3D(1, 0, 0, 0, 0.766045, 0.642788, 0, -0.642788, 0.766045, 4.5, 9, 10)
+current = true
+fov = 40.0
+
+[node name="Effects" type="Node3D" parent="." unique_id=2115800199]
+
+[node name="PoisonCloud" type="Node3D" parent="Effects" unique_id=901263703]
+
+[node name="PoisonCloudVFX_01" parent="Effects/PoisonCloud" unique_id=259183123 instance=ExtResource("2_m038g")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
+proximity_fade = true
+
+[node name="PoisonCloudVFX_02" parent="Effects/PoisonCloud" unique_id=59930611 instance=ExtResource("3_cjmq1")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 2, 0)
+preview = true
+
+[node name="PoisonCloudVFX_03" parent="Effects/PoisonCloud" unique_id=1086401030 instance=ExtResource("4_vciww")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 2, 0)
+
+[node name="PoisonCloudVFX_04" parent="Effects/PoisonCloud" unique_id=975840135 instance=ExtResource("5_3v3yq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 2, 0)
+
+[node name="PoisonCloudVFX_05" parent="Effects/PoisonCloud" unique_id=1641220755 instance=ExtResource("6_3v3yq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 2, 0)
+
+[node name="StinkBig" type="Node3D" parent="Effects" unique_id=1706762033]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, 0)
+
+[node name="StinkBigVFX_01" parent="Effects/StinkBig" unique_id=1215116123 instance=ExtResource("6_lin1c")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0, 4)
+
+[node name="StinkBigVFX_02" parent="Effects/StinkBig" unique_id=997155676 instance=ExtResource("7_4qjfv")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 0, 4)
+
+[node name="StinkBigVFX_03" parent="Effects/StinkBig" unique_id=557531446 instance=ExtResource("8_5ihfg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17, 0, 7)
+
+[node name="StinkBigVFX_04" parent="Effects/StinkBig" unique_id=812297318 instance=ExtResource("9_km0ow")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19, 0, 7)
+
+[node name="StinkBigVFX_05" parent="Effects/StinkBig" unique_id=535561555 instance=ExtResource("11_lin1c")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0, 4)
+preview = true
+
+[node name="StinkSmall" type="Node3D" parent="Effects" unique_id=798852744]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, 0)
+
+[node name="StinkSmallVFX_01" parent="Effects/StinkSmall" unique_id=244734356 instance=ExtResource("10_qvukr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0, 10)
+proximity_fade = true
+
+[node name="StinkSmallVFX_02" parent="Effects/StinkSmall" unique_id=199116422 instance=ExtResource("11_ecbjs")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 0, 10)
+
+[node name="StinkSmallVFX_03" parent="Effects/StinkSmall" unique_id=1491957237 instance=ExtResource("12_gouyb")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17, 0, 12)
+
+[node name="StinkSmallVFX_04" parent="Effects/StinkSmall" unique_id=1029066755 instance=ExtResource("13_nqw5q")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19, 0, 12)
+
+[node name="StinkSmallVFX_05" parent="Effects/StinkSmall" unique_id=216305131 instance=ExtResource("16_4qjfv")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0, 10)
+
+[node name="PoisonPuddle" type="Node3D" parent="Effects" unique_id=1943773473]
+
+[node name="PoisonPuddleVFX_01" parent="Effects/PoisonPuddle" unique_id=682308794 instance=ExtResource("14_va877")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 7)
+
+[node name="PoisonPuddleVFX_02" parent="Effects/PoisonPuddle" unique_id=1066305418 instance=ExtResource("15_tnkan")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, 7)
+
+[node name="PoisonPuddleVFX_03" parent="Effects/PoisonPuddle" unique_id=307714827 instance=ExtResource("16_xrpux")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, 7)
+
+[node name="PoisonPuddleVFX_04" parent="Effects/PoisonPuddle" unique_id=1291897024 instance=ExtResource("17_r3jen")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 0, 7)
+
+[node name="PoisonPuddleVFX_05" parent="Effects/PoisonPuddle" unique_id=387069512 instance=ExtResource("18_m038g")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0, 7)
+
+[node name="PoisonArea" type="Node3D" parent="Effects" unique_id=554585640]
+
+[node name="PoisonAreaVFX_01" parent="Effects/PoisonArea" unique_id=1964057564 instance=ExtResource("18_0pjtk")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 11)
+
+[node name="PoisonAreaVFX_02" parent="Effects/PoisonArea" unique_id=1133565357 instance=ExtResource("19_f0r2s")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, 11)
+
+[node name="PoisonAreaVFX_03" parent="Effects/PoisonArea" unique_id=1990058282 instance=ExtResource("20_hxpmw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, 11)
+
+[node name="PoisonAreaVFX_04" parent="Effects/PoisonArea" unique_id=1079832842 instance=ExtResource("21_bo3ow")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 0, 11)
+preview = true
+
+[node name="PoisonAreaVFX_05" parent="Effects/PoisonArea" unique_id=1622846946 instance=ExtResource("23_cjmq1")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0, 11)
+
+[node name="PoisonBubble" type="Node3D" parent="Effects" unique_id=106063179]
+
+[node name="PoisonBubbleVFX_01" parent="Effects/PoisonBubble" unique_id=1328937927 instance=ExtResource("22_wa8ua")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 3.5)
+
+[node name="PoisonBubbleVFX_02" parent="Effects/PoisonBubble" unique_id=723244529 instance=ExtResource("23_0kovd")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 1, 3.5)
+
+[node name="PoisonBubbleVFX_03" parent="Effects/PoisonBubble" unique_id=175629134 instance=ExtResource("24_wphm2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 1, 3.5)
+
+[node name="PoisonBubbleVFX_04" parent="Effects/PoisonBubble" unique_id=1593064402 instance=ExtResource("25_jphjt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 1, 3.5)
+
+[node name="PoisonBubbleVFX_05" parent="Effects/PoisonBubble" unique_id=1264325728 instance=ExtResource("28_vciww")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 1, 3.5)

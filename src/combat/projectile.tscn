@@ -1,9 +1,11 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene format=3 uid="uid://57tlb1htjqlm"]
 
-[ext_resource type="Script" path="res://src/combat/projectile.gd" id="1_projectile"]
-[ext_resource type="PackedScene" path="res://assets/BinbunVFX/magic_projectiles/effects/mprojectile_javelin/mprojectile_javelin_vfx_01.tscn" id="2_javelin"]
+[ext_resource type="Script" uid="uid://dc3rn5h58eiea" path="res://src/combat/projectile.gd" id="1_projectile"]
+[ext_resource type="PackedScene" path="res://src/vfx/projectiles/javelin_projectile_vfx.tscn" id="2_javelin"]
 
-[node name="Projectile" type="Node3D"]
+[node name="Projectile" type="Node3D" unique_id=351205940]
 script = ExtResource("1_projectile")
+speed = 360.0
+max_distance = 360.0
 
-[node name="JavelinVFX" parent="." instance=ExtResource("2_javelin")]
+[node name="JavelinVFX" parent="." unique_id=855823565 instance=ExtResource("2_javelin")]

@@ -3,9 +3,6 @@
 extends Node3D
 
 const ShotEvent := preload("res://src/shot_event.gd")
-const SHAKE_DURATION_SECONDS := 0.2
-const SHAKE_POSITION_DISTANCE := 0.45
-const SHAKE_ROLL_RADIANS := deg_to_rad(1.5)
 
 @export_category("游標前視")
 ## 不套用前視的正規化游標半徑，畫面中心為 0，邊緣為 1。
@@ -21,15 +18,20 @@ const SHAKE_ROLL_RADIANS := deg_to_rad(1.5)
 ## 允許的最大 Camera3D size，單位為世界公尺。
 @export var max_zoom_size := 100.0
 
+@export_category("開砲鏡頭震動")
+## 開砲瞬間 CameraShakePivot 沿砲彈反方向後座的距離，單位為世界公尺。
+@export_range(0.0, 5.0, 0.01) var fire_shake_kick_distance := 0.25
+## 開砲後座從最大位移平順回到原位所需時間，單位為秒。
+@export_range(0.01, 2.0, 0.01) var fire_shake_duration_seconds := 0.2
+
 @onready var camera: Camera3D = $CameraShakePivot/Camera3D
 @onready var camera_shake_pivot: Node3D = $CameraShakePivot
 
 var follow_target: Node3D
 var follow_target_offset := Vector3.ZERO
 var look_ahead_offset := Vector3.ZERO
-var _shake_elapsed_seconds := SHAKE_DURATION_SECONDS
+var _shake_elapsed_seconds := INF
 var _shake_local_recoil_direction := Vector3.ZERO
-var _shake_roll_direction := 1.0
 
 
 ## 立即註冊要跟隨的節點，並重設先前的前視偏移量。
@@ -50,7 +52,7 @@ func _process(delta: float) -> void:
 	global_position = follow_target.global_position + follow_target_offset + look_ahead_offset
 
 
-## 以一次有效的 ShotEvent 啟動 CameraRig 本地的後座與側傾，連發會取代尚未結束的震動。
+## 以一次有效的 ShotEvent 啟動 CameraRig 本地的位置後座，連發會取代尚未結束的震動。
 func play_shot_recoil(shot_event: ShotEvent) -> void:
 	if camera_shake_pivot == null or shot_event == null or not shot_event.is_valid():
 		return
@@ -63,25 +65,25 @@ func play_shot_recoil(shot_event: ShotEvent) -> void:
 	if not local_recoil_direction.is_finite() or local_recoil_direction.is_zero_approx():
 		return
 	_shake_local_recoil_direction = local_recoil_direction.normalized()
-	_shake_roll_direction = 1.0 if _shake_local_recoil_direction.x >= 0.0 else -1.0
 	_shake_elapsed_seconds = 0.0
 	_apply_shot_recoil(1.0)
 
 
 func _update_shot_recoil(delta: float) -> void:
-	if _shake_elapsed_seconds >= SHAKE_DURATION_SECONDS:
+	camera_shake_pivot.rotation = Vector3.ZERO
+	var duration := maxf(fire_shake_duration_seconds, 0.001)
+	if _shake_elapsed_seconds >= duration:
 		return
-	_shake_elapsed_seconds = minf(_shake_elapsed_seconds + maxf(delta, 0.0), SHAKE_DURATION_SECONDS)
-	var normalized_remaining := 1.0 - _shake_elapsed_seconds / SHAKE_DURATION_SECONDS
+	_shake_elapsed_seconds = minf(_shake_elapsed_seconds + maxf(delta, 0.0), duration)
+	var normalized_remaining := 1.0 - _shake_elapsed_seconds / duration
 	_apply_shot_recoil(normalized_remaining * normalized_remaining)
-	if _shake_elapsed_seconds >= SHAKE_DURATION_SECONDS:
+	if _shake_elapsed_seconds >= duration:
 		camera_shake_pivot.position = Vector3.ZERO
-		camera_shake_pivot.rotation = Vector3.ZERO
 
 
 func _apply_shot_recoil(strength: float) -> void:
-	camera_shake_pivot.position = _shake_local_recoil_direction * SHAKE_POSITION_DISTANCE * strength
-	camera_shake_pivot.rotation = Vector3(0.0, 0.0, _shake_roll_direction * SHAKE_ROLL_RADIANS * strength)
+	camera_shake_pivot.position = _shake_local_recoil_direction * fire_shake_kick_distance * strength
+	camera_shake_pivot.rotation = Vector3.ZERO
 
 
 func _unhandled_input(event: InputEvent) -> void:

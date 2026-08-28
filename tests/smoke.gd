@@ -597,21 +597,25 @@ func _validate_camera_shake(instance: Node) -> bool:
 	var shot_events: Array[ShotEvent] = []
 	tank.shot_event_fired.connect(func(shot_event: ShotEvent) -> void: shot_events.append(shot_event))
 	tank.request_fire()
-	if shot_events.size() != 1 or shake_pivot.position.is_zero_approx() or is_zero_approx(shake_pivot.rotation.z):
-		push_error("Each valid controlled-tank ShotEvent must immediately start exactly one positional and roll camera shake")
+	if shot_events.size() != 1 or shake_pivot.position.is_zero_approx() or not shake_pivot.rotation.is_zero_approx():
+		push_error("Each valid controlled-tank ShotEvent must start one position-only camera shake without rotating the view")
 		return false
 	var expected_local_recoil := camera_controller.global_transform.basis.inverse() * -shot_events[0].direction
 	expected_local_recoil.y = 0.0
 	if expected_local_recoil.is_zero_approx() or shake_pivot.position.normalized().dot(expected_local_recoil.normalized()) < 0.999 \
-			or shake_pivot.position.length() > 0.451:
+			or shake_pivot.position.length() > camera_controller.fire_shake_kick_distance + 0.001:
 		push_error("Camera shake must use the ShotEvent horizontal world-opposite direction within its local bound")
 		return false
 
 	camera_controller._process(0.08)
+	if not shake_pivot.rotation.is_zero_approx():
+		push_error("Camera shake must keep CameraShakePivot rotation at zero while returning")
+		return false
 	tank.turret_pivot.rotation.y += PI / 2.0
 	tank.request_fire()
-	if shot_events.size() != 2 or shake_pivot.position.length() > 0.451 or shake_pivot.rotation.length() > deg_to_rad(1.501):
-		push_error("Repeated controlled-tank shots must replace the prior bounded camera shake")
+	if shot_events.size() != 2 or shake_pivot.position.length() > camera_controller.fire_shake_kick_distance + 0.001 \
+			or not shake_pivot.rotation.is_zero_approx():
+		push_error("Repeated controlled-tank shots must replace the prior bounded position-only camera shake")
 		return false
 	for _frame in range(5):
 		camera_controller._process(0.05)

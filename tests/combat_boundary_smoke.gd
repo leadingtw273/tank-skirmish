@@ -105,8 +105,24 @@ func _validate(instance: Node) -> void:
 	var impact_event := impact_events[0]
 	var impact_vfx := effects.get_node_or_null("ImpactVFX") as Node3D
 	if impact_event.shot_event != shot_event or impact_event.collider != target or impact_vfx == null \
-			or not impact_vfx.global_position.is_equal_approx(impact_event.position + impact_event.normal * 0.05):
-		_fail("CombatRuntime must consume ImpactEvent once and place ImpactVFX under Effects using its normal.")
+			or not impact_vfx.global_position.is_equal_approx(impact_event.position + impact_event.normal * 0.05) \
+			or not impact_vfx.get("one_shot") or not impact_vfx.get("autoplay") \
+			or impact_vfx.get_node_or_null("Core") == null or impact_vfx.get_node_or_null("Smoke") == null \
+			or impact_vfx.get_node_or_null("Sparks") == null or impact_vfx.get_node_or_null("Decal") == null \
+			or impact_vfx.get_node_or_null("Light") == null or impact_vfx.get_node_or_null("AnimationPlayer") == null:
+		_fail("CombatRuntime must consume ImpactEvent once and play Explosion 05 under Effects using its normal.")
+		return
+	if runtime.impact_vfx_lifetime_seconds <= 1.2:
+		_fail("Explosion 05 must remain alive beyond its 1.2-second main animation.")
+		return
+	await create_timer(1.21).timeout
+	if effects.get_node_or_null("ImpactVFX") == null:
+		_fail("Explosion 05 must remain in Effects until its main animation completes.")
+		return
+	await create_timer(runtime.impact_vfx_lifetime_seconds - 1.2).timeout
+	await process_frame
+	if effects.get_node_or_null("ImpactVFX") != null:
+		_fail("Explosion 05 must clear from Effects after its configured lifetime.")
 		return
 
 	var ranged_projectile := load("res://src/projectile.tscn").instantiate() as TankProjectile

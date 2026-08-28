@@ -7,4 +7,3 @@
 script = ExtResource("1_projectile")
 
 [node name="JavelinVFX" parent="." instance=ExtResource("2_javelin")]
-rotation = Vector3(0, 3.1415927, 0)

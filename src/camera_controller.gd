@@ -31,6 +31,7 @@ func set_follow_target(target: Node3D) -> void:
 
 
 func _process(delta: float) -> void:
+	## 以與影格率無關的指數插值平滑前視，並保留註冊當下的相對高度與構圖偏移。
 	if follow_target == null or not is_instance_valid(follow_target):
 		return
 	var desired_offset := _desired_look_ahead_offset()
@@ -40,6 +41,7 @@ func _process(delta: float) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	## 只消費按下的滾輪事件，並在既有正交 Camera3D size 範圍內調整縮放。
 	var mouse_event := event as InputEventMouseButton
 	if mouse_event == null or not mouse_event.pressed:
 		return
@@ -50,6 +52,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _desired_look_ahead_offset() -> Vector3:
+	## 將螢幕游標換成以畫面中心為原點的 -1 到 1 座標，交由可測試的純計算路徑處理。
 	var viewport_size := get_viewport().get_visible_rect().size
 	if viewport_size.x <= 0.0 or viewport_size.y <= 0.0:
 		return Vector3.ZERO
@@ -86,6 +89,7 @@ func calculate_look_ahead_offset(normalized_cursor: Vector2) -> Vector3:
 
 
 func _ray_plane_intersection(screen_position: Vector2, plane_height: float) -> Vector3:
+	## 將螢幕點投影出的相機射線與坦克所在高度的水平平面相交，供 XZ 前視使用。
 	var ray_origin := camera.project_ray_origin(screen_position)
 	var ray_direction := camera.project_ray_normal(screen_position)
 	if is_zero_approx(ray_direction.y):

@@ -24,6 +24,7 @@ var shooter_rid: RID:
 
 
 func _init(new_muzzle_transform: Transform3D, new_direction: Vector3, new_shooter_rid: RID) -> void:
+	## 建構時立即正規化射擊方向，讓事件消費端可直接以砲口當下的世界座標快照建立投射物。
 	_muzzle_transform = new_muzzle_transform
 	_direction = new_direction.normalized()
 	_shooter_rid = new_shooter_rid

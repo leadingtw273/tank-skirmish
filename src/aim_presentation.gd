@@ -47,6 +47,7 @@ func set_world_target(target: Vector3) -> void:
 
 
 func _create_aim_line(line_name: String, color: Color) -> MeshInstance3D:
+	## 建立以本地 Y 軸為長度方向的圓柱，並關閉深度測試使其始終可作為瞄準輔助線看見。
 	var line := MeshInstance3D.new()
 	line.name = line_name
 	var cylinder := CylinderMesh.new()
@@ -69,6 +70,7 @@ func _create_aim_line(line_name: String, color: Color) -> MeshInstance3D:
 
 
 func _update_aim_lines() -> void:
+	## 實線從真實砲口射出；滑鼠線從砲塔樞紐射出，僅在兩者方向有可辨識差異時顯示。
 	if actual_aim_line == null or mouse_aim_line == null or controlled_tank == null:
 		return
 	var muzzle_position := controlled_tank.call("muzzle_global_position") as Vector3
@@ -100,6 +102,7 @@ func _update_aim_lines() -> void:
 
 
 func _aim_line_end(origin: Vector3, direction: Vector3) -> Vector3:
+	## 射線在世界座標中排除控制坦克本身，命中時縮短到碰撞點，否則保留最遠距離。
 	var normalized_direction := direction.normalized()
 	if normalized_direction.is_zero_approx():
 		return origin
@@ -113,6 +116,7 @@ func _aim_line_end(origin: Vector3, direction: Vector3) -> Vector3:
 
 
 func _set_aim_line_segment(line: MeshInstance3D, start: Vector3, end: Vector3) -> void:
+	## 將圓柱的本地 Y 軸對齊線段；接近垂直時改用另一參考軸，避免叉積退化。
 	var segment := end - start
 	var length := segment.length()
 	if length < aim_line_min_length:
@@ -129,6 +133,7 @@ func _set_aim_line_segment(line: MeshInstance3D, start: Vector3, end: Vector3) -
 
 
 func _set_aim_line_path(line: MeshInstance3D, origin: Vector3, end: Vector3, hidden_distance := -1.0) -> void:
+	## 先裁掉起點附近會穿過車體的區段，再以剩餘的世界座標線段更新圓柱。
 	var path := end - origin
 	var length := path.length()
 	var requested_hidden_distance := aim_line_near_tank_hidden_distance if hidden_distance < 0.0 else hidden_distance
@@ -140,6 +145,7 @@ func _set_aim_line_path(line: MeshInstance3D, origin: Vector3, end: Vector3, hid
 
 
 func _tank_aim_line_clearance_distance(origin: Vector3) -> float:
+	## 以碰撞盒所有世界座標角點的最遠距離決定隱藏量，讓任意砲塔角度都能避開車身。
 	var tank_collision := controlled_tank.get("tank_collision") as CollisionShape3D
 	var collision_box := tank_collision.shape as BoxShape3D
 	if collision_box == null:

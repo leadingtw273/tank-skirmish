@@ -1,0 +1,251 @@
+[gd_scene load_steps=18 format=3 uid="uid://cshj340rh3er"]
+
+[ext_resource type="Material" uid="uid://cj52b1uj43up3" path="res://assets/BinbunVFX/poison_effects/src/material/stink_big/stink_big_04/stink_big_04_clouds_01.tres" id="1_5j5bi"]
+[ext_resource type="Script" uid="uid://tb7n6ybv43ch" path="res://assets/BinbunVFX/shared/script/vfx_controller.gd" id="1_yu7px"]
+[ext_resource type="Material" uid="uid://dubiyilv7xyhy" path="res://assets/BinbunVFX/poison_effects/src/material/stink_big/stink_big_04/stink_big_04_clouds_02.tres" id="2_5j5bi"]
+
+[sub_resource type="Curve" id="Curve_smkfe"]
+_data = [Vector2(0, 0), 0.0, 17.9026, 0, 0, Vector2(0.2, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), -2.33072, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_qx25j"]
+curve = SubResource("Curve_smkfe")
+
+[sub_resource type="Gradient" id="Gradient_4jr24"]
+colors = PackedColorArray(1, 0, 0, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_qx25j"]
+gradient = SubResource("Gradient_4jr24")
+
+[sub_resource type="Curve" id="Curve_aasod"]
+_data = [Vector2(0, 0.5), 0.0, 0.502101, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_7ah3o"]
+curve = SubResource("Curve_aasod")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_5j5bi"]
+emission_shape = 1
+emission_sphere_radius = 0.3
+direction = Vector3(0, 1, 0)
+spread = 10.0
+initial_velocity_min = 1.0
+initial_velocity_max = 1.0
+gravity = Vector3(0, 0, 0)
+scale_min = 0.5
+scale_max = 1.5
+scale_curve = SubResource("CurveTexture_7ah3o")
+color_initial_ramp = SubResource("GradientTexture1D_qx25j")
+alpha_curve = SubResource("CurveTexture_qx25j")
+
+[sub_resource type="QuadMesh" id="QuadMesh_yu7px"]
+size = Vector2(3, 3)
+subdivide_width = 32
+subdivide_depth = 32
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_yu7px"]
+emission_shape = 1
+emission_sphere_radius = 0.3
+direction = Vector3(0, 1, 0)
+spread = 10.0
+initial_velocity_min = 1.0
+initial_velocity_max = 1.0
+gravity = Vector3(0, 0, 0)
+scale_min = 0.5
+scale_max = 1.5
+scale_curve = SubResource("CurveTexture_7ah3o")
+color_initial_ramp = SubResource("GradientTexture1D_qx25j")
+alpha_curve = SubResource("CurveTexture_qx25j")
+
+[sub_resource type="QuadMesh" id="QuadMesh_smkfe"]
+size = Vector2(3, 3)
+subdivide_width = 32
+subdivide_depth = 32
+
+[sub_resource type="Animation" id="Animation_7ah3o"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Clouds_01:emitting")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Clouds_02:emitting")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Clouds_02:material_override:shader_parameter/alpha_multiplier")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [1.0]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Clouds_01:material_override:shader_parameter/alpha_multiplier")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [1.0]
+}
+
+[sub_resource type="Animation" id="Animation_qx25j"]
+resource_name = "main"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Clouds_01:emitting")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Clouds_02:emitting")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Clouds_02:material_override:shader_parameter/alpha_multiplier")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [1.0]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Clouds_01:material_override:shader_parameter/alpha_multiplier")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [1.0]
+}
+
+[sub_resource type="Animation" id="Animation_j5goj"]
+resource_name = "oneshot"
+step = 0.05
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Clouds_01:emitting")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Clouds_02:emitting")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Clouds_02:material_override:shader_parameter/alpha_multiplier")
+tracks/2/interp = 2
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.35, 1),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [0.0, 1.0, 0.0]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Clouds_01:material_override:shader_parameter/alpha_multiplier")
+tracks/3/interp = 2
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.15, 1),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [0.0, 1.0, 0.0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_7ah3o"]
+_data = {
+&"RESET": SubResource("Animation_7ah3o"),
+&"main": SubResource("Animation_qx25j"),
+&"oneshot": SubResource("Animation_j5goj")
+}
+
+[node name="StinkBigVFX_04" type="Node3D"]
+script = ExtResource("1_yu7px")
+reset_particles = false
+primary_color = Color(1, 0.221697, 0.774739, 1)
+secondary_color = Color(0.437492, 0.000212112, 0.465908, 1)
+tertiary_color = Color(0.38708, 0.0517413, 0.64499, 1)
+light_color = Color(1, 0.223529, 0.776471, 1)
+
+[node name="Clouds_01" type="GPUParticles3D" parent="."]
+material_override = ExtResource("1_5j5bi")
+lifetime = 5.0
+transform_align = 1
+process_material = SubResource("ParticleProcessMaterial_5j5bi")
+draw_pass_1 = SubResource("QuadMesh_yu7px")
+
+[node name="Clouds_02" type="GPUParticles3D" parent="."]
+material_override = ExtResource("2_5j5bi")
+lifetime = 3.0
+transform_align = 1
+process_material = SubResource("ParticleProcessMaterial_yu7px")
+draw_pass_1 = SubResource("QuadMesh_smkfe")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_7ah3o")
+}

@@ -1,0 +1,51 @@
+[gd_resource type="ShaderMaterial" format=3 uid="uid://dxsodlr0si4h4"]
+
+[ext_resource type="Shader" uid="uid://w5tmfpx1lqg1" path="res://assets/BinbunVFX/shared/shader/glow_fresnel.gdshader" id="1_ydnco"]
+
+[sub_resource type="Gradient" id="Gradient_iqhuf"]
+colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_60pi0"]
+gradient = SubResource("Gradient_iqhuf")
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_tv7fm"]
+noise_type = 2
+seed = 21
+fractal_octaves = 2
+fractal_gain = 0.8
+fractal_weighted_strength = 0.6
+cellular_return_type = 6
+domain_warp_enabled = true
+domain_warp_amplitude = 10.0
+domain_warp_frequency = 0.03
+domain_warp_fractal_octaves = 2
+domain_warp_fractal_lacunarity = 2.0
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_ydnco"]
+noise = SubResource("FastNoiseLite_tv7fm")
+seamless = true
+invert = true
+seamless_blend_skirt = 0.2
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_ydnco")
+shader_parameter/fresnel_amount = 0.5
+shader_parameter/fresnel_exponent = 3.0
+shader_parameter/fresnel_gradient = SubResource("GradientTexture1D_60pi0")
+shader_parameter/enable_mask = true
+shader_parameter/mask_texture = SubResource("NoiseTexture2D_ydnco")
+shader_parameter/mask_scroll = Vector2(0, 0.1)
+shader_parameter/mask_scale = Vector2(1, 1)
+shader_parameter/mask_blend_mode = 6
+shader_parameter/mask_blend = 0.5
+shader_parameter/emission_strength = 1.0
+shader_parameter/primary_color = Color(0.6311893, 0.6211224, 0.42068726, 1)
+shader_parameter/secondary_color = Color(0.17496127, 0.26082483, 0.44042084, 1)
+shader_parameter/tertiary_color = Color(0.32173026, 0.26885074, 0.35882533, 1)
+shader_parameter/proximity_fade = false
+shader_parameter/proximity_fade_distance = 1.0
+shader_parameter/alpha_multiplier = 1.0
+shader_parameter/alpha_mode = 0
+shader_parameter/alpha_cutoff = 0.02
+shader_parameter/dither_cutoff = 0.8

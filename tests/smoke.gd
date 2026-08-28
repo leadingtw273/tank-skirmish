@@ -791,14 +791,14 @@ func _validate_projectile_firing(instance: Node) -> bool:
 	if not projectile.global_position.is_equal_approx(muzzle_position) or not projectile.direction.is_equal_approx(muzzle_direction):
 		push_error("Projectile must start at the current muzzle transform")
 		return false
-	if not is_equal_approx(projectile.speed, 120.0) or not is_equal_approx(projectile.max_distance, 180.0) or projectile.collision_mask != 129:
+	if not is_equal_approx(projectile.speed, 360.0) or not is_equal_approx(projectile.max_distance, 360.0) or projectile.collision_mask != 129:
 		push_error("Projectile MVP speed, range, or collision mask changed")
 		return false
 	if not projectile.excluded_rids.has(tank.get_rid()):
 		push_error("Projectile ray must exclude the firing tank RID")
 		return false
 	var javelin_vfx := projectile.get_node_or_null("JavelinVFX") as Node3D
-	if javelin_vfx == null or javelin_vfx.scene_file_path != "res://assets/BinbunVFX/magic_projectiles/effects/mprojectile_javelin/mprojectile_javelin_vfx_01.tscn" \
+	if javelin_vfx == null or javelin_vfx.scene_file_path != "res://src/vfx/projectiles/javelin_projectile_vfx.tscn" \
 			or projectile.get_node_or_null("Mesh") != null or not javelin_vfx.rotation.is_zero_approx():
 		push_error("Projectile must instance the unflipped Javelin VFX without the legacy CapsuleMesh")
 		return false
@@ -876,8 +876,8 @@ func _validate_projectile_firing(instance: Node) -> bool:
 	projectiles.add_child(ranged_projectile)
 	ranged_projectile.global_position = Vector3(500.0, 2.0, 500.0)
 	ranged_projectile._physics_process(10.0)
-	if not ranged_projectile.is_queued_for_deletion() or ranged_projectile.distance_travelled > 180.001:
-		push_error("Unobstructed projectiles must stop at the 180m range")
+	if not ranged_projectile.is_queued_for_deletion() or ranged_projectile.distance_travelled > 360.001:
+		push_error("Unobstructed projectiles must stop at the approved 360m range")
 		return false
 
 	target.queue_free()

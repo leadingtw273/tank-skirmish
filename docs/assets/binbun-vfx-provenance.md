@@ -1,8 +1,9 @@
 # Binbun 戰鬥 VFX 來源與整合紀錄
 
-本專案保存 Binbun 的完整 Muzzle Flash、Impact VFX、Magic Projectiles，
-以及 Supporter／Green Extra 中不重複的內容。這些素材只作為資料匯入，
-未執行下載包內的任何腳本或指令。
+本專案保存 Binbun 的完整 Muzzle Flash、Impact VFX、Magic Projectiles、
+Poison VFX、Smoke VFX，以及 Supporter／Green Extra 中不重複的內容。導入過程未執行
+任何下載包附帶的外部安裝程式或命令；Godot 載入場景時會正常解析素材本身的
+`@tool` 控制腳本，這些腳本只調整粒子、材質、mesh 與燈光參數。
 
 ## 官方來源與授權
 
@@ -13,6 +14,8 @@
 | ImpactVFX | https://binbun3d.itch.io/impact-vfx | CC0 | 2026-08-27 |
 | MagicProjectilesVFX | https://binbun3d.itch.io/magic-projectiles-vfx | CC0 | 2026-08-27 |
 | GreenExtra（Magic supporter extra） | https://binbun3d.itch.io/magic-projectiles-vfx | CC0 | 2026-08-27 |
+| PoisonVFX | https://binbun3d.itch.io/poison-vfx | CC0 | 2026-08-28 |
+| SmokeVFX | https://binbun3d.itch.io/smoke-vfx | CC0 | 2026-08-28 |
 
 官方頁面標示可用於個人、教育與商業用途，且不要求署名。
 
@@ -27,6 +30,8 @@
 | `GreenExtra.zip` | `47f5378c4bc91911f066d491ccca2144619c4d7bc71f228ef1cc5e068a3399ee` |
 
 原始 ZIP 不提交到 repository；上表用於日後比對使用者持有的來源封存。
+PoisonVFX 與 SmokeVFX 本次由使用者提供已解壓的完整資料夾，未取得原始 ZIP，
+因此不在上表捏造封存檔名或 SHA-256。
 
 ## Repository 內容
 
@@ -37,6 +42,11 @@
   `m_projectile_basic_vfx_05.tscn`、`m_projectile_javelin_vfx_05.tscn`、
   `mprojectile_wave_vfx_05.tscn`；展示入口為
   `assets/BinbunVFX/magic_projectiles/magic_projectiles_scene.tscn`。
+- `assets/BinbunVFX/poison_effects`：Poison Area、Bubble、Cloud、Puddle、
+  Stink Big／Small 六類效果；展示入口為
+  `assets/BinbunVFX/poison_effects/poison_effects_scene.tscn`。
+- `assets/BinbunVFX/smoke_effects`：Smoke、Smoke Big、Smoke Thin 各 8 個預設；
+  展示入口為 `assets/BinbunVFX/smoke_effects/smoke_effects_scene.tscn`。
 
 Green Extra 除上述三個 05 場景外與 Magic 主包相同，因此不保留獨立
 `GreenExtra` 根目錄，也不覆蓋主包的 01～04。
@@ -50,6 +60,8 @@ Green Extra 除上述三個 05 場景外與 Magic 主包相同，因此不保留
 - `vfx_light.gd` 與內容相同的 shared texture 只保留一份。
 - Supporter Extra、Muzzle 與 Impact 的 flare PNG 位元內容相同，只保存於
   `assets/BinbunVFX/shared/texture/flare`，沒有複製第二份。
+- Poison／Smoke 隨包附帶的既有 shared 檔不覆蓋 repository canonical 版本；
+  Poison 額外需要而原本缺少的 `shared/shader/particle.gdshader` 與 UID 則精確補入。
 
 ## Tank Skirmish 目前選用
 

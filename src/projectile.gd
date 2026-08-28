@@ -46,6 +46,7 @@ func initialize(new_shot_event: Variant, legacy_excluded_rids: Array = []) -> vo
 
 
 func _physics_process(delta: float) -> void:
+	## 每個物理步驟以射線涵蓋完整移動區間，避免高速投射物只靠位置更新而穿過薄碰撞器。
 	if _impact_reported or shot_event == null or direction.is_zero_approx() or speed <= 0.0 or max_distance <= 0.0:
 		queue_free()
 		return
@@ -75,6 +76,7 @@ func _physics_process(delta: float) -> void:
 
 
 func _emit_impact(hit_collider: Object, hit_position: Vector3, hit_normal: Vector3) -> void:
+	## 以旗標保證權威 ImpactEvent 最多發出一次；舊版 signal 仍無條件保留既有相容契約。
 	if _impact_reported:
 		return
 	_impact_reported = true
@@ -85,6 +87,7 @@ func _emit_impact(hit_collider: Object, hit_position: Vector3, hit_normal: Vecto
 
 
 func _collision_between(start_position: Vector3, end_position: Vector3) -> Dictionary:
+	## 查詢世界座標的本步起訖區間，排除射手 RID，並只命中實體碰撞體而非 Area3D。
 	var query := PhysicsRayQueryParameters3D.create(
 		start_position,
 		end_position,

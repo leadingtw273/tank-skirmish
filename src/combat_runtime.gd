@@ -26,6 +26,7 @@ var _registered_shot_sources: Array[Node] = []
 
 
 func _ready() -> void:
+	## 先確認兩個執行期容器存在，才逐一連接場景提供的射擊來源，避免生成無主節點。
 	if projectiles == null or effects == null:
 		push_error("CombatRuntime requires injected Projectiles and Effects containers.")
 		return
@@ -34,6 +35,7 @@ func _ready() -> void:
 
 
 func _exit_tree() -> void:
+	## 複製註冊清單後解除連接，因為解除時會同步從原清單移除元素。
 	for shot_source in _registered_shot_sources.duplicate():
 		unregister_shot_source(shot_source)
 
@@ -67,10 +69,12 @@ func unregister_shot_source(shot_source: Node) -> void:
 
 
 func _on_shot_source_tree_exiting(shot_source: Node) -> void:
+	## 射擊來源先於戰鬥容器離開場景時，主動清除它的 signal 與生命週期回呼。
 	unregister_shot_source(shot_source)
 
 
 func _on_shot_fired(shot_event: ShotEvent) -> void:
+	## 將不可變 ShotEvent 轉成暫時投射物，先完成初始化與 signal 連接，再掛入容器以啟動生命週期。
 	if shot_event == null or not shot_event.is_valid():
 		push_error("CombatRuntime rejected an invalid ShotEvent.")
 		return
@@ -86,6 +90,7 @@ func _on_shot_fired(shot_event: ShotEvent) -> void:
 
 
 func _on_projectile_impact(impact_event: ImpactEvent) -> void:
+	## 命中特效沿世界座標表面法線微移，避免穿模，並由 SceneTree 計時器在播放後釋放。
 	if impact_event == null or not impact_event.is_valid():
 		return
 	var impact := IMPACT_VFX_SCENE.instantiate() as Node3D
@@ -98,6 +103,7 @@ func _on_projectile_impact(impact_event: ImpactEvent) -> void:
 
 
 func _basis_with_x_axis(x_axis: Vector3) -> Basis:
+	## 依射擊方向建立正交基底供特效與投射物朝向本地 X 軸；近乎垂直時切換參考上軸避免退化。
 	var normalized_x := x_axis.normalized()
 	var reference_up := Vector3.UP if absf(normalized_x.dot(Vector3.UP)) < 0.99 else Vector3.BACK
 	var z_axis := normalized_x.cross(reference_up).normalized()

@@ -76,9 +76,9 @@ var visual_recoil_tween: Tween
 
 
 func _ready() -> void:
+	## 將匯入模型的砲塔與砲管轉交給常駐樞紐且保持世界姿態，之後才能獨立套用偏航與俯仰。
 	visual_recoil_rest_local_position = visual_recoil_pivot.position
-	# The imported turret and gun remain intact. Permanent scene pivots take ownership
-	# at startup while preserving their authored world transforms.
+	# 匯入的砲塔與砲管保持原樣；常駐場景樞紐在啟動時接手，並保留製作時的世界座標轉換。
 	turret_pivot.global_position = tank_turret.global_position
 	tank_turret.reparent(turret_pivot, true)
 	gun_pitch_pivot.global_position = tank_gun.global_position
@@ -94,6 +94,7 @@ func _ready() -> void:
 
 
 func _physics_process(delta: float) -> void:
+	## 依輸入先切換履帶呈現，再以模型定義的本地 -X 前方換算車身世界速度並交給碰撞滑動。
 	_update_tread_animation(_tread_animation_for_inputs(movement_command, turn_command))
 	rotate_y(turn_command * turn_speed * delta)
 	var forward_direction := transform.basis * MODEL_FORWARD_LOCAL_AXIS
@@ -117,6 +118,7 @@ func get_max_camera_look_ahead_distance() -> float:
 
 
 func _setup_tread_animations() -> void:
+	## 在匯入模型子樹尋找單一播放器，確認所有必要片段後才啟用，避免部分可用的狀態誤播放。
 	tread_animation_player = _find_animation_player(tank_model)
 	if tread_animation_player == null:
 		push_error("Tank tread animation setup failed: no AnimationPlayer found beneath Tank2.")
@@ -133,6 +135,7 @@ func _setup_tread_animations() -> void:
 
 
 func _find_animation_player(node: Node) -> AnimationPlayer:
+	## 深度優先走訪匯入節點，因素材階層不保證 AnimationPlayer 位於固定 NodePath。
 	if node is AnimationPlayer:
 		return node as AnimationPlayer
 	for child in node.get_children():
@@ -143,6 +146,7 @@ func _find_animation_player(node: Node) -> AnimationPlayer:
 
 
 func _tread_animation_for_inputs(movement_input: float, turn_input: float) -> StringName:
+	## 轉向優先於前後移動，確保同時輸入時履帶呈現原地／轉彎動畫而非直行動畫。
 	if not is_zero_approx(turn_input):
 		return TREAD_ANIMATION_CLIPS["turning_left"] if turn_input > 0.0 else TREAD_ANIMATION_CLIPS["turning_right"]
 	if movement_input > 0.0:
@@ -153,6 +157,7 @@ func _tread_animation_for_inputs(movement_input: float, turn_input: float) -> St
 
 
 func _update_tread_animation(next_animation: StringName) -> void:
+	## 只在狀態改變時交給播放器混合；靜止則暫停而不重設目前影格，恢復時可延續既有片段。
 	if not tread_animations_available or tread_animation_player == null:
 		return
 	if next_animation.is_empty():
@@ -189,6 +194,7 @@ func aim_turret_at(target_position: Vector3, delta: float) -> void:
 
 
 func _target_gun_pitch_for_world_target(target_position: Vector3) -> float:
+	## 以砲口到目標的水平距離和高度差求仰角，再限制在製作時設定的俯仰範圍。
 	if _is_target_inside_turret_dead_zone(target_position):
 		return -gun_pitch_pivot.rotation.z
 	var target_direction := target_position - muzzle_global_position()
@@ -204,6 +210,7 @@ func _target_gun_pitch_for_world_target(target_position: Vector3) -> float:
 
 
 func _is_target_inside_turret_dead_zone(target_position: Vector3) -> bool:
+	## 只比較水平 XZ 距離；目標太靠近砲塔時不更新姿態，避免方位與仰角在零向量附近跳動。
 	var offset := target_position - turret_pivot.global_position
 	return Vector2(offset.x, offset.z).length_squared() <= 9.0
 
@@ -248,6 +255,7 @@ func request_fire() -> void:
 
 
 func _play_visual_recoil(muzzle_direction: Vector3) -> void:
+	## 將世界座標的反射擊方向轉回車身本地座標，使後座會隨車身朝向移動且不影響實際碰撞。
 	if visual_recoil_pivot == null:
 		push_error("Tank visual recoil requires a VisualRecoilPivot.")
 		return
@@ -263,10 +271,12 @@ func _play_visual_recoil(muzzle_direction: Vector3) -> void:
 
 
 func _reset_visual_recoil() -> void:
+	## Tween 被中斷或完成後都回寫製作時的本地靜止位置，避免視覺模型累積偏移。
 	visual_recoil_pivot.position = visual_recoil_rest_local_position
 
 
 func _spawn_muzzle_flash(muzzle_position: Vector3, muzzle_direction: Vector3) -> void:
+	## 將一次性特效掛到砲口以承接生命週期，仍以世界座標快照定位並由計時器在壽命結束後釋放。
 	var muzzle_flash := MUZZLE_FLASH_SCENE.instantiate() as Node3D
 	muzzle_flash.name = "MuzzleFlash"
 	muzzle_flash.set("one_shot", true)
@@ -278,6 +288,7 @@ func _spawn_muzzle_flash(muzzle_position: Vector3, muzzle_direction: Vector3) ->
 
 
 func _basis_with_x_axis(x_axis: Vector3) -> Basis:
+	## 讓素材的本地 X 軸對齊砲口方向；接近垂直時改用後方軸建立穩定的正交座標系。
 	var normalized_x := x_axis.normalized()
 	var reference_up := Vector3.UP if absf(normalized_x.dot(Vector3.UP)) < 0.99 else Vector3.BACK
 	var z_axis := normalized_x.cross(reference_up).normalized()

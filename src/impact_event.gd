@@ -30,6 +30,7 @@ var normal: Vector3:
 
 
 func _init(new_shot_event: ShotEvent, new_collider: Object, new_position: Vector3, new_normal: Vector3) -> void:
+	## 在碰撞當下凍結射擊、碰撞器與世界座標資料，並正規化法線讓後續特效位移具有固定尺度。
 	_shot_event = new_shot_event
 	_collider = new_collider
 	_position = new_position

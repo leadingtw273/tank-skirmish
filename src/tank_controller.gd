@@ -9,6 +9,10 @@ extends CharacterBody3D
 @export var turn_speed := 0.8
 ## 在製作好的履帶動畫片段之間混合所用的秒數。
 @export var tread_animation_blend_seconds := 0.12
+## 履帶動畫以 1 倍速播放時所對應的坦克前後線速度，單位為公尺／秒。
+@export_range(0.01, 100.0, 0.01) var tread_animation_reference_speed := 15.0
+## 套用於履帶動畫最終播放倍率的微調係數。
+@export_range(0.0, 4.0, 0.01) var tread_animation_speed_multiplier := 1.0
 
 @export_category("坦克砲塔")
 ## 追蹤目標時砲塔的偏航速度，單位為弧度／秒。
@@ -36,6 +40,7 @@ extends CharacterBody3D
 
 const MODEL_FORWARD_LOCAL_AXIS := Vector3.LEFT
 const MIN_AIM_DISTANCE_SQUARED := 0.001
+const TREAD_ANIMATION_REFERENCE_MODEL_SCALE := 1.7466666
 const TREAD_ANIMATION_CLIPS := {
 	"forward": &"Tank_Forward",
 	"backwards": &"Tank_Backwards",
@@ -94,12 +99,14 @@ func _ready() -> void:
 
 
 func _physics_process(delta: float) -> void:
-	## 依輸入先切換履帶呈現，再以模型定義的本地 -X 前方換算車身世界速度並交給碰撞滑動。
-	_update_tread_animation(_tread_animation_for_inputs(movement_command, turn_command))
+	## 以模型定義的本地 -X 前方換算車身世界速度並交給碰撞滑動，再依實際前後線速度更新履帶呈現。
 	rotate_y(turn_command * turn_speed * delta)
 	var forward_direction := transform.basis * MODEL_FORWARD_LOCAL_AXIS
 	velocity = forward_direction * movement_command * movement_speed
 	move_and_slide()
+	var next_tread_animation := _tread_animation_for_inputs(movement_command, turn_command)
+	var actual_forward_speed := get_real_velocity().dot(forward_direction)
+	_update_tread_animation(next_tread_animation, _tread_animation_speed_scale(next_tread_animation, actual_forward_speed))
 
 
 ## 儲存介於 -1 到 1 的前進／倒退指令，供下一個物理步驟使用。
@@ -156,10 +163,19 @@ func _tread_animation_for_inputs(movement_input: float, turn_input: float) -> St
 	return &""
 
 
-func _update_tread_animation(next_animation: StringName) -> void:
+func _tread_animation_speed_scale(next_animation: StringName, actual_forward_speed: float) -> float:
+	## 直行以碰撞後的前後線速度和 Tank2 的等比縮放修正；原地轉向維持素材速度。
+	if next_animation == TREAD_ANIMATION_CLIPS["turning_left"] or next_animation == TREAD_ANIMATION_CLIPS["turning_right"]:
+		return tread_animation_speed_multiplier
+	var model_scale := maxf(absf(tank_model.scale.x), 0.001)
+	return absf(actual_forward_speed) / tread_animation_reference_speed * TREAD_ANIMATION_REFERENCE_MODEL_SCALE / model_scale * tread_animation_speed_multiplier
+
+
+func _update_tread_animation(next_animation: StringName, animation_speed_scale: float = 1.0) -> void:
 	## 只在狀態改變時交給播放器混合；靜止則暫停而不重設目前影格，恢復時可延續既有片段。
 	if not tread_animations_available or tread_animation_player == null:
 		return
+	tread_animation_player.speed_scale = animation_speed_scale
 	if next_animation.is_empty():
 		if not tread_animation_paused:
 			tread_animation_player.pause()

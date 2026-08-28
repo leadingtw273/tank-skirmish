@@ -3,8 +3,8 @@ extends SceneTree
 const MAIN_SCENE := "res://src/main.tscn"
 const GRASS_IMPORT := "res://assets/BinbunGrass/texture/grass_basic_02.png.import"
 const CONVERSION_MANIFEST := "res://docs/assets/conversion-manifest.json"
-const TankProjectile := preload("res://src/projectile.gd")
-const ShotEvent := preload("res://src/shot_event.gd")
+const TankProjectile := preload("res://src/combat/projectile.gd")
+const ShotEvent := preload("res://src/combat/shot_event.gd")
 const TANK_VISUAL_SCALE := 1.7466666
 const BUILDING_MODELS := {
 	"OneStoryNorthWest": "1story",
@@ -870,7 +870,7 @@ func _validate_projectile_firing(instance: Node) -> bool:
 		push_error("Projectiles must never contain ImpactVFX nodes")
 		return false
 
-	var ranged_projectile := load("res://src/projectile.tscn").instantiate() as Node3D
+	var ranged_projectile := load("res://src/combat/projectile.tscn").instantiate() as Node3D
 	ranged_projectile.name = "RangeTestProjectile"
 	ranged_projectile.initialize(Vector3.RIGHT, [tank.get_rid()])
 	projectiles.add_child(ranged_projectile)

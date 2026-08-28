@@ -1,6 +1,6 @@
 extends Node
 
-const ShotEvent := preload("res://src/shot_event.gd")
+const ShotEvent := preload("res://src/combat/shot_event.gd")
 
 @export var controlled_tank: Node3D
 @export var camera_controller: Node3D

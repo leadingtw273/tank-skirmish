@@ -3,8 +3,8 @@
 extends Node3D
 class_name TankProjectile
 
-const ShotEvent := preload("res://src/shot_event.gd")
-const ImpactEvent := preload("res://src/impact_event.gd")
+const ShotEvent := preload("res://src/combat/shot_event.gd")
+const ImpactEvent := preload("res://src/combat/impact_event.gd")
 
 @export_category("投射物移動")
 ## 投射物的移動速度，單位為公尺／秒。

@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="PackedScene" uid="uid://qx62ju7kqejx" path="res://assets/BinbunVFX/poison_effects/effects/poison_cloud/poison_cloud_vfx_02.tscn" id="1_poison_cloud"]
+
+[node name="MuzzleSmokeVFX" instance=ExtResource("1_poison_cloud")]
+one_shot = true
+autoplay = true
+primary_color = Color(0.45, 0.4, 0.32, 1)
+secondary_color = Color(0.3, 0.27, 0.22, 1)
+tertiary_color = Color(0.18, 0.16, 0.13, 1)

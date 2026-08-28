@@ -1,6 +1,7 @@
 extends SceneTree
 
 const MAIN_SCENE := "res://src/main.tscn"
+const MUZZLE_SMOKE_VFX_PATH := "res://src/vfx/muzzle/muzzle_smoke_vfx.tscn"
 const ShotEvent := preload("res://src/combat/shot_event.gd")
 const ImpactEvent := preload("res://src/combat/impact_event.gd")
 const CombatRuntime := preload("res://src/combat/combat_runtime.gd")
@@ -45,8 +46,8 @@ func _validate(instance: Node) -> void:
 	tank.shot_event_fired.connect(func(shot_event: ShotEvent) -> void: observed_shots.append(shot_event))
 	runtime.register_shot_source(tank)
 	tank.request_fire()
-	if observed_shots.size() != 1 or projectiles.get_child_count() != 1:
-		_fail("Duplicate shot-source registration must not duplicate the shot connection.")
+	if observed_shots.size() != 1 or projectiles.get_child_count() != 1 or _count_named_children(effects, &"MuzzleSmokeVFX") != 1:
+		_fail("Each valid ShotEvent must create exactly one projectile and one MuzzleSmokeVFX.")
 		return
 	var shot_event := observed_shots[0]
 	if not shot_event.is_valid() or not shot_event.direction.is_normalized() \
@@ -62,6 +63,25 @@ func _validate(instance: Node) -> void:
 		_fail("CombatRuntime must create a projectile from the ShotEvent without consulting Tank.")
 		return
 	projectile.set_physics_process(false)
+	var muzzle_smoke := effects.get_node_or_null("MuzzleSmokeVFX") as Node3D
+	var expected_smoke_position := shot_event.muzzle_transform.origin + shot_event.direction * runtime.muzzle_smoke_forward_offset
+	if muzzle_smoke == null or muzzle_smoke.scene_file_path != MUZZLE_SMOKE_VFX_PATH \
+			or not bool(muzzle_smoke.get("one_shot")) or not bool(muzzle_smoke.get("autoplay")) \
+			or not muzzle_smoke.global_position.is_equal_approx(expected_smoke_position) \
+			or not is_equal_approx(muzzle_smoke.global_transform.basis.x.length(), runtime.muzzle_smoke_scale):
+		_fail("CombatRuntime must place one scaled, one-shot, autoplay MuzzleSmokeVFX ahead of the muzzle under Effects.")
+		return
+	var smoke_world_position := muzzle_smoke.global_position
+	tank.global_position += Vector3(10, 0, 0)
+	await process_frame
+	if not muzzle_smoke.global_position.is_equal_approx(smoke_world_position):
+		_fail("A generated MuzzleSmokeVFX must remain at its world position after the tank moves.")
+		return
+	await create_timer(runtime.muzzle_smoke_lifetime_seconds + 0.1).timeout
+	await process_frame
+	if _count_named_children(effects, &"MuzzleSmokeVFX") != 0:
+		_fail("MuzzleSmokeVFX must clean itself up after its configured lifetime.")
+		return
 
 	var source := TestShotSource.new()
 	instance.add_child(source)
@@ -69,8 +89,8 @@ func _validate(instance: Node) -> void:
 	runtime.register_shot_source(source)
 	var source_shot := ShotEvent.new(Transform3D(Basis.IDENTITY, Vector3(500, 2, 500)), Vector3.RIGHT, tank.get_rid())
 	source.publish(source_shot)
-	if projectiles.get_child_count() != 2:
-		_fail("A registered source must connect exactly once.")
+	if projectiles.get_child_count() != 2 or _count_named_children(effects, &"MuzzleSmokeVFX") != 1:
+		_fail("A registered source must connect exactly once and create one projectile plus one MuzzleSmokeVFX.")
 		return
 	runtime.unregister_shot_source(source)
 	source.publish(source_shot)
@@ -103,7 +123,7 @@ func _validate(instance: Node) -> void:
 	if impact_events.size() != 1 or not projectile.is_queued_for_deletion():
 		_fail("The first projectile collision must publish exactly one ImpactEvent and clear the projectile.")
 		return
-	var impact_event := impact_events[0]
+	var impact_event := impact_events[0] as ImpactEvent
 	var impact_vfx := effects.get_node_or_null("ImpactVFX") as Node3D
 	if impact_event.shot_event != shot_event or impact_event.collider != target or impact_vfx == null \
 			or impact_vfx.scene_file_path != "res://assets/BinbunVFX/impact_explosions/effects/explosion/vfx_explosion_05.tscn" \
@@ -140,3 +160,11 @@ func _validate(instance: Node) -> void:
 func _fail(message: String) -> void:
 	push_error(message)
 	quit(1)
+
+
+func _count_named_children(parent: Node, name_to_match: StringName) -> int:
+	var count := 0
+	for child in parent.get_children():
+		if child.name == name_to_match:
+			count += 1
+	return count

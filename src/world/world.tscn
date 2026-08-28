@@ -17,10 +17,10 @@
 [ext_resource type="Texture2D" path="res://assets/BinbunSkies/textures/clouds/clouds_02.tres" id="17_clouds_02"]
 [ext_resource type="Shader" path="res://assets/BinbunGrass/shader/grass.gdshader" id="18_grass_shader"]
 [ext_resource type="Texture2D" path="res://assets/BinbunGrass/texture/grass_basic_02.png" id="19_grass_shape"]
-[ext_resource type="Texture2D" path="res://src/grass_palette_dry.tres" id="20_grass_palette"]
-[ext_resource type="Script" path="res://src/grass_field.gd" id="21_grass_field"]
-[ext_resource type="PackedScene" path="res://src/satellite_district.tscn" id="23_satellite_district"]
-[ext_resource type="PackedScene" path="res://src/arterial_corridor.tscn" id="24_arterial_corridor"]
+[ext_resource type="Texture2D" path="res://src/world/grass_palette_dry.tres" id="20_grass_palette"]
+[ext_resource type="Script" path="res://src/world/grass_field.gd" id="21_grass_field"]
+[ext_resource type="PackedScene" path="res://src/world/satellite_district.tscn" id="23_satellite_district"]
+[ext_resource type="PackedScene" path="res://src/world/arterial_corridor.tscn" id="24_arterial_corridor"]
 
 [sub_resource type="StandardMaterial3D" id="GroundMaterial"]
 albedo_color = Color(0.42, 0.26, 0.12, 1)

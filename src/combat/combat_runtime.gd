@@ -3,11 +3,11 @@
 extends Node3D
 class_name CombatRuntime
 
-const PROJECTILE_SCENE := preload("res://src/projectile.tscn")
+const PROJECTILE_SCENE := preload("res://src/combat/projectile.tscn")
 const IMPACT_VFX_SCENE := preload("res://assets/BinbunVFX/impact_explosions/effects/explosion/vfx_explosion_05.tscn")
-const TankProjectile := preload("res://src/projectile.gd")
-const ShotEvent := preload("res://src/shot_event.gd")
-const ImpactEvent := preload("res://src/impact_event.gd")
+const TankProjectile := preload("res://src/combat/projectile.gd")
+const ShotEvent := preload("res://src/combat/shot_event.gd")
+const ImpactEvent := preload("res://src/combat/impact_event.gd")
 @export_category("場景連接")
 ## 會發出公開 shot_event_fired signal、供此戰鬥執行期消費的節點。
 @export var shot_sources: Array[Node]

@@ -2,7 +2,7 @@
 ## 它只負責框取世界畫面；不會處理瞄準、玩家輸入指令或坦克移動。
 extends Node3D
 
-const ShotEvent := preload("res://src/shot_event.gd")
+const ShotEvent := preload("res://src/combat/shot_event.gd")
 
 @export_category("游標前視")
 ## 不套用前視的正規化游標半徑，畫面中心為 0，邊緣為 1。

@@ -48,7 +48,7 @@ const TREAD_ANIMATION_CLIPS := {
 	"turning_right": &"Tank_TurningRight",
 }
 const MUZZLE_FLASH_SCENE := preload("res://assets/BinbunVFX/muzzle_flash/effects/big_flash/big_flash_05.tscn")
-const ShotEvent := preload("res://src/shot_event.gd")
+const ShotEvent := preload("res://src/combat/shot_event.gd")
 @export_category("砲口火焰")
 ## 已生成的砲口火焰在移除前的存活時間，單位為秒。
 @export var muzzle_flash_lifetime_seconds := 0.25

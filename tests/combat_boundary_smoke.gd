@@ -1,10 +1,10 @@
 extends SceneTree
 
 const MAIN_SCENE := "res://src/main.tscn"
-const ShotEvent := preload("res://src/shot_event.gd")
-const ImpactEvent := preload("res://src/impact_event.gd")
-const CombatRuntime := preload("res://src/combat_runtime.gd")
-const TankProjectile := preload("res://src/projectile.gd")
+const ShotEvent := preload("res://src/combat/shot_event.gd")
+const ImpactEvent := preload("res://src/combat/impact_event.gd")
+const CombatRuntime := preload("res://src/combat/combat_runtime.gd")
+const TankProjectile := preload("res://src/combat/projectile.gd")
 
 
 class TestShotSource extends Node3D:
@@ -120,7 +120,7 @@ func _validate(instance: Node) -> void:
 		_fail("Explosion 05 must clean itself up after its configured lifetime.")
 		return
 
-	var ranged_projectile := load("res://src/projectile.tscn").instantiate() as TankProjectile
+	var ranged_projectile := load("res://src/combat/projectile.tscn").instantiate() as TankProjectile
 	var ranged_shot := ShotEvent.new(Transform3D(Basis.IDENTITY, Vector3(500, 2, 500)), Vector3.RIGHT, tank.get_rid())
 	var ranged_impacts: Array[ImpactEvent] = []
 	ranged_projectile.initialize(ranged_shot)

@@ -3,6 +3,7 @@ extends SceneTree
 const MAIN_SCENE := "res://src/main.tscn"
 const GRASS_IMPORT := "res://assets/BinbunGrass/texture/grass_basic_02.png.import"
 const CONVERSION_MANIFEST := "res://docs/assets/conversion-manifest.json"
+const TankProjectile := preload("res://src/projectile.gd")
 const TANK_VISUAL_SCALE := 1.7466666
 const BUILDING_MODELS := {
 	"OneStoryNorthWest": "1story",
@@ -191,13 +192,35 @@ func _validate_tread_animations(instance: Node) -> bool:
 		push_error("Tank tread clip selection does not match movement input")
 		return false
 
-	tank._update_tread_animation(&"Tank_Forward")
+	var original_model_scale: Vector3 = tank.tank_model.scale
+	tank.tread_animation_reference_speed = 15.0
+	tank.tread_animation_speed_multiplier = 1.0
+	if not is_equal_approx(tank._tread_animation_speed_scale(&"Tank_Forward", 15.0), 1.0) \
+			or not is_equal_approx(tank._tread_animation_speed_scale(&"Tank_Backwards", -15.0), 1.0):
+		push_error("Tank straight tread speed must use the absolute actual forward speed at the reference scale")
+		return false
+	tank.tank_model.scale = original_model_scale * 2.0
+	if not is_equal_approx(tank._tread_animation_speed_scale(&"Tank_Forward", 15.0), 0.5):
+		push_error("Tank tread speed must halve when the Tank2 model scale doubles")
+		return false
+	tank.tank_model.scale = original_model_scale
+	tank.tread_animation_speed_multiplier = 0.8
+	if not is_equal_approx(tank._tread_animation_speed_scale(&"Tank_Forward", 15.0), 0.8) \
+			or not is_equal_approx(tank._tread_animation_speed_scale(&"Tank_TurningLeft", 15.0), 0.8):
+		push_error("Tank tread animation speed multiplier must affect straight and turning clips")
+		return false
+
+	tank._update_tread_animation(&"Tank_Forward", 0.8)
 	if tank.active_tread_animation != &"Tank_Forward" or tank.tread_animation_paused:
 		push_error("Tank forward tread animation did not start")
 		return false
 	tank._update_tread_animation(&"")
 	if not tank.tread_animation_paused:
 		push_error("Tank tread animation must pause when movement stops")
+		return false
+	tank._update_tread_animation(&"Tank_Forward", 0.8)
+	if not is_equal_approx(tank.tread_animation_player.speed_scale, 0.8):
+		push_error("Tank resumed tread animation must apply its current playback speed")
 		return false
 	return true
 

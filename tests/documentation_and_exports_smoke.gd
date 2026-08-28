@@ -2,7 +2,7 @@ extends SceneTree
 
 const SCRIPT_REQUIREMENTS := {
 	"res://src/aim_presentation.gd": ["func set_controlled_tank", "func initialize_presentation", "func set_world_target"],
-	"res://src/camera_controller.gd": ["func set_follow_target", "func calculate_look_ahead_offset"],
+	"res://src/camera_controller.gd": ["func set_follow_target", "func play_shot_recoil", "func calculate_look_ahead_offset"],
 	"res://src/combat_runtime.gd": ["func register_shot_source", "func unregister_shot_source"],
 	"res://src/impact_event.gd": ["var shot_event", "var collider", "var position", "var normal"],
 	"res://src/projectile.gd": ["signal hit_detected", "signal impact_detected", "func initialize"],

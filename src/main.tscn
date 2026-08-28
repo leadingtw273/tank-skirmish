@@ -16,7 +16,9 @@ script = ExtResource("1_adaptive_viewport")
 [node name="CameraRig" type="Node3D" parent="."]
 script = ExtResource("2_camera_controller")
 
-[node name="Camera3D" type="Camera3D" parent="CameraRig"]
+[node name="CameraShakePivot" type="Node3D" parent="CameraRig"]
+
+[node name="Camera3D" type="Camera3D" parent="CameraRig/CameraShakePivot"]
 transform = Transform3D(0.71324474, -0.3791764, 0.58949745, 0, 0.8410397, 0.5409734, -0.7009151, -0.3858464, 0.59986717, 78.46123, 72.81983, 88.0357)
 projection = 1
 size = 100.0

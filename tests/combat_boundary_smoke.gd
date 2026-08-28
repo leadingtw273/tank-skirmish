@@ -105,8 +105,19 @@ func _validate(instance: Node) -> void:
 	var impact_event := impact_events[0]
 	var impact_vfx := effects.get_node_or_null("ImpactVFX") as Node3D
 	if impact_event.shot_event != shot_event or impact_event.collider != target or impact_vfx == null \
+			or impact_vfx.scene_file_path != "res://assets/BinbunVFX/impact_explosions/effects/explosion/vfx_explosion_05.tscn" \
+			or not bool(impact_vfx.get("one_shot")) or not bool(impact_vfx.get("autoplay")) \
 			or not impact_vfx.global_position.is_equal_approx(impact_event.position + impact_event.normal * 0.05):
-		_fail("CombatRuntime must consume ImpactEvent once and place ImpactVFX under Effects using its normal.")
+		_fail("CombatRuntime must consume ImpactEvent once, play Explosion 05, and place it under Effects using its normal.")
+		return
+	await create_timer(1.2).timeout
+	if effects.get_node_or_null("ImpactVFX") == null:
+		_fail("Explosion 05 must remain alive long enough to play its 1.2-second main animation.")
+		return
+	await create_timer(0.11).timeout
+	await process_frame
+	if effects.get_node_or_null("ImpactVFX") != null:
+		_fail("Explosion 05 must clean itself up after its configured lifetime.")
 		return
 
 	var ranged_projectile := load("res://src/projectile.tscn").instantiate() as TankProjectile

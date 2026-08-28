@@ -4,7 +4,7 @@ extends Node3D
 class_name CombatRuntime
 
 const PROJECTILE_SCENE := preload("res://src/projectile.tscn")
-const IMPACT_VFX_SCENE := preload("res://assets/BinbunVFX/impact_explosions/effects/hit/vfx_hit_01.tscn")
+const IMPACT_VFX_SCENE := preload("res://assets/BinbunVFX/impact_explosions/effects/explosion/vfx_explosion_05.tscn")
 const TankProjectile := preload("res://src/projectile.gd")
 const ShotEvent := preload("res://src/shot_event.gd")
 const ImpactEvent := preload("res://src/impact_event.gd")
@@ -18,7 +18,7 @@ const ImpactEvent := preload("res://src/impact_event.gd")
 
 @export_category("命中呈現")
 ## 已實體化的命中特效在移除前的存活時間，單位為秒。
-@export var impact_vfx_lifetime_seconds := 0.9
+@export var impact_vfx_lifetime_seconds := 1.3
 ## 沿命中法線的偏移量，單位為公尺，用來避免視覺特效穿入表面。
 @export var impact_vfx_surface_offset := 0.05
 

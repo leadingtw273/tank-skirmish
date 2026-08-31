@@ -9,6 +9,8 @@ extends CharacterBody3D
 @export var turn_speed := 0.8
 ## 滿轉向輸入時保留的直線最高速度比例；0.5 代表降至原本的一半。
 @export_range(0.0, 1.0, 0.05) var turning_movement_speed_ratio := 0.5
+## 每次成功開砲時立即損失的目前前後移動速度比例；0.25 代表損失四分之一。
+@export_range(0.0, 1.0, 0.05) var firing_movement_speed_loss_ratio := 0.25
 ## 坦克用於換算加速反應的質量，單位為公噸。
 @export var tank_mass_tonnes := 60.0
 ## 引擎用於換算加速反應的額定輸出，單位為馬力。
@@ -183,6 +185,13 @@ func _movement_speed_limit_for_turn(turn_input: float) -> float:
 	return movement_speed * lerpf(1.0, turning_movement_speed_ratio, turn_strength)
 
 
+func _apply_firing_movement_speed_loss() -> void:
+	## 成功開砲的當下只削減線速度；保留前後方向，且不影響車身角速度。
+	var retained_speed_ratio := 1.0 - clampf(firing_movement_speed_loss_ratio, 0.0, 1.0)
+	forward_speed *= retained_speed_ratio
+	velocity *= retained_speed_ratio
+
+
 func _approach_motion_speed(
 		current_speed: float,
 		input_direction: float,
@@ -338,6 +347,7 @@ func request_fire() -> void:
 		push_error("Tank cannot fire: MuzzlePoint has no valid forward direction.")
 		return
 
+	_apply_firing_movement_speed_loss()
 	_spawn_muzzle_flash(muzzle_position, muzzle_direction)
 	var shot_muzzle_transform := muzzle_point.global_transform
 	var shot_event := ShotEvent.new(shot_muzzle_transform, muzzle_direction, get_rid())

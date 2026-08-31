@@ -238,6 +238,7 @@ func _validate_tank_inertia(instance: Node) -> bool:
 		push_error("Tank must exist before inertia can be validated")
 		return false
 	if not is_equal_approx(tank.turning_movement_speed_ratio, 0.5) \
+			or not is_equal_approx(tank.firing_movement_speed_loss_ratio, 0.25) \
 			or not is_equal_approx(tank.tank_mass_tonnes, 60.0) or not is_equal_approx(tank.engine_horsepower, 1500.0) \
 			or not is_equal_approx(tank.brake_force_kilonewtons, 240.0) or not is_equal_approx(tank.turn_response, 0.4):
 		push_error("Tank inertia exports do not match the approved defaults")
@@ -279,6 +280,21 @@ func _validate_tank_inertia(instance: Node) -> bool:
 	turn_rate = tank._approach_motion_speed(0.4, -1.0, 0.4, 0.8, 1.6, 1.0)
 	if not is_equal_approx(turn_rate, 0.0) or not is_equal_approx(tank._approach_motion_speed(turn_rate, -1.0, 0.4, 0.8, 1.6, 1.0), -0.4):
 		push_error("Tank turn reversal must brake to zero before rotating the other way")
+		return false
+	var original_angular_speed: float = tank.angular_speed
+	tank.forward_speed = -8.0
+	tank.velocity = Vector3(-8.0, 0.0, 0.0)
+	tank._apply_firing_movement_speed_loss()
+	if not is_equal_approx(tank.forward_speed, -6.0) \
+			or not tank.velocity.is_equal_approx(Vector3(-6.0, 0.0, 0.0)) \
+			or not is_equal_approx(tank.angular_speed, original_angular_speed):
+		push_error("Tank firing slowdown must reduce reverse linear speed by 25 percent without changing its direction or angular speed")
+		return false
+	tank.forward_speed = 0.0
+	tank.velocity = Vector3.ZERO
+	tank._apply_firing_movement_speed_loss()
+	if not is_zero_approx(tank.forward_speed) or not tank.velocity.is_zero_approx():
+		push_error("Tank firing slowdown must keep a stationary tank stationary")
 		return false
 	return true
 
@@ -651,10 +667,20 @@ func _validate_camera_shake(instance: Node) -> bool:
 
 	var shot_events: Array[ShotEvent] = []
 	tank.shot_event_fired.connect(func(shot_event: ShotEvent) -> void: shot_events.append(shot_event))
+	tank.forward_speed = 8.0
+	tank.velocity = tank.transform.basis * Vector3.LEFT * tank.forward_speed
+	tank.angular_speed = 0.35
+	var velocity_before_fire: Vector3 = tank.velocity
 	tank.request_fire()
-	if shot_events.size() != 1 or shake_pivot.position.is_zero_approx() or not shake_pivot.rotation.is_zero_approx():
-		push_error("Each valid controlled-tank ShotEvent must start one position-only camera shake without rotating the view")
+	if shot_events.size() != 1 or shake_pivot.position.is_zero_approx() or not shake_pivot.rotation.is_zero_approx() \
+			or not is_equal_approx(tank.forward_speed, 6.0) \
+			or not tank.velocity.is_equal_approx(velocity_before_fire * 0.75) \
+			or not is_equal_approx(tank.angular_speed, 0.35):
+		push_error("Each valid fire request must start position-only camera shake and instantly reduce only linear movement speed by 25 percent")
 		return false
+	tank.forward_speed = 0.0
+	tank.velocity = Vector3.ZERO
+	tank.angular_speed = 0.0
 	var expected_local_recoil := camera_controller.global_transform.basis.inverse() * -shot_events[0].direction
 	expected_local_recoil.y = 0.0
 	if expected_local_recoil.is_zero_approx() or shake_pivot.position.normalized().dot(expected_local_recoil.normalized()) < 0.999 \

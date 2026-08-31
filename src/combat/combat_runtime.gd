@@ -135,10 +135,13 @@ func _on_projectile_impact(impact_event: ImpactEvent) -> void:
 	var impact := IMPACT_VFX_SCENE.instantiate() as Node3D
 	impact.name = "ImpactVFX"
 	impact.set("one_shot", true)
-	impact.set("autoplay", true)
+	## 先停用自動播放，避免 GPU 粒子在命中位置與尺寸套用前就以原始倍率發射。
+	impact.set("autoplay", false)
 	effects.add_child(impact, true)
 	impact.scale = Vector3.ONE * impact_vfx_scale
 	impact.global_position = impact_event.position + impact_event.normal * impact_vfx_surface_offset
+	impact.set("autoplay", true)
+	impact.call("play")
 	get_tree().create_timer(impact_vfx_lifetime_seconds).timeout.connect(impact.queue_free)
 
 

@@ -256,18 +256,21 @@ func _validate_tread_dust(instance: Node) -> bool:
 	tank.tread_dust_lifetime_seconds = 0.7
 	tank.tread_dust_emission_amount = 40
 	tank._update_tread_dust(0.0, 0.0)
-	if left_particles.emitting or right_particles.emitting:
+	if left_particles.emitting or right_particles.emitting \
+			or not is_zero_approx(left_particles.amount_ratio) or not is_zero_approx(right_particles.amount_ratio):
 		push_error("Tread dust must stop emitting while the tank is stationary")
 		return false
 	tank._update_tread_dust(tank.movement_speed * 0.5, 0.0)
-	var half_speed_amount := left_particles.amount
-	if not left_particles.emitting or not right_particles.emitting or half_speed_amount != 20 \
+	if not left_particles.emitting or not right_particles.emitting \
+			or left_particles.amount != 40 or right_particles.amount != 40 \
+			or not is_equal_approx(left_particles.amount_ratio, 0.5) \
+			or not is_equal_approx(right_particles.amount_ratio, 0.5) \
 			or not is_equal_approx(left_particles.lifetime, 0.7):
 		push_error("Tread dust must emit from both tracks while moving forward")
 		return false
 	tank._update_tread_dust(-tank.movement_speed, 0.0)
-	if left_particles.amount <= half_speed_amount:
-		push_error("Tread dust emission amount must increase with actual linear speed")
+	if left_particles.amount != 40 or not is_equal_approx(left_particles.amount_ratio, 1.0):
+		push_error("Tread dust emission ratio must increase with actual linear speed without rebuilding the particle amount")
 		return false
 	tank._update_tread_dust(0.0, tank.turn_speed)
 	if not left_particles.emitting or not right_particles.emitting:

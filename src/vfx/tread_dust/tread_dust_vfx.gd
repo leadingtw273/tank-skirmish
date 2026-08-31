@@ -22,30 +22,48 @@ func _ready() -> void:
 
 ## 由坦克 Inspector 的設定更新特效外觀與粒子壽命。
 func set_dust_parameters(next_scale: float, next_lifetime_seconds: float, next_emission_amount: int) -> void:
-	dust_scale = maxf(next_scale, 0.1)
-	lifetime_seconds = maxf(next_lifetime_seconds, 0.1)
-	emission_amount = maxi(next_emission_amount, 1)
-	_apply_dust_parameters()
+	var resolved_scale := maxf(next_scale, 0.1)
+	var resolved_lifetime := maxf(next_lifetime_seconds, 0.1)
+	var resolved_amount := maxi(next_emission_amount, 1)
+	var parameters_changed := not is_equal_approx(dust_scale, resolved_scale) \
+		or not is_equal_approx(lifetime_seconds, resolved_lifetime) \
+		or emission_amount != resolved_amount
+	dust_scale = resolved_scale
+	lifetime_seconds = resolved_lifetime
+	emission_amount = resolved_amount
+	if parameters_changed:
+		_apply_dust_parameters()
 
 
-## 以 0 到 1 的實際運動強度控制是否發射及粒子數量；停車時不再生成新煙塵。
+## 以 0 到 1 的實際運動強度控制發射比例；不改寫粒子總量，避免加速時反覆重建粒子系統。
 func set_motion_intensity(next_intensity: float) -> void:
 	emission_intensity = clampf(next_intensity, 0.0, 1.0)
 	if dust_particles == null:
 		return
-	dust_particles.emitting = emission_intensity > 0.0
-	if dust_particles.emitting:
-		dust_particles.amount = maxi(roundi(float(emission_amount) * emission_intensity), 1)
+	if not is_equal_approx(dust_particles.amount_ratio, emission_intensity):
+		dust_particles.amount_ratio = emission_intensity
+	var should_emit := emission_intensity > 0.0
+	if dust_particles.emitting != should_emit:
+		dust_particles.emitting = should_emit
 
 
 func _apply_dust_parameters() -> void:
 	if dust_particles == null:
 		return
-	dust_particles.lifetime = maxf(lifetime_seconds, 0.1)
+	var resolved_lifetime := maxf(lifetime_seconds, 0.1)
+	if not is_equal_approx(dust_particles.lifetime, resolved_lifetime):
+		dust_particles.lifetime = resolved_lifetime
+	if dust_particles.amount != emission_amount:
+		dust_particles.amount = emission_amount
 	var process_material := dust_particles.process_material as ParticleProcessMaterial
 	if process_material == null:
 		push_error("Tread dust VFX requires a ParticleProcessMaterial.")
 		return
-	process_material.color = dust_color
-	process_material.scale_min = maxf(dust_scale * 0.65, 0.01)
-	process_material.scale_max = maxf(dust_scale, process_material.scale_min)
+	var resolved_scale_min := maxf(dust_scale * 0.65, 0.01)
+	var resolved_scale_max := maxf(dust_scale, resolved_scale_min)
+	if not process_material.color.is_equal_approx(dust_color):
+		process_material.color = dust_color
+	if not is_equal_approx(process_material.scale_min, resolved_scale_min):
+		process_material.scale_min = resolved_scale_min
+	if not is_equal_approx(process_material.scale_max, resolved_scale_max):
+		process_material.scale_max = resolved_scale_max

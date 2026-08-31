@@ -7,6 +7,14 @@ extends CharacterBody3D
 @export var movement_speed := 15.0
 ## 滿轉向輸入時車身偏航速度，單位為弧度／秒。
 @export var turn_speed := 0.8
+## 坦克用於換算加速反應的質量，單位為公噸。
+@export var tank_mass_tonnes := 60.0
+## 引擎用於換算加速反應的額定輸出，單位為馬力。
+@export var engine_horsepower := 1500.0
+## 煞車系統用於換算減速度的最大制動力，單位為千牛頓。
+@export var brake_force_kilonewtons := 240.0
+## 將線性加減速換算為車身偏航反應的係數，單位為無單位倍率。
+@export var turn_response := 0.4
 ## 在製作好的履帶動畫片段之間混合所用的秒數。
 @export var tread_animation_blend_seconds := 0.12
 ## 履帶動畫以 1 倍速播放時所對應的坦克前後線速度，單位為公尺／秒。
@@ -40,6 +48,7 @@ extends CharacterBody3D
 
 const MODEL_FORWARD_LOCAL_AXIS := Vector3.LEFT
 const MIN_AIM_DISTANCE_SQUARED := 0.001
+const TREAD_ANIMATION_MOTION_THRESHOLD := 0.01
 const TREAD_ANIMATION_REFERENCE_MODEL_SCALE := 1.7466666
 const TREAD_ANIMATION_CLIPS := {
 	"forward": &"Tank_Forward",
@@ -72,6 +81,8 @@ signal shot_event_fired(shot_event: ShotEvent)
 
 var movement_command := 0.0
 var turn_command := 0.0
+var forward_speed := 0.0
+var angular_speed := 0.0
 var tread_animation_player: AnimationPlayer
 var active_tread_animation := &""
 var tread_animation_paused := true
@@ -99,14 +110,37 @@ func _ready() -> void:
 
 
 func _physics_process(delta: float) -> void:
-	## 以模型定義的本地 -X 前方換算車身世界速度並交給碰撞滑動，再依實際前後線速度更新履帶呈現。
-	rotate_y(turn_command * turn_speed * delta)
+	## 以動力與煞車積分線／角速度，碰撞後讀回實際線速度，再讓履帶依實際動態更新。
+	var engine_acceleration := _engine_acceleration()
+	var brake_acceleration := _brake_acceleration()
+	forward_speed = _approach_motion_speed(
+		forward_speed,
+		movement_command,
+		movement_speed,
+		engine_acceleration,
+		brake_acceleration,
+		delta,
+	)
+	angular_speed = _approach_motion_speed(
+		angular_speed,
+		turn_command,
+		turn_speed,
+		engine_acceleration * turn_response,
+		brake_acceleration * turn_response,
+		delta,
+	)
+	rotate_y(angular_speed * delta)
 	var forward_direction := transform.basis * MODEL_FORWARD_LOCAL_AXIS
-	velocity = forward_direction * movement_command * movement_speed
+	velocity = forward_direction * forward_speed
 	move_and_slide()
-	var next_tread_animation := _tread_animation_for_inputs(movement_command, turn_command)
 	var actual_forward_speed := get_real_velocity().dot(forward_direction)
-	_update_tread_animation(next_tread_animation, _tread_animation_speed_scale(next_tread_animation, actual_forward_speed))
+	if get_slide_collision_count() > 0:
+		forward_speed = actual_forward_speed
+	var next_tread_animation := _tread_animation_for_motion(actual_forward_speed, angular_speed)
+	_update_tread_animation(
+		next_tread_animation,
+		_tread_animation_speed_scale(next_tread_animation, actual_forward_speed, angular_speed),
+	)
 
 
 ## 儲存介於 -1 到 1 的前進／倒退指令，供下一個物理步驟使用。
@@ -122,6 +156,35 @@ func set_turn_input(input_value: float) -> void:
 ## 回傳供 CameraController 使用且不為負值的鏡頭前視上限，單位為公尺。
 func get_max_camera_look_ahead_distance() -> float:
 	return maxf(max_camera_look_ahead_distance, 0.0)
+
+
+func _engine_acceleration() -> float:
+	## 依遊戲化馬力／質量換算直線加速度，單位為公尺／秒平方。
+	return engine_horsepower / tank_mass_tonnes * 0.08
+
+
+func _brake_acceleration() -> float:
+	## 依制動力／質量換算煞車減速度，單位為公尺／秒平方。
+	return brake_force_kilonewtons / tank_mass_tonnes
+
+
+func _braking_distance(speed: float) -> float:
+	## 回傳以目前煞車減速度估計的煞停距離，單位為公尺。
+	return speed * speed / (2.0 * _brake_acceleration())
+
+
+func _approach_motion_speed(
+		current_speed: float,
+		input_direction: float,
+		maximum_speed: float,
+		acceleration: float,
+		braking_acceleration: float,
+		delta: float,
+) -> float:
+	## 依輸入漸進逼近目標速度；反向時先以煞車精確停住，本影格不消耗剩餘時間反向。
+	if is_zero_approx(input_direction) or (not is_zero_approx(current_speed) and signf(current_speed) != signf(input_direction)):
+		return move_toward(current_speed, 0.0, braking_acceleration * delta)
+	return move_toward(current_speed, input_direction * maximum_speed, acceleration * delta)
 
 
 func _setup_tread_animations() -> void:
@@ -152,21 +215,21 @@ func _find_animation_player(node: Node) -> AnimationPlayer:
 	return null
 
 
-func _tread_animation_for_inputs(movement_input: float, turn_input: float) -> StringName:
-	## 轉向優先於前後移動，確保同時輸入時履帶呈現原地／轉彎動畫而非直行動畫。
-	if not is_zero_approx(turn_input):
-		return TREAD_ANIMATION_CLIPS["turning_left"] if turn_input > 0.0 else TREAD_ANIMATION_CLIPS["turning_right"]
-	if movement_input > 0.0:
+func _tread_animation_for_motion(actual_forward_speed: float, actual_angular_speed: float) -> StringName:
+	## 以實際角速度優先選擇履帶片段，僅在線／角速度高於門檻時持續播放。
+	if absf(actual_angular_speed) > TREAD_ANIMATION_MOTION_THRESHOLD:
+		return TREAD_ANIMATION_CLIPS["turning_left"] if actual_angular_speed > 0.0 else TREAD_ANIMATION_CLIPS["turning_right"]
+	if actual_forward_speed > TREAD_ANIMATION_MOTION_THRESHOLD:
 		return TREAD_ANIMATION_CLIPS["forward"]
-	if movement_input < 0.0:
+	if actual_forward_speed < -TREAD_ANIMATION_MOTION_THRESHOLD:
 		return TREAD_ANIMATION_CLIPS["backwards"]
 	return &""
 
 
-func _tread_animation_speed_scale(next_animation: StringName, actual_forward_speed: float) -> float:
-	## 直行以碰撞後的前後線速度和 Tank2 的等比縮放修正；原地轉向維持素材速度。
+func _tread_animation_speed_scale(next_animation: StringName, actual_forward_speed: float, actual_angular_speed: float = 0.0) -> float:
+	## 直行依碰撞後線速度與模型縮放修正；轉向依實際角速度與最高偏航速度同步。
 	if next_animation == TREAD_ANIMATION_CLIPS["turning_left"] or next_animation == TREAD_ANIMATION_CLIPS["turning_right"]:
-		return tread_animation_speed_multiplier
+		return absf(actual_angular_speed) / maxf(absf(turn_speed), 0.001) * tread_animation_speed_multiplier
 	var model_scale := maxf(absf(tank_model.scale.x), 0.001)
 	return absf(actual_forward_speed) / tread_animation_reference_speed * TREAD_ANIMATION_REFERENCE_MODEL_SCALE / model_scale * tread_animation_speed_multiplier
 

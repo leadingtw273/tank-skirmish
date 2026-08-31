@@ -132,10 +132,20 @@ func _validate(instance: Node) -> void:
 		return
 	var impact_event := impact_events[0] as ImpactEvent
 	var impact_vfx := effects.get_node_or_null("ImpactVFX") as Node3D
+	var impact_core := impact_vfx.get_node_or_null("Core") as GPUParticles3D if impact_vfx != null else null
+	var impact_core_mesh := impact_core.draw_pass_1 as SphereMesh if impact_core != null else null
+	var impact_smoke := impact_vfx.get_node_or_null("Smoke") as GPUParticles3D if impact_vfx != null else null
+	var impact_smoke_mesh := impact_smoke.draw_pass_1 as SphereMesh if impact_smoke != null else null
+	var impact_sparks := impact_vfx.get_node_or_null("Sparks") as GPUParticles3D if impact_vfx != null else null
+	var impact_sparks_mesh := impact_sparks.draw_pass_1 as QuadMesh if impact_sparks != null else null
+	var impact_decal := impact_vfx.get_node_or_null("Decal") as Decal if impact_vfx != null else null
 	if impact_event.shot_event != shot_event or impact_event.collider != target or impact_vfx == null \
 			or impact_vfx.scene_file_path != IMPACT_VFX_PATH \
 			or not bool(impact_vfx.get("one_shot")) or not bool(impact_vfx.get("autoplay")) \
-			or not impact_vfx.scale.is_equal_approx(Vector3.ONE * runtime.impact_vfx_scale) \
+			or impact_core_mesh == null or not is_equal_approx(impact_core_mesh.radius, 0.5 * runtime.impact_vfx_scale) \
+			or impact_smoke_mesh == null or not is_equal_approx(impact_smoke_mesh.radius, 0.8 * runtime.impact_vfx_scale) \
+			or impact_sparks_mesh == null or not impact_sparks_mesh.size.is_equal_approx(Vector2(0.05, 0.4) * runtime.impact_vfx_scale) \
+			or impact_decal == null or not impact_decal.size.is_equal_approx(Vector3.ONE * runtime.impact_vfx_scale) \
 			or not impact_vfx.global_position.is_equal_approx(impact_event.position + impact_event.normal * 0.05):
 		_fail("CombatRuntime must consume ImpactEvent once, play Explosion 05, and place it under Effects using its normal.")
 		return

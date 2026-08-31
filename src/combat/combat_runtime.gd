@@ -138,11 +138,51 @@ func _on_projectile_impact(impact_event: ImpactEvent) -> void:
 	## 先停用自動播放，避免 GPU 粒子在命中位置與尺寸套用前就以原始倍率發射。
 	impact.set("autoplay", false)
 	effects.add_child(impact, true)
-	impact.scale = Vector3.ONE * impact_vfx_scale
+	_apply_impact_vfx_scale(impact, impact_vfx_scale)
 	impact.global_position = impact_event.position + impact_event.normal * impact_vfx_surface_offset
 	impact.set("autoplay", true)
 	impact.call("play")
 	get_tree().create_timer(impact_vfx_lifetime_seconds).timeout.connect(impact.queue_free)
+
+
+func _apply_impact_vfx_scale(impact: Node3D, scale_factor: float) -> void:
+	## GPUParticles3D 不繼承父節點縮放；逐一複製並縮放本次爆炸的網格與運動材質，避免污染 vendor 資源。
+	for child in impact.get_children():
+		var particles := child as GPUParticles3D
+		if particles == null:
+			continue
+		var scaled_mesh := particles.draw_pass_1.duplicate(true) as Mesh if particles.draw_pass_1 != null else null
+		if scaled_mesh is SphereMesh:
+			var sphere := scaled_mesh as SphereMesh
+			var original_radius := sphere.radius
+			var original_height := sphere.height
+			if scale_factor >= 1.0:
+				sphere.height = original_height * scale_factor
+				sphere.radius = original_radius * scale_factor
+			else:
+				sphere.radius = original_radius * scale_factor
+				sphere.height = original_height * scale_factor
+		elif scaled_mesh is QuadMesh:
+			var quad := scaled_mesh as QuadMesh
+			quad.size *= scale_factor
+		if scaled_mesh != null:
+			particles.draw_pass_1 = scaled_mesh
+		var scaled_motion := particles.process_material.duplicate(true) as ParticleProcessMaterial \
+				if particles.process_material is ParticleProcessMaterial else null
+		if scaled_motion != null:
+			scaled_motion.initial_velocity_min *= scale_factor
+			scaled_motion.initial_velocity_max *= scale_factor
+			scaled_motion.damping_min *= scale_factor
+			scaled_motion.damping_max *= scale_factor
+			scaled_motion.gravity *= scale_factor
+			particles.process_material = scaled_motion
+	var decal := impact.get_node_or_null("Decal") as Decal
+	if decal != null:
+		decal.size *= scale_factor
+	var light := impact.get_node_or_null("Light") as OmniLight3D
+	if light != null:
+		light.omni_range *= scale_factor
+		light.light_size *= scale_factor
 
 
 func _basis_with_x_axis(x_axis: Vector3) -> Basis:

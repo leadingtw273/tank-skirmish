@@ -1,6 +1,7 @@
 extends SceneTree
 
 const WRAPPER_PATH := "res://src/vfx/projectiles/javelin_projectile_vfx.tscn"
+const MUZZLE_FLASH_WRAPPER_PATH := "res://src/vfx/muzzle/muzzle_flash_vfx.tscn"
 const PROJECTILE_PATH := "res://src/combat/projectile.tscn"
 const VENDOR_OVERVIEW_PATHS := [
 	"res://assets/BinbunVFX/poison_effects/poison_effects_scene.tscn",
@@ -18,6 +19,16 @@ func _init() -> void:
 			_fail("Vendor overview scene must load: %s" % overview_path)
 			return
 		overview.free()
+
+	var muzzle_flash_scene := load(MUZZLE_FLASH_WRAPPER_PATH) as PackedScene
+	var muzzle_flash := muzzle_flash_scene.instantiate() if muzzle_flash_scene != null else null
+	if muzzle_flash == null or not (muzzle_flash.get("primary_color") as Color).is_equal_approx(Color.WHITE) \
+			or not (muzzle_flash.get("secondary_color") as Color).is_equal_approx(Color(1, 0.270588, 0, 1)):
+		if muzzle_flash != null:
+			muzzle_flash.free()
+		_fail("Muzzle flash wrapper must load with the accepted vendor colors exposed on its root.")
+		return
+	muzzle_flash.free()
 
 	var wrapper_scene := load(WRAPPER_PATH) as PackedScene
 	if wrapper_scene == null:

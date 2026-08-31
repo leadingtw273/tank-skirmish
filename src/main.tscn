@@ -52,6 +52,7 @@ script = ExtResource("8_combat_runtime")
 shot_sources = [NodePath("../Tank")]
 projectiles = NodePath("Projectiles")
 effects = NodePath("Effects")
+muzzle_smoke_forward_offset = 1.0
 
 [node name="Projectiles" type="Node3D" parent="CombatRuntime"]
 

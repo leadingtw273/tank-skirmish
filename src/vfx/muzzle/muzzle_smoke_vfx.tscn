@@ -1,10 +1,30 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene format=3 uid="uid://bnjnr4tbnufa7"]
 
-[ext_resource type="PackedScene" uid="uid://qx62ju7kqejx" path="res://assets/BinbunVFX/poison_effects/effects/poison_cloud/poison_cloud_vfx_02.tscn" id="1_poison_cloud"]
+[ext_resource type="PackedScene" uid="uid://8qeybfrgq5mf" path="res://assets/BinbunVFX/smoke_effects/effects/smoke_big/smoke_big_vfx_01.tscn" id="1_smoke_big"]
 
-[node name="MuzzleSmokeVFX" instance=ExtResource("1_poison_cloud")]
+[node name="MuzzleSmokeVFX" type="Node3D" unique_id=1338827446]
+
+[node name="SmokeBigVFX_01" parent="." unique_id=1011352362 instance=ExtResource("1_smoke_big")]
+emission_amount = 15
+lifetime = 1.0
+explosiveness = 1.0
+primary_color = Color(0.41598046, 0.41598043, 0.4159804, 0.9098039)
+secondary_color = Color(0.59717613, 0.59717613, 0.5971761, 0.7254902)
+cloud_density = 0.3
+normal_strength = 0.25
+
+[node name="Smoke" parent="SmokeBigVFX_01" index="0" unique_id=678660858]
+amount = 15
+lifetime = 1.0
 one_shot = true
-autoplay = true
-primary_color = Color(0.45, 0.4, 0.32, 1)
-secondary_color = Color(0.3, 0.27, 0.22, 1)
-tertiary_color = Color(0.18, 0.16, 0.13, 1)
+explosiveness = 1.0
+transform_align_channel_filter = 1
+
+[node name="ShadowCaster" parent="SmokeBigVFX_01" index="1" unique_id=1252508049]
+emitting = false
+amount = 7
+lifetime = 1.0
+one_shot = true
+explosiveness = 1.0
+
+[editable path="SmokeBigVFX_01"]

@@ -64,12 +64,17 @@ func _validate(instance: Node) -> void:
 		return
 	projectile.set_physics_process(false)
 	var muzzle_smoke := effects.get_node_or_null("MuzzleSmokeVFX") as Node3D
+	var smoke_particles := muzzle_smoke.get_node_or_null("SmokeBigVFX_01/Smoke") as GPUParticles3D if muzzle_smoke != null else null
+	var smoke_process_material := smoke_particles.process_material as ParticleProcessMaterial if smoke_particles != null else null
 	var expected_smoke_position := shot_event.muzzle_transform.origin + shot_event.direction * runtime.muzzle_smoke_forward_offset
 	if muzzle_smoke == null or muzzle_smoke.scene_file_path != MUZZLE_SMOKE_VFX_PATH \
-			or not bool(muzzle_smoke.get("one_shot")) or not bool(muzzle_smoke.get("autoplay")) \
+			or smoke_particles == null or not smoke_particles.one_shot or not smoke_particles.emitting \
+			or smoke_particles.transform_align != GPUParticles3D.TRANSFORM_ALIGN_Z_BILLBOARD \
+			or smoke_particles.local_coords or smoke_process_material == null \
 			or not muzzle_smoke.global_position.is_equal_approx(expected_smoke_position) \
-			or not is_equal_approx(muzzle_smoke.global_transform.basis.x.length(), runtime.muzzle_smoke_scale):
-		_fail("CombatRuntime must place one scaled, one-shot, autoplay MuzzleSmokeVFX ahead of the muzzle under Effects.")
+			or not is_equal_approx(muzzle_smoke.global_transform.basis.x.length(), runtime.muzzle_smoke_scale) \
+			or not smoke_process_material.direction.is_equal_approx(shot_event.direction):
+		_fail("CombatRuntime must restart one scaled, one-shot, camera-facing MuzzleSmokeVFX whose private process material emits along the world shot direction.")
 		return
 	var smoke_world_position := muzzle_smoke.global_position
 	tank.global_position += Vector3(10, 0, 0)

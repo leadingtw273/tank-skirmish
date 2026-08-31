@@ -25,7 +25,7 @@ const ImpactEvent := preload("res://src/combat/impact_event.gd")
 
 @export_category("砲口硝煙")
 ## 砲口硝煙的均勻尺寸倍率，單位為原廠特效比例倍數。
-@export_range(0.1, 5.0, 0.05) var muzzle_smoke_scale := 0.65
+@export_range(0.1, 5.0, 0.05) var muzzle_smoke_scale := 1.0
 ## 砲口硝煙沿 ShotEvent 射擊方向的前方偏移量，單位為公尺。
 @export var muzzle_smoke_forward_offset := 0.9
 ## 已實體化砲口硝煙在釋放前的存活時間，單位為秒。
@@ -106,12 +106,23 @@ func _spawn_muzzle_smoke(shot_event: ShotEvent) -> void:
 		push_error("CombatRuntime could not instantiate muzzle_smoke_vfx.tscn.")
 		return
 	muzzle_smoke.name = "MuzzleSmokeVFX"
-	muzzle_smoke.set("one_shot", true)
-	muzzle_smoke.set("autoplay", true)
+	var smoke_particles := muzzle_smoke.get_node_or_null("SmokeBigVFX_01/Smoke") as GPUParticles3D
+	var source_process_material := smoke_particles.process_material as ParticleProcessMaterial if smoke_particles != null else null
+	if smoke_particles == null or source_process_material == null:
+		push_error("CombatRuntime requires MuzzleSmokeVFX to provide Smoke particles with a ParticleProcessMaterial.")
+		muzzle_smoke.queue_free()
+		return
+	## 每次開火各自持有運動材質，讓煙霧用世界射擊方向移動；面片仍可獨立完整面向攝影機。
+	var smoke_process_material := source_process_material.duplicate(true) as ParticleProcessMaterial
+	smoke_process_material.direction = shot_event.direction
+	smoke_particles.process_material = smoke_process_material
+	smoke_particles.one_shot = true
 	effects.add_child(muzzle_smoke, true)
 	var smoke_position := shot_event.muzzle_transform.origin + shot_event.direction * muzzle_smoke_forward_offset
-	var smoke_basis := _basis_with_x_axis(shot_event.direction).scaled(Vector3.ONE * muzzle_smoke_scale)
+	var smoke_basis := Basis.IDENTITY.scaled(Vector3.ONE * muzzle_smoke_scale)
 	muzzle_smoke.global_transform = Transform3D(smoke_basis, smoke_position)
+	## One Shot 播放結束後會自行把 Emitting 切回 false；每次生成時由執行期明確重新播放。
+	smoke_particles.restart()
 	get_tree().create_timer(muzzle_smoke_lifetime_seconds).timeout.connect(muzzle_smoke.queue_free)
 
 

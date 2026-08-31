@@ -7,6 +7,8 @@ extends CharacterBody3D
 @export var movement_speed := 15.0
 ## 滿轉向輸入時車身偏航速度，單位為弧度／秒。
 @export var turn_speed := 0.8
+## 滿轉向輸入時保留的直線最高速度比例；0.5 代表降至原本的一半。
+@export_range(0.0, 1.0, 0.05) var turning_movement_speed_ratio := 0.5
 ## 坦克用於換算加速反應的質量，單位為公噸。
 @export var tank_mass_tonnes := 60.0
 ## 引擎用於換算加速反應的額定輸出，單位為馬力。
@@ -113,13 +115,15 @@ func _physics_process(delta: float) -> void:
 	## 以動力與煞車積分線／角速度，碰撞後讀回實際線速度，再讓履帶依實際動態更新。
 	var engine_acceleration := _engine_acceleration()
 	var brake_acceleration := _brake_acceleration()
+	var movement_speed_limit := _movement_speed_limit_for_turn(turn_command)
 	forward_speed = _approach_motion_speed(
 		forward_speed,
 		movement_command,
-		movement_speed,
+		movement_speed_limit,
 		engine_acceleration,
 		brake_acceleration,
 		delta,
+		true,
 	)
 	angular_speed = _approach_motion_speed(
 		angular_speed,
@@ -173,18 +177,27 @@ func _braking_distance(speed: float) -> float:
 	return speed * speed / (2.0 * _brake_acceleration())
 
 
+func _movement_speed_limit_for_turn(turn_input: float) -> float:
+	## 依轉向輸入強度平滑降低直線速度上限；滿轉向時使用 Inspector 設定的保留比例。
+	var turn_strength := clampf(absf(turn_input), 0.0, 1.0)
+	return movement_speed * lerpf(1.0, turning_movement_speed_ratio, turn_strength)
+
+
 func _approach_motion_speed(
 		current_speed: float,
 		input_direction: float,
 		maximum_speed: float,
-		acceleration: float,
-		braking_acceleration: float,
-		delta: float,
+	acceleration: float,
+	braking_acceleration: float,
+	delta: float,
+	brake_when_above_limit: bool = false,
 ) -> float:
-	## 依輸入漸進逼近目標速度；反向時先以煞車精確停住，本影格不消耗剩餘時間反向。
+	## 依輸入漸進逼近目標；反向先煞停，線速度超過轉彎上限時可選擇以煞車反應降速。
 	if is_zero_approx(input_direction) or (not is_zero_approx(current_speed) and signf(current_speed) != signf(input_direction)):
 		return move_toward(current_speed, 0.0, braking_acceleration * delta)
-	return move_toward(current_speed, input_direction * maximum_speed, acceleration * delta)
+	var target_speed := input_direction * maximum_speed
+	var response := braking_acceleration if brake_when_above_limit and absf(current_speed) > absf(target_speed) else acceleration
+	return move_toward(current_speed, target_speed, response * delta)
 
 
 func _setup_tread_animations() -> void:

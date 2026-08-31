@@ -3,6 +3,7 @@ extends SceneTree
 const WRAPPER_PATH := "res://src/vfx/projectiles/javelin_projectile_vfx.tscn"
 const MUZZLE_FLASH_WRAPPER_PATH := "res://src/vfx/muzzle/muzzle_flash_vfx.tscn"
 const IMPACT_WRAPPER_PATH := "res://src/vfx/impacts/impact_explosion_vfx.tscn"
+const TREAD_DUST_WRAPPER_PATH := "res://src/vfx/tread_dust/tread_dust_vfx.tscn"
 const PROJECTILE_PATH := "res://src/combat/projectile.tscn"
 const VENDOR_OVERVIEW_PATHS := [
 	"res://assets/BinbunVFX/poison_effects/poison_effects_scene.tscn",
@@ -42,6 +43,18 @@ func _init() -> void:
 		_fail("Impact wrapper must load with the accepted Explosion 05 colors exposed on its root.")
 		return
 	impact.free()
+
+	var tread_dust_scene := load(TREAD_DUST_WRAPPER_PATH) as PackedScene
+	var tread_dust := tread_dust_scene.instantiate() if tread_dust_scene != null else null
+	var expected_dust_color := Color(0.45, 0.38, 0.29, 0.62)
+	var dust_particles := tread_dust.get_node_or_null("DustParticles") as GPUParticles3D if tread_dust != null else null
+	if tread_dust == null or dust_particles == null or dust_particles.local_coords or dust_particles.emitting \
+			or not (tread_dust.get("dust_color") as Color).is_equal_approx(expected_dust_color):
+		if tread_dust != null:
+			tread_dust.free()
+		_fail("Tread dust wrapper must expose sand-brown world-space particles that begin stopped.")
+		return
+	tread_dust.free()
 
 	var wrapper_scene := load(WRAPPER_PATH) as PackedScene
 	if wrapper_scene == null:

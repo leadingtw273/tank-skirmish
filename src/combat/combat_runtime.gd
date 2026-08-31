@@ -4,7 +4,7 @@ extends Node3D
 class_name CombatRuntime
 
 const PROJECTILE_SCENE := preload("res://src/combat/projectile.tscn")
-const IMPACT_VFX_SCENE := preload("res://assets/BinbunVFX/impact_explosions/effects/explosion/vfx_explosion_05.tscn")
+const IMPACT_VFX_SCENE := preload("res://src/vfx/impacts/impact_explosion_vfx.tscn")
 const MUZZLE_SMOKE_VFX_SCENE := preload("res://src/vfx/muzzle/muzzle_smoke_vfx.tscn")
 const TankProjectile := preload("res://src/combat/projectile.gd")
 const ShotEvent := preload("res://src/combat/shot_event.gd")

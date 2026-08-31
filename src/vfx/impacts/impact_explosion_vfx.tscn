@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="PackedScene" uid="uid://shl0iw1x775r" path="res://assets/BinbunVFX/impact_explosions/effects/explosion/vfx_explosion_05.tscn" id="1_explosion"]
+
+[node name="ImpactExplosionVFX" instance=ExtResource("1_explosion")]
+primary_color = Color(0.890196, 0.627451, 0.0901961, 1)
+secondary_color = Color(0.890196, 0, 0.152941, 1)
+tertiary_color = Color(0.215686, 0.215686, 0.180392, 1)
+light_color = Color(0.890196, 0.627451, 0.0901961, 1)
+light_energy = 4.0

@@ -2,6 +2,7 @@ extends SceneTree
 
 const WRAPPER_PATH := "res://src/vfx/projectiles/javelin_projectile_vfx.tscn"
 const MUZZLE_FLASH_WRAPPER_PATH := "res://src/vfx/muzzle/muzzle_flash_vfx.tscn"
+const IMPACT_WRAPPER_PATH := "res://src/vfx/impacts/impact_explosion_vfx.tscn"
 const PROJECTILE_PATH := "res://src/combat/projectile.tscn"
 const VENDOR_OVERVIEW_PATHS := [
 	"res://assets/BinbunVFX/poison_effects/poison_effects_scene.tscn",
@@ -29,6 +30,18 @@ func _init() -> void:
 		_fail("Muzzle flash wrapper must load with the accepted vendor colors exposed on its root.")
 		return
 	muzzle_flash.free()
+
+	var impact_scene := load(IMPACT_WRAPPER_PATH) as PackedScene
+	var impact := impact_scene.instantiate() if impact_scene != null else null
+	if impact == null \
+			or not (impact.get("primary_color") as Color).is_equal_approx(Color(0.890196, 0.627451, 0.0901961, 1)) \
+			or not (impact.get("secondary_color") as Color).is_equal_approx(Color(0.890196, 0, 0.152941, 1)) \
+			or not (impact.get("tertiary_color") as Color).is_equal_approx(Color(0.215686, 0.215686, 0.180392, 1)):
+		if impact != null:
+			impact.free()
+		_fail("Impact wrapper must load with the accepted Explosion 05 colors exposed on its root.")
+		return
+	impact.free()
 
 	var wrapper_scene := load(WRAPPER_PATH) as PackedScene
 	if wrapper_scene == null:

@@ -2,6 +2,7 @@ extends SceneTree
 
 const MAIN_SCENE := "res://src/main.tscn"
 const MUZZLE_SMOKE_VFX_PATH := "res://src/vfx/muzzle/muzzle_smoke_vfx.tscn"
+const IMPACT_VFX_PATH := "res://src/vfx/impacts/impact_explosion_vfx.tscn"
 const ShotEvent := preload("res://src/combat/shot_event.gd")
 const ImpactEvent := preload("res://src/combat/impact_event.gd")
 const CombatRuntime := preload("res://src/combat/combat_runtime.gd")
@@ -131,7 +132,7 @@ func _validate(instance: Node) -> void:
 	var impact_event := impact_events[0] as ImpactEvent
 	var impact_vfx := effects.get_node_or_null("ImpactVFX") as Node3D
 	if impact_event.shot_event != shot_event or impact_event.collider != target or impact_vfx == null \
-			or impact_vfx.scene_file_path != "res://assets/BinbunVFX/impact_explosions/effects/explosion/vfx_explosion_05.tscn" \
+			or impact_vfx.scene_file_path != IMPACT_VFX_PATH \
 			or not bool(impact_vfx.get("one_shot")) or not bool(impact_vfx.get("autoplay")) \
 			or not impact_vfx.global_position.is_equal_approx(impact_event.position + impact_event.normal * 0.05):
 		_fail("CombatRuntime must consume ImpactEvent once, play Explosion 05, and place it under Effects using its normal.")

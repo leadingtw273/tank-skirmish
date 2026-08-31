@@ -121,6 +121,7 @@ func _validate(instance: Node) -> void:
 	instance.add_child(target)
 	await physics_frame
 	var impact_events: Array[ImpactEvent] = []
+	runtime.impact_vfx_scale = 1.75
 	projectile.impact_detected.connect(func(impact_event: ImpactEvent) -> void: impact_events.append(impact_event))
 	projectile.global_position = Vector3(295, 2, 300)
 	projectile.direction = Vector3.RIGHT
@@ -134,6 +135,7 @@ func _validate(instance: Node) -> void:
 	if impact_event.shot_event != shot_event or impact_event.collider != target or impact_vfx == null \
 			or impact_vfx.scene_file_path != IMPACT_VFX_PATH \
 			or not bool(impact_vfx.get("one_shot")) or not bool(impact_vfx.get("autoplay")) \
+			or not impact_vfx.scale.is_equal_approx(Vector3.ONE * runtime.impact_vfx_scale) \
 			or not impact_vfx.global_position.is_equal_approx(impact_event.position + impact_event.normal * 0.05):
 		_fail("CombatRuntime must consume ImpactEvent once, play Explosion 05, and place it under Effects using its normal.")
 		return

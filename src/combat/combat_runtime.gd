@@ -18,6 +18,8 @@ const ImpactEvent := preload("res://src/combat/impact_event.gd")
 @export var effects: Node3D
 
 @export_category("命中呈現")
+## 命中爆炸特效的等比例尺寸倍率；1.0 代表 wrapper 製作時大小。
+@export_range(0.1, 10.0, 0.05) var impact_vfx_scale := 1.0
 ## 已實體化的命中特效在移除前的存活時間，單位為秒。
 @export var impact_vfx_lifetime_seconds := 1.3
 ## 沿命中法線的偏移量，單位為公尺，用來避免視覺特效穿入表面。
@@ -135,6 +137,7 @@ func _on_projectile_impact(impact_event: ImpactEvent) -> void:
 	impact.set("one_shot", true)
 	impact.set("autoplay", true)
 	effects.add_child(impact, true)
+	impact.scale = Vector3.ONE * impact_vfx_scale
 	impact.global_position = impact_event.position + impact_event.normal * impact_vfx_surface_offset
 	get_tree().create_timer(impact_vfx_lifetime_seconds).timeout.connect(impact.queue_free)
 

@@ -246,9 +246,13 @@ func _validate_tread_dust(instance: Node) -> bool:
 			or left_dust.position.y <= 0.0 or right_dust.position.y <= 0.0:
 		push_error("Tank must create left and right tread dust sources near the track contact positions")
 		return false
-	var left_particles := left_dust.get_node_or_null("DustParticles") as GPUParticles3D
-	var right_particles := right_dust.get_node_or_null("DustParticles") as GPUParticles3D
-	if left_particles == null or right_particles == null or left_particles.local_coords or right_particles.local_coords:
+	var left_particles := left_dust.get_node_or_null("SmokeThinVFX_01/Smoke") as GPUParticles3D
+	var right_particles := right_dust.get_node_or_null("SmokeThinVFX_01/Smoke") as GPUParticles3D
+	var left_shadow := left_dust.get_node_or_null("SmokeThinVFX_01/ShadowCaster") as GPUParticles3D
+	var right_shadow := right_dust.get_node_or_null("SmokeThinVFX_01/ShadowCaster") as GPUParticles3D
+	if left_particles == null or right_particles == null or left_shadow == null or right_shadow == null \
+			or left_particles.local_coords or right_particles.local_coords \
+			or left_shadow.local_coords or right_shadow.local_coords:
 		push_error("Tread dust particles must use world coordinates after emission")
 		return false
 	tank.tread_dust_activation_speed = 0.15
@@ -256,20 +260,27 @@ func _validate_tread_dust(instance: Node) -> bool:
 	tank.tread_dust_lifetime_seconds = 0.7
 	tank.tread_dust_emission_amount = 40
 	tank._update_tread_dust(0.0, 0.0)
-	if left_particles.emitting or right_particles.emitting \
-			or not is_zero_approx(left_particles.amount_ratio) or not is_zero_approx(right_particles.amount_ratio):
+	if left_particles.emitting or right_particles.emitting or left_shadow.emitting or right_shadow.emitting \
+			or not is_zero_approx(left_particles.amount_ratio) or not is_zero_approx(right_particles.amount_ratio) \
+			or not is_zero_approx(left_shadow.amount_ratio) or not is_zero_approx(right_shadow.amount_ratio):
 		push_error("Tread dust must stop emitting while the tank is stationary")
 		return false
 	tank._update_tread_dust(tank.movement_speed * 0.5, 0.0)
 	if not left_particles.emitting or not right_particles.emitting \
+			or not left_shadow.emitting or not right_shadow.emitting \
 			or left_particles.amount != 40 or right_particles.amount != 40 \
+			or left_shadow.amount != 20 or right_shadow.amount != 20 \
 			or not is_equal_approx(left_particles.amount_ratio, 0.5) \
 			or not is_equal_approx(right_particles.amount_ratio, 0.5) \
+			or not is_equal_approx(left_shadow.amount_ratio, 0.5) \
+			or not is_equal_approx(right_shadow.amount_ratio, 0.5) \
 			or not is_equal_approx(left_particles.lifetime, 0.7):
 		push_error("Tread dust must emit from both tracks while moving forward")
 		return false
 	tank._update_tread_dust(-tank.movement_speed, 0.0)
-	if left_particles.amount != 40 or not is_equal_approx(left_particles.amount_ratio, 1.0):
+	if left_particles.amount != 40 or left_shadow.amount != 20 \
+			or not is_equal_approx(left_particles.amount_ratio, 1.0) \
+			or not is_equal_approx(left_shadow.amount_ratio, 1.0):
 		push_error("Tread dust emission ratio must increase with actual linear speed without rebuilding the particle amount")
 		return false
 	tank._update_tread_dust(0.0, tank.turn_speed)

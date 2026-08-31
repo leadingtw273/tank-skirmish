@@ -1,5 +1,8 @@
-## 管理單一履帶接地點的沙土煙塵；由 TankController 依實際移動速度更新，不判斷地面種類。
+## 管理單一履帶接地點的 SmokeThinVFX_01 煙塵；由 TankController 依實際移動速度更新。
 extends Node3D
+
+## 將 SmokeThin 原始六公尺面片縮到接近既有履帶煙塵大小的基準倍率。
+const VENDOR_SCALE_FACTOR := 0.2
 
 ## 煙塵粒子的等比尺寸倍率。
 @export_range(0.1, 4.0, 0.05) var dust_scale := 0.85
@@ -7,15 +10,18 @@ extends Node3D
 @export_range(0.1, 5.0, 0.05) var lifetime_seconds := 1.2
 ## 滿移動強度時，同時維持的煙塵粒子數量。
 @export_range(1, 128, 1) var emission_amount := 28
-## 預設為沙土灰褐色的煙塵顏色，避免使用毒霧綠色。
-@export var dust_color := Color(0.45, 0.38, 0.29, 0.62)
+## SmokeThin 使用的主色；次色與第三色會保留同色系並逐步加深。
+@export var dust_color := Color(0.35, 0.35, 0.35, 1.0)
 
-@onready var dust_particles: GPUParticles3D = $DustParticles
+@onready var smoke_effect: Node3D = $SmokeThinVFX_01
+@onready var dust_particles: GPUParticles3D = $SmokeThinVFX_01/Smoke
+@onready var shadow_particles: GPUParticles3D = $SmokeThinVFX_01/ShadowCaster
 
 var emission_intensity := 0.0
 
 
 func _ready() -> void:
+	_prepare_vendor_instance()
 	_apply_dust_parameters()
 	set_motion_intensity(0.0)
 
@@ -35,35 +41,48 @@ func set_dust_parameters(next_scale: float, next_lifetime_seconds: float, next_e
 		_apply_dust_parameters()
 
 
-## 以 0 到 1 的實際運動強度控制發射比例；不改寫粒子總量，避免加速時反覆重建粒子系統。
+## 以 0 到 1 的實際運動強度控制 SmokeThin 主煙與陰影粒子的發射比例。
 func set_motion_intensity(next_intensity: float) -> void:
 	emission_intensity = clampf(next_intensity, 0.0, 1.0)
-	if dust_particles == null:
-		return
-	if not is_equal_approx(dust_particles.amount_ratio, emission_intensity):
-		dust_particles.amount_ratio = emission_intensity
 	var should_emit := emission_intensity > 0.0
-	if dust_particles.emitting != should_emit:
-		dust_particles.emitting = should_emit
+	for particles in _particle_nodes():
+		if not is_equal_approx(particles.amount_ratio, emission_intensity):
+			particles.amount_ratio = emission_intensity
+		if particles.emitting != should_emit:
+			particles.emitting = should_emit
+
+
+## 複製會在執行期調整的 vendor 材質，避免左右履帶共用同一份素材資源。
+func _prepare_vendor_instance() -> void:
+	for particles in _particle_nodes():
+		particles.local_coords = false
+		particles.emitting = false
+		particles.amount_ratio = 0.0
+		if particles.material_override != null:
+			particles.material_override = particles.material_override.duplicate(true)
 
 
 func _apply_dust_parameters() -> void:
-	if dust_particles == null:
+	if smoke_effect == null:
 		return
+	var resolved_scale := maxf(dust_scale, 0.1) * VENDOR_SCALE_FACTOR
 	var resolved_lifetime := maxf(lifetime_seconds, 0.1)
-	if not is_equal_approx(dust_particles.lifetime, resolved_lifetime):
-		dust_particles.lifetime = resolved_lifetime
-	if dust_particles.amount != emission_amount:
-		dust_particles.amount = emission_amount
-	var process_material := dust_particles.process_material as ParticleProcessMaterial
-	if process_material == null:
-		push_error("Tread dust VFX requires a ParticleProcessMaterial.")
-		return
-	var resolved_scale_min := maxf(dust_scale * 0.65, 0.01)
-	var resolved_scale_max := maxf(dust_scale, resolved_scale_min)
-	if not process_material.color.is_equal_approx(dust_color):
-		process_material.color = dust_color
-	if not is_equal_approx(process_material.scale_min, resolved_scale_min):
-		process_material.scale_min = resolved_scale_min
-	if not is_equal_approx(process_material.scale_max, resolved_scale_max):
-		process_material.scale_max = resolved_scale_max
+	var resolved_amount := maxi(emission_amount, 1)
+	smoke_effect.scale = Vector3.ONE * resolved_scale
+	if smoke_effect.get("emission_amount") != resolved_amount:
+		smoke_effect.set("emission_amount", resolved_amount)
+	if not is_equal_approx(float(smoke_effect.get("lifetime")), resolved_lifetime):
+		smoke_effect.set("lifetime", resolved_lifetime)
+	smoke_effect.set("local_coords", false)
+	smoke_effect.set("primary_color", dust_color)
+	smoke_effect.set("secondary_color", dust_color.darkened(0.16))
+	smoke_effect.set("tertiary_color", dust_color.darkened(0.43))
+
+
+func _particle_nodes() -> Array[GPUParticles3D]:
+	var result: Array[GPUParticles3D] = []
+	if dust_particles != null:
+		result.append(dust_particles)
+	if shadow_particles != null:
+		result.append(shadow_particles)
+	return result

@@ -237,9 +237,16 @@ func _validate_tank_inertia(instance: Node) -> bool:
 	if tank == null:
 		push_error("Tank must exist before inertia can be validated")
 		return false
-	if not is_equal_approx(tank.tank_mass_tonnes, 60.0) or not is_equal_approx(tank.engine_horsepower, 1500.0) \
+	if not is_equal_approx(tank.turning_movement_speed_ratio, 0.5) \
+			or not is_equal_approx(tank.tank_mass_tonnes, 60.0) or not is_equal_approx(tank.engine_horsepower, 1500.0) \
 			or not is_equal_approx(tank.brake_force_kilonewtons, 240.0) or not is_equal_approx(tank.turn_response, 0.4):
 		push_error("Tank inertia exports do not match the approved defaults")
+		return false
+	if not is_equal_approx(tank._movement_speed_limit_for_turn(0.0), tank.movement_speed) \
+			or not is_equal_approx(tank._movement_speed_limit_for_turn(0.5), tank.movement_speed * 0.75) \
+			or not is_equal_approx(tank._movement_speed_limit_for_turn(1.0), tank.movement_speed * 0.5) \
+			or not is_equal_approx(tank._movement_speed_limit_for_turn(-1.0), tank.movement_speed * 0.5):
+		push_error("Tank turning must progressively lower the movement speed limit to 50 percent")
 		return false
 	if absf(tank._engine_acceleration() - 2.0) > 0.0001 or absf(tank._brake_acceleration() - 4.0) > 0.0001 \
 			or absf(tank._braking_distance(10.0) - 12.5) > 0.0001:
@@ -256,6 +263,10 @@ func _validate_tank_inertia(instance: Node) -> bool:
 	decelerating_speed = tank._approach_motion_speed(decelerating_speed, 0.0, 10.0, 2.0, 4.0, 1.0)
 	if not is_equal_approx(decelerating_speed, 2.0) or not is_equal_approx(tank._approach_motion_speed(decelerating_speed, 0.0, 10.0, 2.0, 4.0, 1.0), 0.0):
 		push_error("Tank release must continue decreasing without overshooting zero")
+		return false
+	if not is_equal_approx(tank._approach_motion_speed(10.0, 1.0, 5.0, 2.0, 4.0, 1.0, true), 6.0) \
+			or not is_equal_approx(tank._approach_motion_speed(0.4, 0.5, 0.4, 0.8, 1.6, 0.125), 0.3):
+		push_error("Tank turning speed cap must brake linear motion without changing angular response")
 		return false
 	speed = tank._approach_motion_speed(2.0, -1.0, 10.0, 2.0, 4.0, 1.0)
 	if not is_equal_approx(speed, 0.0) or not is_equal_approx(tank._approach_motion_speed(speed, -1.0, 10.0, 2.0, 4.0, 1.0), -2.0):

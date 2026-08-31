@@ -250,7 +250,10 @@ func _validate_tread_dust(instance: Node) -> bool:
 	var right_particles := right_dust.get_node_or_null("SmokeThinVFX_01/Smoke") as GPUParticles3D
 	var left_shadow := left_dust.get_node_or_null("SmokeThinVFX_01/ShadowCaster") as GPUParticles3D
 	var right_shadow := right_dust.get_node_or_null("SmokeThinVFX_01/ShadowCaster") as GPUParticles3D
+	var left_effect := left_dust.get_node_or_null("SmokeThinVFX_01") as Node3D
+	var right_effect := right_dust.get_node_or_null("SmokeThinVFX_01") as Node3D
 	if left_particles == null or right_particles == null or left_shadow == null or right_shadow == null \
+			or left_effect == null or right_effect == null \
 			or left_particles.local_coords or right_particles.local_coords \
 			or left_shadow.local_coords or right_shadow.local_coords:
 		push_error("Tread dust particles must use world coordinates after emission")
@@ -260,6 +263,11 @@ func _validate_tread_dust(instance: Node) -> bool:
 	tank.tread_dust_lifetime_seconds = 0.7
 	tank.tread_dust_emission_amount = 40
 	tank._update_tread_dust(0.0, 0.0)
+	if not is_equal_approx(left_effect.scale.x, 1.1 * 0.2) \
+			or not is_equal_approx(right_effect.scale.x, 1.1 * 0.2) \
+			or left_particles.material_override == right_particles.material_override:
+		push_error("Tread dust must preserve Tank scale settings and isolate mutable materials per track")
+		return false
 	if left_particles.emitting or right_particles.emitting or left_shadow.emitting or right_shadow.emitting \
 			or not is_zero_approx(left_particles.amount_ratio) or not is_zero_approx(right_particles.amount_ratio) \
 			or not is_zero_approx(left_shadow.amount_ratio) or not is_zero_approx(right_shadow.amount_ratio):

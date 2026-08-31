@@ -75,7 +75,7 @@ const ShotEvent := preload("res://src/combat/shot_event.gd")
 ## 履帶停止後，既有煙塵自然散去所需的秒數。
 @export_range(0.1, 5.0, 0.05) var tread_dust_lifetime_seconds := 1.2
 ## 履帶全速移動時，每側煙塵來源維持的粒子數量。
-@export_range(1, 128, 1) var tread_dust_emission_amount := 28
+@export_range(2, 128, 1) var tread_dust_emission_amount := 28
 ## 實際線速度或角速度達到此值時才開始產生煙塵。
 @export_range(0.01, 5.0, 0.01) var tread_dust_activation_speed := 0.15
 

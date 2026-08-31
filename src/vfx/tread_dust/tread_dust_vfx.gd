@@ -9,7 +9,7 @@ const VENDOR_SCALE_FACTOR := 0.2
 ## 每顆煙塵從生成到自然消散的秒數。
 @export_range(0.1, 5.0, 0.05) var lifetime_seconds := 1.2
 ## 滿移動強度時，同時維持的煙塵粒子數量。
-@export_range(1, 128, 1) var emission_amount := 28
+@export_range(2, 128, 1) var emission_amount := 28
 ## SmokeThin 使用的主色；次色與第三色會保留同色系並逐步加深。
 @export var dust_color := Color(0.35, 0.35, 0.35, 1.0)
 
@@ -30,7 +30,7 @@ func _ready() -> void:
 func set_dust_parameters(next_scale: float, next_lifetime_seconds: float, next_emission_amount: int) -> void:
 	var resolved_scale := maxf(next_scale, 0.1)
 	var resolved_lifetime := maxf(next_lifetime_seconds, 0.1)
-	var resolved_amount := maxi(next_emission_amount, 1)
+	var resolved_amount := maxi(next_emission_amount, 2)
 	var parameters_changed := not is_equal_approx(dust_scale, resolved_scale) \
 		or not is_equal_approx(lifetime_seconds, resolved_lifetime) \
 		or emission_amount != resolved_amount
@@ -59,7 +59,9 @@ func _prepare_vendor_instance() -> void:
 		particles.emitting = false
 		particles.amount_ratio = 0.0
 		if particles.material_override != null:
-			particles.material_override = particles.material_override.duplicate(true)
+			particles.material_override = particles.material_override.duplicate(false)
+	# 不繼承展示場景可能使用的暫停預覽值；履帶煙塵在遊戲內一律以正常時間播放。
+	smoke_effect.set("speed_scale", 1.0)
 
 
 func _apply_dust_parameters() -> void:
@@ -67,7 +69,7 @@ func _apply_dust_parameters() -> void:
 		return
 	var resolved_scale := maxf(dust_scale, 0.1) * VENDOR_SCALE_FACTOR
 	var resolved_lifetime := maxf(lifetime_seconds, 0.1)
-	var resolved_amount := maxi(emission_amount, 1)
+	var resolved_amount := maxi(emission_amount, 2)
 	smoke_effect.scale = Vector3.ONE * resolved_scale
 	if smoke_effect.get("emission_amount") != resolved_amount:
 		smoke_effect.set("emission_amount", resolved_amount)

@@ -4,7 +4,7 @@ extends Node3D
 class_name CombatRuntime
 
 const PROJECTILE_SCENE := preload("res://src/combat/projectile.tscn")
-const IMPACT_VFX_SCENE := preload("res://assets/BinbunVFX/impact_explosions/effects/explosion/vfx_explosion_05.tscn")
+const IMPACT_VFX_SCENE := preload("res://src/vfx/impacts/impact_explosion_vfx.tscn")
 const MUZZLE_SMOKE_VFX_SCENE := preload("res://src/vfx/muzzle/muzzle_smoke_vfx.tscn")
 const TankProjectile := preload("res://src/combat/projectile.gd")
 const ShotEvent := preload("res://src/combat/shot_event.gd")
@@ -18,6 +18,8 @@ const ImpactEvent := preload("res://src/combat/impact_event.gd")
 @export var effects: Node3D
 
 @export_category("命中呈現")
+## 命中爆炸特效的等比例尺寸倍率；1.0 代表 wrapper 製作時大小。
+@export_range(0.1, 10.0, 0.05) var impact_vfx_scale := 1.0
 ## 已實體化的命中特效在移除前的存活時間，單位為秒。
 @export var impact_vfx_lifetime_seconds := 1.3
 ## 沿命中法線的偏移量，單位為公尺，用來避免視覺特效穿入表面。
@@ -25,7 +27,7 @@ const ImpactEvent := preload("res://src/combat/impact_event.gd")
 
 @export_category("砲口硝煙")
 ## 砲口硝煙的均勻尺寸倍率，單位為原廠特效比例倍數。
-@export_range(0.1, 5.0, 0.05) var muzzle_smoke_scale := 0.65
+@export_range(0.1, 5.0, 0.05) var muzzle_smoke_scale := 1.0
 ## 砲口硝煙沿 ShotEvent 射擊方向的前方偏移量，單位為公尺。
 @export var muzzle_smoke_forward_offset := 0.9
 ## 已實體化砲口硝煙在釋放前的存活時間，單位為秒。
@@ -106,12 +108,23 @@ func _spawn_muzzle_smoke(shot_event: ShotEvent) -> void:
 		push_error("CombatRuntime could not instantiate muzzle_smoke_vfx.tscn.")
 		return
 	muzzle_smoke.name = "MuzzleSmokeVFX"
-	muzzle_smoke.set("one_shot", true)
-	muzzle_smoke.set("autoplay", true)
+	var smoke_particles := muzzle_smoke.get_node_or_null("SmokeBigVFX_01/Smoke") as GPUParticles3D
+	var source_process_material := smoke_particles.process_material as ParticleProcessMaterial if smoke_particles != null else null
+	if smoke_particles == null or source_process_material == null:
+		push_error("CombatRuntime requires MuzzleSmokeVFX to provide Smoke particles with a ParticleProcessMaterial.")
+		muzzle_smoke.queue_free()
+		return
+	## 每次開火各自持有運動材質，讓煙霧用世界射擊方向移動；面片仍可獨立完整面向攝影機。
+	var smoke_process_material := source_process_material.duplicate(true) as ParticleProcessMaterial
+	smoke_process_material.direction = shot_event.direction
+	smoke_particles.process_material = smoke_process_material
+	smoke_particles.one_shot = true
 	effects.add_child(muzzle_smoke, true)
 	var smoke_position := shot_event.muzzle_transform.origin + shot_event.direction * muzzle_smoke_forward_offset
-	var smoke_basis := _basis_with_x_axis(shot_event.direction).scaled(Vector3.ONE * muzzle_smoke_scale)
+	var smoke_basis := Basis.IDENTITY.scaled(Vector3.ONE * muzzle_smoke_scale)
 	muzzle_smoke.global_transform = Transform3D(smoke_basis, smoke_position)
+	## One Shot 播放結束後會自行把 Emitting 切回 false；每次生成時由執行期明確重新播放。
+	smoke_particles.restart()
 	get_tree().create_timer(muzzle_smoke_lifetime_seconds).timeout.connect(muzzle_smoke.queue_free)
 
 
@@ -122,10 +135,56 @@ func _on_projectile_impact(impact_event: ImpactEvent) -> void:
 	var impact := IMPACT_VFX_SCENE.instantiate() as Node3D
 	impact.name = "ImpactVFX"
 	impact.set("one_shot", true)
-	impact.set("autoplay", true)
+	## 先停用自動播放，避免 GPU 粒子在命中位置與尺寸套用前就以原始倍率發射。
+	impact.set("autoplay", false)
 	effects.add_child(impact, true)
+	_apply_impact_vfx_scale(impact, impact_vfx_scale)
 	impact.global_position = impact_event.position + impact_event.normal * impact_vfx_surface_offset
+	impact.set("autoplay", true)
+	impact.call("play")
 	get_tree().create_timer(impact_vfx_lifetime_seconds).timeout.connect(impact.queue_free)
+
+
+func _apply_impact_vfx_scale(impact: Node3D, scale_factor: float) -> void:
+	## GPUParticles3D 不繼承父節點縮放；逐一複製並縮放本次爆炸的網格與運動材質，避免污染 vendor 資源。
+	for child in impact.get_children():
+		var particles := child as GPUParticles3D
+		if particles == null:
+			continue
+		var scaled_mesh := particles.draw_pass_1.duplicate(true) as Mesh if particles.draw_pass_1 != null else null
+		if scaled_mesh is SphereMesh:
+			var sphere := scaled_mesh as SphereMesh
+			var original_radius := sphere.radius
+			var original_height := sphere.height
+			if scale_factor >= 1.0:
+				sphere.height = original_height * scale_factor
+				sphere.radius = original_radius * scale_factor
+			else:
+				sphere.radius = original_radius * scale_factor
+				sphere.height = original_height * scale_factor
+		elif scaled_mesh is QuadMesh:
+			var quad := scaled_mesh as QuadMesh
+			quad.size *= scale_factor
+		if scaled_mesh != null:
+			particles.draw_pass_1 = scaled_mesh
+		var scaled_motion := particles.process_material.duplicate(true) as ParticleProcessMaterial \
+				if particles.process_material is ParticleProcessMaterial else null
+		if scaled_motion != null:
+			scaled_motion.initial_velocity_min *= scale_factor
+			scaled_motion.initial_velocity_max *= scale_factor
+			scaled_motion.damping_min *= scale_factor
+			scaled_motion.damping_max *= scale_factor
+			scaled_motion.gravity *= scale_factor
+			particles.process_material = scaled_motion
+	var decal := impact.get_node_or_null("Decal") as Decal
+	if decal != null:
+		decal.size *= scale_factor
+	var light := impact.get_node_or_null("Light") as OmniLight3D
+	if light != null:
+		light.omni_range *= scale_factor
+		light.light_size *= scale_factor
+		## 保留圓形漫反射照明，但關閉道路材質上的異形鏡面倒影。
+		light.light_specular = 0.0
 
 
 func _basis_with_x_axis(x_axis: Vector3) -> Basis:

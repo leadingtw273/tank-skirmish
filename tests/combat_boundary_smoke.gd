@@ -2,6 +2,7 @@ extends SceneTree
 
 const MAIN_SCENE := "res://src/main.tscn"
 const MUZZLE_SMOKE_VFX_PATH := "res://src/vfx/muzzle/muzzle_smoke_vfx.tscn"
+const IMPACT_VFX_PATH := "res://src/vfx/impacts/impact_explosion_vfx.tscn"
 const ShotEvent := preload("res://src/combat/shot_event.gd")
 const ImpactEvent := preload("res://src/combat/impact_event.gd")
 const CombatRuntime := preload("res://src/combat/combat_runtime.gd")
@@ -64,12 +65,17 @@ func _validate(instance: Node) -> void:
 		return
 	projectile.set_physics_process(false)
 	var muzzle_smoke := effects.get_node_or_null("MuzzleSmokeVFX") as Node3D
+	var smoke_particles := muzzle_smoke.get_node_or_null("SmokeBigVFX_01/Smoke") as GPUParticles3D if muzzle_smoke != null else null
+	var smoke_process_material := smoke_particles.process_material as ParticleProcessMaterial if smoke_particles != null else null
 	var expected_smoke_position := shot_event.muzzle_transform.origin + shot_event.direction * runtime.muzzle_smoke_forward_offset
 	if muzzle_smoke == null or muzzle_smoke.scene_file_path != MUZZLE_SMOKE_VFX_PATH \
-			or not bool(muzzle_smoke.get("one_shot")) or not bool(muzzle_smoke.get("autoplay")) \
+			or smoke_particles == null or not smoke_particles.one_shot or not smoke_particles.emitting \
+			or smoke_particles.transform_align != GPUParticles3D.TRANSFORM_ALIGN_Z_BILLBOARD \
+			or smoke_particles.local_coords or smoke_process_material == null \
 			or not muzzle_smoke.global_position.is_equal_approx(expected_smoke_position) \
-			or not is_equal_approx(muzzle_smoke.global_transform.basis.x.length(), runtime.muzzle_smoke_scale):
-		_fail("CombatRuntime must place one scaled, one-shot, autoplay MuzzleSmokeVFX ahead of the muzzle under Effects.")
+			or not is_equal_approx(muzzle_smoke.global_transform.basis.x.length(), runtime.muzzle_smoke_scale) \
+			or not smoke_process_material.direction.is_equal_approx(shot_event.direction):
+		_fail("CombatRuntime must restart one scaled, one-shot, camera-facing MuzzleSmokeVFX whose private process material emits along the world shot direction.")
 		return
 	var smoke_world_position := muzzle_smoke.global_position
 	tank.global_position += Vector3(10, 0, 0)
@@ -115,6 +121,7 @@ func _validate(instance: Node) -> void:
 	instance.add_child(target)
 	await physics_frame
 	var impact_events: Array[ImpactEvent] = []
+	runtime.impact_vfx_scale = 1.75
 	projectile.impact_detected.connect(func(impact_event: ImpactEvent) -> void: impact_events.append(impact_event))
 	projectile.global_position = Vector3(295, 2, 300)
 	projectile.direction = Vector3.RIGHT
@@ -125,9 +132,22 @@ func _validate(instance: Node) -> void:
 		return
 	var impact_event := impact_events[0] as ImpactEvent
 	var impact_vfx := effects.get_node_or_null("ImpactVFX") as Node3D
+	var impact_core := impact_vfx.get_node_or_null("Core") as GPUParticles3D if impact_vfx != null else null
+	var impact_core_mesh := impact_core.draw_pass_1 as SphereMesh if impact_core != null else null
+	var impact_smoke := impact_vfx.get_node_or_null("Smoke") as GPUParticles3D if impact_vfx != null else null
+	var impact_smoke_mesh := impact_smoke.draw_pass_1 as SphereMesh if impact_smoke != null else null
+	var impact_sparks := impact_vfx.get_node_or_null("Sparks") as GPUParticles3D if impact_vfx != null else null
+	var impact_sparks_mesh := impact_sparks.draw_pass_1 as QuadMesh if impact_sparks != null else null
+	var impact_decal := impact_vfx.get_node_or_null("Decal") as Decal if impact_vfx != null else null
+	var impact_light := impact_vfx.get_node_or_null("Light") as OmniLight3D if impact_vfx != null else null
 	if impact_event.shot_event != shot_event or impact_event.collider != target or impact_vfx == null \
-			or impact_vfx.scene_file_path != "res://assets/BinbunVFX/impact_explosions/effects/explosion/vfx_explosion_05.tscn" \
+			or impact_vfx.scene_file_path != IMPACT_VFX_PATH \
 			or not bool(impact_vfx.get("one_shot")) or not bool(impact_vfx.get("autoplay")) \
+			or impact_core_mesh == null or not is_equal_approx(impact_core_mesh.radius, 0.5 * runtime.impact_vfx_scale) \
+			or impact_smoke_mesh == null or not is_equal_approx(impact_smoke_mesh.radius, 0.8 * runtime.impact_vfx_scale) \
+			or impact_sparks_mesh == null or not impact_sparks_mesh.size.is_equal_approx(Vector2(0.05, 0.4) * runtime.impact_vfx_scale) \
+			or impact_decal == null or not impact_decal.size.is_equal_approx(Vector3.ONE * runtime.impact_vfx_scale) \
+			or impact_light == null or not is_zero_approx(impact_light.light_specular) \
 			or not impact_vfx.global_position.is_equal_approx(impact_event.position + impact_event.normal * 0.05):
 		_fail("CombatRuntime must consume ImpactEvent once, play Explosion 05, and place it under Effects using its normal.")
 		return

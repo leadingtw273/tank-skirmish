@@ -48,11 +48,15 @@ func _init() -> void:
 	var tread_dust := tread_dust_scene.instantiate() if tread_dust_scene != null else null
 	var expected_dust_color := Color(0.45, 0.38, 0.29, 0.62)
 	var dust_particles := tread_dust.get_node_or_null("DustParticles") as GPUParticles3D if tread_dust != null else null
+	var dust_mesh := dust_particles.draw_pass_1 as QuadMesh if dust_particles != null else null
+	var dust_material := dust_mesh.material as StandardMaterial3D if dust_mesh != null else null
 	if tread_dust == null or dust_particles == null or dust_particles.local_coords or dust_particles.emitting \
+			or dust_material == null or dust_material.billboard_mode != BaseMaterial3D.BILLBOARD_ENABLED \
+			or not dust_material.billboard_keep_scale \
 			or not (tread_dust.get("dust_color") as Color).is_equal_approx(expected_dust_color):
 		if tread_dust != null:
 			tread_dust.free()
-		_fail("Tread dust wrapper must expose sand-brown world-space particles that begin stopped.")
+		_fail("Tread dust wrapper must expose camera-facing sand-brown world-space particles that begin stopped.")
 		return
 	tread_dust.free()
 

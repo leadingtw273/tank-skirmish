@@ -141,6 +141,9 @@ func _validate_instance(instance: Node) -> void:
 	if not _validate_tread_animations(instance):
 		quit(1)
 		return
+	if not _validate_tank_inertia(instance):
+		quit(1)
+		return
 	if not await _validate_turret_aiming(instance):
 		quit(1)
 		return
@@ -189,11 +192,11 @@ func _validate_tread_animations(instance: Node) -> bool:
 			return false
 		if not _tread_clip_moves_track_bones(tank, animation, clip):
 			return false
-	if tank._tread_animation_for_inputs(1.0, 1.0) != &"Tank_TurningLeft" or tank._tread_animation_for_inputs(-1.0, -1.0) != &"Tank_TurningRight":
-		push_error("Tank turning tread clips must take priority over movement clips")
+	if tank._tread_animation_for_motion(15.0, 0.8) != &"Tank_TurningLeft" or tank._tread_animation_for_motion(-15.0, -0.8) != &"Tank_TurningRight":
+		push_error("Tank turning tread clips must take priority over actual forward motion")
 		return false
-	if tank._tread_animation_for_inputs(1.0, 0.0) != &"Tank_Forward" or tank._tread_animation_for_inputs(-1.0, 0.0) != &"Tank_Backwards" or not tank._tread_animation_for_inputs(0.0, 0.0).is_empty():
-		push_error("Tank tread clip selection does not match movement input")
+	if tank._tread_animation_for_motion(15.0, 0.0) != &"Tank_Forward" or tank._tread_animation_for_motion(-15.0, 0.0) != &"Tank_Backwards" or not tank._tread_animation_for_motion(0.01, 0.0).is_empty() or not tank._tread_animation_for_motion(0.0, 0.01).is_empty():
+		push_error("Tank tread clip selection must use actual motion and stop at its threshold")
 		return false
 
 	var original_model_scale: Vector3 = tank.tank_model.scale
@@ -210,7 +213,7 @@ func _validate_tread_animations(instance: Node) -> bool:
 	tank.tank_model.scale = original_model_scale
 	tank.tread_animation_speed_multiplier = 0.8
 	if not is_equal_approx(tank._tread_animation_speed_scale(&"Tank_Forward", 15.0), 0.8) \
-			or not is_equal_approx(tank._tread_animation_speed_scale(&"Tank_TurningLeft", 15.0), 0.8):
+			or not is_equal_approx(tank._tread_animation_speed_scale(&"Tank_TurningLeft", 15.0, tank.turn_speed), 0.8):
 		push_error("Tank tread animation speed multiplier must affect straight and turning clips")
 		return false
 
@@ -225,6 +228,46 @@ func _validate_tread_animations(instance: Node) -> bool:
 	tank._update_tread_animation(&"Tank_Forward", 0.8)
 	if not is_equal_approx(tank.tread_animation_player.speed_scale, 0.8):
 		push_error("Tank resumed tread animation must apply its current playback speed")
+		return false
+	return true
+
+
+func _validate_tank_inertia(instance: Node) -> bool:
+	var tank := instance.get_node_or_null("Tank")
+	if tank == null:
+		push_error("Tank must exist before inertia can be validated")
+		return false
+	if not is_equal_approx(tank.tank_mass_tonnes, 60.0) or not is_equal_approx(tank.engine_horsepower, 1500.0) \
+			or not is_equal_approx(tank.brake_force_kilonewtons, 240.0) or not is_equal_approx(tank.turn_response, 0.4):
+		push_error("Tank inertia exports do not match the approved defaults")
+		return false
+	if absf(tank._engine_acceleration() - 2.0) > 0.0001 or absf(tank._brake_acceleration() - 4.0) > 0.0001 \
+			or absf(tank._braking_distance(10.0) - 12.5) > 0.0001:
+		push_error("Tank inertia formulas do not match the approved physical model")
+		return false
+	var speed: float = tank._approach_motion_speed(0.0, 1.0, 10.0, 2.0, 4.0, 1.0)
+	if not is_equal_approx(speed, 2.0) or not is_equal_approx(tank._approach_motion_speed(9.5, 1.0, 10.0, 2.0, 4.0, 1.0), 10.0):
+		push_error("Tank acceleration must progress without exceeding its speed cap")
+		return false
+	var decelerating_speed: float = tank._approach_motion_speed(10.0, 0.0, 10.0, 2.0, 4.0, 1.0)
+	if not is_equal_approx(decelerating_speed, 6.0):
+		push_error("Tank release must brake monotonically to an exact stop")
+		return false
+	decelerating_speed = tank._approach_motion_speed(decelerating_speed, 0.0, 10.0, 2.0, 4.0, 1.0)
+	if not is_equal_approx(decelerating_speed, 2.0) or not is_equal_approx(tank._approach_motion_speed(decelerating_speed, 0.0, 10.0, 2.0, 4.0, 1.0), 0.0):
+		push_error("Tank release must continue decreasing without overshooting zero")
+		return false
+	speed = tank._approach_motion_speed(2.0, -1.0, 10.0, 2.0, 4.0, 1.0)
+	if not is_equal_approx(speed, 0.0) or not is_equal_approx(tank._approach_motion_speed(speed, -1.0, 10.0, 2.0, 4.0, 1.0), -2.0):
+		push_error("Tank reversal must spend one physics frame braking to zero before accelerating backward")
+		return false
+	var turn_rate: float = tank._approach_motion_speed(0.0, 1.0, 0.4, 0.8, 1.6, 1.0)
+	if not is_equal_approx(turn_rate, 0.4) or not is_equal_approx(tank._approach_motion_speed(turn_rate, 0.0, 0.4, 0.8, 1.6, 1.0), 0.0):
+		push_error("Tank turn inertia must use the scaled acceleration and braking response")
+		return false
+	turn_rate = tank._approach_motion_speed(0.4, -1.0, 0.4, 0.8, 1.6, 1.0)
+	if not is_equal_approx(turn_rate, 0.0) or not is_equal_approx(tank._approach_motion_speed(turn_rate, -1.0, 0.4, 0.8, 1.6, 1.0), -0.4):
+		push_error("Tank turn reversal must brake to zero before rotating the other way")
 		return false
 	return true
 

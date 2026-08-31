@@ -24,7 +24,7 @@ func _init() -> void:
 	var muzzle_flash_scene := load(MUZZLE_FLASH_WRAPPER_PATH) as PackedScene
 	var muzzle_flash := muzzle_flash_scene.instantiate() if muzzle_flash_scene != null else null
 	if muzzle_flash == null or not (muzzle_flash.get("primary_color") as Color).is_equal_approx(Color.WHITE) \
-			or not (muzzle_flash.get("secondary_color") as Color).is_equal_approx(Color(1, 0.270588, 0, 1)):
+			or not (muzzle_flash.get("secondary_color") as Color).is_equal_approx(Color(0.7462728, 0.52009934, 0.25385872, 1)):
 		if muzzle_flash != null:
 			muzzle_flash.free()
 		_fail("Muzzle flash wrapper must load with the accepted vendor colors exposed on its root.")

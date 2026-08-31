@@ -1,9 +1,6 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene format=3 uid="uid://crt2kcv8t172f"]
 
 [ext_resource type="PackedScene" uid="uid://xgeh1g0m76wq" path="res://assets/BinbunVFX/muzzle_flash/effects/big_flash/big_flash_05.tscn" id="1_big_flash"]
 
-[node name="MuzzleFlashVFX" instance=ExtResource("1_big_flash")]
-primary_color = Color(1, 1, 1, 1)
-secondary_color = Color(1, 0.270588, 0, 1)
-light_color = Color(1, 1, 1, 1)
-light_energy = 2.0
+[node name="MuzzleFlashVFX" unique_id=149750054 instance=ExtResource("1_big_flash")]
+secondary_color = Color(0.7462728, 0.52009934, 0.25385872, 1)

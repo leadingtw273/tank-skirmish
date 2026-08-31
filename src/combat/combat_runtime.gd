@@ -183,6 +183,8 @@ func _apply_impact_vfx_scale(impact: Node3D, scale_factor: float) -> void:
 	if light != null:
 		light.omni_range *= scale_factor
 		light.light_size *= scale_factor
+		## 保留圓形漫反射照明，但關閉道路材質上的異形鏡面倒影。
+		light.light_specular = 0.0
 
 
 func _basis_with_x_axis(x_axis: Vector3) -> Basis:

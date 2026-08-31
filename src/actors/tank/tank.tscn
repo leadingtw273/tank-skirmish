@@ -1,25 +1,35 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene format=3 uid="uid://ccc8ikhmdmsj4"]
 
-[ext_resource type="PackedScene" path="res://assets/models/tank/tank2.glb" id="1_tank"]
-[ext_resource type="Script" path="res://src/actors/tank/tank_controller.gd" id="2_controller"]
+[ext_resource type="PackedScene" uid="uid://dkdqyx2hu7t5q" path="res://assets/models/tank/tank2.glb" id="1_tank"]
+[ext_resource type="Script" uid="uid://degeyxnuj5p0k" path="res://src/actors/tank/tank_controller.gd" id="2_controller"]
 
 [sub_resource type="BoxShape3D" id="TankCollisionShape"]
-size = Vector3(13.8953796, 3.631687, 7.9327138)
+size = Vector3(13.89538, 3.631687, 7.932714)
 
-[node name="Tank" type="CharacterBody3D"]
+[node name="Tank" type="CharacterBody3D" unique_id=714117663]
 script = ExtResource("2_controller")
+movement_speed = 10.0
+turn_speed = 0.4
+tread_animation_reference_speed = 3.5
+tread_animation_speed_multiplier = 2.5
+turret_turn_speed = 1.0
+gun_pitch_speed = 0.5
+visual_recoil_distance = 0.2
+visual_recoil_return_seconds = 0.26
+max_camera_look_ahead_distance = 35.0
+muzzle_flash_scale = 2.0
 
-[node name="VisualRecoilPivot" type="Node3D" parent="."]
+[node name="VisualRecoilPivot" type="Node3D" parent="." unique_id=1266528764]
 
-[node name="Tank2" parent="VisualRecoilPivot" instance=ExtResource("1_tank")]
-scale = Vector3(1.7466666, 1.7466666, 1.7466666)
+[node name="Tank2" parent="VisualRecoilPivot" unique_id=335246973 instance=ExtResource("1_tank")]
+transform = Transform3D(1.7466666, 0, 0, 0, 1.7466666, 0, 0, 0, 1.7466666, 0, 0, 0)
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-position = Vector3(0, 1.8158436, 0)
+[node name="TurretPivot" type="Node3D" parent="VisualRecoilPivot" unique_id=657590319]
+
+[node name="GunPitchPivot" type="Node3D" parent="VisualRecoilPivot/TurretPivot" unique_id=634056423]
+
+[node name="MuzzlePoint" type="Marker3D" parent="VisualRecoilPivot/TurretPivot/GunPitchPivot" unique_id=1738130953]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1666503493]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8158436, 0)
 shape = SubResource("TankCollisionShape")
-
-[node name="TurretPivot" type="Node3D" parent="VisualRecoilPivot"]
-
-[node name="GunPitchPivot" type="Node3D" parent="VisualRecoilPivot/TurretPivot"]
-
-[node name="MuzzlePoint" type="Marker3D" parent="VisualRecoilPivot/TurretPivot/GunPitchPivot"]

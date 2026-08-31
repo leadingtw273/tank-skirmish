@@ -4,6 +4,7 @@ const WRAPPER_PATH := "res://src/vfx/projectiles/javelin_projectile_vfx.tscn"
 const MUZZLE_FLASH_WRAPPER_PATH := "res://src/vfx/muzzle/muzzle_flash_vfx.tscn"
 const IMPACT_WRAPPER_PATH := "res://src/vfx/impacts/impact_explosion_vfx.tscn"
 const TREAD_DUST_WRAPPER_PATH := "res://src/vfx/tread_dust/tread_dust_vfx.tscn"
+const TREAD_DUST_VENDOR_PATH := "res://assets/BinbunVFX/smoke_effects/effects/smoke_thin/smoke_thin_vfx_01.tscn"
 const PROJECTILE_PATH := "res://src/combat/projectile.tscn"
 const VENDOR_OVERVIEW_PATHS := [
 	"res://assets/BinbunVFX/poison_effects/poison_effects_scene.tscn",
@@ -46,17 +47,29 @@ func _init() -> void:
 
 	var tread_dust_scene := load(TREAD_DUST_WRAPPER_PATH) as PackedScene
 	var tread_dust := tread_dust_scene.instantiate() if tread_dust_scene != null else null
-	var expected_dust_color := Color(0.45, 0.38, 0.29, 0.62)
-	var dust_particles := tread_dust.get_node_or_null("DustParticles") as GPUParticles3D if tread_dust != null else null
-	var dust_mesh := dust_particles.draw_pass_1 as QuadMesh if dust_particles != null else null
-	var dust_material := dust_mesh.material as StandardMaterial3D if dust_mesh != null else null
-	if tread_dust == null or dust_particles == null or dust_particles.local_coords or dust_particles.emitting \
-			or dust_material == null or dust_material.billboard_mode != BaseMaterial3D.BILLBOARD_ENABLED \
-			or not dust_material.billboard_keep_scale \
+	if tread_dust == null:
+		_fail("Tread dust wrapper scene must load.")
+		return
+	root.add_child(tread_dust)
+	await process_frame
+	tread_dust.set_dust_parameters(1.1, 0.7, 40)
+	var expected_dust_color := Color(0.35, 0.35, 0.35, 1.0)
+	var smoke_thin := tread_dust.get_node_or_null("SmokeThinVFX_01")
+	var dust_particles := tread_dust.get_node_or_null("SmokeThinVFX_01/Smoke") as GPUParticles3D
+	var shadow_particles := tread_dust.get_node_or_null("SmokeThinVFX_01/ShadowCaster") as GPUParticles3D
+	var dust_material := dust_particles.material_override as ShaderMaterial if dust_particles != null else null
+	if smoke_thin == null or smoke_thin.scene_file_path != TREAD_DUST_VENDOR_PATH \
+			or dust_particles == null or shadow_particles == null \
+			or dust_particles.local_coords or shadow_particles.local_coords \
+			or dust_particles.emitting or shadow_particles.emitting \
+			or not is_equal_approx(dust_particles.speed_scale, 1.0) \
+			or not is_equal_approx(shadow_particles.speed_scale, 1.0) \
+			or dust_material == null \
+			or not is_equal_approx(float(dust_material.get_shader_parameter("time_scale")), 1.0) \
+			or not is_equal_approx(smoke_thin.scale.x, 1.1 * 0.2) \
 			or not (tread_dust.get("dust_color") as Color).is_equal_approx(expected_dust_color):
-		if tread_dust != null:
-			tread_dust.free()
-		_fail("Tread dust wrapper must expose camera-facing sand-brown world-space particles that begin stopped.")
+		tread_dust.free()
+		_fail("Tread dust wrapper must instance stopped world-space SmokeThinVFX_01 particles.")
 		return
 	tread_dust.free()
 

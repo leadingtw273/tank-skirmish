@@ -6,6 +6,8 @@ const TREAD_DUST_SCENE := preload("res://src/vfx/tread_dust/tread_dust_vfx.tscn"
 @export_category("履帶煙塵")
 ## 套用至每個接地點煙塵的等比粒子尺寸倍率。
 @export_range(0.1, 4.0, 0.05) var tread_dust_scale := 0.85
+## 每顆煙塵出生時相對於完整尺寸的比例；提高可避免寬履帶從小點開始冒煙。
+@export_range(0.1, 1.0, 0.01) var tread_dust_initial_size_ratio := 0.65
 ## 接觸停止後，既有煙塵自然散去所需的秒數。
 @export_range(0.1, 5.0, 0.05) var tread_dust_lifetime_seconds := 1.2
 ## 滿運動強度時，每個接地點持續維持的粒子數量。
@@ -41,7 +43,13 @@ func consume_track_contact(
 			return
 	var resolved_normal := ground_normal.normalized() if not ground_normal.is_zero_approx() else Vector3.UP
 	emitter.global_position = world_position + resolved_normal * maxf(surface_normal_offset, 0.0)
-	emitter.call("set_dust_parameters", tread_dust_scale, tread_dust_lifetime_seconds, tread_dust_emission_amount)
+	emitter.call(
+		"set_dust_parameters",
+		tread_dust_scale,
+		tread_dust_initial_size_ratio,
+		tread_dust_lifetime_seconds,
+		tread_dust_emission_amount,
+	)
 	var emission_intensity := clampf(intensity, 0.0, 1.0) if source_motion_speed >= tread_dust_activation_speed else 0.0
 	emitter.call("set_motion_intensity", emission_intensity)
 

@@ -50,17 +50,26 @@ func _init() -> void:
 
 	var tread_dust_scene := load(TREAD_DUST_WRAPPER_PATH) as PackedScene
 	var tread_dust := tread_dust_scene.instantiate() if tread_dust_scene != null else null
+	var vendor_tread_dust_scene := load(TREAD_DUST_VENDOR_PATH) as PackedScene
+	var vendor_tread_dust := vendor_tread_dust_scene.instantiate() if vendor_tread_dust_scene != null else null
 	if tread_dust == null:
 		_fail("Tread dust wrapper scene must load.")
 		return
 	root.add_child(tread_dust)
 	await process_frame
-	tread_dust.set_dust_parameters(1.1, 0.7, 40)
+	tread_dust.set_dust_parameters(1.1, 0.65, 0.7, 40)
 	var expected_dust_color := Color(0.35, 0.35, 0.35, 1.0)
 	var smoke_thin := tread_dust.get_node_or_null("SmokeThinVFX_01")
 	var dust_particles := tread_dust.get_node_or_null("SmokeThinVFX_01/Smoke") as GPUParticles3D
 	var shadow_particles := tread_dust.get_node_or_null("SmokeThinVFX_01/ShadowCaster") as GPUParticles3D
 	var dust_material := dust_particles.material_override as ShaderMaterial if dust_particles != null else null
+	var dust_process_material := dust_particles.process_material as ParticleProcessMaterial if dust_particles != null else null
+	var shadow_process_material := shadow_particles.process_material as ParticleProcessMaterial if shadow_particles != null else null
+	var dust_scale_curve: Curve = dust_process_material.scale_curve.curve if dust_process_material != null and dust_process_material.scale_curve != null else null
+	var shadow_scale_curve: Curve = shadow_process_material.scale_curve.curve if shadow_process_material != null and shadow_process_material.scale_curve != null else null
+	var vendor_dust_particles := vendor_tread_dust.get_node_or_null("Smoke") as GPUParticles3D if vendor_tread_dust != null else null
+	var vendor_process_material := vendor_dust_particles.process_material as ParticleProcessMaterial if vendor_dust_particles != null else null
+	var vendor_scale_curve: Curve = vendor_process_material.scale_curve.curve if vendor_process_material != null and vendor_process_material.scale_curve != null else null
 	var vendor_material := load(TREAD_DUST_VENDOR_MATERIAL_PATH) as ShaderMaterial
 	if smoke_thin == null or smoke_thin.scene_file_path != TREAD_DUST_VENDOR_PATH \
 			or dust_particles == null or shadow_particles == null \
@@ -82,11 +91,18 @@ func _init() -> void:
 			or vendor_material.get_shader_parameter("proximity_fade") != true \
 			or not is_equal_approx(float(dust_material.get_shader_parameter("time_scale")), 1.0) \
 			or not is_equal_approx(smoke_thin.scale.x, 1.1 * 0.2) \
+			or dust_scale_curve == null or not is_equal_approx(dust_scale_curve.get_point_position(0).y, 0.65) \
+			or shadow_scale_curve == null or not is_equal_approx(shadow_scale_curve.get_point_position(0).y, 0.65) \
+			or vendor_scale_curve == null or dust_scale_curve == vendor_scale_curve \
+			or not is_equal_approx(vendor_scale_curve.get_point_position(0).y, 0.29213488) \
 			or not (tread_dust.get("dust_color") as Color).is_equal_approx(expected_dust_color):
 		tread_dust.free()
+		if vendor_tread_dust != null:
+			vendor_tread_dust.free()
 		_fail("Tread dust wrapper must instance stopped world-space SmokeThinVFX_01 particles.")
 		return
 	tread_dust.free()
+	vendor_tread_dust.free()
 
 	var wrapper_scene := load(WRAPPER_PATH) as PackedScene
 	if wrapper_scene == null:

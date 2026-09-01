@@ -1,4 +1,4 @@
-## 管理單一履帶接地點的 SmokeThinVFX_01 煙塵；由 TankController 依實際移動速度更新。
+## 管理單一履帶接地點的 SmokeThinVFX_01 煙塵；由世界層 SurfaceEffects 依接地互動更新。
 extends Node3D
 
 ## 將 SmokeThin 原始六公尺面片縮到接近既有履帶煙塵大小的基準倍率。
@@ -29,7 +29,7 @@ func _ready() -> void:
 	set_motion_intensity(0.0)
 
 
-## 由坦克 Inspector 的設定更新特效外觀與粒子壽命。
+## 由 SurfaceEffects 的設定更新特效外觀與粒子壽命。
 func set_dust_parameters(next_scale: float, next_lifetime_seconds: float, next_emission_amount: int) -> void:
 	var resolved_scale := maxf(next_scale, 0.1)
 	var resolved_lifetime := maxf(next_lifetime_seconds, 0.1)

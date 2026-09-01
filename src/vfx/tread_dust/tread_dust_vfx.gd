@@ -3,6 +3,9 @@ extends Node3D
 
 ## 將 SmokeThin 原始六公尺面片縮到接近既有履帶煙塵大小的基準倍率。
 const VENDOR_SCALE_FACTOR := 0.2
+const SMOKE_BILLBOARD_SHADER := preload("res://src/vfx/tread_dust/smoke_thin_billboard.gdshader")
+const SMOKE_BILLBOARD_PARAMETER := &"billboard"
+const SMOKE_PROXIMITY_FADE_PARAMETER := &"proximity_fade"
 
 ## 煙塵粒子的等比尺寸倍率。
 @export_range(0.1, 4.0, 0.05) var dust_scale := 0.85
@@ -60,6 +63,14 @@ func _prepare_vendor_instance() -> void:
 		particles.amount_ratio = 0.0
 		if particles.material_override != null:
 			particles.material_override = particles.material_override.duplicate(false)
+	# 履帶專用 Shader 自行完成保留縮放的 billboard；關閉粒子層對齊，避免兩層重複旋轉。
+	dust_particles.transform_align = GPUParticles3D.TRANSFORM_ALIGN_DISABLED
+	var smoke_material := dust_particles.material_override as ShaderMaterial
+	if smoke_material != null:
+		smoke_material.shader = SMOKE_BILLBOARD_SHADER
+		smoke_material.set_shader_parameter(SMOKE_BILLBOARD_PARAMETER, true)
+		# 展示素材的貼面淡出會把貼近履帶與地面的煙塵吃掉；履帶 wrapper 不使用此效果。
+		smoke_material.set_shader_parameter(SMOKE_PROXIMITY_FADE_PARAMETER, false)
 	# 不繼承展示場景可能使用的暫停預覽值；履帶煙塵在遊戲內一律以正常時間播放。
 	smoke_effect.set("speed_scale", 1.0)
 

@@ -5,6 +5,9 @@ const MUZZLE_FLASH_WRAPPER_PATH := "res://src/vfx/muzzle/muzzle_flash_vfx.tscn"
 const IMPACT_WRAPPER_PATH := "res://src/vfx/impacts/impact_explosion_vfx.tscn"
 const TREAD_DUST_WRAPPER_PATH := "res://src/vfx/tread_dust/tread_dust_vfx.tscn"
 const TREAD_DUST_VENDOR_PATH := "res://assets/BinbunVFX/smoke_effects/effects/smoke_thin/smoke_thin_vfx_01.tscn"
+const TREAD_DUST_VENDOR_MATERIAL_PATH := "res://assets/BinbunVFX/smoke_effects/src/material/smoke_thin/smoke_thin_01.tres"
+const TREAD_DUST_VENDOR_SHADER_PATH := "res://assets/BinbunVFX/smoke_effects/src/shader/smoke.gdshader"
+const TREAD_DUST_BILLBOARD_SHADER_PATH := "res://src/vfx/tread_dust/smoke_thin_billboard.gdshader"
 const PROJECTILE_PATH := "res://src/combat/projectile.tscn"
 const VENDOR_OVERVIEW_PATHS := [
 	"res://assets/BinbunVFX/poison_effects/poison_effects_scene.tscn",
@@ -58,6 +61,7 @@ func _init() -> void:
 	var dust_particles := tread_dust.get_node_or_null("SmokeThinVFX_01/Smoke") as GPUParticles3D
 	var shadow_particles := tread_dust.get_node_or_null("SmokeThinVFX_01/ShadowCaster") as GPUParticles3D
 	var dust_material := dust_particles.material_override as ShaderMaterial if dust_particles != null else null
+	var vendor_material := load(TREAD_DUST_VENDOR_MATERIAL_PATH) as ShaderMaterial
 	if smoke_thin == null or smoke_thin.scene_file_path != TREAD_DUST_VENDOR_PATH \
 			or dust_particles == null or shadow_particles == null \
 			or dust_particles.local_coords or shadow_particles.local_coords \
@@ -65,6 +69,17 @@ func _init() -> void:
 			or not is_equal_approx(dust_particles.speed_scale, 1.0) \
 			or not is_equal_approx(shadow_particles.speed_scale, 1.0) \
 			or dust_material == null \
+			or dust_particles.transform_align != GPUParticles3D.TRANSFORM_ALIGN_DISABLED \
+			or dust_material.shader == null \
+			or dust_material.shader.resource_path != TREAD_DUST_BILLBOARD_SHADER_PATH \
+			or dust_material.get_shader_parameter("billboard") != true \
+			or dust_material.get_shader_parameter("proximity_fade") != false \
+			or vendor_material == null \
+			or vendor_material == dust_material \
+			or vendor_material.shader == null \
+			or vendor_material.shader.resource_path != TREAD_DUST_VENDOR_SHADER_PATH \
+			or vendor_material.get_shader_parameter("billboard") != false \
+			or vendor_material.get_shader_parameter("proximity_fade") != true \
 			or not is_equal_approx(float(dust_material.get_shader_parameter("time_scale")), 1.0) \
 			or not is_equal_approx(smoke_thin.scale.x, 1.1 * 0.2) \
 			or not (tread_dust.get("dust_color") as Color).is_equal_approx(expected_dust_color):

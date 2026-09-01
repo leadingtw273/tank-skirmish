@@ -9,6 +9,8 @@ const SMOKE_PROXIMITY_FADE_PARAMETER := &"proximity_fade"
 
 ## 煙塵粒子的等比尺寸倍率。
 @export_range(0.1, 4.0, 0.05) var dust_scale := 0.85
+## 每顆煙塵出生時相對於完整尺寸的比例。
+@export_range(0.1, 1.0, 0.01) var initial_size_ratio := 0.65
 ## 每顆煙塵從生成到自然消散的秒數。
 @export_range(0.1, 5.0, 0.05) var lifetime_seconds := 1.2
 ## 滿移動強度時，同時維持的煙塵粒子數量。
@@ -29,15 +31,23 @@ func _ready() -> void:
 	set_motion_intensity(0.0)
 
 
-## 由 SurfaceEffects 的設定更新特效外觀與粒子壽命。
-func set_dust_parameters(next_scale: float, next_lifetime_seconds: float, next_emission_amount: int) -> void:
+## 由 SurfaceEffects 的設定更新特效外觀、出生尺寸與粒子壽命。
+func set_dust_parameters(
+		next_scale: float,
+		next_initial_size_ratio: float,
+		next_lifetime_seconds: float,
+		next_emission_amount: int,
+) -> void:
 	var resolved_scale := maxf(next_scale, 0.1)
+	var resolved_initial_size_ratio := clampf(next_initial_size_ratio, 0.1, 1.0)
 	var resolved_lifetime := maxf(next_lifetime_seconds, 0.1)
 	var resolved_amount := maxi(next_emission_amount, 2)
 	var parameters_changed := not is_equal_approx(dust_scale, resolved_scale) \
+		or not is_equal_approx(initial_size_ratio, resolved_initial_size_ratio) \
 		or not is_equal_approx(lifetime_seconds, resolved_lifetime) \
 		or emission_amount != resolved_amount
 	dust_scale = resolved_scale
+	initial_size_ratio = resolved_initial_size_ratio
 	lifetime_seconds = resolved_lifetime
 	emission_amount = resolved_amount
 	if parameters_changed:
@@ -61,6 +71,8 @@ func _prepare_vendor_instance() -> void:
 		particles.local_coords = false
 		particles.emitting = false
 		particles.amount_ratio = 0.0
+		if particles.process_material != null:
+			particles.process_material = particles.process_material.duplicate(true)
 		if particles.material_override != null:
 			particles.material_override = particles.material_override.duplicate(false)
 	# 履帶專用 Shader 自行完成保留縮放的 billboard；關閉粒子層對齊，避免兩層重複旋轉。
@@ -90,6 +102,19 @@ func _apply_dust_parameters() -> void:
 	smoke_effect.set("primary_color", dust_color)
 	smoke_effect.set("secondary_color", dust_color.darkened(0.16))
 	smoke_effect.set("tertiary_color", dust_color.darkened(0.43))
+	for particles in _particle_nodes():
+		_apply_initial_size_ratio(particles, initial_size_ratio)
+
+
+## 只調整 wrapper 私有粒子材質的縮放曲線起點，不改動 Binbun 原始素材。
+func _apply_initial_size_ratio(particles: GPUParticles3D, next_ratio: float) -> void:
+	var process_material := particles.process_material as ParticleProcessMaterial
+	if process_material == null or process_material.scale_curve == null:
+		return
+	var scale_curve: Curve = process_material.scale_curve.curve
+	if scale_curve == null or scale_curve.point_count == 0:
+		return
+	scale_curve.set_point_value(0, clampf(next_ratio, 0.1, 1.0))
 
 
 func _particle_nodes() -> Array[GPUParticles3D]:

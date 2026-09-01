@@ -3,8 +3,10 @@
 extends CharacterBody3D
 
 @export_category("坦克移動")
-## 滿輸入時車身前進或倒退的最高速度，單位為公尺／秒。
+## 滿前進輸入時車身的最高速度，單位為公尺／秒。
 @export var movement_speed := 15.0
+## 滿倒退輸入時車身的最高速度，單位為公尺／秒。
+@export var reverse_movement_speed := 5.0
 ## 滿轉向輸入時車身偏航速度，單位為弧度／秒。
 @export var turn_speed := 0.8
 ## 滿轉向輸入時保留的直線最高速度比例；0.5 代表降至原本的一半。
@@ -121,7 +123,7 @@ func _physics_process(delta: float) -> void:
 	## 以動力與煞車積分線／角速度，碰撞後讀回實際線速度，再讓履帶依實際動態更新。
 	var engine_acceleration := _engine_acceleration()
 	var brake_acceleration := _brake_acceleration()
-	var movement_speed_limit := _movement_speed_limit_for_turn(turn_command)
+	var movement_speed_limit := _movement_speed_limit_for_turn(movement_command, turn_command)
 	forward_speed = _approach_motion_speed(
 		forward_speed,
 		movement_command,
@@ -195,10 +197,11 @@ func _braking_distance(speed: float) -> float:
 	return speed * speed / (2.0 * _brake_acceleration())
 
 
-func _movement_speed_limit_for_turn(turn_input: float) -> float:
-	## 依轉向輸入強度平滑降低直線速度上限；滿轉向時使用 Inspector 設定的保留比例。
+func _movement_speed_limit_for_turn(movement_input: float, turn_input: float) -> float:
+	## 依目前前進或倒退指令選擇速度上限，再依轉向輸入強度平滑降低；滿轉向時使用 Inspector 設定的保留比例。
 	var turn_strength := clampf(absf(turn_input), 0.0, 1.0)
-	return movement_speed * lerpf(1.0, turning_movement_speed_ratio, turn_strength)
+	var base_speed_limit := movement_speed if movement_input >= 0.0 else reverse_movement_speed
+	return base_speed_limit * lerpf(1.0, turning_movement_speed_ratio, turn_strength)
 
 
 func _apply_firing_movement_speed_loss() -> void:

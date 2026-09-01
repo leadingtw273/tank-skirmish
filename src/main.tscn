@@ -1,6 +1,6 @@
-[gd_scene format=3 uid="uid://ditdn0r5bmeb3"]
+[gd_scene load_steps=11 format=3 uid="uid://ditdn0r5bmeb3"]
 
-[ext_resource type="Script" uid="uid://vc1xua3mgaeu" path="res://src/camera/adaptive_viewport.gd" id="1_adaptive_viewport"]
+[ext_resource type="Script" path="res://src/main.gd" id="2_main"]
 [ext_resource type="Script" uid="uid://bca1mijc0u46r" path="res://src/camera/camera_controller.gd" id="2_camera_controller"]
 [ext_resource type="PackedScene" uid="uid://ccc8ikhmdmsj4" path="res://src/actors/tank/tank.tscn" id="3_tank"]
 [ext_resource type="Script" uid="uid://bkmyvemlgoyub" path="res://src/player/player_runtime.gd" id="4_player_runtime"]
@@ -9,9 +9,10 @@
 [ext_resource type="Script" uid="uid://d0ynxpa1wrjft" path="res://src/player/aim_presentation.gd" id="7_aim_presentation"]
 [ext_resource type="Script" uid="uid://df8n8yyxgp1cq" path="res://src/combat/combat_runtime.gd" id="8_combat_runtime"]
 [ext_resource type="PackedScene" path="res://src/world/world.tscn" id="9_world"]
+[ext_resource type="PackedScene" path="res://src/vfx/surface_effects/surface_effects.tscn" id="10_surface_effects"]
 
 [node name="TankSkirmish" type="Node3D" unique_id=312571395]
-script = ExtResource("1_adaptive_viewport")
+script = ExtResource("2_main")
 
 [node name="CameraRig" type="Node3D" parent="." unique_id=1627748860]
 script = ExtResource("2_camera_controller")
@@ -56,5 +57,7 @@ muzzle_smoke_forward_offset = 1.0
 [node name="Projectiles" type="Node3D" parent="CombatRuntime" unique_id=1204464415]
 
 [node name="Effects" type="Node3D" parent="CombatRuntime" unique_id=504125484]
+
+[node name="SurfaceEffects" parent="." unique_id=169800416 instance=ExtResource("10_surface_effects")]
 
 [node name="World" parent="." unique_id=25069140 instance=ExtResource("9_world")]

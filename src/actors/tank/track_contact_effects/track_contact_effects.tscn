@@ -1,0 +1,18 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/actors/tank/track_contact_effects/track_contact_effects.gd" id="1_controller"]
+
+[node name="TrackContactEffects" type="Node3D"]
+script = ExtResource("1_controller")
+
+[node name="LeftFront" type="Marker3D" parent="."]
+position = Vector3(-4.5, 0.4, 3.1)
+
+[node name="LeftRear" type="Marker3D" parent="."]
+position = Vector3(4.5, 0.4, 3.1)
+
+[node name="RightFront" type="Marker3D" parent="."]
+position = Vector3(-4.5, 0.4, -3.1)
+
+[node name="RightRear" type="Marker3D" parent="."]
+position = Vector3(4.5, 0.4, -3.1)

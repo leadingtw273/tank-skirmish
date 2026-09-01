@@ -141,7 +141,7 @@ func _validate_instance(instance: Node) -> void:
 	if not _validate_tread_animations(instance):
 		quit(1)
 		return
-	if not _validate_tread_dust(instance):
+	if not await _validate_tread_dust(instance):
 		quit(1)
 		return
 	if not _validate_tank_inertia(instance):
@@ -238,62 +238,84 @@ func _validate_tread_animations(instance: Node) -> bool:
 func _validate_tread_dust(instance: Node) -> bool:
 	var tank := instance.get_node_or_null("Tank") as CharacterBody3D
 	if tank == null:
-		push_error("Tank must exist before tread dust can be validated")
+		push_error("Tank must exist before track contact effects can be validated")
 		return false
-	var left_dust := tank.get_node_or_null("LeftTreadDust") as Node3D
-	var right_dust := tank.get_node_or_null("RightTreadDust") as Node3D
-	if left_dust == null or right_dust == null or left_dust.position.z <= 0.0 or right_dust.position.z >= 0.0 \
-			or left_dust.position.y <= 0.0 or right_dust.position.y <= 0.0:
-		push_error("Tank must create left and right tread dust sources near the track contact positions")
+	if tank.get_node_or_null("LeftTreadDust") != null or tank.get_node_or_null("RightTreadDust") != null:
+		push_error("TankController must not own legacy tread dust nodes")
 		return false
-	var left_particles := left_dust.get_node_or_null("SmokeThinVFX_01/Smoke") as GPUParticles3D
-	var right_particles := right_dust.get_node_or_null("SmokeThinVFX_01/Smoke") as GPUParticles3D
-	var left_shadow := left_dust.get_node_or_null("SmokeThinVFX_01/ShadowCaster") as GPUParticles3D
-	var right_shadow := right_dust.get_node_or_null("SmokeThinVFX_01/ShadowCaster") as GPUParticles3D
-	var left_effect := left_dust.get_node_or_null("SmokeThinVFX_01") as Node3D
-	var right_effect := right_dust.get_node_or_null("SmokeThinVFX_01") as Node3D
-	if left_particles == null or right_particles == null or left_shadow == null or right_shadow == null \
-			or left_effect == null or right_effect == null \
+	var contacts := tank.get_node_or_null("TrackContactEffects") as Node3D
+	var surface_effects := instance.get_node_or_null("SurfaceEffects") as Node3D
+	if contacts == null or surface_effects == null or not contacts.has_signal("track_contact") \
+			or not surface_effects.has_method("consume_track_contact"):
+		push_error("Tank and main scene must expose the TrackContactEffects to SurfaceEffects boundary")
+		return false
+	var expected_contact_ids: Array[StringName] = [&"LeftFront", &"LeftRear", &"RightFront", &"RightRear"]
+	for contact_id in expected_contact_ids:
+		var point := contacts.get_node_or_null(NodePath(contact_id)) as Marker3D
+		if point == null or point.position.y <= 0.0:
+			push_error("TrackContactEffects must expose four hand-adjustable Marker3D contact points")
+			return false
+	var left_front := contacts.get_node_or_null("LeftFront") as Marker3D
+	var left_rear := contacts.get_node_or_null("LeftRear") as Marker3D
+	var right_front := contacts.get_node_or_null("RightFront") as Marker3D
+	var right_rear := contacts.get_node_or_null("RightRear") as Marker3D
+	if left_front.position.z <= 0.0 or left_rear.position.z <= 0.0 \
+			or right_front.position.z >= 0.0 or right_rear.position.z >= 0.0 \
+			or left_front.position.x >= left_rear.position.x or right_front.position.x >= right_rear.position.x:
+		push_error("Track contact points must retain independent front/rear and left/right positions")
+		return false
+	var received_contacts: Array[Dictionary] = []
+	contacts.track_contact.connect(func(source_id: StringName, contact_id: StringName, active: bool, world_position: Vector3, ground_normal: Vector3, intensity: float, source_velocity: Vector3, source_motion_speed: float) -> void:
+		received_contacts.append({"source_id": source_id, "contact_id": contact_id, "active": active, "position": world_position, "normal": ground_normal, "intensity": intensity, "velocity": source_velocity, "motion_speed": source_motion_speed})
+	)
+	await physics_frame
+	## physics_frame 在節點的 _physics_process 前發出；於同一物理階段直接驅動一次，避免等待 idle 時連帶改變攝影機測試狀態。
+	contacts._physics_process(0.0)
+	if received_contacts.size() < expected_contact_ids.size():
+		push_error("TrackContactEffects must report every contact point during the physics step")
+		return false
+	var reported_ids: Array[StringName] = []
+	for report in received_contacts:
+		if report["source_id"] != &"player_tank" or not report["active"] \
+			or (report["normal"] as Vector3).dot(Vector3.UP) < 0.99 \
+			or not (report["velocity"] as Vector3).is_zero_approx() \
+			or not is_zero_approx(float(report["intensity"])) or not is_zero_approx(float(report["motion_speed"])):
+			push_error("Track contact signal must include the static source, hit position, normal, intensity, and velocity payload")
+			return false
+		reported_ids.append(report["contact_id"] as StringName)
+	for contact_id in expected_contact_ids:
+		if not reported_ids.has(contact_id):
+			push_error("TrackContactEffects did not report %s" % contact_id)
+			return false
+	if surface_effects.get_child_count() != expected_contact_ids.size():
+		push_error("SurfaceEffects must maintain one stopped emitter per active contact, outside Tank and World")
+		return false
+	surface_effects.tread_dust_scale = 1.1
+	surface_effects.tread_dust_lifetime_seconds = 0.7
+	surface_effects.tread_dust_emission_amount = 40
+	contacts.track_contact.emit(&"player_tank", &"LeftFront", true, Vector3(10.0, 0.0, 2.0), Vector3.UP, 0.5, Vector3(2.0, 0.0, 0.0), 2.0)
+	contacts.track_contact.emit(&"player_tank", &"RightFront", true, Vector3(10.0, 0.0, -2.0), Vector3.UP, 1.0, Vector3(4.0, 0.0, 0.0), 4.0)
+	var left_emitter := surface_effects.get_emitter(&"player_tank", &"LeftFront") as Node3D
+	var right_emitter := surface_effects.get_emitter(&"player_tank", &"RightFront") as Node3D
+	var left_particles := left_emitter.get_node_or_null("SmokeThinVFX_01/Smoke") as GPUParticles3D if left_emitter != null else null
+	var right_particles := right_emitter.get_node_or_null("SmokeThinVFX_01/Smoke") as GPUParticles3D if right_emitter != null else null
+	var left_effect := left_emitter.get_node_or_null("SmokeThinVFX_01") as Node3D if left_emitter != null else null
+	if left_emitter == null or right_emitter == null or left_particles == null or right_particles == null or left_effect == null \
+			or not left_particles.emitting or not right_particles.emitting \
 			or left_particles.local_coords or right_particles.local_coords \
-			or left_shadow.local_coords or right_shadow.local_coords:
-		push_error("Tread dust particles must use world coordinates after emission")
+			or not left_emitter.global_position.is_equal_approx(Vector3(10.0, 0.05, 2.0)) \
+			or not is_equal_approx(left_effect.scale.x, 1.1 * 0.2) \
+			or left_particles.amount != 40 or not is_equal_approx(left_particles.lifetime, 0.7):
+		push_error("SurfaceEffects must update persistent world-space emitters at the contact normal offset")
 		return false
-	tank.tread_dust_activation_speed = 0.15
-	tank.tread_dust_scale = 1.1
-	tank.tread_dust_lifetime_seconds = 0.7
-	tank.tread_dust_emission_amount = 40
-	tank._update_tread_dust(0.0, 0.0)
-	if not is_equal_approx(left_effect.scale.x, 1.1 * 0.2) \
-			or not is_equal_approx(right_effect.scale.x, 1.1 * 0.2) \
-			or left_particles.material_override == right_particles.material_override:
-		push_error("Tread dust must preserve Tank scale settings and isolate mutable materials per track")
+	var left_instance_id := left_emitter.get_instance_id()
+	contacts.track_contact.emit(&"player_tank", &"LeftFront", true, Vector3(12.0, 0.0, 2.0), Vector3.UP, 1.0, Vector3.ZERO, 0.8)
+	if (surface_effects.get_emitter(&"player_tank", &"LeftFront") as Node3D).get_instance_id() != left_instance_id:
+		push_error("SurfaceEffects must update a contact emitter instead of creating one every physics frame")
 		return false
-	if left_particles.emitting or right_particles.emitting or left_shadow.emitting or right_shadow.emitting \
-			or not is_zero_approx(left_particles.amount_ratio) or not is_zero_approx(right_particles.amount_ratio) \
-			or not is_zero_approx(left_shadow.amount_ratio) or not is_zero_approx(right_shadow.amount_ratio):
-		push_error("Tread dust must stop emitting while the tank is stationary")
-		return false
-	tank._update_tread_dust(tank.movement_speed * 0.5, 0.0)
-	if not left_particles.emitting or not right_particles.emitting \
-			or not left_shadow.emitting or not right_shadow.emitting \
-			or left_particles.amount != 40 or right_particles.amount != 40 \
-			or left_shadow.amount != 20 or right_shadow.amount != 20 \
-			or not is_equal_approx(left_particles.amount_ratio, 0.5) \
-			or not is_equal_approx(right_particles.amount_ratio, 0.5) \
-			or not is_equal_approx(left_shadow.amount_ratio, 0.5) \
-			or not is_equal_approx(right_shadow.amount_ratio, 0.5) \
-			or not is_equal_approx(left_particles.lifetime, 0.7):
-		push_error("Tread dust must emit from both tracks while moving forward")
-		return false
-	tank._update_tread_dust(-tank.movement_speed, 0.0)
-	if left_particles.amount != 40 or left_shadow.amount != 20 \
-			or not is_equal_approx(left_particles.amount_ratio, 1.0) \
-			or not is_equal_approx(left_shadow.amount_ratio, 1.0):
-		push_error("Tread dust emission ratio must increase with actual linear speed without rebuilding the particle amount")
-		return false
-	tank._update_tread_dust(0.0, tank.turn_speed)
-	if not left_particles.emitting or not right_particles.emitting:
-		push_error("Tread dust must emit from both tracks while rotating in place")
+	contacts.track_contact.emit(&"player_tank", &"LeftFront", false, Vector3.ZERO, Vector3.UP, 0.0, Vector3.ZERO, 0.0)
+	if left_particles.emitting or not right_particles.emitting:
+		push_error("A missed contact must stop only its own emitter while other contacts continue")
 		return false
 	return true
 
@@ -1255,19 +1277,23 @@ func _validate_grid_layout(instance: Node) -> bool:
 
 
 func _validate_world_structure(instance: Node) -> bool:
-	var expected_root_children := [&"CameraRig", &"Tank", &"PlayerRuntime", &"CombatRuntime", &"World"]
+	var expected_root_children := [&"CameraRig", &"Tank", &"PlayerRuntime", &"CombatRuntime", &"SurfaceEffects", &"World"]
 	if instance.get_child_count() != expected_root_children.size():
-		push_error("Main scene must contain CameraRig, Tank, PlayerRuntime, CombatRuntime, and World")
+		push_error("Main scene must contain CameraRig, Tank, PlayerRuntime, CombatRuntime, SurfaceEffects, and World")
 		return false
 	for index: int in expected_root_children.size():
 		if instance.get_child(index).name != expected_root_children[index]:
-			push_error("Main scene root child order must retain runtime ownership before World")
+			push_error("Main scene root child order must retain runtime ownership and SurfaceEffects before World")
 			return false
 	var combat_runtime := instance.get_node_or_null("CombatRuntime") as Node3D
 	var projectiles := instance.get_node_or_null("CombatRuntime/Projectiles") as Node3D
 	var effects := instance.get_node_or_null("CombatRuntime/Effects") as Node3D
 	if combat_runtime == null or projectiles == null or effects == null:
 		push_error("CombatRuntime must inline separate Projectiles and Effects containers")
+		return false
+	var surface_effects := instance.get_node_or_null("SurfaceEffects") as Node3D
+	if surface_effects == null or surface_effects.scene_file_path.get_file() != "surface_effects.tscn":
+		push_error("SurfaceEffects must be a main-scene sibling of Tank, CombatRuntime, and World")
 		return false
 
 	var world := instance.get_node_or_null("World") as Node3D

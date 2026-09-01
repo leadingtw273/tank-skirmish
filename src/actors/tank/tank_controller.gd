@@ -61,23 +61,12 @@ const TREAD_ANIMATION_CLIPS := {
 	"turning_right": &"Tank_TurningRight",
 }
 const MUZZLE_FLASH_SCENE := preload("res://src/vfx/muzzle/muzzle_flash_vfx.tscn")
-const TREAD_DUST_SCENE := preload("res://src/vfx/tread_dust/tread_dust_vfx.tscn")
 const ShotEvent := preload("res://src/combat/shot_event.gd")
 @export_category("砲口火焰")
 ## 已生成的砲口火焰在移除前的存活時間，單位為秒。
 @export var muzzle_flash_lifetime_seconds := 0.25
 ## 套用至製作好的砲口火焰特效之等比縮放倍率。
 @export var muzzle_flash_scale := 4.0
-
-@export_category("履帶煙塵")
-## 套用至左右履帶煙塵的等比粒子尺寸倍率。
-@export_range(0.1, 4.0, 0.05) var tread_dust_scale := 0.85
-## 履帶停止後，既有煙塵自然散去所需的秒數。
-@export_range(0.1, 5.0, 0.05) var tread_dust_lifetime_seconds := 1.2
-## 履帶全速移動時，每側煙塵來源維持的粒子數量。
-@export_range(2, 128, 1) var tread_dust_emission_amount := 28
-## 實際線速度或角速度達到此值時才開始產生煙塵。
-@export_range(0.01, 5.0, 0.01) var tread_dust_activation_speed := 0.15
 
 @onready var visual_recoil_pivot: Node3D = $VisualRecoilPivot
 @onready var tank_model: Node3D = $VisualRecoilPivot/Tank2
@@ -98,14 +87,16 @@ var movement_command := 0.0
 var turn_command := 0.0
 var forward_speed := 0.0
 var angular_speed := 0.0
+## 碰撞解算後沿坦克前後軸的實際線速度，供接地互動讀取，單位為公尺／秒。
+var actual_linear_speed := 0.0
+## 物理步驟中實際套用的車身偏航角速度，供接地互動讀取，單位為弧度／秒。
+var actual_angular_speed := 0.0
 var tread_animation_player: AnimationPlayer
 var active_tread_animation := &""
 var tread_animation_paused := true
 var tread_animations_available := false
 var visual_recoil_rest_local_position := Vector3.ZERO
 var visual_recoil_tween: Tween
-var left_tread_dust: Node3D
-var right_tread_dust: Node3D
 
 
 func _ready() -> void:
@@ -124,7 +115,6 @@ func _ready() -> void:
 		tank_gun.global_transform * local_muzzle,
 	)
 	_setup_tread_animations()
-	_setup_tread_dust()
 
 
 func _physics_process(delta: float) -> void:
@@ -156,12 +146,23 @@ func _physics_process(delta: float) -> void:
 	var actual_forward_speed := get_real_velocity().dot(forward_direction)
 	if get_slide_collision_count() > 0:
 		forward_speed = actual_forward_speed
+	actual_linear_speed = actual_forward_speed
+	actual_angular_speed = angular_speed
 	var next_tread_animation := _tread_animation_for_motion(actual_forward_speed, angular_speed)
 	_update_tread_animation(
 		next_tread_animation,
 		_tread_animation_speed_scale(next_tread_animation, actual_forward_speed, angular_speed),
 	)
-	_update_tread_dust(actual_forward_speed, angular_speed)
+
+
+## 回傳碰撞解算後沿坦克前後軸的實際線速度，供 TrackContactEffects 計算接地互動強度。
+func get_actual_linear_speed() -> float:
+	return actual_linear_speed
+
+
+## 回傳物理步驟實際套用的車身偏航角速度，供 TrackContactEffects 計算原地旋轉強度。
+func get_actual_angular_speed() -> float:
+	return actual_angular_speed
 
 
 ## 儲存介於 -1 到 1 的前進／倒退指令，供下一個物理步驟使用。
@@ -239,37 +240,6 @@ func _setup_tread_animations() -> void:
 		animation.loop_mode = Animation.LOOP_LINEAR
 
 	tread_animations_available = true
-
-
-func _setup_tread_dust() -> void:
-	## 在車身兩側、接近履帶接地處建立來源；粒子本身使用世界座標，故車輛駛離後會留在原處散去。
-	left_tread_dust = _create_tread_dust(&"LeftTreadDust", Vector3(0.0, 0.15, 3.1))
-	right_tread_dust = _create_tread_dust(&"RightTreadDust", Vector3(0.0, 0.15, -3.1))
-
-
-func _create_tread_dust(dust_name: StringName, local_position: Vector3) -> Node3D:
-	var tread_dust := TREAD_DUST_SCENE.instantiate() as Node3D
-	tread_dust.name = dust_name
-	add_child(tread_dust)
-	tread_dust.position = local_position
-	return tread_dust
-
-
-func _update_tread_dust(actual_forward_speed: float, actual_angular_speed: float) -> void:
-	## 只用物理步驟取得的實際線／角速度；直行、倒退與原地旋轉都會依速度強度調整發射量。
-	var linear_motion := absf(actual_forward_speed)
-	var angular_motion := absf(actual_angular_speed)
-	var motion_speed := maxf(linear_motion, angular_motion)
-	var speed_ratio := maxf(
-		linear_motion / maxf(absf(movement_speed), 0.001),
-		angular_motion / maxf(absf(turn_speed), 0.001),
-	)
-	var emission_intensity := speed_ratio if motion_speed >= tread_dust_activation_speed else 0.0
-	for tread_dust in [left_tread_dust, right_tread_dust]:
-		if tread_dust == null:
-			continue
-		tread_dust.set_dust_parameters(tread_dust_scale, tread_dust_lifetime_seconds, tread_dust_emission_amount)
-		tread_dust.set_motion_intensity(emission_intensity)
 
 
 func _find_animation_player(node: Node) -> AnimationPlayer:

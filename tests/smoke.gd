@@ -269,6 +269,8 @@ func _validate_tread_dust(instance: Node) -> bool:
 		received_contacts.append({"source_id": source_id, "contact_id": contact_id, "active": active, "position": world_position, "normal": ground_normal, "intensity": intensity, "velocity": source_velocity, "motion_speed": source_motion_speed})
 	)
 	await physics_frame
+	## physics_frame 在節點的 _physics_process 前發出；等到 idle 階段再驗證，才能觀察本次物理步驟的四點回報。
+	await process_frame
 	if received_contacts.size() < expected_contact_ids.size():
 		push_error("TrackContactEffects must report every contact point during the physics step")
 		return false

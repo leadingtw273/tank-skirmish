@@ -7,6 +7,8 @@ const ShotEvent := preload("res://src/combat/shot_event.gd")
 const ImpactEvent := preload("res://src/combat/impact_event.gd")
 const CombatRuntime := preload("res://src/combat/combat_runtime.gd")
 const TankProjectile := preload("res://src/combat/projectile.gd")
+const HealthComponent := preload("res://src/combat/damage/health_component.gd")
+const DamageReceiver := preload("res://src/combat/damage/damage_receiver.gd")
 
 
 class TestShotSource extends Node3D:
@@ -53,7 +55,7 @@ func _validate(instance: Node) -> void:
 	var shot_event := observed_shots[0]
 	if not shot_event.is_valid() or not shot_event.direction.is_normalized() \
 			or not shot_event.muzzle_transform.is_equal_approx(tank.muzzle_point.global_transform) \
-			or shot_event.shooter_rid != tank.get_rid():
+			or shot_event.shooter_rid != tank.get_rid() or not is_equal_approx(shot_event.damage, 25.0):
 		_fail("Tank must publish one closed ShotEvent with its final muzzle transform, direction, and RID.")
 		return
 	var projectile := projectiles.get_child(0) as TankProjectile
@@ -114,9 +116,16 @@ func _validate(instance: Node) -> void:
 	var target := StaticBody3D.new()
 	var target_collision := CollisionShape3D.new()
 	var target_shape := BoxShape3D.new()
+	var target_health := HealthComponent.new()
+	var target_receiver := DamageReceiver.new()
 	target_shape.size = Vector3(2, 2, 2)
 	target_collision.shape = target_shape
 	target.add_child(target_collision)
+	target_health.name = "HealthComponent"
+	target.add_child(target_health)
+	target_receiver.name = "DamageReceiver"
+	target_receiver.set("health_component", target_health)
+	target.add_child(target_receiver)
 	target.position = Vector3(300, 2, 300)
 	instance.add_child(target)
 	await physics_frame
@@ -141,6 +150,7 @@ func _validate(instance: Node) -> void:
 	var impact_decal := impact_vfx.get_node_or_null("Decal") as Decal if impact_vfx != null else null
 	var impact_light := impact_vfx.get_node_or_null("Light") as OmniLight3D if impact_vfx != null else null
 	if impact_event.shot_event != shot_event or impact_event.collider != target or impact_vfx == null \
+			or not is_equal_approx(target_health.current_health, 75.0) \
 			or impact_vfx.scene_file_path != IMPACT_VFX_PATH \
 			or not bool(impact_vfx.get("one_shot")) or not bool(impact_vfx.get("autoplay")) \
 			or impact_core_mesh == null or not is_equal_approx(impact_core_mesh.radius, 0.5 * runtime.impact_vfx_scale) \

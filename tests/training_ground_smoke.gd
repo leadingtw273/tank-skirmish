@@ -3,7 +3,7 @@ extends SceneTree
 const TRAINING_GROUND_SCENE := "res://src/world/training_ground/training_ground.tscn"
 const TRAINING_GROUND_SHADER := "res://src/world/training_ground/training_ground_grid.gdshader"
 const TRAINING_GROUND_PLAYTEST_SCENE := "res://src/world/training_ground/training_ground_playtest.tscn"
-const STATIC_TARGET_TANK_SCENE := "res://src/world/training_ground/static_target_tank.tscn"
+const TRAINING_TARGET_SCENE := "res://src/world/training_ground/training_target.tscn"
 const EXPECTED_GROUND_COLOR := Color(0.34, 0.36, 0.38, 1)
 const EXPECTED_GRID_COLOR := Color.WHITE
 const EXPECTED_AMBIENT_COLOR := Color(0.72, 0.74, 0.78, 1)
@@ -32,14 +32,16 @@ func _validate_training_ground() -> bool:
 		training_ground.free()
 		return _fail("Training ground must not include city or vegetation objects.")
 	var targets := training_ground.get_node_or_null("Targets") as Node3D
-	var static_target := training_ground.get_node_or_null("Targets/StaticTank") as StaticBody3D
-	var target_collision := static_target.get_node_or_null("CollisionShape3D") as CollisionShape3D \
-			if static_target != null else null
+	var training_target := training_ground.get_node_or_null("Targets/TrainingTarget") as Node3D
+	var target_tank := training_target.get_node_or_null("SubjectSlot/Tank") as CharacterBody3D \
+			if training_target != null else null
+	var target_collision := target_tank.get_node_or_null("CollisionShape3D") as CollisionShape3D \
+			if target_tank != null else null
 	var target_shape := target_collision.shape as BoxShape3D if target_collision != null else null
-	if targets == null or targets.get_child_count() != 1 or static_target == null \
-			or static_target.scene_file_path != STATIC_TARGET_TANK_SCENE \
-			or not static_target.position.is_equal_approx(Vector3(-40, 0, -6)) \
-			or static_target.collision_layer != 1 or static_target.collision_mask != 0 \
+	if targets == null or targets.get_child_count() != 1 or training_target == null \
+			or training_target.scene_file_path != TRAINING_TARGET_SCENE \
+			or not training_target.position.is_equal_approx(Vector3(-40, 0, -6)) \
+			or target_tank == null or target_tank.collision_layer != 1 \
 			or target_shape == null \
 			or not target_shape.size.is_equal_approx(EXPECTED_TARGET_COLLISION_SIZE) \
 			or not target_collision.position.is_equal_approx(Vector3(0, 1.8158436, 0)):
@@ -102,15 +104,17 @@ func _validate_playtest_composition() -> bool:
 			if gameplay_runtime.get_node_or_null(NodePath(node_name)) == null:
 				has_existing_runtime = false
 				break
-	var static_target := world.get_node_or_null("Targets/StaticTank") as StaticBody3D if world != null else null
+	var training_target := world.get_node_or_null("Targets/TrainingTarget") as Node3D if world != null else null
+	var target_tank := training_target.get_node_or_null("SubjectSlot/Tank") as CharacterBody3D \
+			if training_target != null else null
 	var valid := has_existing_runtime and world != null \
 		and world.scene_file_path == TRAINING_GROUND_SCENE \
 		and world.get_node_or_null("Ground") != null \
 		and world.get_node_or_null("Roads") == null \
-		and static_target != null \
-		and static_target.collision_layer == 1 \
-		and static_target.get_node_or_null("CollisionShape3D") != null \
-		and _all_target_meshes_are_gray(static_target)
+		and training_target != null and target_tank != null \
+		and target_tank.collision_layer == 1 \
+		and target_tank.get_node_or_null("CollisionShape3D") != null \
+		and _all_target_meshes_are_gray(training_target)
 	playtest.queue_free()
 	if not valid:
 		return _fail("Training ground playtest must reuse main gameplay and replace only World.")

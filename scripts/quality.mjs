@@ -119,6 +119,15 @@ run("converted-assets-production-static", process.execPath, [
   join(projectRoot, "docs", "assets", "quaternius-lock.json"),
 ]);
 run("import", godot, ["--headless", "--path", ".", "--import"], { scanGodotErrors: true });
+run("aim-cursor-smoke", godot, [
+  "--headless",
+  "--audio-driver",
+  "Dummy",
+  "--path",
+  ".",
+  "--script",
+  "res://tests/aim_cursor_smoke.gd",
+], { scanGodotErrors: true });
 run("measure-converted-assets", godot, [
   "--headless",
   "--audio-driver",
@@ -162,6 +171,15 @@ run("training-ground-smoke", godot, [
   ".",
   "--script",
   "res://tests/training_ground_smoke.gd",
+], { scanGodotErrors: true });
+run("damage-health-smoke", godot, [
+  "--headless",
+  "--audio-driver",
+  "Dummy",
+  "--path",
+  ".",
+  "--script",
+  "res://tests/damage_health_smoke.gd",
 ], { scanGodotErrors: true });
 run("map960-components-smoke", godot, [
   "--headless",

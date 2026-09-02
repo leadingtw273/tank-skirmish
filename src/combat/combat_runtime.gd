@@ -9,6 +9,7 @@ const MUZZLE_SMOKE_VFX_SCENE := preload("res://src/vfx/muzzle/muzzle_smoke_vfx.t
 const TankProjectile := preload("res://src/combat/projectile.gd")
 const ShotEvent := preload("res://src/combat/shot_event.gd")
 const ImpactEvent := preload("res://src/combat/impact_event.gd")
+const DamageReceiver := preload("res://src/combat/damage/damage_receiver.gd")
 @export_category("場景連接")
 ## 會發出公開 shot_event_fired signal、供此戰鬥執行期消費的節點。
 @export var shot_sources: Array[Node]
@@ -132,6 +133,7 @@ func _on_projectile_impact(impact_event: ImpactEvent) -> void:
 	## 命中特效沿世界座標表面法線微移，避免穿模，並由 SceneTree 計時器在播放後釋放。
 	if impact_event == null or not impact_event.is_valid():
 		return
+	_deliver_impact_damage(impact_event)
 	var impact := IMPACT_VFX_SCENE.instantiate() as Node3D
 	impact.name = "ImpactVFX"
 	impact.set("one_shot", true)
@@ -143,6 +145,16 @@ func _on_projectile_impact(impact_event: ImpactEvent) -> void:
 	impact.set("autoplay", true)
 	impact.call("play")
 	get_tree().create_timer(impact_vfx_lifetime_seconds).timeout.connect(impact.queue_free)
+
+
+func _deliver_impact_damage(impact_event: ImpactEvent) -> void:
+	## Damageable 契約採組合約定：碰撞節點若有直屬 DamageReceiver，就把 ShotEvent 的傷害快照交給它。
+	var collider_node := impact_event.collider as Node
+	if collider_node == null:
+		return
+	var receiver := collider_node.get_node_or_null("DamageReceiver") as DamageReceiver
+	if receiver != null:
+		receiver.receive_damage(impact_event.shot_event.damage)
 
 
 func _apply_impact_vfx_scale(impact: Node3D, scale_factor: float) -> void:

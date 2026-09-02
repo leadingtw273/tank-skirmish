@@ -64,6 +64,7 @@ const TREAD_ANIMATION_CLIPS := {
 }
 const MUZZLE_FLASH_SCENE := preload("res://src/vfx/muzzle/muzzle_flash_vfx.tscn")
 const ShotEvent := preload("res://src/combat/shot_event.gd")
+const SHELL_DAMAGE := 25.0
 @export_category("砲口火焰")
 ## 已生成的砲口火焰在移除前的存活時間，單位為秒。
 @export var muzzle_flash_lifetime_seconds := 0.25
@@ -369,7 +370,7 @@ func request_fire() -> void:
 	_apply_firing_movement_speed_loss()
 	_spawn_muzzle_flash(muzzle_position, muzzle_direction)
 	var shot_muzzle_transform := muzzle_point.global_transform
-	var shot_event := ShotEvent.new(shot_muzzle_transform, muzzle_direction, get_rid())
+	var shot_event := ShotEvent.new(shot_muzzle_transform, muzzle_direction, get_rid(), SHELL_DAMAGE)
 	shot_event_fired.emit(shot_event)
 	shot_fired.emit(shot_event.to_legacy_dictionary())
 	_play_visual_recoil(muzzle_direction)

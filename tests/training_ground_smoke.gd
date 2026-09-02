@@ -3,9 +3,12 @@ extends SceneTree
 const TRAINING_GROUND_SCENE := "res://src/world/training_ground/training_ground.tscn"
 const TRAINING_GROUND_SHADER := "res://src/world/training_ground/training_ground_grid.gdshader"
 const TRAINING_GROUND_PLAYTEST_SCENE := "res://src/world/training_ground/training_ground_playtest.tscn"
+const STATIC_TARGET_TANK_SCENE := "res://src/world/training_ground/static_target_tank.tscn"
 const EXPECTED_GROUND_COLOR := Color(0.34, 0.36, 0.38, 1)
 const EXPECTED_GRID_COLOR := Color.WHITE
 const EXPECTED_AMBIENT_COLOR := Color(0.72, 0.74, 0.78, 1)
+const EXPECTED_TARGET_COLOR := Color(0.16, 0.18, 0.2, 1)
+const EXPECTED_TARGET_COLLISION_SIZE := Vector3(13.89538, 3.631687, 7.932714)
 
 
 func _init() -> void:
@@ -21,13 +24,27 @@ func _validate_training_ground() -> bool:
 	var training_ground := training_ground_scene.instantiate() as Node3D if training_ground_scene != null else null
 	if training_ground == null or training_ground.name != "TrainingGround":
 		return _fail("Training ground scene must load as a TrainingGround Node3D.")
-	if training_ground.get_child_count() != 2:
+	if training_ground.get_child_count() != 3:
 		training_ground.free()
-		return _fail("Training ground must contain only Ground and Lighting roots.")
+		return _fail("Training ground must contain only Ground, Targets, and Lighting roots.")
 	if training_ground.get_node_or_null("Roads") != null or training_ground.get_node_or_null("Buildings") != null \
-			or training_ground.get_node_or_null("GrassField") != null or training_ground.get_node_or_null("Targets") != null:
+			or training_ground.get_node_or_null("GrassField") != null:
 		training_ground.free()
-		return _fail("Training ground must not include city, vegetation, or target objects.")
+		return _fail("Training ground must not include city or vegetation objects.")
+	var targets := training_ground.get_node_or_null("Targets") as Node3D
+	var static_target := training_ground.get_node_or_null("Targets/StaticTank") as StaticBody3D
+	var target_collision := static_target.get_node_or_null("CollisionShape3D") as CollisionShape3D \
+			if static_target != null else null
+	var target_shape := target_collision.shape as BoxShape3D if target_collision != null else null
+	if targets == null or targets.get_child_count() != 1 or static_target == null \
+			or static_target.scene_file_path != STATIC_TARGET_TANK_SCENE \
+			or not static_target.position.is_equal_approx(Vector3(-40, 0, -6)) \
+			or static_target.collision_layer != 1 or static_target.collision_mask != 0 \
+			or target_shape == null \
+			or not target_shape.size.is_equal_approx(EXPECTED_TARGET_COLLISION_SIZE) \
+			or not target_collision.position.is_equal_approx(Vector3(0, 1.8158436, 0)):
+		training_ground.free()
+		return _fail("Training ground must contain one stationary, projectile-collidable target tank at the approved position.")
 
 	var ground := training_ground.get_node_or_null("Ground") as StaticBody3D
 	var visual := training_ground.get_node_or_null("Ground/Visual") as MeshInstance3D
@@ -45,10 +62,10 @@ func _validate_training_ground() -> bool:
 			or grid_material.shader.resource_path != TRAINING_GROUND_SHADER \
 			or not (grid_material.get_shader_parameter("ground_color") as Color).is_equal_approx(EXPECTED_GROUND_COLOR) \
 			or not (grid_material.get_shader_parameter("grid_color") as Color).is_equal_approx(EXPECTED_GRID_COLOR) \
-			or not is_equal_approx(float(grid_material.get_shader_parameter("grid_spacing")), 1.0) \
-			or not is_equal_approx(float(grid_material.get_shader_parameter("grid_width")), 0.025):
+			or not is_equal_approx(float(grid_material.get_shader_parameter("grid_spacing")), 8.0) \
+			or not is_equal_approx(float(grid_material.get_shader_parameter("grid_width")), 0.00078125):
 		training_ground.free()
-		return _fail("Training ground grid material must expose the approved one-metre colors and width.")
+		return _fail("Training ground grid material must expose the approved eight-metre colors and width.")
 
 	var shader_file := FileAccess.open(TRAINING_GROUND_SHADER, FileAccess.READ)
 	var shader_source := shader_file.get_as_text() if shader_file != null else ""
@@ -85,14 +102,30 @@ func _validate_playtest_composition() -> bool:
 			if gameplay_runtime.get_node_or_null(NodePath(node_name)) == null:
 				has_existing_runtime = false
 				break
+	var static_target := world.get_node_or_null("Targets/StaticTank") as StaticBody3D if world != null else null
 	var valid := has_existing_runtime and world != null \
 		and world.scene_file_path == TRAINING_GROUND_SCENE \
 		and world.get_node_or_null("Ground") != null \
-		and world.get_node_or_null("Roads") == null
+		and world.get_node_or_null("Roads") == null \
+		and static_target != null \
+		and static_target.collision_layer == 1 \
+		and static_target.get_node_or_null("CollisionShape3D") != null \
+		and _all_target_meshes_are_gray(static_target)
 	playtest.queue_free()
 	if not valid:
 		return _fail("Training ground playtest must reuse main gameplay and replace only World.")
 	return true
+
+
+func _all_target_meshes_are_gray(root_node: Node) -> bool:
+	var mesh_count := 0
+	for node: Node in root_node.find_children("*", "MeshInstance3D", true, false):
+		var mesh_instance := node as MeshInstance3D
+		var material := mesh_instance.material_override as StandardMaterial3D
+		if material == null or not material.albedo_color.is_equal_approx(EXPECTED_TARGET_COLOR):
+			return false
+		mesh_count += 1
+	return mesh_count > 0
 
 
 func _fail(message: String) -> bool:

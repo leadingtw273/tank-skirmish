@@ -158,7 +158,7 @@ func _validate(instance: Node) -> void:
 			or impact_sparks_mesh == null or not impact_sparks_mesh.size.is_equal_approx(Vector2(0.05, 0.4) * runtime.impact_vfx_scale) \
 			or impact_decal == null or not impact_decal.size.is_equal_approx(Vector3.ONE * runtime.impact_vfx_scale) \
 			or impact_light == null or not is_zero_approx(impact_light.light_specular) \
-			or not impact_vfx.global_position.is_equal_approx(impact_event.position + impact_event.normal * 0.05):
+			or not impact_vfx.global_position.is_equal_approx(impact_event.position + impact_event.normal * runtime.impact_vfx_surface_offset):
 		_fail("CombatRuntime must consume ImpactEvent once, play Explosion 05, and place it under Effects using its normal.")
 		return
 	await create_timer(1.2).timeout

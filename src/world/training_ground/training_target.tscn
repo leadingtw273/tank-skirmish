@@ -14,13 +14,13 @@ roughness = 0.9
 [node name="Tank" parent="SubjectSlot" instance=ExtResource("1_tank")]
 
 [node name="HealthLabel3D" type="Label3D" parent="."]
-position = Vector3(0, 6.5, 0)
+position = Vector3(0, 3.721374187839, 0)
 billboard = 1
 no_depth_test = true
 text = "100 / 100"
 modulate = Color(1, 0, 0, 1)
-font_size = 480
-outline_size = 12
+font_size = 275
+outline_size = 7
 
 [node name="TrainingTargetController" type="Node" parent="." node_paths=PackedStringArray("subject", "health_component", "damage_receiver", "health_label")]
 script = ExtResource("2_controller")

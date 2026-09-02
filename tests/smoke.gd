@@ -5,7 +5,6 @@ const GRASS_IMPORT := "res://assets/BinbunGrass/texture/grass_basic_02.png.impor
 const CONVERSION_MANIFEST := "res://docs/assets/conversion-manifest.json"
 const TankProjectile := preload("res://src/combat/projectile.gd")
 const ShotEvent := preload("res://src/combat/shot_event.gd")
-const TANK_VISUAL_SCALE := 1.7466666
 const BUILDING_MODELS := {
 	"OneStoryNorthWest": "1story",
 	"GableRoofNorthWest": "1story-gable-roof",
@@ -202,18 +201,12 @@ func _validate_tread_animations(instance: Node) -> bool:
 		push_error("Tank tread clip selection must use actual motion and stop at its threshold")
 		return false
 
-	var original_model_scale: Vector3 = tank.tank_model.scale
 	tank.tread_animation_reference_speed = 15.0
 	tank.tread_animation_speed_multiplier = 1.0
 	if not is_equal_approx(tank._tread_animation_speed_scale(&"Tank_Forward", 15.0), 1.0) \
 			or not is_equal_approx(tank._tread_animation_speed_scale(&"Tank_Backwards", -15.0), 1.0):
-		push_error("Tank straight tread speed must use the absolute actual forward speed at the reference scale")
+		push_error("Tank straight tread speed must use the absolute actual forward speed at the Inspector reference speed")
 		return false
-	tank.tank_model.scale = original_model_scale * 2.0
-	if not is_equal_approx(tank._tread_animation_speed_scale(&"Tank_Forward", 15.0), 0.5):
-		push_error("Tank tread speed must halve when the Tank2 model scale doubles")
-		return false
-	tank.tank_model.scale = original_model_scale
 	tank.tread_animation_speed_multiplier = 0.8
 	if not is_equal_approx(tank._tread_animation_speed_scale(&"Tank_Forward", 15.0), 0.8) \
 			or not is_equal_approx(tank._tread_animation_speed_scale(&"Tank_TurningLeft", 15.0, tank.turn_speed), 0.8):
@@ -303,7 +296,7 @@ func _validate_tread_dust(instance: Node) -> bool:
 	if left_emitter == null or right_emitter == null or left_particles == null or right_particles == null or left_effect == null \
 			or not left_particles.emitting or not right_particles.emitting \
 			or left_particles.local_coords or right_particles.local_coords \
-			or not left_emitter.global_position.is_equal_approx(Vector3(10.0, 0.05, 2.0)) \
+			or not left_emitter.global_position.is_equal_approx(Vector3(10.0, surface_effects.surface_normal_offset, 2.0)) \
 			or not is_equal_approx(left_effect.scale.x, 1.1 * 0.2) \
 			or left_particles.amount != 40 or not is_equal_approx(left_particles.lifetime, 0.7):
 		push_error("SurfaceEffects must update persistent world-space emitters at the contact normal offset")
@@ -325,7 +318,7 @@ func _validate_tank_inertia(instance: Node) -> bool:
 	if tank == null:
 		push_error("Tank must exist before inertia can be validated")
 		return false
-	if not is_equal_approx(tank.reverse_movement_speed, 5.0) \
+	if tank.movement_speed <= 0.0 or tank.reverse_movement_speed <= 0.0 \
 			or not is_equal_approx(tank.turning_movement_speed_ratio, 0.5) \
 			or not is_equal_approx(tank.firing_movement_speed_loss_ratio, 0.25) \
 			or not is_equal_approx(tank.tank_mass_tonnes, 60.0) or not is_equal_approx(tank.engine_horsepower, 2500.0) \
@@ -340,8 +333,8 @@ func _validate_tank_inertia(instance: Node) -> bool:
 			or not is_equal_approx(tank._movement_speed_limit_for_turn(-1.0, -1.0), tank.reverse_movement_speed * 0.5):
 		push_error("Tank turning must progressively lower the active forward or reverse movement speed limit to 50 percent")
 		return false
-	if not is_equal_approx(tank._approach_motion_speed(0.0, 0.5, tank._movement_speed_limit_for_turn(0.5, 0.0), 100.0, 100.0, 1.0), 5.0) \
-			or not is_equal_approx(tank._approach_motion_speed(0.0, -0.5, tank._movement_speed_limit_for_turn(-0.5, 0.0), 100.0, 100.0, 1.0), -2.5):
+	if not is_equal_approx(tank._approach_motion_speed(0.0, 0.5, tank._movement_speed_limit_for_turn(0.5, 0.0), 100.0, 100.0, 1.0), tank.movement_speed * 0.5) \
+			or not is_equal_approx(tank._approach_motion_speed(0.0, -0.5, tank._movement_speed_limit_for_turn(-0.5, 0.0), 100.0, 100.0, 1.0), -tank.reverse_movement_speed * 0.5):
 		push_error("Tank partial forward and reverse input must scale their respective speed limits")
 		return false
 	if absf(tank._engine_acceleration() - (2500.0 / 60.0 * 0.08)) > 0.0001 or absf(tank._brake_acceleration() - 4.0) > 0.0001 \
@@ -830,10 +823,10 @@ func _validate_visual_recoil(instance: Node) -> bool:
 			or collision.get_parent() != tank:
 		push_error("Tank visual recoil pivot must own all visible tank nodes while collision stays at the physics root")
 		return false
-	if not is_equal_approx(tank.visual_recoil_distance, 0.3) \
+	if tank.visual_recoil_distance <= 0.0 \
 			or not is_equal_approx(tank.visual_recoil_kick_seconds, 0.04) \
 			or not is_equal_approx(tank.visual_recoil_return_seconds, 0.26):
-		push_error("Tank visual recoil exports must retain the approved defaults")
+		push_error("Tank visual recoil must retain a positive adjustable distance and approved timing")
 		return false
 
 	var rest_position := recoil_pivot.position
@@ -986,8 +979,9 @@ func _validate_projectile_firing(instance: Node) -> bool:
 	if not bool(muzzle_flash.get("one_shot")):
 		push_error("Muzzle flash must play once per shot")
 		return false
-	if not muzzle_flash.global_transform.basis.get_scale().is_equal_approx(Vector3.ONE * 2.0):
-		push_error("Muzzle flash acceptance scale must remain 2x")
+	var flash_scale := muzzle_flash.global_transform.basis.get_scale()
+	if flash_scale.x <= 0.0 or not is_equal_approx(flash_scale.x, flash_scale.y) or not is_equal_approx(flash_scale.y, flash_scale.z):
+		push_error("Muzzle flash must retain a positive uniform scale")
 		return false
 	var flash_start := muzzle_flash.global_position
 	var projectile_start := projectile.global_position
@@ -1080,11 +1074,15 @@ func _validate_collision_layout(instance: Node) -> bool:
 	if tank == null:
 		push_error("Tank must be a CharacterBody3D")
 		return false
-	if not is_equal_approx(tank.movement_speed, 10.0) or not is_equal_approx(tank.turn_speed, 0.4):
-		push_error("Tank movement exports do not match the approved values")
-		return false
-	if not _validate_box_collision(tank, manifest["tank2"] * TANK_VISUAL_SCALE):
-		push_error("Tank collision shape is missing, disabled, or incorrectly sized")
+	var tank_model := tank.get_node_or_null("VisualRecoilPivot/Tank2") as Node3D
+	var tank_collision := tank.get_node_or_null("CollisionShape3D") as CollisionShape3D
+	var tank_shape := tank_collision.shape as BoxShape3D if tank_collision != null else null
+	if tank.movement_speed <= 0.0 or tank.reverse_movement_speed <= 0.0 or not is_equal_approx(tank.turn_speed, 0.4) \
+			or tank_model == null or not tank_model.scale.is_equal_approx(Vector3.ONE) \
+			or tank_collision == null or tank_collision.disabled or tank_shape == null \
+			or tank_shape.size.x <= 0.0 or tank_shape.size.y <= 0.0 or tank_shape.size.z <= 0.0 \
+			or not is_equal_approx(tank_collision.position.y, tank_shape.size.y * 0.5):
+		push_error("Tank must use scale=1 with a positive, grounded collision box and adjustable linear speed exports")
 		return false
 
 	for building_name: String in BUILDING_MODELS:

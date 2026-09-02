@@ -154,6 +154,15 @@ run("smoke", godot, [
   "--script",
   "res://tests/smoke.gd",
 ], { scanGodotErrors: true });
+run("training-ground-smoke", godot, [
+  "--headless",
+  "--audio-driver",
+  "Dummy",
+  "--path",
+  ".",
+  "--script",
+  "res://tests/training_ground_smoke.gd",
+], { scanGodotErrors: true });
 run("map960-components-smoke", godot, [
   "--headless",
   "--audio-driver",

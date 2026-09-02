@@ -4,8 +4,8 @@ render_mode diffuse_burley, specular_disabled;
 // The grid is evaluated from world coordinates so it remains continuous across the ground mesh.
 uniform vec4 ground_color : source_color = vec4(0.34, 0.36, 0.38, 1.0);
 uniform vec4 grid_color : source_color = vec4(1.0, 1.0, 1.0, 1.0);
-uniform float grid_spacing : hint_range(0.25, 10.0, 0.25) = 1.0;
-uniform float grid_width : hint_range(0.001, 0.25, 0.001) = 0.025;
+uniform float grid_spacing : hint_range(0.25, 10.0, 0.25) = 8.0;
+uniform float grid_width : hint_range(0.0001, 0.25, 0.0001) = 0.00078125;
 
 varying vec3 training_ground_world_position;
 

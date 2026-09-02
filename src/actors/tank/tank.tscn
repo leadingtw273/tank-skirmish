@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=5 format=3 uid="uid://ccc8ikhmdmsj4"]
 
 [ext_resource type="PackedScene" path="res://assets/models/tank/tank2.glb" id="1_tank"]
 [ext_resource type="Script" path="res://src/actors/tank/tank_controller.gd" id="2_controller"]
@@ -9,6 +9,16 @@ size = Vector3(13.8953796, 3.631687, 7.9327138)
 
 [node name="Tank" type="CharacterBody3D"]
 script = ExtResource("2_controller")
+movement_speed = 10.0
+turn_speed = 0.4
+tread_animation_reference_speed = 3.5
+tread_animation_speed_multiplier = 2.5
+turret_turn_speed = 1.0
+gun_pitch_speed = 0.5
+visual_recoil_distance = 0.2
+visual_recoil_return_seconds = 0.26
+max_camera_look_ahead_distance = 35.0
+muzzle_flash_scale = 2.0
 
 [node name="VisualRecoilPivot" type="Node3D" parent="."]
 

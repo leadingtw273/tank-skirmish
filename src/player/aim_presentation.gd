@@ -8,6 +8,14 @@ extends Node
 ## 可阻擋瞄準射線的物理圖層。
 @export_flags_3d_physics var aim_collision_mask := 129
 
+@export_category("瞄準游標")
+## 遊戲執行時取代系統箭頭的滑鼠準星圖片。
+@export var aim_cursor_texture: Texture2D = preload("res://assets/KenneyCrosshair/PNG/Light/crosshair-014.png")
+## 準星中真正對準世界目標的像素位置；預設為 64×64 圖片中心。
+@export var aim_cursor_hotspot := Vector2(32.0, 32.0)
+## 遊戲內準星相對於原始圖片的顯示比例；2/3 代表縮小三分之一。
+@export_range(0.1, 2.0, 0.05) var aim_cursor_scale := 2.0 / 3.0
+
 @export_category("瞄準線")
 ## 每條圓柱形瞄準線的半徑，單位為公尺。
 @export var aim_line_radius := 0.04
@@ -25,6 +33,7 @@ const AIM_VERTICAL_BASIS_THRESHOLD := 0.999
 var controlled_tank: Node3D
 var actual_aim_line: MeshInstance3D
 var mouse_aim_line: MeshInstance3D
+var scaled_aim_cursor_texture: ImageTexture
 var world_target := Vector3.ZERO
 
 
@@ -33,11 +42,33 @@ func set_controlled_tank(tank: Node3D) -> void:
 	controlled_tank = tank
 
 
-## 在呈現節點擁有場景父節點後，一次建立兩個可重複使用的線條網格。
+## 設定滑鼠準星，並一次建立兩個可重複使用的線條網格。
 func initialize_presentation() -> void:
 	if actual_aim_line == null:
 		actual_aim_line = _create_aim_line("ActualAimLine", Color.WHITE)
 		mouse_aim_line = _create_aim_line("MouseAimLine", Color.RED)
+	_apply_aim_cursor()
+
+
+func _apply_aim_cursor() -> void:
+	## 保留 vendor 原圖，僅在記憶體產生縮放版，並同步縮放真正的瞄準熱點。
+	if aim_cursor_texture == null:
+		return
+	var cursor_image := aim_cursor_texture.get_image()
+	if cursor_image == null or cursor_image.is_empty():
+		return
+	var safe_scale := maxf(aim_cursor_scale, 0.01)
+	var scaled_size := Vector2i(
+		maxi(roundi(cursor_image.get_width() * safe_scale), 1),
+		maxi(roundi(cursor_image.get_height() * safe_scale), 1),
+	)
+	cursor_image.resize(scaled_size.x, scaled_size.y, Image.INTERPOLATE_LANCZOS)
+	scaled_aim_cursor_texture = ImageTexture.create_from_image(cursor_image)
+	Input.set_custom_mouse_cursor(
+		scaled_aim_cursor_texture,
+		Input.CURSOR_ARROW,
+		aim_cursor_hotspot * safe_scale,
+	)
 
 
 ## 更新滑鼠選取的世界目標，並重繪兩條瞄準線。

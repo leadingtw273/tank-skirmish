@@ -328,7 +328,7 @@ func _validate_tank_inertia(instance: Node) -> bool:
 	if not is_equal_approx(tank.reverse_movement_speed, 5.0) \
 			or not is_equal_approx(tank.turning_movement_speed_ratio, 0.5) \
 			or not is_equal_approx(tank.firing_movement_speed_loss_ratio, 0.25) \
-			or not is_equal_approx(tank.tank_mass_tonnes, 60.0) or not is_equal_approx(tank.engine_horsepower, 1500.0) \
+			or not is_equal_approx(tank.tank_mass_tonnes, 60.0) or not is_equal_approx(tank.engine_horsepower, 2500.0) \
 			or not is_equal_approx(tank.brake_force_kilonewtons, 240.0) or not is_equal_approx(tank.turn_response, 0.4):
 		push_error("Tank inertia exports do not match the approved defaults")
 		return false
@@ -340,11 +340,11 @@ func _validate_tank_inertia(instance: Node) -> bool:
 			or not is_equal_approx(tank._movement_speed_limit_for_turn(-1.0, -1.0), tank.reverse_movement_speed * 0.5):
 		push_error("Tank turning must progressively lower the active forward or reverse movement speed limit to 50 percent")
 		return false
-	if not is_equal_approx(tank._approach_motion_speed(0.0, 0.5, tank._movement_speed_limit_for_turn(0.5, 0.0), 100.0, 100.0, 1.0), 7.5) \
+	if not is_equal_approx(tank._approach_motion_speed(0.0, 0.5, tank._movement_speed_limit_for_turn(0.5, 0.0), 100.0, 100.0, 1.0), 5.0) \
 			or not is_equal_approx(tank._approach_motion_speed(0.0, -0.5, tank._movement_speed_limit_for_turn(-0.5, 0.0), 100.0, 100.0, 1.0), -2.5):
 		push_error("Tank partial forward and reverse input must scale their respective speed limits")
 		return false
-	if absf(tank._engine_acceleration() - 2.0) > 0.0001 or absf(tank._brake_acceleration() - 4.0) > 0.0001 \
+	if absf(tank._engine_acceleration() - (2500.0 / 60.0 * 0.08)) > 0.0001 or absf(tank._brake_acceleration() - 4.0) > 0.0001 \
 			or absf(tank._braking_distance(10.0) - 12.5) > 0.0001:
 		push_error("Tank inertia formulas do not match the approved physical model")
 		return false
@@ -443,10 +443,10 @@ func _validate_turret_aiming(instance: Node) -> bool:
 	if tank == null:
 		push_error("Tank must exist before turret aiming can be validated")
 		return false
-	if not is_equal_approx(tank.turret_turn_speed, 1.777778):
+	if not is_equal_approx(tank.turret_turn_speed, 1.0):
 		push_error("Tank turret turn speed does not match the approved value")
 		return false
-	if not is_equal_approx(tank.gun_pitch_speed, 1.2) or not is_equal_approx(tank.gun_max_elevation_degrees, 20.0) or not is_equal_approx(tank.gun_max_depression_degrees, 8.0):
+	if not is_equal_approx(tank.gun_pitch_speed, 0.5) or not is_equal_approx(tank.gun_max_elevation_degrees, 20.0) or not is_equal_approx(tank.gun_max_depression_degrees, 8.0):
 		push_error("Tank gun pitch exports do not match the approved MVP values")
 		return false
 
@@ -830,9 +830,9 @@ func _validate_visual_recoil(instance: Node) -> bool:
 			or collision.get_parent() != tank:
 		push_error("Tank visual recoil pivot must own all visible tank nodes while collision stays at the physics root")
 		return false
-	if not is_equal_approx(tank.visual_recoil_distance, 0.36) \
+	if not is_equal_approx(tank.visual_recoil_distance, 0.3) \
 			or not is_equal_approx(tank.visual_recoil_kick_seconds, 0.04) \
-			or not is_equal_approx(tank.visual_recoil_return_seconds, 0.18):
+			or not is_equal_approx(tank.visual_recoil_return_seconds, 0.26):
 		push_error("Tank visual recoil exports must retain the approved defaults")
 		return false
 
@@ -986,8 +986,8 @@ func _validate_projectile_firing(instance: Node) -> bool:
 	if not bool(muzzle_flash.get("one_shot")):
 		push_error("Muzzle flash must play once per shot")
 		return false
-	if not muzzle_flash.global_transform.basis.get_scale().is_equal_approx(Vector3.ONE * 4.0):
-		push_error("Muzzle flash acceptance scale must remain 4x")
+	if not muzzle_flash.global_transform.basis.get_scale().is_equal_approx(Vector3.ONE * 2.0):
+		push_error("Muzzle flash acceptance scale must remain 2x")
 		return false
 	var flash_start := muzzle_flash.global_position
 	var projectile_start := projectile.global_position
@@ -1080,7 +1080,7 @@ func _validate_collision_layout(instance: Node) -> bool:
 	if tank == null:
 		push_error("Tank must be a CharacterBody3D")
 		return false
-	if not is_equal_approx(tank.movement_speed, 15.0) or not is_equal_approx(tank.turn_speed, 0.8):
+	if not is_equal_approx(tank.movement_speed, 10.0) or not is_equal_approx(tank.turn_speed, 0.4):
 		push_error("Tank movement exports do not match the approved values")
 		return false
 	if not _validate_box_collision(tank, manifest["tank2"] * TANK_VISUAL_SCALE):

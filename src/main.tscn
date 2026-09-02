@@ -16,6 +16,7 @@ script = ExtResource("2_main")
 
 [node name="CameraRig" type="Node3D" parent="." unique_id=1627748860]
 script = ExtResource("2_camera_controller")
+fire_shake_kick_distance = 0.5
 
 [node name="CameraShakePivot" type="Node3D" parent="CameraRig" unique_id=798159369]
 
@@ -27,6 +28,8 @@ size = 100.0
 
 [node name="Tank" parent="." unique_id=1574182086 instance=ExtResource("3_tank")]
 transform = Transform3D(0.9393727, 0, -0.3428978, 0, 1, 0, 0.3428978, 0, 0.9393727, 0, 0, 8)
+engine_horsepower = 2500.0
+visual_recoil_distance = 0.3
 
 [node name="PlayerRuntime" type="Node" parent="." unique_id=1190780304 node_paths=PackedStringArray("controlled_tank", "camera_controller", "player_controller", "player_aim_controller", "aim_presentation")]
 script = ExtResource("4_player_runtime")
@@ -59,5 +62,6 @@ muzzle_smoke_forward_offset = 1.0
 [node name="Effects" type="Node3D" parent="CombatRuntime" unique_id=504125484]
 
 [node name="SurfaceEffects" parent="." unique_id=169800416 instance=ExtResource("10_surface_effects")]
+tread_dust_scale = 1.7000000000000002
 
 [node name="World" parent="." unique_id=25069140 instance=ExtResource("9_world")]

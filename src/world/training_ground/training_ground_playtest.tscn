@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://src/world/training_ground/training_ground_playtest.gd" id="1_playtest"]
+[ext_resource type="PackedScene" path="res://src/main.tscn" id="2_main"]
+
+[node name="TrainingGroundPlaytest" type="Node3D"]
+script = ExtResource("1_playtest")
+
+[node name="Main" parent="." instance=ExtResource("2_main")]

@@ -29,7 +29,7 @@ size = 100.0
 [node name="Tank" parent="." unique_id=1574182086 instance=ExtResource("3_tank")]
 transform = Transform3D(0.9393727, 0, -0.3428978, 0, 1, 0, 0.3428978, 0, 0.9393727, 0, 0, 8)
 engine_horsepower = 2500.0
-visual_recoil_distance = 0.3
+visual_recoil_distance = 0.171755731746
 
 [node name="PlayerRuntime" type="Node" parent="." unique_id=1190780304 node_paths=PackedStringArray("controlled_tank", "camera_controller", "player_controller", "player_aim_controller", "aim_presentation")]
 script = ExtResource("4_player_runtime")
@@ -54,14 +54,17 @@ script = ExtResource("8_combat_runtime")
 shot_sources = [NodePath("../Tank")]
 projectiles = NodePath("Projectiles")
 effects = NodePath("Effects")
-impact_vfx_scale = 5.0
-muzzle_smoke_forward_offset = 1.0
+impact_vfx_scale = 2.862595529107
+impact_vfx_surface_offset = 0.028625955291
+muzzle_smoke_scale = 0.572519105821
+muzzle_smoke_forward_offset = 0.572519105821
 
 [node name="Projectiles" type="Node3D" parent="CombatRuntime" unique_id=1204464415]
 
 [node name="Effects" type="Node3D" parent="CombatRuntime" unique_id=504125484]
 
 [node name="SurfaceEffects" parent="." unique_id=169800416 instance=ExtResource("10_surface_effects")]
-tread_dust_scale = 1.7000000000000002
+tread_dust_scale = 0.973282479895
+surface_normal_offset = 0.028625955291
 
 [node name="World" parent="." unique_id=25069140 instance=ExtResource("9_world")]

@@ -8,7 +8,6 @@ const EXPECTED_GROUND_COLOR := Color(0.34, 0.36, 0.38, 1)
 const EXPECTED_GRID_COLOR := Color.WHITE
 const EXPECTED_AMBIENT_COLOR := Color(0.72, 0.74, 0.78, 1)
 const EXPECTED_TARGET_COLOR := Color(0.16, 0.18, 0.2, 1)
-const EXPECTED_TARGET_COLLISION_SIZE := Vector3(13.89538, 3.631687, 7.932714)
 
 
 func _init() -> void:
@@ -38,15 +37,19 @@ func _validate_training_ground() -> bool:
 	var target_collision := target_tank.get_node_or_null("CollisionShape3D") as CollisionShape3D \
 			if target_tank != null else null
 	var target_shape := target_collision.shape as BoxShape3D if target_collision != null else null
+	var target_model := target_tank.get_node_or_null("VisualRecoilPivot/Tank2") as Node3D \
+			if target_tank != null else null
+	var health_label := training_target.get_node_or_null("HealthLabel3D") as Label3D if training_target != null else null
 	if targets == null or targets.get_child_count() != 1 or training_target == null \
 			or training_target.scene_file_path != TRAINING_TARGET_SCENE \
 			or not training_target.position.is_equal_approx(Vector3(-40, 0, -6)) \
 			or target_tank == null or target_tank.collision_layer != 1 \
-			or target_shape == null \
-			or not target_shape.size.is_equal_approx(EXPECTED_TARGET_COLLISION_SIZE) \
-			or not target_collision.position.is_equal_approx(Vector3(0, 1.8158436, 0)):
+			or target_model == null or not target_model.scale.is_equal_approx(Vector3.ONE) \
+			or target_shape == null or target_shape.size.x <= 0.0 or target_shape.size.y <= 0.0 or target_shape.size.z <= 0.0 \
+			or not is_equal_approx(target_collision.position.y, target_shape.size.y * 0.5) \
+			or health_label == null or health_label.font_size <= 0 or health_label.position.y <= target_shape.size.y * 0.5:
 		training_ground.free()
-		return _fail("Training ground must contain one stationary, projectile-collidable target tank at the approved position.")
+		return _fail("Training ground must contain one scale=1 stationary target with grounded collision and a readable health label.")
 
 	var ground := training_ground.get_node_or_null("Ground") as StaticBody3D
 	var visual := training_ground.get_node_or_null("Ground/Visual") as MeshInstance3D

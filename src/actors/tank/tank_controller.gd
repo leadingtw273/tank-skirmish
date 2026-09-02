@@ -55,7 +55,6 @@ extends CharacterBody3D
 const MODEL_FORWARD_LOCAL_AXIS := Vector3.LEFT
 const MIN_AIM_DISTANCE_SQUARED := 0.001
 const TREAD_ANIMATION_MOTION_THRESHOLD := 0.01
-const TREAD_ANIMATION_REFERENCE_MODEL_SCALE := 1.7466666
 const TREAD_ANIMATION_CLIPS := {
 	"forward": &"Tank_Forward",
 	"backwards": &"Tank_Backwards",
@@ -269,11 +268,10 @@ func _tread_animation_for_motion(actual_forward_speed: float, actual_angular_spe
 
 
 func _tread_animation_speed_scale(next_animation: StringName, actual_forward_speed: float, actual_angular_speed: float = 0.0) -> float:
-	## 直行依碰撞後線速度與模型縮放修正；轉向依實際角速度與最高偏航速度同步。
+	## 直行依縮小後的實際線速度與 Inspector 基準速度播放；轉向依實際角速度與最高偏航速度同步。
 	if next_animation == TREAD_ANIMATION_CLIPS["turning_left"] or next_animation == TREAD_ANIMATION_CLIPS["turning_right"]:
 		return absf(actual_angular_speed) / maxf(absf(turn_speed), 0.001) * tread_animation_speed_multiplier
-	var model_scale := maxf(absf(tank_model.scale.x), 0.001)
-	return absf(actual_forward_speed) / tread_animation_reference_speed * TREAD_ANIMATION_REFERENCE_MODEL_SCALE / model_scale * tread_animation_speed_multiplier
+	return absf(actual_forward_speed) / tread_animation_reference_speed * tread_animation_speed_multiplier
 
 
 func _update_tread_animation(next_animation: StringName, animation_speed_scale: float = 1.0) -> void:

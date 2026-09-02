@@ -1,8 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://ccc8ikhmdmsj4"]
+[gd_scene load_steps=7 format=3 uid="uid://ccc8ikhmdmsj4"]
 
 [ext_resource type="PackedScene" path="res://assets/models/tank/tank2.glb" id="1_tank"]
 [ext_resource type="Script" path="res://src/actors/tank/tank_controller.gd" id="2_controller"]
 [ext_resource type="PackedScene" path="res://src/actors/tank/track_contact_effects/track_contact_effects.tscn" id="3_track_contact_effects"]
+[ext_resource type="Script" path="res://src/combat/damage/health_component.gd" id="4_health"]
+[ext_resource type="Script" path="res://src/combat/damage/damage_receiver.gd" id="5_receiver"]
 
 [sub_resource type="BoxShape3D" id="TankCollisionShape"]
 size = Vector3(13.8953796, 3.631687, 7.9327138)
@@ -28,6 +30,13 @@ scale = Vector3(1.7466666, 1.7466666, 1.7466666)
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 position = Vector3(0, 1.8158436, 0)
 shape = SubResource("TankCollisionShape")
+
+[node name="HealthComponent" type="Node" parent="."]
+script = ExtResource("4_health")
+
+[node name="DamageReceiver" type="Node" parent="." node_paths=PackedStringArray("health_component")]
+script = ExtResource("5_receiver")
+health_component = NodePath("../HealthComponent")
 
 [node name="TurretPivot" type="Node3D" parent="VisualRecoilPivot"]
 

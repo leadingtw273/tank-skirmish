@@ -3,8 +3,10 @@
 extends Node
 class_name DamageReceiver
 
+const HealthComponentScript := preload("res://src/combat/damage/health_component.gd")
+
 ## 實際保存血量的同實體元件。
-@export var health_component: HealthComponent
+@export var health_component: HealthComponentScript
 ## 關閉時暫時拒絕所有傷害，供訓練靶歸零等待重設使用。
 @export var enabled := true
 

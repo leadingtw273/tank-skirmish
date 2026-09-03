@@ -193,6 +193,11 @@ position = Vector3(1.0743942, -0.3375666, -0.43723774)
 scale = Vector3(1.35, 1.35, 1.35)
 emission_amount = 30
 lifetime = 2.0
+speed_scale = 0.5
+primary_color = Color(0.41598046, 0.41598043, 0.4159804, 0.9098039)
+secondary_color = Color(0.59717613, 0.59717613, 0.5971761, 0.7254902)
+cloud_density = 0.3
+normal_strength = 0.25
 
 [node name="Smoke" parent="TurretDamageVFXAnchor/Depleted/TurretSmokeCritical" index="0"]
 amount = 30

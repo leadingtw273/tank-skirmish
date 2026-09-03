@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=16 format=3]
 
 [ext_resource type="Script" path="res://src/vfx/damage/tank_damage_visuals.gd" id="1_controller"]
 [ext_resource type="PackedScene" uid="uid://b7qebvhfuoj0t" path="res://assets/BinbunVFX/smoke_effects/effects/smoke_thin/smoke_thin_vfx_01.tscn" id="2_smoke_thin"]
@@ -6,6 +6,77 @@
 [ext_resource type="PackedScene" uid="uid://8qeybfrgq5mf" path="res://assets/BinbunVFX/smoke_effects/effects/smoke_big/smoke_big_vfx_01.tscn" id="4_smoke_big"]
 [ext_resource type="PackedScene" uid="uid://cuuxqxyjkvsh7" path="res://assets/BinbunVFX/fire_effects/effects/Fire/fire_07.tscn" id="5_fire_07"]
 [ext_resource type="PackedScene" uid="uid://ckwh3kn1duce2" path="res://assets/BinbunVFX/fire_effects/effects/Fire/fire_11.tscn" id="6_fire_11"]
+[ext_resource type="Shader" path="res://assets/BinbunVFX/smoke_effects/src/shader/smoke.gdshader" id="7_smoke_shader"]
+[ext_resource type="Texture2D" path="res://assets/BinbunVFX/shared/texture/noise/warp/warp_brush_01.tres" id="8_warp_brush"]
+[ext_resource type="Texture2D" path="res://assets/BinbunVFX/shared/texture/noise/cell/cell_inverted_01.tres" id="9_cell_inverted"]
+
+[sub_resource type="Gradient" id="CriticalSmokeMaskGradient"]
+interpolation_color_space = 1
+offsets = PackedFloat32Array(0, 0.6)
+colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="CriticalSmokeMaskTexture"]
+gradient = SubResource("CriticalSmokeMaskGradient")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(0.5, 0)
+
+[sub_resource type="Gradient" id="CriticalSmokeNormalGradient"]
+interpolation_color_space = 1
+
+[sub_resource type="FastNoiseLite" id="CriticalSmokeNormalNoise"]
+noise_type = 2
+fractal_type = 0
+fractal_octaves = 1
+
+[sub_resource type="NoiseTexture2D" id="CriticalSmokeNormalTexture"]
+noise = SubResource("CriticalSmokeNormalNoise")
+color_ramp = SubResource("CriticalSmokeNormalGradient")
+seamless = true
+invert = true
+as_normal_map = true
+seamless_blend_skirt = 0.2
+bump_strength = 64.0
+
+[sub_resource type="ShaderMaterial" id="Tank2CriticalSmokeMaterial"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("7_smoke_shader")
+shader_parameter/mask1_texture = ExtResource("8_warp_brush")
+shader_parameter/mask1_scroll = Vector2(0, 0.2)
+shader_parameter/mask1_scale = Vector2(2, 2)
+shader_parameter/use_mask2 = true
+shader_parameter/mask2_texture = ExtResource("9_cell_inverted")
+shader_parameter/mask2_scroll = Vector2(0, -0.1)
+shader_parameter/mask2_scale = Vector2(0.4, 0.8)
+shader_parameter/mask2_strength = 0.44
+shader_parameter/mask2_blend_mode = 9
+shader_parameter/use_mask3 = true
+shader_parameter/mask3_texture = SubResource("CriticalSmokeMaskTexture")
+shader_parameter/mask3_scroll = Vector2(0, 0)
+shader_parameter/mask3_scale = Vector2(1, 1)
+shader_parameter/mask3_strength = 0.999999977648
+shader_parameter/mask3_blend_mode = 2
+shader_parameter/primary_color = Color(0.41598046, 0.41598043, 0.4159804, 0.9098039)
+shader_parameter/secondary_color = Color(0.59717613, 0.59717613, 0.5971761, 0.7254902)
+shader_parameter/tertiary_color = Color(0.1, 0.09285, 0.087000005, 1)
+shader_parameter/color_smoothness = 0.5
+shader_parameter/billboard = false
+shader_parameter/displacement_scale = 0.0
+shader_parameter/displacement_offset = 0.5
+shader_parameter/time_scale = 0.5
+shader_parameter/emission_strength = 1.0
+shader_parameter/proximity_fade = true
+shader_parameter/proximity_fade_distance = 1.0
+shader_parameter/edge_cutoff = Vector4(0, 0, 0, 0)
+shader_parameter/alpha_smoothness = 1.0
+shader_parameter/alpha_multiplier = 1.0
+shader_parameter/alpha_mode = 0
+shader_parameter/alpha_cutoff = 0.02
+shader_parameter/dither_cutoff = 1.0
+shader_parameter/normal_texture = SubResource("CriticalSmokeNormalTexture")
+shader_parameter/normal_strength = 0.25
+shader_parameter/roughness = 0.8
 
 [node name="Tank2DamageVisuals" type="Node"]
 script = ExtResource("1_controller")
@@ -200,13 +271,16 @@ cloud_density = 0.3
 normal_strength = 0.25
 
 [node name="Smoke" parent="TurretDamageVFXAnchor/Depleted/TurretSmokeCritical" index="0"]
+material_override = SubResource("Tank2CriticalSmokeMaterial")
 amount = 30
 lifetime = 2.0
+speed_scale = 0.5
 transform_align_channel_filter = 1
 
 [node name="ShadowCaster" parent="TurretDamageVFXAnchor/Depleted/TurretSmokeCritical" index="1"]
 amount = 15
 lifetime = 2.0
+speed_scale = 0.5
 
 [editable path="HullDamageVFXAnchor/Damage50/HullSmokeRight"]
 [editable path="HullDamageVFXAnchor/Damage25/HullSmokeLeft"]

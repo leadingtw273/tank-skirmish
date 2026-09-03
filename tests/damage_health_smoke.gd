@@ -87,6 +87,7 @@ func _validate_training_target() -> bool:
 		return _fail("Tank2 damage visuals must preserve the approved hull/turret effect roles and readable names.")
 	var critical_smoke := turret_vfx_anchor.get_node("Depleted/TurretSmokeCritical")
 	var critical_smoke_particles := critical_smoke.get_node("Smoke") as GPUParticles3D
+	var critical_shadow_particles := critical_smoke.get_node("ShadowCaster") as GPUParticles3D
 	var critical_smoke_material := critical_smoke_particles.material_override as ShaderMaterial
 	if not is_equal_approx(float(critical_smoke.speed_scale), 0.5) \
 			or not Color(0.41598046, 0.41598043, 0.4159804, 0.9098039).is_equal_approx(Color(critical_smoke.primary_color)) \
@@ -94,7 +95,10 @@ func _validate_training_target() -> bool:
 			or not is_equal_approx(float(critical_smoke.cloud_density), 0.3) \
 			or not is_equal_approx(float(critical_smoke.normal_strength), 0.25) \
 			or critical_smoke_material == null \
-			or not is_equal_approx(float(critical_smoke_material.get_shader_parameter("time_scale")), 0.5):
+			or not critical_smoke_material.resource_local_to_scene \
+			or not is_equal_approx(float(critical_smoke_material.get_shader_parameter("time_scale")), 0.5) \
+			or not is_equal_approx(critical_smoke_particles.speed_scale, 0.5) \
+			or not is_equal_approx(critical_shadow_particles.speed_scale, 0.5):
 		target.queue_free()
 		return _fail("Tank2 depleted smoke must preserve the accepted local tuning without modifying vendor assets.")
 	if label.text != "100 / 100" or not is_equal_approx(float(controller.reset_delay_seconds), 3.0):
@@ -107,7 +111,7 @@ func _validate_training_target() -> bool:
 	if int(damage_visuals.active_damage_stage) != 75 or not is_zero_approx(light_smoke_particles.amount_ratio):
 		target.queue_free()
 		return _fail("A new damage stage must begin its particle emission gradually.")
-	await create_timer(0.02).timeout
+	await create_timer(0.05).timeout
 	if light_smoke_particles.amount_ratio < 0.99:
 		target.queue_free()
 		return _fail("A new damage stage must reach its authored particle amount after the transition.")
@@ -138,6 +142,8 @@ func _validate_training_target() -> bool:
 	var gun_pitch_before_depletion := -0.04
 	turret_pivot.rotation.y = turret_yaw_before_depletion
 	gun_pitch_pivot.rotation.z = gun_pitch_before_depletion
+	for node: Node in turret_vfx_anchor.get_node("Depleted").find_children("*", "GPUParticles3D", true, false):
+		(node as GPUParticles3D).lifetime = 0.1
 	receiver.receive_damage(25.0)
 	var expected_depleted_pitch := deg_to_rad(float(damage_visuals.depleted_gun_depression_degrees))
 	var depleted_explosion := root.find_child("TankDepletedExplosion", true, false) as Node3D
@@ -164,6 +170,8 @@ func _validate_training_target() -> bool:
 		and is_equal_approx(turret_pivot.rotation.y, turret_yaw_before_depletion) \
 		and is_equal_approx(gun_pitch_pivot.rotation.z, gun_pitch_before_depletion)
 	target.queue_free()
+	await process_frame
+	await create_timer(0.25).timeout
 	if not reset_is_valid:
 		return _fail("TrainingTarget must restore only health and damage reception after its delay.")
 	return true

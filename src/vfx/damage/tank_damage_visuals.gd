@@ -119,18 +119,16 @@ func _fade_out_state_root(state_root: Node3D) -> void:
 		if tween == null:
 			tween = create_tween().set_parallel(true)
 		tween.tween_property(effect_mesh, "transparency", 1.0, duration)
-	_finish_fade_out(state_root, serial, cleanup_delay)
+	get_tree().create_timer(cleanup_delay).timeout.connect(_finish_fade_out.bind(state_root, serial))
 
 
-func _finish_fade_out(state_root: Node3D, serial: int, delay_seconds: float) -> void:
-	await get_tree().create_timer(delay_seconds).timeout
+func _finish_fade_out(state_root: Node3D, serial: int) -> void:
 	if not is_instance_valid(state_root) or int(_root_transition_serials.get(state_root, -1)) != serial:
 		return
 	state_root.visible = false
 	for node: Node in state_root.find_children("*", "GPUParticles3D", true, false):
 		var particles := node as GPUParticles3D
 		particles.amount_ratio = 1.0
-		particles.emitting = true
 	for node: Node in state_root.find_children("*", "MeshInstance3D", true, false):
 		(node as MeshInstance3D).transparency = 0.0
 

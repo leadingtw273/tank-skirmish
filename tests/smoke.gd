@@ -446,12 +446,14 @@ func _validate_turret_aiming(instance: Node) -> bool:
 	var turret_pivot := tank.get_node_or_null("VisualRecoilPivot/TurretPivot") as Node3D
 	var gun_pitch_pivot := turret_pivot.get_node_or_null("GunPitchPivot") as Node3D if turret_pivot != null else null
 	var muzzle_point := gun_pitch_pivot.get_node_or_null("MuzzlePoint") as Marker3D if gun_pitch_pivot != null else null
-	var turret := turret_pivot.get_node_or_null("Tank_Turret") as MeshInstance3D if turret_pivot != null else null
-	var gun := gun_pitch_pivot.get_node_or_null("Tank_Gun") as MeshInstance3D if gun_pitch_pivot != null else null
+	var turret_visual := turret_pivot.get_node_or_null("TurretVisual") as Node3D if turret_pivot != null else null
+	var gun_visual := gun_pitch_pivot.get_node_or_null("GunVisual") as Node3D if gun_pitch_pivot != null else null
+	var turret := turret_visual.get_node_or_null("Tank_Turret") as MeshInstance3D if turret_visual != null else null
+	var gun := gun_visual.get_node_or_null("Tank_Gun") as MeshInstance3D if gun_visual != null else null
 	if turret_pivot == null or gun_pitch_pivot == null or muzzle_point == null or turret == null or gun == null:
 		push_error("Tank scene must retain permanent turret, gun, and muzzle pivots")
 		return false
-	if turret.get_parent() != turret_pivot or gun_pitch_pivot.get_parent() != turret_pivot or gun.get_parent() != gun_pitch_pivot:
+	if turret.get_parent() != turret_visual or gun_pitch_pivot.get_parent() != turret_pivot or gun.get_parent() != gun_visual:
 		push_error("Tank gun pitch pivot must remain attached beneath the turret yaw pivot")
 		return false
 	if not gun.position.is_zero_approx() or not gun.global_position.is_equal_approx(gun_pitch_pivot.global_position):
@@ -818,7 +820,7 @@ func _validate_visual_recoil(instance: Node) -> bool:
 	var recoil_pivot := tank.get_node_or_null("VisualRecoilPivot") as Node3D
 	var collision := tank.get_node_or_null("CollisionShape3D") as CollisionShape3D
 	if recoil_pivot == null or collision == null \
-			or recoil_pivot.get_node_or_null("Tank2") == null \
+			or recoil_pivot.get_node_or_null("TankVisualSlot/HullVisual/Tank2Model") == null \
 			or recoil_pivot.get_node_or_null("TurretPivot/GunPitchPivot/MuzzlePoint") == null \
 			or collision.get_parent() != tank:
 		push_error("Tank visual recoil pivot must own all visible tank nodes while collision stays at the physics root")
@@ -1074,7 +1076,7 @@ func _validate_collision_layout(instance: Node) -> bool:
 	if tank == null:
 		push_error("Tank must be a CharacterBody3D")
 		return false
-	var tank_model := tank.get_node_or_null("VisualRecoilPivot/Tank2") as Node3D
+	var tank_model := tank.get_node_or_null("VisualRecoilPivot/TankVisualSlot/HullVisual/Tank2Model") as Node3D
 	var tank_collision := tank.get_node_or_null("CollisionShape3D") as CollisionShape3D
 	var tank_shape := tank_collision.shape as BoxShape3D if tank_collision != null else null
 	if tank.movement_speed <= 0.0 or tank.reverse_movement_speed <= 0.0 or not is_equal_approx(tank.turn_speed, 0.4) \

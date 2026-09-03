@@ -153,7 +153,7 @@ func _validate_training_target() -> bool:
 			or not is_equal_approx(turret_pivot.rotation.y, turret_yaw_before_depletion) \
 			or not is_equal_approx(gun_pitch_pivot.rotation.z, expected_depleted_pitch) \
 			or depleted_explosion == null \
-			or depleted_explosion.scene_file_path != "res://src/vfx/damage/tank_depleted_explosion_vfx.tscn" \
+			or depleted_explosion.scene_file_path != "res://src/actors/tank/variants/tank2/damage/tank_depleted_explosion_vfx.tscn" \
 			or not depleted_explosion.scale.is_equal_approx(Vector3.ONE * 1.5) \
 			or explosion_core == null or not explosion_core.scale.is_equal_approx(Vector3.ONE) \
 			or explosion_decal == null or not explosion_decal.size.is_equal_approx(Vector3(10, 5, 10)):

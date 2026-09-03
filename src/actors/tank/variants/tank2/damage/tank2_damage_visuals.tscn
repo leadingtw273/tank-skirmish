@@ -1,6 +1,6 @@
-[gd_scene load_steps=16 format=3]
+[gd_scene load_steps=17 format=3]
 
-[ext_resource type="Script" path="res://src/vfx/damage/tank_damage_visuals.gd" id="1_controller"]
+[ext_resource type="Script" path="res://src/actors/tank/damage/tank_damage_visuals.gd" id="1_controller"]
 [ext_resource type="PackedScene" uid="uid://b7qebvhfuoj0t" path="res://assets/BinbunVFX/smoke_effects/effects/smoke_thin/smoke_thin_vfx_01.tscn" id="2_smoke_thin"]
 [ext_resource type="PackedScene" uid="uid://ctxdbwha5sf47" path="res://assets/BinbunVFX/smoke_effects/effects/smoke/smoke_vfx_01.tscn" id="3_smoke"]
 [ext_resource type="PackedScene" uid="uid://8qeybfrgq5mf" path="res://assets/BinbunVFX/smoke_effects/effects/smoke_big/smoke_big_vfx_01.tscn" id="4_smoke_big"]
@@ -9,6 +9,7 @@
 [ext_resource type="Shader" path="res://assets/BinbunVFX/smoke_effects/src/shader/smoke.gdshader" id="7_smoke_shader"]
 [ext_resource type="Texture2D" path="res://assets/BinbunVFX/shared/texture/noise/warp/warp_brush_01.tres" id="8_warp_brush"]
 [ext_resource type="Texture2D" path="res://assets/BinbunVFX/shared/texture/noise/cell/cell_inverted_01.tres" id="9_cell_inverted"]
+[ext_resource type="PackedScene" path="res://src/actors/tank/variants/tank2/damage/tank_depleted_explosion_vfx.tscn" id="10_depleted_explosion"]
 
 [sub_resource type="Gradient" id="CriticalSmokeMaskGradient"]
 interpolation_color_space = 1
@@ -80,6 +81,7 @@ shader_parameter/roughness = 0.8
 
 [node name="Tank2DamageVisuals" type="Node"]
 script = ExtResource("1_controller")
+depleted_explosion_scene = ExtResource("10_depleted_explosion")
 
 [node name="HullDamageVFXAnchor" type="Node3D" parent="."]
 position = Vector3(0, 3.2, 0)

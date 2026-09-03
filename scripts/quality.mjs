@@ -99,6 +99,7 @@ run("asset-lock-tests", process.execPath, ["--test", "tests/assets-lock.test.mjs
 run("asset-conversion-staging-tests", process.execPath, ["--test", "tests/asset-conversion-staging.test.mjs"]);
 run("asset-conversion-tests", process.execPath, ["--test", "tests/asset-conversion.test.mjs"]);
 run("converted-assets-tests", process.execPath, ["--test", "tests/converted-assets.test.mjs"]);
+run("tank-variant-boundary-tests", process.execPath, ["--test", "tests/tank-variant-boundary.test.mjs"]);
 
 assertVerifiedGodotExecutable(godot, godotTool);
 
@@ -180,6 +181,15 @@ run("damage-health-smoke", godot, [
   ".",
   "--script",
   "res://tests/damage_health_smoke.gd",
+], { scanGodotErrors: true });
+run("tank-variant-refactor-smoke", godot, [
+  "--headless",
+  "--audio-driver",
+  "Dummy",
+  "--path",
+  ".",
+  "--script",
+  "res://tests/tank_variant_refactor_smoke.gd",
 ], { scanGodotErrors: true });
 run("map960-components-smoke", godot, [
   "--headless",

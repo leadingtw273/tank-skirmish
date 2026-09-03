@@ -1,0 +1,40 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://src/actors/tank/tank_controller.gd" id="1_controller"]
+[ext_resource type="PackedScene" path="res://src/actors/tank/track_contact_effects/track_contact_effects.tscn" id="2_track_contact_effects"]
+[ext_resource type="Script" path="res://src/combat/damage/health_component.gd" id="3_health"]
+[ext_resource type="Script" path="res://src/combat/damage/damage_receiver.gd" id="4_receiver"]
+
+[sub_resource type="BoxShape3D" id="TankCollisionShape"]
+size = Vector3(1, 1, 1)
+
+[node name="TankBase" type="CharacterBody3D"]
+script = ExtResource("1_controller")
+
+[node name="VisualRecoilPivot" type="Node3D" parent="."]
+
+[node name="TankVisualSlot" type="Node3D" parent="VisualRecoilPivot"]
+
+[node name="HullVisual" type="Node3D" parent="VisualRecoilPivot/TankVisualSlot"]
+
+[node name="TurretPivot" type="Node3D" parent="VisualRecoilPivot"]
+
+[node name="TurretVisual" type="Node3D" parent="VisualRecoilPivot/TurretPivot"]
+
+[node name="GunPitchPivot" type="Node3D" parent="VisualRecoilPivot/TurretPivot"]
+
+[node name="GunVisual" type="Node3D" parent="VisualRecoilPivot/TurretPivot/GunPitchPivot"]
+
+[node name="MuzzlePoint" type="Marker3D" parent="VisualRecoilPivot/TurretPivot/GunPitchPivot"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("TankCollisionShape")
+
+[node name="HealthComponent" type="Node" parent="."]
+script = ExtResource("3_health")
+
+[node name="DamageReceiver" type="Node" parent="." node_paths=PackedStringArray("health_component")]
+script = ExtResource("4_receiver")
+health_component = NodePath("../HealthComponent")
+
+[node name="TrackContactEffects" parent="." instance=ExtResource("2_track_contact_effects")]

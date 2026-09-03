@@ -15,7 +15,8 @@ const ASSET_LOCK_PATH = join(PROJECT_ROOT, "docs/assets/quaternius-lock.json");
 const TOOLCHAIN_LOCK_PATH = join(PROJECT_ROOT, "docs/toolchain-lock.json");
 const EXPORTER_PATH = join(PROJECT_ROOT, "scripts/blender/export_selected_glb.py");
 const UID = typeof process.getuid === "function" ? process.getuid() : null;
-const CLOSED_IDS = new Set(["tank2", "1story", "1story-gable-roof", "2story", "2story-slim", "2story-wide", "3story-small", "4story", "6story-stack"]);
+const TANK_IDS = new Set(["tank1", "tank2", "tank3", "tank4"]);
+const CLOSED_IDS = new Set([...TANK_IDS, "1story", "1story-gable-roof", "2story", "2story-slim", "2story-wide", "3story-small", "4story", "6story-stack"]);
 const REQUEST_FIELDS = new Set(["atlasBasename", "atlasDigest", "category", "id", "outputPrivatePath", "policy", "resultPrivatePath", "scale", "sourceBasename"]);
 const HELP = "Usage: node scripts/convert-assets.mjs --help | --check | --output-root <absolute-path> (--item <model-id> | --all)\n";
 export const CONVERSION_ERROR_CODES = new Set([
@@ -88,8 +89,8 @@ export function parseCliArgs(args) {
 
 export function logicalOutputPath(model) {
   if (model === null || typeof model !== "object" || !CLOSED_IDS.has(model.id)) fail("MODEL_ID_INVALID");
-  if (model.category === "tank" && model.id === "tank2") return `assets/models/tank/${model.id}.glb`;
-  if (model.category === "building" && model.id !== "tank2") return `assets/models/buildings/${model.id}.glb`;
+  if (model.category === "tank" && TANK_IDS.has(model.id)) return `assets/models/tank/${model.id}.glb`;
+  if (model.category === "building" && !TANK_IDS.has(model.id)) return `assets/models/buildings/${model.id}.glb`;
   fail("MODEL_CATEGORY_INVALID");
 }
 export function canonicalJson(value) {

@@ -75,7 +75,9 @@ test("cache resolver uses explicit canonical root exclusively and otherwise foll
 
 test("locked source paths use only the closed two-segment cache layout", () => {
   const root = resolve(tmpdir(), "tank-stage-layout");
-  assert.equal(resolveLockedSourcePath({ pack: "animated-tanks", filename: "Tank2.blend" }, root), join(root, "animated-tanks", "Tank2.blend"));
+  for (const filename of ["Tank.blend", "Tank2.blend", "Tank3.blend", "Tank4.blend"]) {
+    assert.equal(resolveLockedSourcePath({ pack: "animated-tanks", filename }, root), join(root, "animated-tanks", filename));
+  }
   for (const [pack, filename] of [
     ["/tmp", "Tank2.blend"], ["animated-tanks", "../Tank2.blend"], ["animated-tanks", "Tank2\\.blend"],
     ["animated-tanks", "Tank\u00002.blend"], ["animated-tanks", "Tank\u00012.blend"], ["animated-tanks", "Ta\u006e\u0303k.blend"], ["animated-tanks", "tank2.blend"], ["other", "Tank2.blend"],

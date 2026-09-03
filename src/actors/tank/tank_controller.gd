@@ -8,7 +8,7 @@ extends CharacterBody3D
 ## 指向派生車型的完整匯入模型根節點。
 @export var tank_model: Node3D
 ## 指向派生車型中要交給共用砲塔樞紐的視覺節點。
-@export var tank_turret: MeshInstance3D
+@export var tank_turret: Node3D
 ## 指向派生車型中要交給共用砲管樞紐的視覺節點。
 @export var tank_gun: MeshInstance3D
 ## 指向派生車型的履帶 AnimationPlayer。
@@ -21,6 +21,8 @@ extends CharacterBody3D
 @export var tread_turning_left_animation: StringName
 ## 派生車型右轉履帶動畫名稱。
 @export var tread_turning_right_animation: StringName
+## 車型缺少倒車片段時，是否反向播放它提供的直行履帶動畫。
+@export var reverse_tread_animation_playback := false
 
 @export_category("坦克移動")
 ## 滿前進輸入時車身的最高速度，單位為公尺／秒。
@@ -309,9 +311,12 @@ func _tread_animation_for_motion(actual_forward_speed: float, actual_angular_spe
 
 func _tread_animation_speed_scale(next_animation: StringName, actual_forward_speed: float, actual_angular_speed: float = 0.0) -> float:
 	## 直行依縮小後的實際線速度與 Inspector 基準速度播放；轉向依實際角速度與最高偏航速度同步。
-	if next_animation == tread_turning_left_animation or next_animation == tread_turning_right_animation:
+	if absf(actual_angular_speed) > TREAD_ANIMATION_MOTION_THRESHOLD:
 		return absf(actual_angular_speed) / maxf(absf(turn_speed), 0.001) * tread_animation_speed_multiplier
-	return absf(actual_forward_speed) / tread_animation_reference_speed * tread_animation_speed_multiplier
+	var speed_scale := absf(actual_forward_speed) / tread_animation_reference_speed * tread_animation_speed_multiplier
+	if reverse_tread_animation_playback and actual_forward_speed < 0.0:
+		return -speed_scale
+	return speed_scale
 
 
 func _update_tread_animation(next_animation: StringName, animation_speed_scale: float = 1.0) -> void:

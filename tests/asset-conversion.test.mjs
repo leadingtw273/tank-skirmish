@@ -14,7 +14,8 @@ import {
 
 const digest = (bytes) => createHash("sha256").update(bytes).digest("hex");
 const exporterPath = new URL("../scripts/blender/export_selected_glb.py", import.meta.url).pathname;
-const closed = ["tank2", "1story", "1story-gable-roof", "2story", "2story-slim", "2story-wide", "3story-small", "4story", "6story-stack"];
+const tankIds = new Set(["tank1", "tank2", "tank3", "tank4"]);
+const closed = [...tankIds, "1story", "1story-gable-roof", "2story", "2story-slim", "2story-wide", "3story-small", "4story", "6story-stack"];
 const source = { fileId: "file", sha256: "a".repeat(64), filename: "Tank2.blend" };
 
 function syntheticModel(overrides = {}) {
@@ -94,7 +95,7 @@ test("CLI modes are mutually exclusive and closed mapping rejects hostile ids", 
     assert.throws(() => parseCliArgs(bad), { message: "USAGE" });
   }
   for (const id of ["Tank2", "tank2/", "tank2\\", ".", "..", "unknown"]) assert.throws(() => logicalOutputPath({ id, category: "tank" }), { message: "MODEL_ID_INVALID" });
-  for (const id of closed) assert.match(logicalOutputPath({ id, category: id === "tank2" ? "tank" : "building" }), /^assets\/models\/(tank|buildings)\/.+\.glb$/u);
+  for (const id of closed) assert.match(logicalOutputPath({ id, category: tankIds.has(id) ? "tank" : "building" }), /^assets\/models\/(tank|buildings)\/.+\.glb$/u);
   assert.equal(logicalOutputPath({ id: "tank2", category: "tank" }), "assets/models/tank/tank2.glb");
   assert.equal(logicalOutputPath({ id: "1story", category: "building" }), "assets/models/buildings/1story.glb");
 });

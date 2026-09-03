@@ -24,10 +24,12 @@ test("common tank layer contains no vehicle or vendor node names", () => {
   }
 });
 
-test("only the Tank2 variant owns Tank2 scenes and damage choreography", () => {
+test("each tank variant owns its model scene and damage choreography", () => {
   assert.equal(existsSync(join(tankRoot, "tank.tscn")), false);
   assert.equal(existsSync(join(tankRoot, "tank_base.tscn")), true);
-  assert.equal(existsSync(join(tankRoot, "variants", "tank2", "tank2.tscn")), true);
-  assert.equal(existsSync(join(tankRoot, "variants", "tank2", "damage", "tank2_damage_visuals.tscn")), true);
-  assert.equal(existsSync(join(projectRoot, "src", "vfx", "damage", "tank2_damage_visuals.tscn")), false);
+  for (const tankId of ["tank1", "tank2", "tank3", "tank4"]) {
+    assert.equal(existsSync(join(tankRoot, "variants", tankId, `${tankId}.tscn`)), true, tankId);
+    assert.equal(existsSync(join(tankRoot, "variants", tankId, "damage", `${tankId}_damage_visuals.tscn`)), true, tankId);
+    assert.equal(existsSync(join(projectRoot, "src", "vfx", "damage", `${tankId}_damage_visuals.tscn`)), false, tankId);
+  }
 });

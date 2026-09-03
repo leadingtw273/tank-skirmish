@@ -10,7 +10,7 @@ const PROJECT_ROOT = realpathSync(resolve(dirname(new URL(import.meta.url).pathn
 const UID = typeof process.getuid === "function" ? process.getuid() : null;
 const PACKS = new Set(["animated-tanks", "ultimate-buildings"]);
 const CANONICAL_FILENAMES = new Map([
-  ["animated-tanks", new Set(["Tank2.blend"])],
+  ["animated-tanks", new Set(["Tank.blend", "Tank2.blend", "Tank3.blend", "Tank4.blend"])],
   ["ultimate-buildings", new Set([
     "1Story.blend", "1Story_GableRoof.blend", "2Story.blend", "2Story_Slim.blend",
     "2Story_Wide.blend", "3Story_Small.blend", "4Story.blend", "6Story_Stack.blend", "Texture_Light.png",

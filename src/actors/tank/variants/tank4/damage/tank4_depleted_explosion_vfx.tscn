@@ -1,0 +1,213 @@
+[gd_scene format=3 uid="uid://cqq5at6rea7jk"]
+
+[ext_resource type="PackedScene" uid="uid://bflg720h1w3d3" path="res://assets/BinbunVFX/impact_explosions/effects/explosion/vfx_explosion_01.tscn" id="1_explosion"]
+[ext_resource type="Shader" uid="uid://b6ke6r1fjb8s3" path="res://assets/BinbunVFX/impact_explosions/src/shader/explosion_core.gdshader" id="2_0xul1"]
+
+[sub_resource type="Gradient" id="Gradient_y01pw"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_85p3d"]
+noise_type = 2
+frequency = 0.02
+fractal_octaves = 1
+domain_warp_enabled = true
+domain_warp_type = 2
+domain_warp_amplitude = 5.0
+domain_warp_fractal_octaves = 1
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_csir3"]
+noise = SubResource("FastNoiseLite_85p3d")
+color_ramp = SubResource("Gradient_y01pw")
+seamless = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_0xul1"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("2_0xul1")
+shader_parameter/noise_texture = SubResource("NoiseTexture2D_csir3")
+shader_parameter/primary_color = Color(1, 0.662745, 0.0666667, 1)
+shader_parameter/texture_scale = Vector2(1, 1)
+shader_parameter/decay = 0.0
+shader_parameter/proximity_fade = false
+shader_parameter/proximity_fade_distance = 1.0
+shader_parameter/alpha_mode = 0
+
+[sub_resource type="Curve" id="Curve_smoke_alpha"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), -1.42645, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_smoke_alpha"]
+curve = SubResource("Curve_smoke_alpha")
+
+[sub_resource type="Gradient" id="Gradient_smoke_initial_color"]
+offsets = PackedFloat32Array(0, 0.494872, 1)
+colors = PackedColorArray(1, 1, 1, 1, 0.623529, 0.921569, 0.921569, 1, 0.87451, 0.87451, 0.87451, 0.258824)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture_smoke_initial_color"]
+gradient = SubResource("Gradient_smoke_initial_color")
+
+[sub_resource type="Gradient" id="Gradient_smoke_color"]
+offsets = PackedFloat32Array(0.133333, 0.735897)
+colors = PackedColorArray(1, 0, 0, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture_smoke_color"]
+gradient = SubResource("Gradient_smoke_color")
+
+[sub_resource type="Curve" id="Curve_smoke_scale"]
+_data = [Vector2(0, 0.103036), 0.0, 2.87627, 0, 0, Vector2(0.502404, 1), 0.0, 0.0, 0, 0, Vector2(1, 1), -0.135687, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_smoke_scale"]
+curve = SubResource("Curve_smoke_scale")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_smoke"]
+particle_flag_align_y = true
+angle_min = -720.0
+angle_max = 720.0
+spread = 180.0
+initial_velocity_min = 6.0
+initial_velocity_max = 10.0
+gravity = Vector3(0, 0, 0)
+damping_min = 15.0
+damping_max = 20.0
+scale_min = 0.5
+scale_curve = SubResource("CurveTexture_smoke_scale")
+color_ramp = SubResource("GradientTexture_smoke_color")
+color_initial_ramp = SubResource("GradientTexture_smoke_initial_color")
+alpha_curve = SubResource("CurveTexture_smoke_alpha")
+
+[sub_resource type="SphereMesh" id="SphereMesh_smoke"]
+radius = 2.4
+height = 4.8
+radial_segments = 32
+rings = 16
+
+[sub_resource type="SphereMesh" id="SphereMesh_core"]
+radius = 3.6
+height = 7.2
+radial_segments = 32
+rings = 16
+
+[sub_resource type="Curve" id="Curve_sparks_scale"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), -2.87029, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_sparks_scale"]
+curve = SubResource("Curve_sparks_scale")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_sparks"]
+particle_flag_align_y = true
+angle_min = -720.0
+angle_max = 720.0
+spread = 180.0
+initial_velocity_min = 5.0
+initial_velocity_max = 20.0
+damping_min = 5.0
+damping_max = 10.0
+scale_min = 0.5
+scale_curve = SubResource("CurveTexture_sparks_scale")
+
+[sub_resource type="QuadMesh" id="QuadMesh_sparks"]
+size = Vector2(0.1, 0.8)
+subdivide_width = 32
+subdivide_depth = 32
+
+[sub_resource type="Curve" id="Curve_rings_alpha"]
+_data = [Vector2(0, 1), 0.0, -0.971299, 0, 0, Vector2(1, 0), -0.989796, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_rings_alpha"]
+curve = SubResource("Curve_rings_alpha")
+
+[sub_resource type="Curve" id="Curve_rings_scale"]
+_data = [Vector2(0, 0), 0.0, 6.09936, 0, 0, Vector2(0.216346, 0.856486), 0.699631, 0.699631, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_rings_scale"]
+curve = SubResource("Curve_rings_scale")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_rings"]
+particle_flag_align_y = true
+angle_min = 1.07288e-05
+angle_max = 720.0
+direction = Vector3(0, 1, 0)
+spread = 90.0
+initial_velocity_min = -0.2
+initial_velocity_max = 0.2
+gravity = Vector3(0, 0, 0)
+scale_min = 0.6
+scale_max = 1.2
+scale_curve = SubResource("CurveTexture_rings_scale")
+alpha_curve = SubResource("CurveTexture_rings_alpha")
+
+[sub_resource type="QuadMesh" id="QuadMesh_rings"]
+size = Vector2(16, 16)
+subdivide_width = 32
+subdivide_depth = 32
+orientation = 1
+
+[sub_resource type="Curve" id="Curve_dust_alpha"]
+_data = [Vector2(0, 0), 0.0, 1.01211, 0, 0, Vector2(1, 1), 0.977263, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_dust_alpha"]
+curve = SubResource("Curve_dust_alpha")
+
+[sub_resource type="Gradient" id="Gradient_dust_initial_color"]
+colors = PackedColorArray(0, 0, 0, 1, 1, 0, 0, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture_dust_initial_color"]
+gradient = SubResource("Gradient_dust_initial_color")
+
+[sub_resource type="Curve" id="Curve_dust_scale_velocity"]
+_limits = [0.0, 3.0, 0.0, 1.0]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_dust_scale_velocity"]
+curve = SubResource("Curve_dust_scale_velocity")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_dust"]
+spread = 180.0
+flatness = 0.8
+initial_velocity_min = 4.0
+initial_velocity_max = 6.0
+gravity = Vector3(0, 1, 0)
+damping_min = 1.0
+damping_max = 2.0
+scale_over_velocity_curve = SubResource("CurveTexture_dust_scale_velocity")
+color_initial_ramp = SubResource("GradientTexture_dust_initial_color")
+alpha_curve = SubResource("CurveTexture_dust_alpha")
+
+[sub_resource type="QuadMesh" id="QuadMesh_dust"]
+size = Vector2(8, 8)
+subdivide_width = 32
+subdivide_depth = 32
+
+[node name="TankDepletedExplosionVFX" unique_id=1410141009 instance=ExtResource("1_explosion")]
+
+[node name="Core" parent="." index="0"]
+material_override = SubResource("ShaderMaterial_0xul1")
+mesh = SubResource("SphereMesh_core")
+
+[node name="Smoke" parent="." index="1"]
+process_material = SubResource("ParticleProcessMaterial_smoke")
+draw_pass_1 = SubResource("SphereMesh_smoke")
+
+[node name="Sparks" parent="." index="2"]
+process_material = SubResource("ParticleProcessMaterial_sparks")
+draw_pass_1 = SubResource("QuadMesh_sparks")
+
+[node name="Rings" parent="." index="3"]
+process_material = SubResource("ParticleProcessMaterial_rings")
+draw_pass_1 = SubResource("QuadMesh_rings")
+
+[node name="Dust" parent="." index="4"]
+process_material = SubResource("ParticleProcessMaterial_dust")
+draw_pass_1 = SubResource("QuadMesh_dust")
+
+[node name="Decal" parent="." index="5"]
+size = Vector3(10, 5, 10)
+
+[node name="Light" parent="." index="6"]
+light_size = 8.0
+omni_range = 16.0

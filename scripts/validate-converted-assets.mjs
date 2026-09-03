@@ -5,8 +5,9 @@ import { fileURLToPath } from "node:url";
 
 import { validateAssetLockValue } from "./validate-assets-lock.mjs";
 
-const IDS = ["tank2", "1story", "1story-gable-roof", "2story", "2story-slim", "2story-wide", "3story-small", "4story", "6story-stack"];
-const BUILDING_IDS = new Set(IDS.slice(1));
+const TANK_IDS = new Set(["tank1", "tank2", "tank3", "tank4"]);
+const IDS = [...TANK_IDS, "1story", "1story-gable-roof", "2story", "2story-slim", "2story-wide", "3story-small", "4story", "6story-stack"];
+const BUILDING_IDS = new Set(IDS.filter((id) => !TANK_IDS.has(id)));
 const ID_SET = new Set(IDS);
 const SHA256 = /^[0-9a-f]{64}$/u;
 const GLB_MAGIC = 0x46546c67;
@@ -61,8 +62,8 @@ function string(value, code, { empty = false } = {}) {
 function sha(value, code) { if (typeof value !== "string" || !SHA256.test(value)) fail(code); return value; }
 function index(value, length, code) { if (!safe(value) || value >= length) fail(code); return value; }
 function logicalPath(id, category) {
-  if (!ID_SET.has(id) || (id === "tank2" ? category !== "tank" : category !== "building")) fail("OUTPUT_INVALID");
-  return id === "tank2" ? `assets/models/tank/${id}.glb` : `assets/models/buildings/${id}.glb`;
+  if (!ID_SET.has(id) || (TANK_IDS.has(id) ? category !== "tank" : category !== "building")) fail("OUTPUT_INVALID");
+  return TANK_IDS.has(id) ? `assets/models/tank/${id}.glb` : `assets/models/buildings/${id}.glb`;
 }
 function absolute(value) {
   if (typeof value !== "string" || !isAbsolute(value) || resolve(value) !== value) fail("PATH_INVALID");
@@ -138,7 +139,7 @@ export function parseCliArgs(args) {
 function validateRunnerModel(model) {
   exact(model, ["blender", "category", "exporterSourceDigest", "id", "output", "policy", "scale", "source", "sourceActionNames"], "RUNNER_MANIFEST_INVALID");
   string(model.id, "RUNNER_MANIFEST_INVALID");
-  if (!ID_SET.has(model.id) || (model.id === "tank2" ? model.category !== "tank" : model.category !== "building")) fail("RUNNER_MANIFEST_INVALID");
+  if (!ID_SET.has(model.id) || (TANK_IDS.has(model.id) ? model.category !== "tank" : model.category !== "building")) fail("RUNNER_MANIFEST_INVALID");
   exact(model.output, ["digest", "logicalPath"], "RUNNER_MANIFEST_INVALID");
   sha(model.output.digest, "RUNNER_MANIFEST_INVALID");
   if (model.output.logicalPath !== logicalPath(model.id, model.category)) fail("RUNNER_MANIFEST_INVALID");
@@ -269,7 +270,7 @@ function inspectModel(inputRoot, model) {
   if (outputDigest !== model.output.digest) fail("DIGEST_MISMATCH");
   const glb = parseGlb(bytes);
   const animationNames = sortCodePoints(glb.animationNames); const sourceActionNames = sortCodePoints(model.sourceActionNames);
-  if (model.id === "tank2") {
+  if (TANK_IDS.has(model.id)) {
     if (glb.imageCount !== 0 || animationNames.length === 0 || animationNames.length !== sourceActionNames.length || animationNames.some((name, index) => name !== sourceActionNames[index])) fail("GLB_STRUCTURE_INVALID");
     return { id: model.id, category: model.category, outputRelativePath, outputDigest, sourceActionNames, animationNames, imageCount: 0, embeddedImageDigest: null };
   }
@@ -284,7 +285,7 @@ function assertInputTree(root) {
   if (rootEntries.length !== expectedRoot.size || rootEntries.some((entry) => !expectedRoot.has(entry))) fail("OUTPUT_INVALID");
   const assets = join(root, "assets"); const models = join(assets, "models");
   for (const path of [assets, models, join(models, "tank"), join(models, "buildings")]) directory(path, "OUTPUT_INVALID");
-  const expectedTank = new Set(["tank2.glb"]); const expectedBuildings = new Set(IDS.slice(1).map((id) => `${id}.glb`));
+  const expectedTank = new Set([...TANK_IDS].map((id) => `${id}.glb`)); const expectedBuildings = new Set([...BUILDING_IDS].map((id) => `${id}.glb`));
   for (const [path, expected] of [[join(models, "tank"), expectedTank], [join(models, "buildings"), expectedBuildings]]) {
     const entries = readdirSync(path); if (entries.length !== expected.size || entries.some((entry) => !expected.has(entry))) fail("OUTPUT_INVALID");
   }
@@ -313,10 +314,10 @@ function validateStaticReport(value, code) {
   exact(value.exporter, ["sourceDigest"], code); sha(value.exporter.sourceDigest, code); sameIdSet(value.models, code);
   for (const model of value.models) {
     exact(model, ["id", "category", "outputRelativePath", "outputDigest", "sourceActionNames", "animationNames", "imageCount", "embeddedImageDigest"], code);
-    if (!ID_SET.has(model.id) || (model.id === "tank2" ? model.category !== "tank" : model.category !== "building") || model.outputRelativePath !== logicalPath(model.id, model.category)) fail(code);
+    if (!ID_SET.has(model.id) || (TANK_IDS.has(model.id) ? model.category !== "tank" : model.category !== "building") || model.outputRelativePath !== logicalPath(model.id, model.category)) fail(code);
     sha(model.outputDigest, code); uniqueStrings(model.sourceActionNames, code); uniqueStrings(model.animationNames, code);
     if (!safe(model.imageCount)) fail(code);
-    if (model.id === "tank2") { if (model.imageCount !== 0 || model.embeddedImageDigest !== null || model.animationNames.length === 0 || JSON.stringify(sortCodePoints(model.animationNames)) !== JSON.stringify(sortCodePoints(model.sourceActionNames))) fail(code); }
+    if (TANK_IDS.has(model.id)) { if (model.imageCount !== 0 || model.embeddedImageDigest !== null || model.animationNames.length === 0 || JSON.stringify(sortCodePoints(model.animationNames)) !== JSON.stringify(sortCodePoints(model.sourceActionNames))) fail(code); }
     else if (model.imageCount !== 1 || model.embeddedImageDigest === null || (typeof model.embeddedImageDigest !== "string" || !SHA256.test(model.embeddedImageDigest)) || model.sourceActionNames.length !== 0 || model.animationNames.length !== 0) fail(code);
   }
   uniqueDigests(value.models, "DUPLICATE_DIGEST");
@@ -345,12 +346,12 @@ function validateCompositeManifest(value, code) {
   sha(value.runnerManifestDigest, code); sha(value.runnerRunIdentity, code); sha(value.exporterDigest, code); validateBlender(value.toolchain, code); sameIdSet(value.models, code);
   for (const model of value.models) {
     exact(model, ["id", "category", "sourceFileId", "sourceDigest", "scale", "sourceActionNames", "outputRelativePath", "outputDigest", "animationNames", "imageCount", "embeddedImageDigest", "measuredGodotXyz"], code);
-    if (!ID_SET.has(model.id) || (model.id === "tank2" ? model.category !== "tank" : model.category !== "building")) fail(code);
+    if (!ID_SET.has(model.id) || (TANK_IDS.has(model.id) ? model.category !== "tank" : model.category !== "building")) fail(code);
     string(model.sourceFileId, code); sha(model.sourceDigest, code);
     if (typeof model.scale !== "number" || !Number.isFinite(model.scale) || model.scale <= 0) fail(code);
     if (model.outputRelativePath !== logicalPath(model.id, model.category)) fail(code);
     sha(model.outputDigest, code); uniqueStrings(model.sourceActionNames, code); uniqueStrings(model.animationNames, code); if (!safe(model.imageCount)) fail(code); validateMeasurement(model.measuredGodotXyz, code);
-    if (model.id === "tank2") {
+    if (TANK_IDS.has(model.id)) {
       if (model.imageCount !== 0 || model.embeddedImageDigest !== null || model.animationNames.length === 0 || canonicalJson(sortCodePoints(model.animationNames)) !== canonicalJson(sortCodePoints(model.sourceActionNames))) fail(code);
     } else if (model.imageCount !== 1 || !SHA256.test(model.embeddedImageDigest ?? "") || model.sourceActionNames.length !== 0 || model.animationNames.length !== 0) fail(code);
   }
@@ -418,7 +419,7 @@ function assertProductionGlbTree(root) {
   directory(root, "OUTPUT_INVALID");
   const models = join(root, "assets", "models"); const tank = join(models, "tank"); const buildings = join(models, "buildings");
   for (const path of [models, tank, buildings]) directory(path, "OUTPUT_INVALID");
-  const expected = [[tank, new Set(["tank2.glb"])], [buildings, new Set(IDS.slice(1).map((id) => `${id}.glb`) )]];
+  const expected = [[tank, new Set([...TANK_IDS].map((id) => `${id}.glb`))], [buildings, new Set([...BUILDING_IDS].map((id) => `${id}.glb`) )]];
   for (const [path, names] of expected) {
     const entries = readdirSync(path); const glbs = entries.filter((entry) => entry.endsWith(".glb"));
     if (glbs.length !== names.size || glbs.some((entry) => !names.has(entry))) fail("OUTPUT_INVALID");

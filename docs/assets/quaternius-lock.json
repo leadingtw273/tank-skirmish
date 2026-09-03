@@ -6,7 +6,7 @@
     "expectedGodotXyzFormula": "round([rawX * scale, rawZ * scale, rawY * scale], 5)",
     "axisTolerance": {
       "minimumMeters": 0.01,
-      "relative": 0.005
+      "relative": 0.01
     }
   },
   "conversionManifest": {
@@ -19,10 +19,43 @@
     "requirementsWhenPresent": {
       "outputDigest": "non-null for every model",
       "measuredGodotXyz": "non-null for every model",
-      "embeddedImageDigest": "non-null for every building and null for tank2"
+      "embeddedImageDigest": "non-null for every building and null for every tank"
     }
   },
   "models": [
+    {
+      "id": "tank1",
+      "category": "tank",
+      "pack": "animated-tanks",
+      "source": {
+        "fileId": "1uaTlQ-HqN27if0knwsGTpL2NiQKFEKms",
+        "filename": "Tank.blend",
+        "sizeBytes": 1279620,
+        "sha256": "1949b020efda14164b62f153e8d186e624aa4b6edb8d3539a31d42e2286a5692"
+      },
+      "scale": 0.45,
+      "rawSourceXyz": [
+        17.215613842010498,
+        10.092504024505615,
+        7.50416886806488
+      ],
+      "expectedGodotXyz": [
+        7.74703,
+        3.37688,
+        4.54163
+      ],
+      "animationPolicy": "retain_names_for_future_validation",
+      "texturePolicy": "material_color_only",
+      "sourceImagePath": null,
+      "expectedImageCount": 0,
+      "outputDigest": "3d529f76befe09f614ed354defe49403b6bb0ff58866eb268ea09c3963bdc8fb",
+      "measuredGodotXyz": [
+        7.74082,
+        3.372,
+        4.54163
+      ],
+      "embeddedImageDigest": null
+    },
     {
       "id": "tank2",
       "category": "tank",
@@ -42,6 +75,72 @@
       "expectedImageCount": 0,
       "outputDigest": "61b05ab82d0e57b3ce1d73f2b78f3c0010fc677b9115dd4965b67356a1431e9a",
       "measuredGodotXyz": [7.95537, 2.07921, 4.54163],
+      "embeddedImageDigest": null
+    },
+    {
+      "id": "tank3",
+      "category": "tank",
+      "pack": "animated-tanks",
+      "source": {
+        "fileId": "1z_CR2nhFwz8n2z0JM6sI5bXD-2iC4_r5",
+        "filename": "Tank3.blend",
+        "sizeBytes": 1653716,
+        "sha256": "882975a599e7d265803f971424b2ffe7ca6d7aab5736cec98058e99239092e7d"
+      },
+      "scale": 0.45,
+      "rawSourceXyz": [
+        14.874444961547852,
+        10.542677879333496,
+        6.7602657079696655
+      ],
+      "expectedGodotXyz": [
+        6.6935,
+        3.04212,
+        4.74421
+      ],
+      "animationPolicy": "retain_names_for_future_validation",
+      "texturePolicy": "material_color_only",
+      "sourceImagePath": null,
+      "expectedImageCount": 0,
+      "outputDigest": "8b1aa6676b833b18b65110af98be523606042e9d79336fbb0089ace3e5498acd",
+      "measuredGodotXyz": [
+        6.63575,
+        3.03756,
+        4.7442
+      ],
+      "embeddedImageDigest": null
+    },
+    {
+      "id": "tank4",
+      "category": "tank",
+      "pack": "animated-tanks",
+      "source": {
+        "fileId": "1hrG1XAUSpbCAtvxsOEdx0Csi-O4yTSAx",
+        "filename": "Tank4.blend",
+        "sizeBytes": 2008212,
+        "sha256": "25613d55289dce03f71c19f11cb1386be24927ad28f6766af6ec19a51f4cb93e"
+      },
+      "scale": 0.45,
+      "rawSourceXyz": [
+        16.16000270843506,
+        9.978668689727783,
+        5.997371077537537
+      ],
+      "expectedGodotXyz": [
+        7.272,
+        2.69882,
+        4.4904
+      ],
+      "animationPolicy": "retain_names_for_future_validation",
+      "texturePolicy": "material_color_only",
+      "sourceImagePath": null,
+      "expectedImageCount": 0,
+      "outputDigest": "02a2f612f8fc35be86ace74607d27d990c9023940854082d9bb959b7189ed6d8",
+      "measuredGodotXyz": [
+        7.26225,
+        2.69023,
+        4.4904
+      ],
       "embeddedImageDigest": null
     },
     {

@@ -1,0 +1,44 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://src/actors/tank/damage/tank_damage_visuals.gd" id="1_controller"]
+[ext_resource type="PackedScene" path="res://assets/BinbunVFX/smoke_effects/effects/smoke_thin/smoke_thin_vfx_01.tscn" id="2_smoke_thin"]
+[ext_resource type="PackedScene" path="res://assets/BinbunVFX/smoke_effects/effects/smoke/smoke_vfx_01.tscn" id="3_smoke"]
+[ext_resource type="PackedScene" path="res://assets/BinbunVFX/smoke_effects/effects/smoke_big/smoke_big_vfx_01.tscn" id="4_smoke_big"]
+[ext_resource type="PackedScene" path="res://assets/BinbunVFX/fire_effects/effects/Fire/fire_01.tscn" id="5_fire"]
+[ext_resource type="PackedScene" path="res://src/actors/tank/variants/tank4/damage/tank4_depleted_explosion_vfx.tscn" id="6_explosion"]
+
+[node name="Tank4DamageVisuals" type="Node"]
+script = ExtResource("1_controller")
+depleted_explosion_scene = ExtResource("6_explosion")
+
+[node name="HullDamageVFXAnchor" type="Node3D" parent="."]
+position = Vector3(0, 2.7, 0)
+[node name="Damage75" type="Node3D" parent="HullDamageVFXAnchor"]
+visible = false
+[node name="Damage50" type="Node3D" parent="HullDamageVFXAnchor"]
+visible = false
+[node name="HullSmoke" parent="HullDamageVFXAnchor/Damage50" instance=ExtResource("3_smoke")]
+[node name="Damage25" type="Node3D" parent="HullDamageVFXAnchor"]
+visible = false
+[node name="HullSmokeHeavy" parent="HullDamageVFXAnchor/Damage25" instance=ExtResource("4_smoke_big")]
+[node name="Depleted" type="Node3D" parent="HullDamageVFXAnchor"]
+visible = false
+[node name="HullSmokeCritical" parent="HullDamageVFXAnchor/Depleted" instance=ExtResource("4_smoke_big")]
+scale = Vector3(1.35, 1.35, 1.35)
+
+[node name="TurretDamageVFXAnchor" type="Node3D" parent="."]
+position = Vector3(0, 0.8, 0)
+[node name="Damage75" type="Node3D" parent="TurretDamageVFXAnchor"]
+visible = false
+[node name="TurretSmokeLight" parent="TurretDamageVFXAnchor/Damage75" instance=ExtResource("2_smoke_thin")]
+scale = Vector3(0.8, 0.8, 0.8)
+[node name="Damage50" type="Node3D" parent="TurretDamageVFXAnchor"]
+visible = false
+[node name="Damage25" type="Node3D" parent="TurretDamageVFXAnchor"]
+visible = false
+[node name="TurretFire" parent="TurretDamageVFXAnchor/Damage25" instance=ExtResource("5_fire")]
+scale = Vector3(0.9, 0.9, 0.9)
+[node name="Depleted" type="Node3D" parent="TurretDamageVFXAnchor"]
+visible = false
+[node name="TurretFireCritical" parent="TurretDamageVFXAnchor/Depleted" instance=ExtResource("5_fire")]
+scale = Vector3(1.35, 1.35, 1.35)

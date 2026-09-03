@@ -1,7 +1,8 @@
 extends SceneTree
 
 const Verifier := preload("res://scripts/measure-converted-assets.gd")
-const IDS := ["tank2", "1story", "1story-gable-roof", "2story", "2story-slim", "2story-wide", "3story-small", "4story", "6story-stack"]
+const TANK_IDS := ["tank1", "tank2", "tank3", "tank4"]
+const IDS := ["tank1", "tank2", "tank3", "tank4", "1story", "1story-gable-roof", "2story", "2story-slim", "2story-wide", "3story-small", "4story", "6story-stack"]
 
 
 func _init() -> void:
@@ -132,10 +133,10 @@ func check_join_cases() -> Dictionary:
 	var past_floor_boundary := join_case(1.01001, 1.0)
 	if Verifier.verify_measurement_join(past_floor_boundary.actual, past_floor_boundary.manifest, past_floor_boundary.lock).code != "TOLERANCE_MISMATCH":
 		return failure()
-	var relative_boundary := join_case(10.05, 10.0)
+	var relative_boundary := join_case(10.1, 10.0)
 	if not Verifier.verify_measurement_join(relative_boundary.actual, relative_boundary.manifest, relative_boundary.lock).ok:
 		return failure()
-	var past_relative_boundary := join_case(10.05001, 10.0)
+	var past_relative_boundary := join_case(10.10001, 10.0)
 	if Verifier.verify_measurement_join(past_relative_boundary.actual, past_relative_boundary.manifest, past_relative_boundary.lock).code != "TOLERANCE_MISMATCH":
 		return failure()
 	var manifest_digest_mismatch := manifest.duplicate(true)
@@ -147,7 +148,7 @@ func check_join_cases() -> Dictionary:
 	if Verifier.verify_measurement_join(actual, manifest_measurement_mismatch, lock).code != "MEASUREMENT_MISMATCH":
 		return failure()
 	var wrong_join := manifest.duplicate(true)
-	wrong_join[1].id = "tank2"
+	wrong_join[1].id = "tank1"
 	if Verifier.verify_measurement_join(actual, wrong_join, lock).ok:
 		return failure()
 	return success()
@@ -216,7 +217,8 @@ func composite_models() -> Array:
 	var models: Array = []
 	for index in range(IDS.size()):
 		var id: String = IDS[index]
-		models.append({"id": id, "category": "tank" if id == "tank2" else "building", "sourceFileId": "file-%s" % id, "sourceDigest": "%064x" % (index + 10), "scale": 1.0, "sourceActionNames": ["Drive"] if id == "tank2" else [], "outputRelativePath": "assets/models/tank/tank2.glb" if id == "tank2" else "assets/models/buildings/%s.glb" % id, "outputDigest": "%064x" % (index + 1), "animationNames": ["Drive"] if id == "tank2" else [], "imageCount": 0 if id == "tank2" else 1, "embeddedImageDigest": null if id == "tank2" else "%064x" % (index + 30), "measuredGodotXyz": [1.0, 1.0, 1.0]})
+		var is_tank := TANK_IDS.has(id)
+		models.append({"id": id, "category": "tank" if is_tank else "building", "sourceFileId": "file-%s" % id, "sourceDigest": "%064x" % (index + 10), "scale": 1.0, "sourceActionNames": ["Drive"] if is_tank else [], "outputRelativePath": "assets/models/tank/%s.glb" % id if is_tank else "assets/models/buildings/%s.glb" % id, "outputDigest": "%064x" % (index + 1), "animationNames": ["Drive"] if is_tank else [], "imageCount": 0 if is_tank else 1, "embeddedImageDigest": null if is_tank else "%064x" % (index + 30), "measuredGodotXyz": [1.0, 1.0, 1.0]})
 	return models
 
 

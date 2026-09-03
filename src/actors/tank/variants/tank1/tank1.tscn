@@ -1,0 +1,42 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="PackedScene" path="res://src/actors/tank/tank_base.tscn" id="1_base"]
+[ext_resource type="PackedScene" path="res://assets/models/tank/tank1.glb" id="2_model"]
+[ext_resource type="PackedScene" path="res://src/actors/tank/variants/tank1/damage/tank1_damage_visuals.tscn" id="3_damage_visuals"]
+
+[sub_resource type="BoxShape3D" id="TankCollisionShape"]
+size = Vector3(7.74703, 3.37688, 4.54163)
+
+[node name="Tank" node_paths=PackedStringArray("tank_model", "tank_turret", "tank_gun", "tread_animation_player") instance=ExtResource("1_base")]
+variant_interface_enabled = true
+tank_model = NodePath("VisualRecoilPivot/TankVisualSlot/HullVisual/Tank1Model")
+tank_turret = NodePath("VisualRecoilPivot/TankVisualSlot/HullVisual/Tank1TurretAdapter")
+tank_gun = NodePath("VisualRecoilPivot/TankVisualSlot/HullVisual/Tank1Model/AgentTeamScaleRoot/Tank_Gun")
+tread_animation_player = NodePath("VisualRecoilPivot/TankVisualSlot/HullVisual/Tank1Model/AnimationPlayer")
+tread_forward_animation = &"Forward"
+tread_backwards_animation = &"Forward"
+tread_turning_left_animation = &"Forward"
+tread_turning_right_animation = &"Forward"
+reverse_tread_animation_playback = true
+movement_speed = 5.725191058213
+reverse_movement_speed = 2.862595529107
+turn_speed = 0.4
+tread_animation_reference_speed = 2.003816870375
+tread_animation_speed_multiplier = 2.5
+turret_turn_speed = 1.0
+gun_pitch_speed = 0.5
+visual_recoil_distance = 0.114503821164
+visual_recoil_return_seconds = 0.26
+max_camera_look_ahead_distance = 35.0
+muzzle_flash_scale = 1.145038211643
+
+[node name="Tank1Model" parent="VisualRecoilPivot/TankVisualSlot/HullVisual" instance=ExtResource("2_model")]
+
+[node name="Tank1TurretAdapter" type="Node3D" parent="VisualRecoilPivot/TankVisualSlot/HullVisual"]
+
+[node name="CollisionShape3D" parent="." index="1"]
+position = Vector3(0, 1.68844, 0)
+shape = SubResource("TankCollisionShape")
+
+[node name="Tank1DamageVisuals" parent="." instance=ExtResource("3_damage_visuals")]
+depleted_explosion_scale = 1.5

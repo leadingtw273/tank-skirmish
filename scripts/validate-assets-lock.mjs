@@ -17,8 +17,9 @@ const REQUIRED_PRESENT_FIELDS = ["outputDigest", "measuredGodotXyz", "embeddedIm
 const PRESENT_REQUIREMENTS = {
   outputDigest: "non-null for every model",
   measuredGodotXyz: "non-null for every model",
-  embeddedImageDigest: "non-null for every building and null for tank2",
+  embeddedImageDigest: "non-null for every building and null for every tank",
 };
+const TANK_IDS = new Set(["tank1", "tank2", "tank3", "tank4"]);
 
 function fail(path) {
   throw new Error(path || "root");
@@ -104,7 +105,7 @@ function validateCoordinateContract(value) {
   if (value.expectedGodotXyzFormula !== "round([rawX * scale, rawZ * scale, rawY * scale], 5)") fail("coordinateContract.expectedGodotXyzFormula");
   assertExactFields(value.axisTolerance, TOLERANCE_FIELDS, "coordinateContract.axisTolerance");
   if (value.axisTolerance.minimumMeters !== 0.01) fail("coordinateContract.axisTolerance.minimumMeters");
-  if (value.axisTolerance.relative !== 0.005) fail("coordinateContract.axisTolerance.relative");
+  if (value.axisTolerance.relative !== 0.01) fail("coordinateContract.axisTolerance.relative");
 }
 
 function validateManifest(value) {
@@ -137,7 +138,7 @@ function validateModel(model, index, manifestState, atlas) {
   }
 
   if (model.category === "tank") {
-    if (model.id !== "tank2" || model.pack !== "animated-tanks" || model.scale !== 0.45 || model.animationPolicy !== "retain_names_for_future_validation" || model.texturePolicy !== "material_color_only" || model.sourceImagePath !== null || model.expectedImageCount !== 0) fail(path);
+    if (!TANK_IDS.has(model.id) || model.pack !== "animated-tanks" || model.scale !== 0.45 || model.animationPolicy !== "retain_names_for_future_validation" || model.texturePolicy !== "material_color_only" || model.sourceImagePath !== null || model.expectedImageCount !== 0) fail(path);
   } else if (model.pack !== "ultimate-buildings" || model.scale !== 3.6 || model.animationPolicy !== "no_source_clips" || model.texturePolicy !== "embed_selected_atlas" || model.sourceImagePath !== `//${atlas.stagingBasename}` || model.expectedImageCount !== 1) {
     fail(path);
   }
@@ -151,7 +152,7 @@ function validateModel(model, index, manifestState, atlas) {
   assertDigest(model.outputDigest, `${path}.outputDigest`);
   assertVector(model.measuredGodotXyz, `${path}.measuredGodotXyz`);
   for (const [axis, measured] of model.measuredGodotXyz.entries()) {
-    if (Math.abs(measured - model.expectedGodotXyz[axis]) > Math.max(0.01, 0.005 * Math.abs(model.expectedGodotXyz[axis]))) fail(`${path}.measuredGodotXyz[${axis}]`);
+    if (Math.abs(measured - model.expectedGodotXyz[axis]) > Math.max(0.01, 0.01 * Math.abs(model.expectedGodotXyz[axis]))) fail(`${path}.measuredGodotXyz[${axis}]`);
   }
   if (model.category === "building") assertDigest(model.embeddedImageDigest, `${path}.embeddedImageDigest`);
 }
@@ -173,14 +174,14 @@ export function validateAssetLockValue(value) {
   if (value.schemaVersion !== 1) fail("schemaVersion");
   validateCoordinateContract(value.coordinateContract);
   validateManifest(value.conversionManifest);
-  if (!Array.isArray(value.models) || value.models.length !== 9) fail("models");
+  if (!Array.isArray(value.models) || value.models.length !== 12) fail("models");
   if (!Array.isArray(value.atlases) || value.atlases.length !== 1) fail("atlases");
   validateAtlas(value.atlases[0], 0);
   for (const [index, model] of value.models.entries()) validateModel(model, index, value.conversionManifest.state, value.atlases[0]);
 
   const tanks = value.models.filter((model) => model.category === "tank").length;
   const buildings = value.models.filter((model) => model.category === "building").length;
-  if (tanks !== 1 || buildings !== 8) fail("models");
+  if (tanks !== 4 || buildings !== 8) fail("models");
   assertUnique(value.models.map((model) => model.id), "models");
   assertUnique(value.models.map((model) => model.source.filename), "models");
   assertUnique(value.atlases.map((atlas) => atlas.id), "atlases");

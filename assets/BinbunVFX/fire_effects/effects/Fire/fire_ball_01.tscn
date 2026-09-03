@@ -1,0 +1,156 @@
+[gd_scene load_steps=30 format=3 uid="uid://b2ab52tt76b5o"]
+
+[ext_resource type="Script" uid="uid://boxi7d4dogpjl" path="res://assets/BinbunVFX/fire_effects/src/script/vfx_fire_controller.gd" id="1_xx77p"]
+[ext_resource type="Shader" uid="uid://iiwfrop7ptg1" path="res://assets/BinbunVFX/fire_effects/src/shader/fire/flame_core.gdshader" id="2_qonl2"]
+[ext_resource type="Texture2D" uid="uid://cb6uibjeyk6lq" path="res://assets/BinbunVFX/fire_effects/src/texture/flame/flame_01.tres" id="3_rpff5"]
+[ext_resource type="Shader" uid="uid://c8pmipy6r4r2a" path="res://assets/BinbunVFX/fire_effects/src/shader/fire/fire_ball_01.gdshader" id="4_rcabl"]
+[ext_resource type="Texture2D" uid="uid://my8st384p2dy" path="res://assets/BinbunVFX/fire_effects/src/texture/flame/flame_02.tres" id="5_bfwwq"]
+[ext_resource type="Shader" uid="uid://dvnai5wsqfd3s" path="res://assets/BinbunVFX/fire_effects/src/shader/fire/flame_01.gdshader" id="6_ckq56"]
+[ext_resource type="PackedScene" uid="uid://cfi2ejoe46dll" path="res://assets/BinbunVFX/fire_effects/src/prefs/fire/sparks.tscn" id="7_7v7af"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_o530b"]
+noise_type = 5
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_jnt6n"]
+width = 128
+height = 128
+noise = SubResource("FastNoiseLite_o530b")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_du5lb"]
+render_priority = 0
+shader = ExtResource("2_qonl2")
+shader_parameter/noise_texture_1 = ExtResource("3_rpff5")
+shader_parameter/noise_texture_2 = SubResource("NoiseTexture2D_jnt6n")
+shader_parameter/edge_softness = 0.08
+shader_parameter/main_color = Color(0, 0, 0, 1)
+shader_parameter/mask_from = Vector2(0.5, 0.5)
+shader_parameter/mask_scale = 0.25
+
+[sub_resource type="QuadMesh" id="QuadMesh_6w3tt"]
+material = SubResource("ShaderMaterial_du5lb")
+size = Vector2(2, 2)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ykbwl"]
+render_priority = 0
+shader = ExtResource("4_rcabl")
+shader_parameter/noise_texture_1 = ExtResource("5_bfwwq")
+shader_parameter/texture_scale = Vector2(1, 0.5)
+shader_parameter/edge_softness = 0.5
+shader_parameter/mask_from = 0.1
+shader_parameter/mask_to = 1.0
+
+[sub_resource type="SphereMesh" id="SphereMesh_54856"]
+material = SubResource("ShaderMaterial_ykbwl")
+radius = 0.42
+
+[sub_resource type="Curve" id="Curve_gqqj4"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), -2.26103, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_4pj3p"]
+curve = SubResource("Curve_gqqj4")
+
+[sub_resource type="Gradient" id="Gradient_d6w5f"]
+colors = PackedColorArray(1, 0, 0, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_gx2xs"]
+gradient = SubResource("Gradient_d6w5f")
+
+[sub_resource type="Gradient" id="Gradient_6w3tt"]
+colors = PackedColorArray(1, 0, 0, 1, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_nygw6"]
+gradient = SubResource("Gradient_6w3tt")
+
+[sub_resource type="Curve" id="Curve_axvpv"]
+_data = [Vector2(0, 1), 0.0, -2.18199, 0, 0, Vector2(1, 0), -0.440996, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_dt612"]
+curve = SubResource("Curve_axvpv")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_gqqj4"]
+direction = Vector3(0, 1, 0)
+spread = 0.0
+initial_velocity_min = 2.0
+initial_velocity_max = 4.0
+gravity = Vector3(0, 0, 0)
+scale_curve = SubResource("CurveTexture_dt612")
+color_ramp = SubResource("GradientTexture1D_nygw6")
+color_initial_ramp = SubResource("GradientTexture1D_gx2xs")
+alpha_curve = SubResource("CurveTexture_4pj3p")
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_4v53s"]
+noise_type = 5
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_d6w5f"]
+width = 128
+height = 128
+noise = SubResource("FastNoiseLite_4v53s")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_bwu8l"]
+render_priority = 0
+shader = ExtResource("6_ckq56")
+shader_parameter/noise_texture_1 = ExtResource("3_rpff5")
+shader_parameter/noise_texture_2 = SubResource("NoiseTexture2D_d6w5f")
+shader_parameter/edge_softness = 0.5
+shader_parameter/texture_scale = Vector2(1, 1)
+shader_parameter/smoke_color = Color(0, 0, 0, 1)
+shader_parameter/lightness = 0.0
+shader_parameter/mask_from = Vector2(0.5, 0.5)
+shader_parameter/mask_scale = 0.4
+
+[sub_resource type="QuadMesh" id="QuadMesh_d6w5f"]
+material = SubResource("ShaderMaterial_bwu8l")
+size = Vector2(2, 2)
+
+[sub_resource type="Curve" id="Curve_4hpt6"]
+_data = [Vector2(0, 0), 0.0, 6.71383, 0, 0, Vector2(0.494253, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), -4.95378, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_yvkl8"]
+curve = SubResource("Curve_4hpt6")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_d6w5f"]
+emission_shape_offset = Vector3(0, 0.1, 0)
+emission_shape_scale = Vector3(1, 2, 1)
+emission_shape = 2
+emission_sphere_radius = 0.1
+direction = Vector3(0, 1, 0)
+initial_velocity_min = 1.0
+initial_velocity_max = 3.0
+radial_velocity_min = -2.23517e-05
+radial_velocity_max = 0.999978
+gravity = Vector3(0, 0, 0)
+tangential_accel_min = -5.0
+tangential_accel_max = 5.0
+damping_min = 1.0
+damping_max = 10.0
+scale_min = 0.1
+scale_curve = SubResource("CurveTexture_yvkl8")
+
+[node name="Fire_Ball_01" type="Node3D"]
+script = ExtResource("1_xx77p")
+
+[node name="Flame_Core" type="MeshInstance3D" parent="." groups=["effect_mesh"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.000336149, 0, 0.00508887)
+sorting_offset = -0.1
+cast_shadow = 0
+mesh = SubResource("QuadMesh_6w3tt")
+skeleton = NodePath("")
+
+[node name="Tip" type="MeshInstance3D" parent="." groups=["effect_mesh"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0482069, 0)
+sorting_offset = 0.1
+mesh = SubResource("SphereMesh_54856")
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="."]
+amount = 40
+lifetime = 0.7
+draw_order = 3
+process_material = SubResource("ParticleProcessMaterial_gqqj4")
+draw_pass_1 = SubResource("QuadMesh_d6w5f")
+
+[node name="sparks" parent="." instance=ExtResource("7_7v7af")]
+amount = 20
+process_material = SubResource("ParticleProcessMaterial_d6w5f")

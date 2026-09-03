@@ -1,0 +1,50 @@
+[gd_scene load_steps=9 format=3 uid="uid://cglrxhr75fhi3"]
+
+[ext_resource type="Shader" uid="uid://ce0jli3oc7fn6" path="res://assets/BinbunVFX/fire_effects/src/shader/fire/fire_forcefield_01.gdshader" id="1_2u5oa"]
+[ext_resource type="Script" uid="uid://dwiriuvqer150" path="res://assets/BinbunVFX/fire_effects/src/script/fire/fire_forcefield.gd" id="1_3nlgg"]
+[ext_resource type="Texture2D" uid="uid://cb6uibjeyk6lq" path="res://assets/BinbunVFX/fire_effects/src/texture/flame/flame_01.tres" id="2_3nlgg"]
+
+[sub_resource type="Gradient" id="Gradient_2u5oa"]
+colors = PackedColorArray(0.187176, 0.187176, 0.187176, 1, 1, 1, 1, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_3nlgg"]
+noise_type = 2
+frequency = 0.0044
+fractal_type = 2
+fractal_octaves = 4
+fractal_gain = 1.71
+cellular_distance_function = 2
+cellular_return_type = 6
+domain_warp_type = 2
+domain_warp_frequency = 0.004
+domain_warp_fractal_octaves = 3
+domain_warp_fractal_lacunarity = 10.0
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_2fiqp"]
+seamless = true
+seamless_blend_skirt = 1.0
+color_ramp = SubResource("Gradient_2u5oa")
+noise = SubResource("FastNoiseLite_3nlgg")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_c2g6h"]
+render_priority = 0
+shader = ExtResource("1_2u5oa")
+shader_parameter/noise_texture = ExtResource("2_3nlgg")
+shader_parameter/mask_texture = SubResource("NoiseTexture2D_2fiqp")
+shader_parameter/main_color = Color(1, 0.513726, 0, 1)
+shader_parameter/edge_color = Color(1, 0, 0, 1)
+shader_parameter/glow_color = Color(1, 0, 0, 1)
+shader_parameter/fresnel_multiplier = 0.2
+shader_parameter/displace_strength = 0.01
+shader_parameter/texture_scale = Vector2(10, 2)
+
+[sub_resource type="SphereMesh" id="SphereMesh_v8mck"]
+material = SubResource("ShaderMaterial_c2g6h")
+radius = 1.0
+height = 2.0
+
+[node name="Fire_Forcefield_04" type="Node3D"]
+script = ExtResource("1_3nlgg")
+
+[node name="FieldMesh" type="MeshInstance3D" parent="." groups=["effect_mesh"]]
+mesh = SubResource("SphereMesh_v8mck")

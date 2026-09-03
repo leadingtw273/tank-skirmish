@@ -1,0 +1,109 @@
+[gd_scene load_steps=21 format=3 uid="uid://dhiobx0qlv1c6"]
+
+[ext_resource type="Shader" uid="uid://dvnai5wsqfd3s" path="res://assets/BinbunVFX/fire_effects/src/shader/fire/flame_01.gdshader" id="1_8bqkk"]
+[ext_resource type="Script" uid="uid://boxi7d4dogpjl" path="res://assets/BinbunVFX/fire_effects/src/script/vfx_fire_controller.gd" id="1_ncahp"]
+[ext_resource type="Texture2D" uid="uid://cb6uibjeyk6lq" path="res://assets/BinbunVFX/fire_effects/src/texture/flame/flame_01.tres" id="2_ncahp"]
+[ext_resource type="Shader" uid="uid://daf8tuwg27ttm" path="res://assets/BinbunVFX/fire_effects/src/shader/fire/fire_ball_03.gdshader" id="3_8bqkk"]
+[ext_resource type="Texture2D" uid="uid://my8st384p2dy" path="res://assets/BinbunVFX/fire_effects/src/texture/flame/flame_02.tres" id="4_oyhs2"]
+[ext_resource type="PackedScene" uid="uid://cfi2ejoe46dll" path="res://assets/BinbunVFX/fire_effects/src/prefs/fire/sparks.tscn" id="5_r2lqi"]
+
+[sub_resource type="Gradient" id="Gradient_xns7w"]
+colors = PackedColorArray(1, 0, 0, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_ncahp"]
+gradient = SubResource("Gradient_xns7w")
+
+[sub_resource type="Curve" id="Curve_8bqkk"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), -3.08716, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_dgiuk"]
+curve = SubResource("Curve_8bqkk")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_8bqkk"]
+spread = 180.0
+initial_velocity_max = 1.0
+gravity = Vector3(0, 0, 0)
+scale_curve = SubResource("CurveTexture_dgiuk")
+color_initial_ramp = SubResource("GradientTexture1D_ncahp")
+sub_emitter_mode = 4
+sub_emitter_amount_at_start = 1
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_oyhs2"]
+noise_type = 3
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_n5sf1"]
+width = 128
+height = 128
+seamless = true
+noise = SubResource("FastNoiseLite_oyhs2")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_r2lqi"]
+render_priority = 0
+shader = ExtResource("1_8bqkk")
+shader_parameter/noise_texture_1 = ExtResource("2_ncahp")
+shader_parameter/noise_texture_2 = SubResource("NoiseTexture2D_n5sf1")
+shader_parameter/edge_softness = 0.4
+shader_parameter/texture_scale = Vector2(1.5, 1.5)
+shader_parameter/smoke_color = Color(1, 0, 0, 1)
+shader_parameter/lightness = 0.2
+shader_parameter/mask_from = Vector2(0.5, 0.5)
+shader_parameter/mask_scale = 0.4
+
+[sub_resource type="QuadMesh" id="QuadMesh_8bqkk"]
+material = SubResource("ShaderMaterial_r2lqi")
+size = Vector2(2.8, 2.8)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_vkqks"]
+render_priority = 0
+shader = ExtResource("3_8bqkk")
+shader_parameter/noise_texture_1 = ExtResource("4_oyhs2")
+shader_parameter/texture_scale = Vector2(1, 1)
+shader_parameter/edge_softness = 0.5
+shader_parameter/mask_from = 0.3
+shader_parameter/mask_to = 1.0
+shader_parameter/glow_color = Color(1, 0.9, 0.8, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_lwksv"]
+material = SubResource("ShaderMaterial_vkqks")
+
+[sub_resource type="Curve" id="Curve_ahoht"]
+_data = [Vector2(0, 0), 0.0, 6.71383, 0, 0, Vector2(0.494253, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), -4.95378, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_xns7w"]
+curve = SubResource("Curve_ahoht")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_dgiuk"]
+emission_shape = 2
+emission_sphere_radius = 0.1
+direction = Vector3(0, 1, 0)
+spread = 180.0
+initial_velocity_min = 1.0
+initial_velocity_max = 3.0
+radial_velocity_min = -2.23517e-05
+radial_velocity_max = 0.999978
+gravity = Vector3(0, 0, 0)
+tangential_accel_min = -5.0
+tangential_accel_max = 5.0
+damping_min = 1.0
+damping_max = 10.0
+scale_min = 0.1
+scale_curve = SubResource("CurveTexture_xns7w")
+
+[node name="Fire_Ball_03" type="Node3D"]
+script = ExtResource("1_ncahp")
+
+[node name="Flame" type="GPUParticles3D" parent="."]
+amount = 32
+lifetime = 0.8
+process_material = SubResource("ParticleProcessMaterial_8bqkk")
+draw_pass_1 = SubResource("QuadMesh_8bqkk")
+
+[node name="Ball" type="MeshInstance3D" parent="." groups=["effect_mesh"]]
+mesh = SubResource("SphereMesh_lwksv")
+
+[node name="sparks" parent="." instance=ExtResource("5_r2lqi")]
+amount = 20
+lifetime = 0.8
+process_material = SubResource("ParticleProcessMaterial_dgiuk")

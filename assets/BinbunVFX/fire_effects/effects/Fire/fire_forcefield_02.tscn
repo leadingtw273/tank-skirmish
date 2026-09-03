@@ -1,0 +1,35 @@
+[gd_scene load_steps=8 format=3 uid="uid://dqw1cdhfhg44x"]
+
+[ext_resource type="Shader" uid="uid://ce0jli3oc7fn6" path="res://assets/BinbunVFX/fire_effects/src/shader/fire/fire_forcefield_01.gdshader" id="1_kr50v"]
+[ext_resource type="Script" uid="uid://dwiriuvqer150" path="res://assets/BinbunVFX/fire_effects/src/script/fire/fire_forcefield.gd" id="1_upibq"]
+[ext_resource type="Texture2D" uid="uid://cb6uibjeyk6lq" path="res://assets/BinbunVFX/fire_effects/src/texture/flame/flame_01.tres" id="2_upibq"]
+
+[sub_resource type="Gradient" id="Gradient_kr50v"]
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_upibq"]
+gradient = SubResource("Gradient_kr50v")
+width = 32
+height = 32
+fill_to = Vector2(0, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_kr50v"]
+render_priority = 0
+shader = ExtResource("1_kr50v")
+shader_parameter/noise_texture = ExtResource("2_upibq")
+shader_parameter/mask_texture = SubResource("GradientTexture2D_upibq")
+shader_parameter/main_color = Color(1, 0.235294, 0, 1)
+shader_parameter/edge_color = Color(1, 0.447059, 0, 1)
+shader_parameter/glow_color = Color(1, 1, 0.682353, 1)
+shader_parameter/displace_strength = 0.01
+shader_parameter/texture_scale = Vector2(3, 3)
+
+[sub_resource type="SphereMesh" id="SphereMesh_upibq"]
+material = SubResource("ShaderMaterial_kr50v")
+radius = 1.0
+height = 2.0
+
+[node name="Fire_Forcefield_02" type="Node3D"]
+script = ExtResource("1_upibq")
+
+[node name="FieldMesh" type="MeshInstance3D" parent="." groups=["effect_mesh"]]
+mesh = SubResource("SphereMesh_upibq")

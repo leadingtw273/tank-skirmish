@@ -1,10 +1,11 @@
-[gd_scene load_steps=7 format=3 uid="uid://ccc8ikhmdmsj4"]
+[gd_scene load_steps=8 format=3 uid="uid://ccc8ikhmdmsj4"]
 
 [ext_resource type="PackedScene" path="res://assets/models/tank/tank2.glb" id="1_tank"]
 [ext_resource type="Script" path="res://src/actors/tank/tank_controller.gd" id="2_controller"]
 [ext_resource type="PackedScene" path="res://src/actors/tank/track_contact_effects/track_contact_effects.tscn" id="3_track_contact_effects"]
 [ext_resource type="Script" path="res://src/combat/damage/health_component.gd" id="4_health"]
 [ext_resource type="Script" path="res://src/combat/damage/damage_receiver.gd" id="5_receiver"]
+[ext_resource type="PackedScene" path="res://src/vfx/damage/tank2_damage_visuals.tscn" id="6_damage_visuals"]
 
 [sub_resource type="BoxShape3D" id="TankCollisionShape"]
 size = Vector3(7.955370303640, 2.079210193863, 4.541630211513)
@@ -46,3 +47,6 @@ health_component = NodePath("../HealthComponent")
 [node name="MuzzlePoint" type="Marker3D" parent="VisualRecoilPivot/TurretPivot/GunPitchPivot"]
 
 [node name="TrackContactEffects" parent="." instance=ExtResource("3_track_contact_effects")]
+
+[node name="Tank2DamageVisuals" parent="." instance=ExtResource("6_damage_visuals")]
+depleted_explosion_scale = 1.5

@@ -58,7 +58,8 @@ func _update_label(current_health: float, maximum_health: float) -> void:
 
 
 func _apply_target_material(node: Node) -> void:
-	if target_material != null and node is MeshInstance3D:
+	# VFX 內的 effect_mesh 必須保留自己的 ShaderMaterial；否則火焰核心會被靶子灰材質蓋成色塊。
+	if target_material != null and node is MeshInstance3D and not node.is_in_group("effect_mesh"):
 		(node as MeshInstance3D).material_override = target_material
 	for child: Node in node.get_children():
 		_apply_target_material(child)

@@ -128,6 +128,11 @@ func _all_target_meshes_are_gray(root_node: Node) -> bool:
 	var mesh_count := 0
 	for node: Node in root_node.find_children("*", "MeshInstance3D", true, false):
 		var mesh_instance := node as MeshInstance3D
+		if mesh_instance.is_in_group("effect_mesh"):
+			if mesh_instance.material_override is StandardMaterial3D \
+					and (mesh_instance.material_override as StandardMaterial3D).albedo_color.is_equal_approx(EXPECTED_TARGET_COLOR):
+				return false
+			continue
 		var material := mesh_instance.material_override as StandardMaterial3D
 		if material == null or not material.albedo_color.is_equal_approx(EXPECTED_TARGET_COLOR):
 			return false

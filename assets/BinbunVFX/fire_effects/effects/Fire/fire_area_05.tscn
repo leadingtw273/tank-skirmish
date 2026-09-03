@@ -1,0 +1,81 @@
+[gd_scene load_steps=12 format=3 uid="uid://c7pnfv66doxo3"]
+
+[ext_resource type="Shader" uid="uid://deoomobptadmb" path="res://assets/BinbunVFX/fire_effects/src/shader/fire/fire_area_01.gdshader" id="1_4ldnf"]
+[ext_resource type="Script" uid="uid://bp27qbsbiqitc" path="res://assets/BinbunVFX/fire_effects/src/script/fire/fire_area.gd" id="1_k154d"]
+[ext_resource type="PackedScene" uid="uid://cfi2ejoe46dll" path="res://assets/BinbunVFX/fire_effects/src/prefs/fire/sparks.tscn" id="2_k154d"]
+
+[sub_resource type="Gradient" id="Gradient_mxi17"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_w1axa"]
+noise_type = 2
+seed = 5
+fractal_type = 3
+fractal_octaves = 3
+fractal_gain = 3.0
+fractal_weighted_strength = 0.64
+fractal_ping_pong_strength = 10.0
+cellular_distance_function = 1
+cellular_return_type = 5
+domain_warp_enabled = true
+domain_warp_type = 2
+domain_warp_frequency = 0.009
+domain_warp_fractal_type = 0
+domain_warp_fractal_octaves = 2
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_68e56"]
+seamless = true
+color_ramp = SubResource("Gradient_mxi17")
+noise = SubResource("FastNoiseLite_w1axa")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_7ea3s"]
+render_priority = 0
+shader = ExtResource("1_4ldnf")
+shader_parameter/noise_texture_1 = SubResource("NoiseTexture2D_68e56")
+shader_parameter/wave_scale = 5.0
+shader_parameter/main_color = Color(1, 0.235294, 0, 1)
+shader_parameter/edge_color = Color(1, 0.580392, 0, 1)
+shader_parameter/glow_color = Color(1, 1, 0.682353, 1)
+shader_parameter/speed = 1.0
+shader_parameter/texture_scale = Vector2(0.3, 0.3)
+shader_parameter/mask_scale = 0.5
+
+[sub_resource type="QuadMesh" id="QuadMesh_xtef0"]
+material = SubResource("ShaderMaterial_7ea3s")
+size = Vector2(1.5, 1.5)
+subdivide_width = 16
+subdivide_depth = 16
+orientation = 1
+
+[sub_resource type="Curve" id="Curve_1m62c"]
+_data = [Vector2(0, 0), 0.0, 6.71383, 0, 0, Vector2(0.494253, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), -4.95378, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_6uf0i"]
+curve = SubResource("Curve_1m62c")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_ky6uy"]
+emission_shape_offset = Vector3(0, 0.1, 0)
+emission_shape_scale = Vector3(1, 2, 1)
+emission_shape = 3
+emission_box_extents = Vector3(0.4, 0.1, 0.4)
+direction = Vector3(0, 1, 0)
+initial_velocity_min = 1.0
+initial_velocity_max = 3.0
+radial_velocity_min = -2.23517e-05
+radial_velocity_max = 0.999978
+gravity = Vector3(0, 0, 0)
+tangential_accel_min = -5.0
+tangential_accel_max = 5.0
+damping_min = 1.0
+damping_max = 10.0
+scale_min = 0.1
+scale_curve = SubResource("CurveTexture_6uf0i")
+
+[node name="Fire_Area_05" type="Node3D"]
+script = ExtResource("1_k154d")
+
+[node name="WaveMesh" type="MeshInstance3D" parent="." groups=["effect_mesh"]]
+mesh = SubResource("QuadMesh_xtef0")
+
+[node name="sparks" parent="." instance=ExtResource("2_k154d")]
+process_material = SubResource("ParticleProcessMaterial_ky6uy")

@@ -1,0 +1,60 @@
+[gd_scene load_steps=13 format=3 uid="uid://b4rwcr53rj13w"]
+
+[ext_resource type="Script" uid="uid://boxi7d4dogpjl" path="res://assets/BinbunVFX/fire_effects/src/script/vfx_fire_controller.gd" id="1_3ao5j"]
+[ext_resource type="Shader" uid="uid://dvnai5wsqfd3s" path="res://assets/BinbunVFX/fire_effects/src/shader/fire/flame_01.gdshader" id="1_cj3sg"]
+[ext_resource type="Texture2D" uid="uid://cb6uibjeyk6lq" path="res://assets/BinbunVFX/fire_effects/src/texture/flame/flame_01.tres" id="2_ygyq2"]
+
+[sub_resource type="Curve" id="Curve_ygyq2"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), -2.88135, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_3ao5j"]
+curve = SubResource("Curve_ygyq2")
+
+[sub_resource type="Gradient" id="Gradient_ygyq2"]
+colors = PackedColorArray(1, 0, 0, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_mwl40"]
+gradient = SubResource("Gradient_ygyq2")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_ygyq2"]
+spread = 10.0
+gravity = Vector3(0, 0, 0)
+color_initial_ramp = SubResource("GradientTexture1D_mwl40")
+alpha_curve = SubResource("CurveTexture_3ao5j")
+sub_emitter_mode = 4
+sub_emitter_amount_at_start = 1
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_17a5u"]
+noise_type = 3
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_3ao5j"]
+width = 128
+height = 128
+seamless = true
+noise = SubResource("FastNoiseLite_17a5u")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_v61lf"]
+render_priority = 0
+shader = ExtResource("1_cj3sg")
+shader_parameter/noise_texture_1 = ExtResource("2_ygyq2")
+shader_parameter/noise_texture_2 = SubResource("NoiseTexture2D_3ao5j")
+shader_parameter/edge_softness = 0.5
+shader_parameter/texture_scale = Vector2(1, 1)
+shader_parameter/smoke_color = Color(0, 0, 0, 1)
+shader_parameter/lightness = 0.0
+shader_parameter/mask_from = Vector2(0.5, 0.5)
+shader_parameter/mask_scale = 0.2
+
+[sub_resource type="QuadMesh" id="QuadMesh_cj3sg"]
+material = SubResource("ShaderMaterial_v61lf")
+
+[node name="Fire_Trail" type="Node3D"]
+script = ExtResource("1_3ao5j")
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="."]
+amount = 24
+lifetime = 0.4
+draw_order = 3
+process_material = SubResource("ParticleProcessMaterial_ygyq2")
+draw_pass_1 = SubResource("QuadMesh_cj3sg")

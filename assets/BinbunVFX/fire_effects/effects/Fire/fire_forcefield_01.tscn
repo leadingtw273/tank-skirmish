@@ -1,0 +1,26 @@
+[gd_scene load_steps=6 format=3 uid="uid://bcd1krhenwtx2"]
+
+[ext_resource type="Script" uid="uid://dwiriuvqer150" path="res://assets/BinbunVFX/fire_effects/src/script/fire/fire_forcefield.gd" id="1_6nqnk"]
+[ext_resource type="Shader" uid="uid://ce0jli3oc7fn6" path="res://assets/BinbunVFX/fire_effects/src/shader/fire/fire_forcefield_01.gdshader" id="1_owsde"]
+[ext_resource type="Texture2D" uid="uid://cb6uibjeyk6lq" path="res://assets/BinbunVFX/fire_effects/src/texture/flame/flame_01.tres" id="2_6d208"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_6nqnk"]
+render_priority = 0
+shader = ExtResource("1_owsde")
+shader_parameter/noise_texture = ExtResource("2_6d208")
+shader_parameter/main_color = Color(1, 0.235294, 0, 1)
+shader_parameter/edge_color = Color(1, 0.447059, 0, 1)
+shader_parameter/glow_color = Color(1, 1, 0.682353, 1)
+shader_parameter/displace_strength = 0.01
+shader_parameter/texture_scale = Vector2(3, 3)
+
+[sub_resource type="SphereMesh" id="SphereMesh_3nsr5"]
+material = SubResource("ShaderMaterial_6nqnk")
+radius = 1.0
+height = 2.0
+
+[node name="Fire_Forcefield_01" type="Node3D"]
+script = ExtResource("1_6nqnk")
+
+[node name="FieldMesh" type="MeshInstance3D" parent="." groups=["effect_mesh"]]
+mesh = SubResource("SphereMesh_3nsr5")

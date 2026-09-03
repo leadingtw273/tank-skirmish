@@ -1,0 +1,198 @@
+[gd_scene format=3 uid="uid://7gwa41r7a7ub"]
+
+[ext_resource type="PackedScene" uid="uid://dhqevcfe27wis" path="res://assets/BinbunVFX/fire_effects/effects/Fire/fire_candle.tscn" id="1_thvcc"]
+[ext_resource type="PackedScene" uid="uid://6agn6ayo6dow" path="res://assets/BinbunVFX/fire_effects/effects/Fire/fire_01.tscn" id="2_yquov"]
+[ext_resource type="PackedScene" uid="uid://ct51l01fjttnl" path="res://assets/BinbunVFX/fire_effects/effects/Fire/fire_02.tscn" id="3_n3qrm"]
+[ext_resource type="PackedScene" uid="uid://cpgjtaxpu2xt1" path="res://assets/BinbunVFX/fire_effects/effects/Fire/fire_03.tscn" id="4_m1qya"]
+[ext_resource type="PackedScene" uid="uid://3706jqo6ehwh" path="res://assets/BinbunVFX/fire_effects/effects/Fire/fire_04.tscn" id="5_p6h8f"]
+[ext_resource type="PackedScene" uid="uid://djvf0i62xd1l0" path="res://assets/BinbunVFX/fire_effects/effects/Fire/fire_05.tscn" id="6_rbbqo"]
+[ext_resource type="PackedScene" uid="uid://ci3jeyidg7axc" path="res://assets/BinbunVFX/fire_effects/effects/Fire/fire_06.tscn" id="7_f6pbb"]
+[ext_resource type="PackedScene" uid="uid://cuuxqxyjkvsh7" path="res://assets/BinbunVFX/fire_effects/effects/Fire/fire_07.tscn" id="8_bulrg"]
+[ext_resource type="PackedScene" uid="uid://clyd6ui11twpf" path="res://assets/BinbunVFX/fire_effects/effects/Fire/fire_08.tscn" id="9_ab4f8"]
+[ext_resource type="PackedScene" uid="uid://dcnxmci6bgmk1" path="res://assets/BinbunVFX/fire_effects/effects/Fire/fire_09.tscn" id="10_8bhxu"]
+[ext_resource type="PackedScene" uid="uid://ksh0flu0s0cl" path="res://assets/BinbunVFX/fire_effects/effects/Fire/fire_10.tscn" id="11_h24e5"]
+[ext_resource type="PackedScene" uid="uid://ckwh3kn1duce2" path="res://assets/BinbunVFX/fire_effects/effects/Fire/fire_11.tscn" id="12_s4qsf"]
+[ext_resource type="PackedScene" uid="uid://b2ab52tt76b5o" path="res://assets/BinbunVFX/fire_effects/effects/Fire/fire_ball_01.tscn" id="12_ygddb"]
+[ext_resource type="PackedScene" uid="uid://bph30003wdfi6" path="res://assets/BinbunVFX/fire_effects/effects/Fire/fire_ball_02.tscn" id="13_djuyq"]
+[ext_resource type="PackedScene" uid="uid://dhiobx0qlv1c6" path="res://assets/BinbunVFX/fire_effects/effects/Fire/fire_ball_03.tscn" id="14_bpggd"]
+[ext_resource type="PackedScene" uid="uid://pyomi1wu6t2v" path="res://assets/BinbunVFX/fire_effects/effects/Fire/fire_ball_04.tscn" id="15_bh655"]
+[ext_resource type="PackedScene" uid="uid://d0kdg3i7p55p" path="res://assets/BinbunVFX/fire_effects/effects/Fire/fire_ball_05.tscn" id="16_gqqbe"]
+[ext_resource type="PackedScene" uid="uid://cfg7a0hexgqni" path="res://assets/BinbunVFX/fire_effects/effects/Fire/fire_ball_06.tscn" id="17_nea1f"]
+[ext_resource type="PackedScene" uid="uid://u2bvemfo8m7g" path="res://assets/BinbunVFX/fire_effects/effects/Fire/fire_ball_07.tscn" id="18_140db"]
+[ext_resource type="PackedScene" uid="uid://gtmt8pp0hlp5" path="res://assets/BinbunVFX/fire_effects/effects/Fire/fire_area_01.tscn" id="18_gg1i7"]
+[ext_resource type="PackedScene" uid="uid://bweqj8sruoy5j" path="res://assets/BinbunVFX/fire_effects/effects/Fire/fire_area_02.tscn" id="19_baprw"]
+[ext_resource type="PackedScene" uid="uid://gccmc8p2p4ji" path="res://assets/BinbunVFX/fire_effects/effects/Fire/fire_area_03.tscn" id="20_adswr"]
+[ext_resource type="PackedScene" uid="uid://b1wprcdbire6a" path="res://assets/BinbunVFX/fire_effects/effects/Fire/fire_area_04.tscn" id="21_w82tf"]
+[ext_resource type="PackedScene" uid="uid://c7pnfv66doxo3" path="res://assets/BinbunVFX/fire_effects/effects/Fire/fire_area_05.tscn" id="22_0gve2"]
+[ext_resource type="PackedScene" uid="uid://dcs5gsithu1vw" path="res://assets/BinbunVFX/fire_effects/effects/Fire/fire_area_06.tscn" id="23_0t2nf"]
+[ext_resource type="PackedScene" uid="uid://c8nwv1ahjtf0c" path="res://assets/BinbunVFX/fire_effects/effects/Fire/fire_area_07.tscn" id="24_237g8"]
+[ext_resource type="PackedScene" uid="uid://vexc2fg2x2le" path="res://assets/BinbunVFX/fire_effects/effects/Fire/fire_area_08.tscn" id="25_jlvdr"]
+[ext_resource type="PackedScene" uid="uid://bcd1krhenwtx2" path="res://assets/BinbunVFX/fire_effects/effects/Fire/fire_forcefield_01.tscn" id="26_a47yk"]
+[ext_resource type="PackedScene" uid="uid://dqw1cdhfhg44x" path="res://assets/BinbunVFX/fire_effects/effects/Fire/fire_forcefield_02.tscn" id="27_m5i2p"]
+[ext_resource type="PackedScene" uid="uid://dxurcl26bvtao" path="res://assets/BinbunVFX/fire_effects/effects/Fire/fire_forcefield_03.tscn" id="28_tcidu"]
+[ext_resource type="PackedScene" uid="uid://cglrxhr75fhi3" path="res://assets/BinbunVFX/fire_effects/effects/Fire/fire_forcefield_04.tscn" id="29_n8idv"]
+[ext_resource type="PackedScene" uid="uid://b4rwcr53rj13w" path="res://assets/BinbunVFX/fire_effects/effects/Fire/fire_trail.tscn" id="30_kmm5o"]
+
+[sub_resource type="Environment" id="Environment_xuqvo"]
+background_mode = 1
+background_color = Color(0.146229, 0.0544183, 0.0354145, 1)
+ambient_light_color = Color(1, 1, 1, 1)
+sdfgi_enabled = true
+sdfgi_use_occlusion = true
+sdfgi_cascades = 3
+sdfgi_y_scale = 0
+glow_enabled = true
+glow_normalized = true
+volumetric_fog_density = 0.1298
+
+[sub_resource type="Animation" id="Animation_yquov"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(2, 0, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_thvcc"]
+resource_name = "preview"
+length = 7.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 7),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(2, 0, 0), Vector3(-11.67, 0, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_yquov"]
+_data = {
+&"RESET": SubResource("Animation_yquov"),
+&"preview": SubResource("Animation_thvcc")
+}
+
+[node name="Node3D" type="Node3D" unique_id=683647020]
+transform = Transform3D(1.00219, 0, 0, 0, 1.00219, 0, 0, 0, 1.00219, 0, 0, 0)
+
+[node name="Fire" type="Node" parent="." unique_id=100657306]
+
+[node name="Fire_Candle" parent="Fire" unique_id=1245349530 instance=ExtResource("1_thvcc")]
+transform = Transform3D(1.00219, 0, 0, 0, 1.00219, 0, 0, 0, 1.00219, -8.82258, 0, 1.55831)
+
+[node name="Fire_01" parent="Fire" unique_id=1547324085 instance=ExtResource("2_yquov")]
+transform = Transform3D(1.00219, 0, 0, 0, 1.00219, 0, 0, 0, 1.00219, -3.50704, 0.0288498, 3.88559)
+
+[node name="Fire_02" parent="Fire" unique_id=984390316 instance=ExtResource("3_n3qrm")]
+transform = Transform3D(1.00219, 0, 0, 0, 1.00219, 0, 0, 0, 1.00219, -12.463, 0.219044, 6.00241)
+
+[node name="Fire_03" parent="Fire" unique_id=669997180 instance=ExtResource("4_m1qya")]
+transform = Transform3D(1.00219, 0, 0, 0, 1.00219, 0, 0, 0, 1.00219, -4.90851, -0.015008, -0.0119761)
+
+[node name="Fire_04" parent="Fire" unique_id=636097046 instance=ExtResource("5_p6h8f")]
+transform = Transform3D(1.00219, 0, 0, 0, 1.00219, 0, 0, 0, 1.00219, -6.3283, 0, 0.152541)
+
+[node name="Fire_05" parent="Fire" unique_id=1647446775 instance=ExtResource("6_rbbqo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.31889, 0.366383, 6.08588)
+
+[node name="Fire_06" parent="Fire" unique_id=628011256 instance=ExtResource("7_f6pbb")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.47023, 0, 0.0956092)
+
+[node name="Fire_07" parent="Fire" unique_id=1442961696 instance=ExtResource("8_bulrg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.87083, 0, 3.91064)
+
+[node name="Fire_08" parent="Fire" unique_id=2065556102 instance=ExtResource("9_ab4f8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.34707, 0, 4.14495)
+
+[node name="Fire_09" parent="Fire" unique_id=1167889392 instance=ExtResource("10_8bhxu")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.35864, 0, 3.80988)
+
+[node name="Fire_10" parent="Fire" unique_id=945825272 instance=ExtResource("11_h24e5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.28575, 0.82639, 6.2366)
+
+[node name="Fire_11" parent="Fire" unique_id=702875750 instance=ExtResource("12_s4qsf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18, 0, 6)
+
+[node name="Fire_Ball_01" parent="Fire" unique_id=1995840203 instance=ExtResource("12_ygddb")]
+transform = Transform3D(0.52215, -0.85542, 0, 0.472138, 0.288194, -0.835712, 0.713322, 0.435414, 0.553146, -7.99804, 0, 0.164)
+
+[node name="Fire_Ball_02" parent="Fire" unique_id=886908799 instance=ExtResource("13_djuyq")]
+transform = Transform3D(1.00219, 0, 0, 0, 1.00219, 0, 0, 0, 1.00219, -2.26399, 0, 2.03235)
+
+[node name="Fire_Ball_03" parent="Fire" unique_id=347413487 instance=ExtResource("14_bpggd")]
+transform = Transform3D(1.00219, 0, 0, 0, 1.00219, 0, 0, 0, 1.00219, -4.95424, 0, 2.15508)
+
+[node name="Fire_Ball_04" parent="Fire" unique_id=1649413389 instance=ExtResource("15_bh655")]
+transform = Transform3D(1.00219, 0, 0, 0, 1.00219, 0, 0, 0, 1.00219, -7.83385, -4.76837e-07, 2.05099)
+
+[node name="Fire_Ball_05" parent="Fire" unique_id=204321070 instance=ExtResource("16_gqqbe")]
+transform = Transform3D(0.625217, -0.769342, -0.131216, 0.196626, 0.31798, -0.927484, 0.755277, 0.554078, 0.350079, -9.8897, 0, 0.164)
+
+[node name="Fire_Ball_06" parent="Fire" unique_id=52102110 instance=ExtResource("17_nea1f")]
+transform = Transform3D(0.774072, -0.633097, 0, 0.236691, 0.289396, -0.927484, 0.587188, 0.71794, 0.373862, -11.9983, 0, 0.164483)
+
+[node name="Fire_Ball_07" parent="Fire" unique_id=102384448 instance=ExtResource("18_140db")]
+transform = Transform3D(-0.16199298, -0.5313767, 0.83150285, 0.7915773, 0.4331545, 0.43102452, -0.5892057, 0.72802186, 0.3504579, -14, 0, 0)
+
+[node name="Fire_Area_01" parent="Fire" unique_id=1975647518 instance=ExtResource("18_gg1i7")]
+transform = Transform3D(1.00219, 0, 0, 0, 1.00219, 0, 0, 0, 1.00219, -8.10765, 0, 4.10051)
+
+[node name="Fire_Area_02" parent="Fire" unique_id=1549677364 instance=ExtResource("19_baprw")]
+transform = Transform3D(1.00219, 0, 0, 0, 1.00219, 0, 0, 0, 1.00219, -10.7375, 0, 4.10051)
+
+[node name="Fire_Area_03" parent="Fire" unique_id=1393308848 instance=ExtResource("20_adswr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.5329, 0, 3.72691)
+
+[node name="Fire_Area_04" parent="Fire" unique_id=1179811974 instance=ExtResource("21_w82tf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15.1817, 0, 1.20554)
+
+[node name="Fire_Area_05" parent="Fire" unique_id=774795885 instance=ExtResource("22_0gve2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.9341, 4.76837e-07, 1.71143)
+
+[node name="Fire_Area_06" parent="Fire" unique_id=1794313023 instance=ExtResource("23_0t2nf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0362549, -0.498643, 2.0403)
+
+[node name="Fire_Area_07" parent="Fire" unique_id=557523596 instance=ExtResource("24_237g8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.6257, 0, 1.87215)
+
+[node name="Fire_Area_08" parent="Fire" unique_id=1758890994 instance=ExtResource("25_jlvdr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18.2629, 0, 3.11893)
+
+[node name="Fire_Forcefield_01" parent="Fire" unique_id=36294814 instance=ExtResource("26_a47yk")]
+transform = Transform3D(1.00219, 0, 0, 0, 1.00219, 0, 0, 0, 1.00219, -14.9324, 1.09777, 6.20734)
+
+[node name="Fire_Forcefield_02" parent="Fire" unique_id=2033131078 instance=ExtResource("27_m5i2p")]
+transform = Transform3D(1.00219, 0, 0, 0, 1.00219, 0, 0, 0, 1.00219, -0.196464, 1.18488, 6.13627)
+
+[node name="Fire_Forcefield_03" parent="Fire" unique_id=741012734 instance=ExtResource("28_tcidu")]
+transform = Transform3D(1.00219, 0, 0, 0, 1.00219, 0, 0, 0, 1.00219, -4.7635, 1.22096, 6.13627)
+
+[node name="Fire_Forcefield_04" parent="Fire" unique_id=720947282 instance=ExtResource("29_n8idv")]
+transform = Transform3D(1.00219, 0, 0, 0, 1.00219, 0, 0, 0, 1.00219, -9.76081, 1.26946, 6.05379)
+
+[node name="Fire_Trail" parent="Fire" unique_id=501665457 instance=ExtResource("30_kmm5o")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.85406, -0.0228904, 1.65458)
+visible = false
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1210659338]
+environment = SubResource("Environment_xuqvo")
+
+[node name="Node3D" type="Node3D" parent="." unique_id=202197552]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 0)
+
+[node name="Camera3D" type="Camera3D" parent="Node3D" unique_id=110228497]
+transform = Transform3D(-0.997814, 6.16822e-08, -6.16821e-08, 0, 0.705562, 0.705561, 8.72317e-08, 0.705562, -0.705561, -9.615, 4.2, -1.405)
+fov = 70.0
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Node3D" unique_id=1838974595]
+libraries/ = SubResource("AnimationLibrary_yquov")

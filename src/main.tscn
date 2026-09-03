@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://src/main.gd" id="2_main"]
 [ext_resource type="Script" uid="uid://bca1mijc0u46r" path="res://src/camera/camera_controller.gd" id="2_camera_controller"]
-[ext_resource type="PackedScene" uid="uid://ccc8ikhmdmsj4" path="res://src/actors/tank/tank.tscn" id="3_tank"]
+[ext_resource type="PackedScene" path="res://src/actors/tank/variants/tank2/tank2.tscn" id="3_tank"]
 [ext_resource type="Script" uid="uid://bkmyvemlgoyub" path="res://src/player/player_runtime.gd" id="4_player_runtime"]
 [ext_resource type="Script" uid="uid://bni4teh46h7cf" path="res://src/player/player_controller.gd" id="5_player_controller"]
 [ext_resource type="Script" uid="uid://daju3g8j3l7s2" path="res://src/player/player_aim_controller.gd" id="6_player_aim_controller"]

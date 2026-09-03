@@ -1,13 +1,13 @@
-## 依 Tank2 的血量比例切換受損煙火，並在歸零時只讓砲管下垂。
+## 依坦克的血量比例切換車型提供的受損煙火，並在歸零時只讓砲管下垂。
 ## 砲塔的水平朝向不會被本元件改動。
 extends Node
 class_name TankDamageVisuals
 
 const HealthComponent := preload("res://src/combat/damage/health_component.gd")
-const DEPLETED_EXPLOSION_SCENE := preload("res://src/vfx/damage/tank_depleted_explosion_vfx.tscn")
-
-## 血量歸零時砲管向下垂的角度；數值取自 Tank2 VFX Lab 的手調結果。
+## 血量歸零時砲管向下垂的角度；數值由各車型的損傷場景提供。
 @export_range(0.0, 45.0, 0.01) var depleted_gun_depression_degrees := 9.638463
+## 車型專屬的歸零爆炸包裝場景。
+@export var depleted_explosion_scene: PackedScene
 ## 不同受損階段交接時，新效果淡入所需的秒數。
 @export_range(0.0, 3.0, 0.05) var damage_transition_seconds := 0.6
 ## 歸零爆炸相對於坦克原點的本地位置。
@@ -165,7 +165,7 @@ func _set_depleted_pose(should_be_depleted: bool) -> void:
 
 
 func _play_depleted_explosion() -> void:
-	var explosion := DEPLETED_EXPLOSION_SCENE.instantiate() as Node3D
+	var explosion := depleted_explosion_scene.instantiate() as Node3D if depleted_explosion_scene != null else null
 	if explosion == null or _tank == null:
 		push_error("TankDamageVisuals could not instantiate the depleted explosion.")
 		return

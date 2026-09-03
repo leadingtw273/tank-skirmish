@@ -1,6 +1,26 @@
-## 管理坦克移動、砲塔姿態、射擊事件、履帶動畫與視覺後座。
+## 管理共用坦克移動、砲塔姿態、射擊事件、履帶動畫與視覺後座。
 ## 它不會實體化投射物或擁有世界戰鬥容器；CombatRuntime 消費其事件。
 extends CharacterBody3D
+
+@export_category("車型介面")
+## 派生車型是否已提供完整視覺與動畫接線；TankBase 本身保持關閉。
+@export var variant_interface_enabled := false
+## 指向派生車型的完整匯入模型根節點。
+@export var tank_model: Node3D
+## 指向派生車型中要交給共用砲塔樞紐的視覺節點。
+@export var tank_turret: MeshInstance3D
+## 指向派生車型中要交給共用砲管樞紐的視覺節點。
+@export var tank_gun: MeshInstance3D
+## 指向派生車型的履帶 AnimationPlayer。
+@export var tread_animation_player: AnimationPlayer
+## 派生車型前進履帶動畫名稱。
+@export var tread_forward_animation: StringName
+## 派生車型倒車履帶動畫名稱。
+@export var tread_backwards_animation: StringName
+## 派生車型左轉履帶動畫名稱。
+@export var tread_turning_left_animation: StringName
+## 派生車型右轉履帶動畫名稱。
+@export var tread_turning_right_animation: StringName
 
 @export_category("坦克移動")
 ## 滿前進輸入時車身的最高速度，單位為公尺／秒。
@@ -55,12 +75,6 @@ extends CharacterBody3D
 const MODEL_FORWARD_LOCAL_AXIS := Vector3.LEFT
 const MIN_AIM_DISTANCE_SQUARED := 0.001
 const TREAD_ANIMATION_MOTION_THRESHOLD := 0.01
-const TREAD_ANIMATION_CLIPS := {
-	"forward": &"Tank_Forward",
-	"backwards": &"Tank_Backwards",
-	"turning_left": &"Tank_TurningLeft",
-	"turning_right": &"Tank_TurningRight",
-}
 const MUZZLE_FLASH_SCENE := preload("res://src/vfx/muzzle/muzzle_flash_vfx.tscn")
 const ShotEvent := preload("res://src/combat/shot_event.gd")
 const SHELL_DAMAGE := 25.0
@@ -71,10 +85,10 @@ const SHELL_DAMAGE := 25.0
 @export var muzzle_flash_scale := 4.0
 
 @onready var visual_recoil_pivot: Node3D = $VisualRecoilPivot
-@onready var tank_model: Node3D = $VisualRecoilPivot/Tank2
-@onready var tank_scale_root: Node3D = $VisualRecoilPivot/Tank2/AgentTeamScaleRoot
-@onready var tank_turret: MeshInstance3D = $VisualRecoilPivot/Tank2/AgentTeamScaleRoot/Tank_Turret
-@onready var tank_gun: MeshInstance3D = $VisualRecoilPivot/Tank2/AgentTeamScaleRoot/Tank_Gun
+@onready var tank_visual_slot: Node3D = $VisualRecoilPivot/TankVisualSlot
+@onready var hull_visual: Node3D = $VisualRecoilPivot/TankVisualSlot/HullVisual
+@onready var turret_visual: Node3D = $VisualRecoilPivot/TurretPivot/TurretVisual
+@onready var gun_visual: Node3D = $VisualRecoilPivot/TurretPivot/GunPitchPivot/GunVisual
 @onready var tank_collision: CollisionShape3D = $CollisionShape3D
 @onready var turret_pivot: Node3D = $VisualRecoilPivot/TurretPivot
 @onready var gun_pitch_pivot: Node3D = $VisualRecoilPivot/TurretPivot/GunPitchPivot
@@ -93,7 +107,6 @@ var angular_speed := 0.0
 var actual_linear_speed := 0.0
 ## 物理步驟中實際套用的車身偏航角速度，供接地互動讀取，單位為弧度／秒。
 var actual_angular_speed := 0.0
-var tread_animation_player: AnimationPlayer
 var active_tread_animation := &""
 var tread_animation_paused := true
 var tread_animations_available := false
@@ -102,13 +115,19 @@ var visual_recoil_tween: Tween
 
 
 func _ready() -> void:
+	if not variant_interface_enabled:
+		set_physics_process(false)
+		return
+	if not _has_valid_variant_interface():
+		set_physics_process(false)
+		return
 	## 將匯入模型的砲塔與砲管轉交給常駐樞紐且保持世界姿態，之後才能獨立套用偏航與俯仰。
 	visual_recoil_rest_local_position = visual_recoil_pivot.position
 	# 匯入的砲塔與砲管保持原樣；常駐場景樞紐在啟動時接手，並保留製作時的世界座標轉換。
 	turret_pivot.global_position = tank_turret.global_position
-	tank_turret.reparent(turret_pivot, true)
+	tank_turret.reparent(turret_visual, true)
 	gun_pitch_pivot.global_position = tank_gun.global_position
-	tank_gun.reparent(gun_pitch_pivot, true)
+	tank_gun.reparent(gun_visual, true)
 	var gun_aabb := tank_gun.get_aabb()
 	var local_muzzle := gun_aabb.get_center()
 	local_muzzle.x = gun_aabb.position.x
@@ -117,6 +136,30 @@ func _ready() -> void:
 		tank_gun.global_transform * local_muzzle,
 	)
 	_setup_tread_animations()
+
+
+func _has_valid_variant_interface() -> bool:
+	## 車型差異只允許出現在派生場景的 NodePath 與動畫映射；共用層只檢查固定介面是否完整。
+	if (
+		tank_visual_slot == null
+		or hull_visual == null
+		or turret_visual == null
+		or gun_visual == null
+		or turret_pivot == null
+		or gun_pitch_pivot == null
+		or muzzle_point == null
+		or tank_model == null
+		or tank_turret == null
+		or tank_gun == null
+		or tread_animation_player == null
+	):
+		push_error("Tank variant interface is incomplete.")
+		return false
+	for clip: StringName in _tread_animation_clips().values():
+		if clip.is_empty():
+			push_error("Tank variant interface requires four tread animation mappings.")
+			return false
+	return true
 
 
 func _physics_process(delta: float) -> void:
@@ -229,13 +272,12 @@ func _approach_motion_speed(
 
 
 func _setup_tread_animations() -> void:
-	## 在匯入模型子樹尋找單一播放器，確認所有必要片段後才啟用，避免部分可用的狀態誤播放。
-	tread_animation_player = _find_animation_player(tank_model)
+	## 使用派生車型明確提供的播放器與片段映射，避免共用層依賴素材內部命名。
 	if tread_animation_player == null:
-		push_error("Tank tread animation setup failed: no AnimationPlayer found beneath Tank2.")
+		push_error("Tank tread animation setup failed: the variant has no AnimationPlayer.")
 		return
 
-	for clip: StringName in TREAD_ANIMATION_CLIPS.values():
+	for clip: StringName in _tread_animation_clips().values():
 		var animation: Animation = tread_animation_player.get_animation(clip)
 		if animation == null:
 			push_error("Tank tread animation setup failed: missing clip %s." % clip)
@@ -245,31 +287,29 @@ func _setup_tread_animations() -> void:
 	tread_animations_available = true
 
 
-func _find_animation_player(node: Node) -> AnimationPlayer:
-	## 深度優先走訪匯入節點，因素材階層不保證 AnimationPlayer 位於固定 NodePath。
-	if node is AnimationPlayer:
-		return node as AnimationPlayer
-	for child in node.get_children():
-		var player := _find_animation_player(child)
-		if player != null:
-			return player
-	return null
+func _tread_animation_clips() -> Dictionary:
+	return {
+		"forward": tread_forward_animation,
+		"backwards": tread_backwards_animation,
+		"turning_left": tread_turning_left_animation,
+		"turning_right": tread_turning_right_animation,
+	}
 
 
 func _tread_animation_for_motion(actual_forward_speed: float, actual_angular_speed: float) -> StringName:
 	## 以實際角速度優先選擇履帶片段，僅在線／角速度高於門檻時持續播放。
 	if absf(actual_angular_speed) > TREAD_ANIMATION_MOTION_THRESHOLD:
-		return TREAD_ANIMATION_CLIPS["turning_left"] if actual_angular_speed > 0.0 else TREAD_ANIMATION_CLIPS["turning_right"]
+		return tread_turning_left_animation if actual_angular_speed > 0.0 else tread_turning_right_animation
 	if actual_forward_speed > TREAD_ANIMATION_MOTION_THRESHOLD:
-		return TREAD_ANIMATION_CLIPS["forward"]
+		return tread_forward_animation
 	if actual_forward_speed < -TREAD_ANIMATION_MOTION_THRESHOLD:
-		return TREAD_ANIMATION_CLIPS["backwards"]
+		return tread_backwards_animation
 	return &""
 
 
 func _tread_animation_speed_scale(next_animation: StringName, actual_forward_speed: float, actual_angular_speed: float = 0.0) -> float:
 	## 直行依縮小後的實際線速度與 Inspector 基準速度播放；轉向依實際角速度與最高偏航速度同步。
-	if next_animation == TREAD_ANIMATION_CLIPS["turning_left"] or next_animation == TREAD_ANIMATION_CLIPS["turning_right"]:
+	if next_animation == tread_turning_left_animation or next_animation == tread_turning_right_animation:
 		return absf(actual_angular_speed) / maxf(absf(turn_speed), 0.001) * tread_animation_speed_multiplier
 	return absf(actual_forward_speed) / tread_animation_reference_speed * tread_animation_speed_multiplier
 

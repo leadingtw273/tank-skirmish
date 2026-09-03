@@ -37,7 +37,7 @@ func _validate_training_ground() -> bool:
 	var target_collision := target_tank.get_node_or_null("CollisionShape3D") as CollisionShape3D \
 			if target_tank != null else null
 	var target_shape := target_collision.shape as BoxShape3D if target_collision != null else null
-	var target_model := target_tank.get_node_or_null("VisualRecoilPivot/Tank2") as Node3D \
+	var target_model := target_tank.get_node_or_null("VisualRecoilPivot/TankVisualSlot/HullVisual/Tank2Model") as Node3D \
 			if target_tank != null else null
 	var health_label := training_target.get_node_or_null("HealthLabel3D") as Label3D if training_target != null else null
 	if targets == null or targets.get_child_count() != 1 or training_target == null \

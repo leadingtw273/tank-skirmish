@@ -12,18 +12,25 @@ variant_interface_enabled = true
 tank_model = NodePath("VisualRecoilPivot/TankVisualSlot/HullVisual/Tank3Model")
 tank_turret = NodePath("VisualRecoilPivot/TankVisualSlot/HullVisual/Tank3Model/AgentTeamScaleRoot/Tank_Turret")
 tank_gun = NodePath("VisualRecoilPivot/TankVisualSlot/HullVisual/Tank3Model/AgentTeamScaleRoot/Tank_Gun")
+tank_gun_forward_local_axis = Vector3(0, -1, 0)
 tread_animation_player = NodePath("VisualRecoilPivot/TankVisualSlot/HullVisual/Tank3Model/AnimationPlayer")
 tread_forward_animation = &"Tank_Forward"
 tread_backwards_animation = &"Tank_Backwards"
 tread_turning_left_animation = &"Tank_TurningLeft"
 tread_turning_right_animation = &"Tank_TurningRight"
-movement_speed = 5.725191058213
-reverse_movement_speed = 2.862595529107
-turn_speed = 0.4
+movement_speed = 4.8
+reverse_movement_speed = 2.4
+turn_speed = 0.32
+turning_movement_speed_ratio = 0.45
+tank_mass_tonnes = 70.0
+engine_horsepower = 1400.0
+brake_force_kilonewtons = 330.0
+turn_response = 0.32
 tread_animation_reference_speed = 2.003816870375
 tread_animation_speed_multiplier = 2.5
-turret_turn_speed = 1.0
-gun_pitch_speed = 0.5
+turret_turn_speed = 0.8
+gun_pitch_speed = 0.4
+shell_damage = 25.0
 visual_recoil_distance = 0.114503821164
 visual_recoil_return_seconds = 0.26
 max_camera_look_ahead_distance = 35.0
@@ -34,6 +41,9 @@ muzzle_flash_scale = 1.145038211643
 [node name="CollisionShape3D" parent="." index="1"]
 position = Vector3(0, 1.52106, 0)
 shape = SubResource("TankCollisionShape")
+
+[node name="HealthComponent" parent="." index="2"]
+maximum_health = 100.0
 
 [node name="Tank3DamageVisuals" parent="." instance=ExtResource("3_damage_visuals")]
 depleted_explosion_scale = 1.5

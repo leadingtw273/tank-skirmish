@@ -10,20 +10,30 @@ size = Vector3(7.272, 2.69882, 4.4904)
 [node name="Tank" node_paths=PackedStringArray("tank_model", "tank_turret", "tank_gun", "tread_animation_player") instance=ExtResource("1_base")]
 variant_interface_enabled = true
 tank_model = NodePath("VisualRecoilPivot/TankVisualSlot/HullVisual/Tank4Model")
-tank_turret = NodePath("VisualRecoilPivot/TankVisualSlot/HullVisual/Tank4Model/AgentTeamScaleRoot/Tank_Turret")
+tank_turret = NodePath("VisualRecoilPivot/TankVisualSlot/HullVisual/Tank4GunYawAdapter")
 tank_gun = NodePath("VisualRecoilPivot/TankVisualSlot/HullVisual/Tank4Model/AgentTeamScaleRoot/Tank_Gun")
 tread_animation_player = NodePath("VisualRecoilPivot/TankVisualSlot/HullVisual/Tank4Model/AnimationPlayer")
 tread_forward_animation = &"Tank_Forward"
 tread_backwards_animation = &"Tank_Backwards"
 tread_turning_left_animation = &"Tank_TurningLeft"
 tread_turning_right_animation = &"Tank_TurningRight"
-movement_speed = 5.725191058213
-reverse_movement_speed = 2.862595529107
-turn_speed = 0.4
+movement_speed = 6.2
+reverse_movement_speed = 3.1
+turn_speed = 0.5
+turning_movement_speed_ratio = 0.5
+tank_mass_tonnes = 52.0
+engine_horsepower = 1650.0
+brake_force_kilonewtons = 220.0
+turn_response = 0.46
 tread_animation_reference_speed = 2.003816870375
 tread_animation_speed_multiplier = 2.5
-turret_turn_speed = 1.0
-gun_pitch_speed = 0.5
+turret_turn_speed = 1.1
+turret_max_yaw_degrees = 6.0
+hull_aim_assist_enabled = true
+gun_pitch_speed = 0.6
+gun_max_elevation_degrees = 20.0
+gun_max_depression_degrees = 10.0
+shell_damage = 25.0
 visual_recoil_distance = 0.114503821164
 visual_recoil_return_seconds = 0.26
 max_camera_look_ahead_distance = 35.0
@@ -31,9 +41,15 @@ muzzle_flash_scale = 1.145038211643
 
 [node name="Tank4Model" parent="VisualRecoilPivot/TankVisualSlot/HullVisual" instance=ExtResource("2_model")]
 
+[node name="Tank4GunYawAdapter" type="Node3D" parent="VisualRecoilPivot/TankVisualSlot/HullVisual"]
+position = Vector3(0.615279, 2.369274, -0.030112)
+
 [node name="CollisionShape3D" parent="." index="1"]
 position = Vector3(0, 1.34941, 0)
 shape = SubResource("TankCollisionShape")
+
+[node name="HealthComponent" parent="." index="2"]
+maximum_health = 100.0
 
 [node name="Tank4DamageVisuals" parent="." instance=ExtResource("3_damage_visuals")]
 depleted_explosion_scale = 1.5

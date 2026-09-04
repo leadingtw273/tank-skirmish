@@ -88,12 +88,14 @@ func _validate_variant(tank_id: String, contract: Dictionary) -> bool:
 		and tank.tank_model.is_ancestor_of(tank.tread_animation_player)
 		and tank.tank_turret != null
 		and tank.tank_turret.get_parent() == turret_visual
+		and (float(tank.turret_max_yaw_degrees) < 180.0 or _has_visible_geometry(tank.tank_turret))
 		and tank.tank_gun != null
 		and tank.tank_gun.get_parent() == gun_visual
 		and hull_visual != null
 		and turret_visual != null
 		and gun_visual != null
 		and muzzle_point != null
+		and tank.muzzle_global_direction().dot(Vector3.LEFT) > 0.999
 		and collision_shape != null
 		and collision_shape.size.is_equal_approx(contract.collision)
 		and is_equal_approx(collision.position.y, contract.collision.y * 0.5)
@@ -105,6 +107,23 @@ func _validate_variant(tank_id: String, contract: Dictionary) -> bool:
 	)
 	if valid and VARIANT_DAMAGE_EFFECT_COUNTS.has(tank_id):
 		valid = _validate_variant_damage_effects(tank, tank_id)
+	if valid and tank_id == "tank1":
+		var fixed_body := tank.tank_model.find_child("Tank_body", true, false) as MeshInstance3D
+		var fixed_body_basis_before := fixed_body.global_basis if fixed_body != null else Basis()
+		var gun_basis_before: Basis = (tank.tank_gun as Node3D).global_basis
+		var turret_pivot := tank.get_node("VisualRecoilPivot/TurretPivot") as Node3D
+		tank.aim_turret_at(turret_pivot.global_position + Vector3.FORWARD * 100.0, 10.0)
+		var gun_pitch_pivot := tank.get_node("VisualRecoilPivot/TurretPivot/GunPitchPivot") as Node3D
+		tank.aim_gun_pitch_at_target(tank.muzzle_global_position() + Vector3(-100.0, 100.0, 0.0), 10.0)
+		var elevation_degrees := -rad_to_deg(gun_pitch_pivot.rotation.z)
+		tank.aim_gun_pitch_at_target(tank.muzzle_global_position() + Vector3(-100.0, -100.0, 0.0), 10.0)
+		var depression_degrees := -rad_to_deg(gun_pitch_pivot.rotation.z)
+		valid = fixed_body != null \
+			and fixed_body.global_basis.is_equal_approx(fixed_body_basis_before) \
+			and not tank.tank_gun.global_basis.is_equal_approx(gun_basis_before) \
+			and is_equal_approx(absf(rad_to_deg(turret_pivot.rotation.y)), 8.0) \
+			and is_equal_approx(elevation_degrees, 10.0) \
+			and is_equal_approx(depression_degrees, -5.0)
 	if valid:
 		for clip: StringName in clips:
 			if clip.is_empty() or not tank.tread_animation_player.has_animation(clip):
@@ -128,6 +147,12 @@ func _validate_variant(tank_id: String, contract: Dictionary) -> bool:
 	if not valid:
 		return _fail("%s must provide the shared interface, collision, tread mapping, fire event, health, and vehicle-specific damage visuals." % tank_id)
 	return true
+
+
+func _has_visible_geometry(root_node: Node3D) -> bool:
+	## 砲塔介面必須真的包含可見 Mesh；空 Adapter 雖會旋轉，畫面上的砲塔仍不會動。
+	return root_node is MeshInstance3D \
+		or not root_node.find_children("*", "MeshInstance3D", true, false).is_empty()
 
 
 func _validate_variant_damage_effects(tank: CharacterBody3D, tank_id: String) -> bool:

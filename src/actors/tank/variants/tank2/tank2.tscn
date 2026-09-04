@@ -20,10 +20,16 @@ tread_turning_right_animation = &"Tank_TurningRight"
 movement_speed = 5.725191058213
 reverse_movement_speed = 2.862595529107
 turn_speed = 0.4
+turning_movement_speed_ratio = 0.5
+tank_mass_tonnes = 60.0
+engine_horsepower = 2500.0
+brake_force_kilonewtons = 240.0
+turn_response = 0.4
 tread_animation_reference_speed = 2.003816870375
 tread_animation_speed_multiplier = 2.5
 turret_turn_speed = 1.0
 gun_pitch_speed = 0.5
+shell_damage = 25.0
 visual_recoil_distance = 0.114503821164
 visual_recoil_return_seconds = 0.26
 max_camera_look_ahead_distance = 35.0
@@ -35,6 +41,9 @@ scale = Vector3(1, 1, 1)
 [node name="CollisionShape3D" parent="." index="1"]
 position = Vector3(0, 1.039605154183, 0)
 shape = SubResource("TankCollisionShape")
+
+[node name="HealthComponent" parent="." index="2"]
+maximum_health = 100.0
 
 [node name="Tank2DamageVisuals" parent="." instance=ExtResource("3_damage_visuals")]
 depleted_explosion_scale = 1.5

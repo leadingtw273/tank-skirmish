@@ -1,12 +1,17 @@
 extends SceneTree
 
 const TANK_BASE_SCENE := "res://src/actors/tank/tank_base.tscn"
-const DAMAGE_LAB_SCENE := "res://tmp/tank_damage_vfx_lab/tank_damage_vfx_lab.tscn"
 const VARIANTS := {
 	"tank1": {"scene": "res://src/actors/tank/variants/tank1/tank1.tscn", "collision": Vector3(7.74703, 3.37688, 4.54163), "damage": "Tank1DamageVisuals"},
 	"tank2": {"scene": "res://src/actors/tank/variants/tank2/tank2.tscn", "collision": Vector3(7.955370303640, 2.079210193863, 4.541630211513), "damage": "Tank2DamageVisuals"},
 	"tank3": {"scene": "res://src/actors/tank/variants/tank3/tank3.tscn", "collision": Vector3(6.6935, 3.04212, 4.7442), "damage": "Tank3DamageVisuals"},
 	"tank4": {"scene": "res://src/actors/tank/variants/tank4/tank4.tscn", "collision": Vector3(7.272, 2.69882, 4.4904), "damage": "Tank4DamageVisuals"},
+}
+const DAMAGE_STAGE_NAMES := [&"Damage75", &"Damage50", &"Damage25", &"Depleted"]
+const VARIANT_DAMAGE_EFFECT_COUNTS := {
+	"tank1": {"hull": [0, 1, 2, 4], "turret": [1, 1, 1, 2]},
+	"tank3": {"hull": [0, 1, 2, 4], "turret": [1, 1, 1, 3]},
+	"tank4": {"hull": [1, 2, 3, 6], "turret": [0, 0, 0, 0]},
 }
 
 
@@ -22,9 +27,6 @@ func _validate() -> void:
 		if not await _validate_variant(tank_id, VARIANTS[tank_id]):
 			quit(1)
 			return
-	if not await _validate_damage_lab():
-		quit(1)
-		return
 	print("Tank variant refactor smoke validation passed.")
 	quit(0)
 
@@ -54,37 +56,6 @@ func _validate_base_scene() -> bool:
 	return true
 
 
-func _validate_damage_lab() -> bool:
-	var packed := load(DAMAGE_LAB_SCENE) as PackedScene
-	var lab := packed.instantiate() as Node3D if packed != null else null
-	if lab == null:
-		return _fail("The four-tank damage lab must load.")
-	root.add_child(lab)
-	await process_frame
-	await process_frame
-	var valid := true
-	for tank_number in range(1, 5):
-		var row := lab.get_node_or_null("Displays/Tank%d" % tank_number)
-		if row == null or row.get_child_count() != 5:
-			valid = false
-			break
-		for health_percent in [100, 75, 50, 25, 0]:
-			var tank := row.get_node_or_null("Health%d/Tank" % health_percent) as CharacterBody3D
-			var health := tank.get_node_or_null("HealthComponent") as HealthComponent if tank != null else null
-			if tank == null or health == null \
-					or not is_equal_approx(health.current_health, float(health_percent)) \
-					or tank.is_physics_processing() or tank.collision_layer != 0 or tank.collision_mask != 0:
-				valid = false
-				break
-		if not valid:
-			break
-	lab.queue_free()
-	await process_frame
-	if not valid:
-		return _fail("The damage lab must contain four complete variants at 100/75/50/25/0 health with physics and collision disabled.")
-	return true
-
-
 func _validate_variant(tank_id: String, contract: Dictionary) -> bool:
 	var scene_path: String = contract.scene
 	var packed := load(scene_path) as PackedScene
@@ -103,6 +74,7 @@ func _validate_variant(tank_id: String, contract: Dictionary) -> bool:
 	var health := tank.get_node_or_null("HealthComponent") as HealthComponent
 	var receiver := tank.get_node_or_null("DamageReceiver") as DamageReceiver
 	var contact_effects := tank.get_node_or_null("TrackContactEffects") as Node3D
+	var damage_visuals := tank.get_node_or_null(contract.damage)
 	var clips := [
 		tank.tread_forward_animation,
 		tank.tread_backwards_animation,
@@ -129,8 +101,10 @@ func _validate_variant(tank_id: String, contract: Dictionary) -> bool:
 		and receiver != null
 		and contact_effects != null
 		and contact_effects.get_child_count() == 4
-		and tank.get_node_or_null(contract.damage) != null
+		and damage_visuals != null
 	)
+	if valid and VARIANT_DAMAGE_EFFECT_COUNTS.has(tank_id):
+		valid = _validate_variant_damage_effects(tank, tank_id)
 	if valid:
 		for clip: StringName in clips:
 			if clip.is_empty() or not tank.tread_animation_player.has_animation(clip):
@@ -147,11 +121,35 @@ func _validate_variant(tank_id: String, contract: Dictionary) -> bool:
 			and is_equal_approx(float(shots[0].damage), 25.0) \
 			and shots[0].direction.is_equal_approx(tank.muzzle_global_direction()) \
 			and receiver.receive_damage(25.0) \
-			and is_equal_approx(health.current_health, 75.0)
+			and is_equal_approx(health.current_health, 75.0) \
+			and int(damage_visuals.active_damage_stage) == 75
 	tank.queue_free()
 	await process_frame
 	if not valid:
 		return _fail("%s must provide the shared interface, collision, tread mapping, fire event, health, and vehicle-specific damage visuals." % tank_id)
+	return true
+
+
+func _validate_variant_damage_effects(tank: CharacterBody3D, tank_id: String) -> bool:
+	var hull_anchor := tank.get_node_or_null("VisualRecoilPivot/HullDamageVFXAnchor") as Node3D
+	var turret_anchor := tank.get_node_or_null("VisualRecoilPivot/TurretPivot/TurretDamageVFXAnchor") as Node3D
+	if hull_anchor == null or turret_anchor == null:
+		return false
+	var expected: Dictionary = VARIANT_DAMAGE_EFFECT_COUNTS[tank_id]
+	for index in DAMAGE_STAGE_NAMES.size():
+		var stage_name: StringName = DAMAGE_STAGE_NAMES[index]
+		var hull_stage := hull_anchor.get_node_or_null(NodePath(stage_name)) as Node3D
+		var turret_stage := turret_anchor.get_node_or_null(NodePath(stage_name)) as Node3D
+		if hull_stage == null or turret_stage == null \
+				or hull_stage.get_child_count() != int(expected.hull[index]) \
+				or turret_stage.get_child_count() != int(expected.turret[index]):
+			return false
+		for effect: Node in hull_stage.get_children():
+			if not effect.name.begins_with("Hull"):
+				return false
+		for effect: Node in turret_stage.get_children():
+			if not effect.name.begins_with("Turret"):
+				return false
 	return true
 
 

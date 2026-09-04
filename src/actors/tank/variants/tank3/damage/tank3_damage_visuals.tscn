@@ -1,44 +1,255 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://src/actors/tank/damage/tank_damage_visuals.gd" id="1_controller"]
-[ext_resource type="PackedScene" path="res://assets/BinbunVFX/smoke_effects/effects/smoke_thin/smoke_thin_vfx_01.tscn" id="2_smoke_thin"]
-[ext_resource type="PackedScene" path="res://assets/BinbunVFX/smoke_effects/effects/smoke/smoke_vfx_01.tscn" id="3_smoke"]
-[ext_resource type="PackedScene" path="res://assets/BinbunVFX/smoke_effects/effects/smoke_big/smoke_big_vfx_01.tscn" id="4_smoke_big"]
-[ext_resource type="PackedScene" path="res://assets/BinbunVFX/fire_effects/effects/Fire/fire_01.tscn" id="5_fire"]
-[ext_resource type="PackedScene" path="res://src/actors/tank/variants/tank3/damage/tank3_depleted_explosion_vfx.tscn" id="6_explosion"]
+[ext_resource type="PackedScene" uid="uid://b7qebvhfuoj0t" path="res://assets/BinbunVFX/smoke_effects/effects/smoke_thin/smoke_thin_vfx_01.tscn" id="5_smoke_thin"]
+[ext_resource type="PackedScene" uid="uid://ctxdbwha5sf47" path="res://assets/BinbunVFX/smoke_effects/effects/smoke/smoke_vfx_01.tscn" id="6_smoke"]
+[ext_resource type="PackedScene" uid="uid://8qeybfrgq5mf" path="res://assets/BinbunVFX/smoke_effects/effects/smoke_big/smoke_big_vfx_01.tscn" id="7_smoke_big"]
+[ext_resource type="PackedScene" uid="uid://cuuxqxyjkvsh7" path="res://assets/BinbunVFX/fire_effects/effects/Fire/fire_07.tscn" id="7_4o53o"]
+[ext_resource type="PackedScene" uid="uid://ckwh3kn1duce2" path="res://assets/BinbunVFX/fire_effects/effects/Fire/fire_11.tscn" id="8_soq6w"]
+[ext_resource type="PackedScene" path="res://src/actors/tank/variants/tank3/damage/tank3_depleted_explosion_vfx.tscn" id="9_explosion"]
 
 [node name="Tank3DamageVisuals" type="Node"]
 script = ExtResource("1_controller")
-depleted_explosion_scene = ExtResource("6_explosion")
+depleted_explosion_scene = ExtResource("9_explosion")
 
 [node name="HullDamageVFXAnchor" type="Node3D" parent="."]
-position = Vector3(0, 3.0, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.2, 0)
+
 [node name="Damage75" type="Node3D" parent="HullDamageVFXAnchor"]
 visible = false
+
 [node name="Damage50" type="Node3D" parent="HullDamageVFXAnchor"]
 visible = false
-[node name="HullSmoke" parent="HullDamageVFXAnchor/Damage50" instance=ExtResource("3_smoke")]
+
+[node name="HullSmokeMedium" parent="HullDamageVFXAnchor/Damage50" instance=ExtResource("6_smoke")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.2146482, -1.6714287, -0.44229317)
+emission_amount = 10
+lifetime = 1.0
+speed_scale = 0.5
+
+
+[node name="Smoke" parent="HullDamageVFXAnchor/Damage50/HullSmokeMedium" index="0"]
+amount = 10
+lifetime = 1.0
+speed_scale = 0.5
+transform_align_channel_filter = 1
+
+
+[node name="ShadowCaster" parent="HullDamageVFXAnchor/Damage50/HullSmokeMedium" index="1"]
+amount = 5
+lifetime = 1.0
+speed_scale = 0.5
+
+
 [node name="Damage25" type="Node3D" parent="HullDamageVFXAnchor"]
 visible = false
-[node name="HullSmokeHeavy" parent="HullDamageVFXAnchor/Damage25" instance=ExtResource("4_smoke_big")]
+
+[node name="HullSmokeHeavyPrimary" parent="HullDamageVFXAnchor/Damage25" instance=ExtResource("6_smoke")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.2136898, -2.0999255, -0.8985901)
+emission_amount = 10
+lifetime = 1.0
+speed_scale = 0.5
+
+
+[node name="Smoke" parent="HullDamageVFXAnchor/Damage25/HullSmokeHeavyPrimary" index="0"]
+amount = 10
+lifetime = 1.0
+speed_scale = 0.5
+transform_align_channel_filter = 1
+
+
+[node name="ShadowCaster" parent="HullDamageVFXAnchor/Damage25/HullSmokeHeavyPrimary" index="1"]
+amount = 5
+lifetime = 1.0
+speed_scale = 0.5
+
+
+[node name="HullSmokeHeavySecondary" parent="HullDamageVFXAnchor/Damage25" instance=ExtResource("6_smoke")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.436409, -1.7873971, -0.47926712)
+emission_amount = 15
+lifetime = 1.0
+speed_scale = 0.5
+
+
+[node name="Smoke" parent="HullDamageVFXAnchor/Damage25/HullSmokeHeavySecondary" index="0"]
+amount = 15
+lifetime = 1.0
+speed_scale = 0.5
+transform_align_channel_filter = 1
+
+
+[node name="ShadowCaster" parent="HullDamageVFXAnchor/Damage25/HullSmokeHeavySecondary" index="1"]
+amount = 7
+lifetime = 1.0
+speed_scale = 0.5
+
+
 [node name="Depleted" type="Node3D" parent="HullDamageVFXAnchor"]
 visible = false
-[node name="HullSmokeCritical" parent="HullDamageVFXAnchor/Depleted" instance=ExtResource("4_smoke_big")]
-scale = Vector3(1.35, 1.35, 1.35)
+
+[node name="HullFireCriticalPrimary" parent="HullDamageVFXAnchor/Depleted" instance=ExtResource("8_soq6w")]
+transform = Transform3D(1.505, 0, 0, 0, 1.505, 0, 0, 0, 1.505, 2.420288, -1.8873761, -0.471447)
+
+
+[node name="HullFireCriticalSecondary" parent="HullDamageVFXAnchor/Depleted" instance=ExtResource("8_soq6w")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.8842754, -2.1568413, -0.9278717)
+
+
+[node name="HullSmokeCriticalPrimary" parent="HullDamageVFXAnchor/Depleted" instance=ExtResource("6_smoke")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.7440891, -2.2400231, -1.1225967)
+emission_amount = 10
+lifetime = 1.0
+speed_scale = 0.5
+
+
+[node name="Smoke" parent="HullDamageVFXAnchor/Depleted/HullSmokeCriticalPrimary" index="0"]
+amount = 10
+lifetime = 1.0
+speed_scale = 0.5
+transform_align_channel_filter = 1
+
+
+[node name="ShadowCaster" parent="HullDamageVFXAnchor/Depleted/HullSmokeCriticalPrimary" index="1"]
+amount = 5
+lifetime = 1.0
+speed_scale = 0.5
+
+
+[node name="HullSmokeCriticalSecondary" parent="HullDamageVFXAnchor/Depleted" instance=ExtResource("6_smoke")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.3608665, -1.9851022, -0.44248772)
+emission_amount = 15
+lifetime = 1.0
+speed_scale = 0.5
+
+
+[node name="Smoke" parent="HullDamageVFXAnchor/Depleted/HullSmokeCriticalSecondary" index="0"]
+amount = 15
+lifetime = 1.0
+speed_scale = 0.5
+transform_align_channel_filter = 1
+
+
+[node name="ShadowCaster" parent="HullDamageVFXAnchor/Depleted/HullSmokeCriticalSecondary" index="1"]
+amount = 7
+lifetime = 1.0
+speed_scale = 0.5
+
 
 [node name="TurretDamageVFXAnchor" type="Node3D" parent="."]
-position = Vector3(0, 0.8, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
+
 [node name="Damage75" type="Node3D" parent="TurretDamageVFXAnchor"]
 visible = false
-[node name="TurretSmokeLight" parent="TurretDamageVFXAnchor/Damage75" instance=ExtResource("2_smoke_thin")]
-scale = Vector3(0.8, 0.8, 0.8)
+
+[node name="TurretSmokeLight" parent="TurretDamageVFXAnchor/Damage75" instance=ExtResource("5_smoke_thin")]
+transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 0.40454865, -0.345232, 0.5410557)
+emission_amount = 10
+lifetime = 1.0
+speed_scale = 0.5
+
+
+[node name="Smoke" parent="TurretDamageVFXAnchor/Damage75/TurretSmokeLight" index="0"]
+amount = 10
+lifetime = 1.0
+speed_scale = 0.5
+transform_align_channel_filter = 1
+
+
+[node name="ShadowCaster" parent="TurretDamageVFXAnchor/Damage75/TurretSmokeLight" index="1"]
+amount = 5
+lifetime = 1.0
+speed_scale = 0.5
+
+
 [node name="Damage50" type="Node3D" parent="TurretDamageVFXAnchor"]
 visible = false
+
+[node name="TurretSmokeMedium" parent="TurretDamageVFXAnchor/Damage50" instance=ExtResource("6_smoke")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.47416377, -0.3770678, 0.77267075)
+emission_amount = 15
+lifetime = 1.0
+speed_scale = 0.5
+
+
+[node name="Smoke" parent="TurretDamageVFXAnchor/Damage50/TurretSmokeMedium" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.003286004, 4.7683716e-07, 0.002313614)
+amount = 15
+lifetime = 1.0
+speed_scale = 0.5
+transform_align_channel_filter = 1
+
+
+[node name="ShadowCaster" parent="TurretDamageVFXAnchor/Damage50/TurretSmokeMedium" index="1"]
+amount = 7
+lifetime = 1.0
+speed_scale = 0.5
+
+
 [node name="Damage25" type="Node3D" parent="TurretDamageVFXAnchor"]
 visible = false
-[node name="TurretFire" parent="TurretDamageVFXAnchor/Damage25" instance=ExtResource("5_fire")]
-scale = Vector3(0.9, 0.9, 0.9)
+
+[node name="TurretSmokeHeavy" parent="TurretDamageVFXAnchor/Damage25" instance=ExtResource("6_smoke")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.47044277, -0.36185503, 0.5629597)
+emission_amount = 20
+lifetime = 1.0
+speed_scale = 0.5
+
+
+[node name="Smoke" parent="TurretDamageVFXAnchor/Damage25/TurretSmokeHeavy" index="0"]
+amount = 20
+lifetime = 1.0
+speed_scale = 0.5
+transform_align_channel_filter = 1
+
+
+[node name="ShadowCaster" parent="TurretDamageVFXAnchor/Damage25/TurretSmokeHeavy" index="1"]
+amount = 10
+lifetime = 1.0
+speed_scale = 0.5
+
+
 [node name="Depleted" type="Node3D" parent="TurretDamageVFXAnchor"]
 visible = false
-[node name="TurretFireCritical" parent="TurretDamageVFXAnchor/Depleted" instance=ExtResource("5_fire")]
-scale = Vector3(1.35, 1.35, 1.35)
+
+[node name="TurretFireCriticalPrimary" parent="TurretDamageVFXAnchor/Depleted" instance=ExtResource("7_4o53o")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 1.0362587, -0.36633778, 0.09671402)
+
+
+[node name="TurretSmokeCritical" parent="TurretDamageVFXAnchor/Depleted" instance=ExtResource("7_smoke_big")]
+transform = Transform3D(1.35, 0, 0, 0, 1.35, 0, 0, 0, 1.35, 0.43675613, -0.5822165, 0.48343658)
+emission_amount = 30
+lifetime = 2.0
+
+
+[node name="Smoke" parent="TurretDamageVFXAnchor/Depleted/TurretSmokeCritical" index="0"]
+amount = 30
+lifetime = 2.0
+transform_align_channel_filter = 1
+
+
+[node name="ShadowCaster" parent="TurretDamageVFXAnchor/Depleted/TurretSmokeCritical" index="1"]
+amount = 15
+lifetime = 2.0
+
+
+[node name="TurretFireCriticalSecondary" parent="TurretDamageVFXAnchor/Depleted" instance=ExtResource("7_4o53o")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, -0.3026886, 0.21821404, 0.043310165)
+
+
+[editable path="TurretDamageVFXAnchor/Damage75/TurretSmokeLight"]
+
+[editable path="HullDamageVFXAnchor/Damage50/HullSmokeMedium"]
+
+[editable path="TurretDamageVFXAnchor/Damage50/TurretSmokeMedium"]
+
+[editable path="HullDamageVFXAnchor/Damage25/HullSmokeHeavyPrimary"]
+
+[editable path="HullDamageVFXAnchor/Damage25/HullSmokeHeavySecondary"]
+
+[editable path="TurretDamageVFXAnchor/Damage25/TurretSmokeHeavy"]
+
+[editable path="HullDamageVFXAnchor/Depleted/HullSmokeCriticalPrimary"]
+
+[editable path="HullDamageVFXAnchor/Depleted/HullSmokeCriticalSecondary"]
+
+[editable path="TurretDamageVFXAnchor/Depleted/TurretSmokeCritical"]

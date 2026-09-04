@@ -65,8 +65,8 @@ test("rejects closed-schema unknown, missing, and prototype keys at every object
     [(value) => { delete value.coordinateContract.axisTolerance.relative; }, "coordinateContract.axisTolerance.relative"],
     [(value) => { value.conversionManifest.constructor = 1; }, "conversionManifest.constructor"],
     [(value) => { value.conversionManifest.requirementsWhenPresent.prototype = 1; }, "conversionManifest.requirementsWhenPresent.prototype"],
-    [(value) => { building(value).unknown = true; }, "models[1].unknown"],
-    [(value) => { delete building(value).source.fileId; }, "models[1].source.fileId"],
+    [(value) => { building(value).unknown = true; }, "models[4].unknown"],
+    [(value) => { delete building(value).source.fileId; }, "models[4].source.fileId"],
     [(value) => { value.atlases[0].__proto__ = { polluted: true }; }, "atlases[0]"],
   ];
   for (const [mutate, path] of cases) expectReject(mutate, path);
@@ -74,39 +74,39 @@ test("rejects closed-schema unknown, missing, and prototype keys at every object
 
 test("rejects invalid primitive values, identity fields, filenames, and normalized collisions", () => {
   const cases = [
-    [(value) => { building(value).source.sizeBytes = Number.NaN; }, "models[1].source.sizeBytes"],
-    [(value) => { building(value).rawSourceXyz[0] = Infinity; }, "models[1].rawSourceXyz[0]"],
-    [(value) => { building(value).scale = -0; }, "models[1].scale"],
-    [(value) => { building(value).source.sizeBytes = Number.MAX_SAFE_INTEGER + 1; }, "models[1].source.sizeBytes"],
-    [(value) => { building(value).pack = "other"; }, "models[1].pack"],
-    [(value) => { building(value).category = "atlas"; }, "models[1].category"],
-    [(value) => { building(value).source.fileId = "x".repeat(32); }, "models[1].source.fileId"],
-    [(value) => { building(value).source.sha256 = "A".repeat(64); }, "models[1].source.sha256"],
-    [(value) => { building(value).source.sizeBytes = 0; }, "models[1].source.sizeBytes"],
-    [(value) => { building(value).source.filename = "../Tank2.blend"; }, "models[1].source.filename"],
+    [(value) => { building(value).source.sizeBytes = Number.NaN; }, "models[4].source.sizeBytes"],
+    [(value) => { building(value).rawSourceXyz[0] = Infinity; }, "models[4].rawSourceXyz[0]"],
+    [(value) => { building(value).scale = -0; }, "models[4].scale"],
+    [(value) => { building(value).source.sizeBytes = Number.MAX_SAFE_INTEGER + 1; }, "models[4].source.sizeBytes"],
+    [(value) => { building(value).pack = "other"; }, "models[4].pack"],
+    [(value) => { building(value).category = "atlas"; }, "models[4].category"],
+    [(value) => { building(value).source.fileId = "x".repeat(32); }, "models[4].source.fileId"],
+    [(value) => { building(value).source.sha256 = "A".repeat(64); }, "models[4].source.sha256"],
+    [(value) => { building(value).source.sizeBytes = 0; }, "models[4].source.sizeBytes"],
+    [(value) => { building(value).source.filename = "../Tank2.blend"; }, "models[4].source.filename"],
     [(value) => { value.atlases[0].filename = "C:\\Texture.png"; }, "atlases[0].filename"],
     [(value) => { value.atlases[0].stagingBasename = "texture.png"; }, "atlases[0].stagingBasename"],
-    [(value) => { building(value).id = value.models[2].id.toUpperCase(); }, "models[2]"],
+    [(value) => { building(value).id = value.models[2].id.toUpperCase(); }, "models[4]"],
     [(value) => {
       const filename = value.models[2].source.filename;
       building(value).source.filename = `${filename.slice(0, -6).toUpperCase()}.blend`;
-    }, "models[2]"],
+    }, "models[4]"],
   ];
   for (const [mutate, path] of cases) expectReject(mutate, path);
 });
 
 test("enforces coordinate contract, deterministic axis mapping, and category policy", () => {
   const cases = [
-    [(value) => { value.coordinateContract.axisTolerance.relative = 0.01; }, "coordinateContract.axisTolerance.relative"],
+    [(value) => { value.coordinateContract.axisTolerance.relative = 0.005; }, "coordinateContract.axisTolerance.relative"],
     [(value) => {
       const model = building(value);
       model.scale = 0.45;
       model.expectedGodotXyz = [model.rawSourceXyz[0], model.rawSourceXyz[2], model.rawSourceXyz[1]].map((axis) => Math.round(axis * model.scale * 100000) / 100000);
-    }, "models[1]"],
-    [(value) => { building(value).expectedGodotXyz = [...building(value).expectedGodotXyz].reverse(); }, "models[1].expectedGodotXyz[0]"],
-    [(value) => { building(value).expectedGodotXyz[0] += 0.000001; }, "models[1].expectedGodotXyz[0]"],
-    [(value) => { building(value).animationPolicy = "retain_names_for_future_validation"; }, "models[1]"],
-    [(value) => { building(value).sourceImagePath = "//other.png"; }, "models[1]"],
+    }, "models[4]"],
+    [(value) => { building(value).expectedGodotXyz = [...building(value).expectedGodotXyz].reverse(); }, "models[4].expectedGodotXyz[0]"],
+    [(value) => { building(value).expectedGodotXyz[0] += 0.000001; }, "models[4].expectedGodotXyz[0]"],
+    [(value) => { building(value).animationPolicy = "retain_names_for_future_validation"; }, "models[4]"],
+    [(value) => { building(value).sourceImagePath = "//other.png"; }, "models[4]"],
     [(value) => { value.models[0].embeddedImageDigest = "a".repeat(64); }, "models[0].embeddedImageDigest"],
   ];
   for (const [mutate, path] of cases) expectReject(mutate, path);
@@ -114,16 +114,16 @@ test("enforces coordinate contract, deterministic axis mapping, and category pol
 
 test("separates models from atlases and applies final category counts after model validation", () => {
   expectReject((value) => { value.models[1] = structuredClone(value.atlases[0]); }, "models[1].category");
-  expectReject((value) => { value.models[1] = structuredClone(value.models[0]); }, "models");
-  expectReject((value) => { value.models[0] = structuredClone(value.models[1]); }, "models");
+  expectReject((value) => { value.models[1] = structuredClone(value.models[0]); }, "models[1]");
+  expectReject((value) => { value.models[0] = structuredClone(value.models[1]); }, "models[1]");
   expectReject((value) => { value.models.pop(); }, "models");
 });
 
 test("enforces absent and present conversion-state invariants", () => {
   const absentCases = [
-    [(value) => { building(value).outputDigest = "a".repeat(64); }, "models[1].outputDigest"],
-    [(value) => { building(value).measuredGodotXyz = [...building(value).expectedGodotXyz]; }, "models[1].measuredGodotXyz"],
-    [(value) => { building(value).embeddedImageDigest = "a".repeat(64); }, "models[1].embeddedImageDigest"],
+    [(value) => { building(value).outputDigest = "a".repeat(64); }, "models[4].outputDigest"],
+    [(value) => { building(value).measuredGodotXyz = [...building(value).expectedGodotXyz]; }, "models[4].measuredGodotXyz"],
+    [(value) => { building(value).embeddedImageDigest = "a".repeat(64); }, "models[4].embeddedImageDigest"],
   ];
   for (const [mutate, path] of absentCases) {
     const value = absent();
@@ -132,9 +132,9 @@ test("enforces absent and present conversion-state invariants", () => {
   }
 
   for (const [mutate, path] of [
-    [(value) => { building(value).outputDigest = null; }, "models[1].outputDigest"],
-    [(value) => { building(value).embeddedImageDigest = "A".repeat(64); }, "models[1].embeddedImageDigest"],
-    [(value) => { building(value).measuredGodotXyz[0] += 1; }, "models[1].measuredGodotXyz[0]"],
+    [(value) => { building(value).outputDigest = null; }, "models[4].outputDigest"],
+    [(value) => { building(value).embeddedImageDigest = "A".repeat(64); }, "models[4].embeddedImageDigest"],
+    [(value) => { building(value).measuredGodotXyz[0] += 1; }, "models[4].measuredGodotXyz[0]"],
     [(value) => { value.models[0].embeddedImageDigest = "b".repeat(64); }, "models[0].embeddedImageDigest"],
   ]) {
     const value = present();
@@ -152,7 +152,7 @@ test("import is silent and CLI is cwd-independent with exact stream contracts", 
   assert.deepEqual([importResult.status, importResult.stdout, importResult.stderr], [0, "", ""]);
 
   const valid = spawnSync(process.execPath, [script, "--check"], { cwd: directory, encoding: "utf8" });
-  assert.deepEqual([valid.status, valid.stdout, valid.stderr], [0, "{\"ok\":true,\"schemaVersion\":1,\"models\":9,\"atlases\":1}\n", ""]);
+  assert.deepEqual([valid.status, valid.stdout, valid.stderr], [0, "{\"ok\":true,\"schemaVersion\":1,\"models\":12,\"atlases\":1}\n", ""]);
   for (const args of [[], ["--wrong"], ["--check", "extra"]]) {
     const usage = spawnSync(process.execPath, [script, ...args], { cwd: directory, encoding: "utf8" });
     assert.deepEqual([usage.status, usage.stdout, usage.stderr], [2, "", "{\"ok\":false,\"code\":\"usage_error\",\"path\":\"argv\"}\n"]);

@@ -8,9 +8,10 @@ import bpy
 
 BUILDING_IMAGE_PATH = "//Texture.png"
 CLOSED_IDS = {
-    "tank2", "1story", "1story-gable-roof", "2story", "2story-slim",
+    "tank1", "tank2", "tank3", "tank4", "1story", "1story-gable-roof", "2story", "2story-slim",
     "2story-wide", "3story-small", "4story", "6story-stack",
 }
+TANK_IDS = {"tank1", "tank2", "tank3", "tank4"}
 REQUEST_FIELDS = {
     "atlasBasename", "atlasDigest", "category", "id", "outputPrivatePath",
     "policy", "resultPrivatePath", "scale", "sourceBasename",
@@ -38,7 +39,7 @@ def load_request():
     request = json.loads(request_path.read_text(encoding="utf-8"))
     require(set(request) == REQUEST_FIELDS, "closed request schema")
     require(request["id"] in CLOSED_IDS and request["category"] in {"tank", "building"} and isinstance(request["scale"], (int, float)), "invalid identity")
-    require((request["id"] == "tank2") == (request["category"] == "tank"), "closed category mapping")
+    require((request["id"] in TANK_IDS) == (request["category"] == "tank"), "closed category mapping")
     require(isinstance(request["policy"], dict) and set(request["policy"]) == {"animation", "texture"}, "closed policy")
     for key in ("sourceBasename", "atlasBasename"):
         value = request[key]
@@ -62,7 +63,7 @@ def used_images():
 def verify_images(request_dir, request):
     images = used_images()
     if request["category"] == "tank":
-        require(request["id"] == "tank2" and not images, "Tank2 must not depend on material images")
+        require(request["id"] in TANK_IDS and not images, "tank must not depend on material images")
         return
     require(request["atlasBasename"] == "Texture.png", "building atlas basename")
     require(images, "building must use Texture.png")

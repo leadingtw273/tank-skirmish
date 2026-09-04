@@ -13,10 +13,11 @@ import {
   computeRunIdentity, parseCliArgs, parseGlb, runCli,
 } from "../scripts/validate-converted-assets.mjs";
 
-const ids = ["tank2", "1story", "1story-gable-roof", "2story", "2story-slim", "2story-wide", "3story-small", "4story", "6story-stack"];
+const tankIds = new Set(["tank1", "tank2", "tank3", "tank4"]);
+const ids = [...tankIds, "1story", "1story-gable-roof", "2story", "2story-slim", "2story-wide", "3story-small", "4story", "6story-stack"];
 const projectRoot = dirname(dirname(fileURLToPath(import.meta.url)));
 const sha = (value) => createHash("sha256").update(value).digest("hex");
-const logicalPath = (id) => id === "tank2" ? `assets/models/tank/${id}.glb` : `assets/models/buildings/${id}.glb`;
+const logicalPath = (id) => tankIds.has(id) ? `assets/models/tank/${id}.glb` : `assets/models/buildings/${id}.glb`;
 
 function glb(json, bin = Buffer.alloc(0)) {
   const source = Buffer.from(JSON.stringify(json), "utf8");
@@ -32,13 +33,14 @@ function glb(json, bin = Buffer.alloc(0)) {
   return bytes;
 }
 function modelGlb(id, { actions = ["Drive"], image } = {}) {
-  const building = id !== "tank2";
+  const building = !tankIds.has(id);
   const imageBytes = image ?? Buffer.from(id, "utf8");
+  const binaryBytes = building ? imageBytes : Buffer.from(id, "utf8");
   return glb({
-    asset: { version: "2.0" }, buffers: [{ byteLength: building ? imageBytes.length : 0 }],
+    asset: { version: "2.0" }, buffers: [{ byteLength: binaryBytes.length }],
     ...(building ? { bufferViews: [{ buffer: 0, byteOffset: 0, byteLength: imageBytes.length }], images: [{ bufferView: 0, mimeType: "image/png" }] } : {}),
     ...(building ? {} : { animations: actions.map((name) => ({ name })) }),
-  }, building ? imageBytes : Buffer.alloc(0));
+  }, binaryBytes);
 }
 function runner(root, files, { action = ["Drive"] } = {}) {
   const assetBytes = readFileSync(new URL("../docs/assets/quaternius-lock.json", import.meta.url));
@@ -52,9 +54,9 @@ function runner(root, files, { action = ["Drive"] } = {}) {
     blender, exporterSourceDigest, models: ids.map((id) => {
       const locked = assetLock.models.find((model) => model.id === id);
       return {
-        blender, category: id === "tank2" ? "tank" : "building", exporterSourceDigest, id,
+        blender, category: tankIds.has(id) ? "tank" : "building", exporterSourceDigest, id,
         output: { digest: sha(files.get(id)), logicalPath: logicalPath(id) }, policy: { animation: locked.animationPolicy, texture: locked.texturePolicy },
-        scale: locked.scale, source: { digest: locked.source.sha256, fileId: locked.source.fileId }, sourceActionNames: id === "tank2" ? action : [],
+        scale: locked.scale, source: { digest: locked.source.sha256, fileId: locked.source.fileId }, sourceActionNames: tankIds.has(id) ? action : [],
       };
     }), runIdentity: "", schemaVersion: 1,
   };
@@ -150,13 +152,14 @@ test("parser accepts the supported GLB shape and rejects header, chunk, JSON, bu
 });
 
 test("inspection produces a canonical report with sorted action names and exact embedded image bytes", async (t) => {
-  const value = await fixture(t, { glbs: { tank2: { actions: ["Zulu", "Alpha"] } }, runner: { action: ["Alpha", "Zulu"] } });
+  const glbs = Object.fromEntries([...tankIds].map((id) => [id, { actions: ["Zulu", "Alpha"] }]));
+  const value = await fixture(t, { glbs, runner: { action: ["Alpha", "Zulu"] } });
   const report = inspectConvertedAssets({ inputRoot: value.root, runnerManifest: value.path });
   assert.deepEqual(Object.keys(report), ["schemaVersion", "runIdentity", "runnerManifestDigest", "toolchain", "exporter", "models"]);
   assert.deepEqual(report.models.map((model) => model.id), ids);
   assert.deepEqual(report.models[0].animationNames, ["Alpha", "Zulu"]);
   assert.equal(report.models[0].embeddedImageDigest, null);
-  assert.equal(report.models[1].embeddedImageDigest, sha(Buffer.from("1story", "utf8")));
+  assert.equal(report.models[4].embeddedImageDigest, sha(Buffer.from("1story", "utf8")));
   const output = join(value.root, "report.json");
   assert.equal(await runCli(["--inspect", "--input-root", value.root, "--runner-manifest", value.path, "--output-report", output]), 0);
   const bytes = readFileSync(output); assert.deepEqual(bytes, canonicalBytes(JSON.parse(bytes)));
@@ -166,10 +169,10 @@ test("inspection fail-closes output trees, runner paths and model contracts", as
   const badTree = await fixture(t); writeFileSync(join(badTree.root, "unexpected.txt"), "x"); expectCode(() => inspectConvertedAssets({ inputRoot: badTree.root, runnerManifest: badTree.path }), "OUTPUT_INVALID");
   const missingOutput = await fixture(t); await unlink(join(missingOutput.root, ...logicalPath("1story").split("/"))); expectCode(() => inspectConvertedAssets({ inputRoot: missingOutput.root, runnerManifest: missingOutput.path }), "OUTPUT_INVALID");
   const nonCanonical = await fixture(t); writeFileSync(nonCanonical.path, `${JSON.stringify(nonCanonical.value, null, 2)}\n`); expectCode(() => inspectConvertedAssets({ inputRoot: nonCanonical.root, runnerManifest: nonCanonical.path }), "CANONICAL_MANIFEST_INVALID");
-  const badId = await fixture(t); badId.value.models[1].id = "1STORY"; writeFileSync(badId.path, canonicalBytes(badId.value)); expectCode(() => inspectConvertedAssets({ inputRoot: badId.root, runnerManifest: badId.path }), "RUNNER_MANIFEST_INVALID");
+  const badId = await fixture(t); badId.value.models[4].id = "1STORY"; writeFileSync(badId.path, canonicalBytes(badId.value)); expectCode(() => inspectConvertedAssets({ inputRoot: badId.root, runnerManifest: badId.path }), "RUNNER_MANIFEST_INVALID");
   const badPath = await fixture(t); badPath.value.models[0].output.logicalPath = "assets/models/tank/../tank2.glb"; writeFileSync(badPath.path, canonicalBytes(badPath.value)); expectCode(() => inspectConvertedAssets({ inputRoot: badPath.root, runnerManifest: badPath.path }), "RUNNER_MANIFEST_INVALID");
   const badAction = await fixture(t, { glbs: { tank2: { actions: ["Other"] } } }); expectCode(() => inspectConvertedAssets({ inputRoot: badAction.root, runnerManifest: badAction.path }), "GLB_STRUCTURE_INVALID");
-  const badBuilding = await fixture(t, { glbs: { "1story": { image: Buffer.from([9, 9, 9, 9]) } } }); badBuilding.value.models[1].output.digest = "0".repeat(64); writeFileSync(badBuilding.path, canonicalBytes(badBuilding.value)); expectCode(() => inspectConvertedAssets({ inputRoot: badBuilding.root, runnerManifest: badBuilding.path }), "DIGEST_MISMATCH");
+  const badBuilding = await fixture(t, { glbs: { "1story": { image: Buffer.from([9, 9, 9, 9]) } } }); badBuilding.value.models[4].output.digest = "0".repeat(64); writeFileSync(badBuilding.path, canonicalBytes(badBuilding.value)); expectCode(() => inspectConvertedAssets({ inputRoot: badBuilding.root, runnerManifest: badBuilding.path }), "DIGEST_MISMATCH");
 });
 
 test("compose writes independently-derived canonical bytes, accepts absent and matching-present locks, and production check has no private runner dependency", async (t) => {
@@ -188,9 +191,9 @@ test("compose writes independently-derived canonical bytes, accepts absent and m
     model.outputDigest = actual.outputDigest; model.embeddedImageDigest = actual.embeddedImageDigest; model.measuredGodotXyz = actual.measuredGodotXyz;
   }
   writeFileSync(value.lock, JSON.stringify(present));
-  assert.equal(checkConvertedAssets({ inputRoot: value.root, manifest: value.output, lock: value.lock }).models.length, 9);
+  assert.equal(checkConvertedAssets({ inputRoot: value.root, manifest: value.output, lock: value.lock }).models.length, 12);
   await unlink(value.path);
-  assert.equal(checkConvertedAssets({ inputRoot: value.root, manifest: value.output, lock: value.lock }).models.length, 9);
+  assert.equal(checkConvertedAssets({ inputRoot: value.root, manifest: value.output, lock: value.lock }).models.length, 12);
 });
 
 test("compose rejects static, measurement, runner and lock drift without exposing private paths", async (t) => {
@@ -243,7 +246,7 @@ test("check rejects legacy static-only and measurement-only manifests, then fail
   await unlink(join(value.root, ...logicalPath("1story").split("/")));
   expectCode(() => checkConvertedAssets({ inputRoot: value.root, manifest, lock: value.lock }), "OUTPUT_INVALID");
   writeFileSync(join(value.root, ...logicalPath("1story").split("/")), value.files.get("1story"));
-  const staticDrift = structuredClone(composite); staticDrift.models[1].embeddedImageDigest = "0".repeat(64); writeFileSync(manifest, canonicalBytes(staticDrift));
+  const staticDrift = structuredClone(composite); staticDrift.models[4].embeddedImageDigest = "0".repeat(64); writeFileSync(manifest, canonicalBytes(staticDrift));
   expectCode(() => checkConvertedAssets({ inputRoot: value.root, manifest, lock: value.lock }), "JOIN_MISMATCH");
   const duplicate = structuredClone(composite); duplicate.models[1].outputDigest = duplicate.models[0].outputDigest; writeFileSync(manifest, canonicalBytes(duplicate));
   expectCode(() => checkConvertedAssets({ inputRoot: value.root, manifest, lock: value.lock }), "DUPLICATE_DIGEST");

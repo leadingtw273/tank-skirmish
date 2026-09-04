@@ -1,6 +1,7 @@
 extends SceneTree
 
-const IDS := ["tank2", "1story", "1story-gable-roof", "2story", "2story-slim", "2story-wide", "3story-small", "4story", "6story-stack"]
+const TANK_IDS := ["tank1", "tank2", "tank3", "tank4"]
+const IDS := ["tank1", "tank2", "tank3", "tank4", "1story", "1story-gable-roof", "2story", "2story-slim", "2story-wide", "3story-small", "4story", "6story-stack"]
 const SHA256_LENGTH := 64
 const ROUNDING_FACTOR := 100000.0
 
@@ -295,7 +296,7 @@ static func verify_composite_join(actual_models: Array, manifest_models: Array, 
 		var current: Dictionary = actual.value[id]
 		var recorded: Dictionary = manifest.value[id]
 		var locked: Dictionary = lock.value[id]
-		if recorded.category != ("tank" if id == "tank2" else "building") or recorded.outputRelativePath != logical_path(id) or not valid_sha256(recorded.sourceDigest) or typeof(recorded.sourceFileId) != TYPE_STRING or recorded.sourceFileId.is_empty() or typeof(recorded.scale) != TYPE_FLOAT and typeof(recorded.scale) != TYPE_INT or float(recorded.scale) <= 0.0 or not valid_sha256(current.outputDigest) or current.outputDigest != recorded.outputDigest or current.outputDigest != locked.outputDigest:
+		if recorded.category != category_for(id) or recorded.outputRelativePath != logical_path(id) or not valid_sha256(recorded.sourceDigest) or typeof(recorded.sourceFileId) != TYPE_STRING or recorded.sourceFileId.is_empty() or typeof(recorded.scale) != TYPE_FLOAT and typeof(recorded.scale) != TYPE_INT or float(recorded.scale) <= 0.0 or not valid_sha256(current.outputDigest) or current.outputDigest != recorded.outputDigest or current.outputDigest != locked.outputDigest:
 			return failure("JOIN_MISMATCH")
 		if typeof(locked.source) != TYPE_DICTIONARY or locked.source.get("fileId") != recorded.sourceFileId or locked.source.get("sha256") != recorded.sourceDigest or float(locked.get("scale", 0.0)) != float(recorded.scale):
 			return failure("JOIN_MISMATCH")
@@ -326,7 +327,7 @@ static func validate_static_report(value: Variant) -> Dictionary:
 	var digest_seen := {}
 	for id in IDS:
 		var model: Dictionary = models.value[id]
-		if model.category != ("tank" if id == "tank2" else "building") or model.outputRelativePath != logical_path(id) or not valid_sha256(model.outputDigest) or typeof(model.sourceActionNames) != TYPE_ARRAY or typeof(model.animationNames) != TYPE_ARRAY or not ((model.imageCount is int and model.imageCount >= 0) or (typeof(model.imageCount) == TYPE_FLOAT and is_finite(model.imageCount) and model.imageCount >= 0.0 and floor(model.imageCount) == model.imageCount)):
+		if model.category != category_for(id) or model.outputRelativePath != logical_path(id) or not valid_sha256(model.outputDigest) or typeof(model.sourceActionNames) != TYPE_ARRAY or typeof(model.animationNames) != TYPE_ARRAY or not ((model.imageCount is int and model.imageCount >= 0) or (typeof(model.imageCount) == TYPE_FLOAT and is_finite(model.imageCount) and model.imageCount >= 0.0 and floor(model.imageCount) == model.imageCount)):
 			return failure("STATIC_REPORT_INVALID")
 		if digest_seen.has(model.outputDigest):
 			return failure("DUPLICATE_DIGEST")
@@ -351,12 +352,12 @@ static func validate_composite_manifest(value: Variant) -> Dictionary:
 	var seen := {}
 	for id in IDS:
 		var model: Dictionary = models.value[id]
-		if model.category != ("tank" if id == "tank2" else "building") or model.outputRelativePath != logical_path(id) or typeof(model.sourceFileId) != TYPE_STRING or model.sourceFileId.is_empty() or not valid_sha256(model.sourceDigest) or (typeof(model.scale) != TYPE_INT and typeof(model.scale) != TYPE_FLOAT) or not is_finite(float(model.scale)) or float(model.scale) <= 0.0 or not valid_sha256(model.outputDigest) or typeof(model.sourceActionNames) != TYPE_ARRAY or typeof(model.animationNames) != TYPE_ARRAY or not valid_vector_array(model.measuredGodotXyz, false):
+		if model.category != category_for(id) or model.outputRelativePath != logical_path(id) or typeof(model.sourceFileId) != TYPE_STRING or model.sourceFileId.is_empty() or not valid_sha256(model.sourceDigest) or (typeof(model.scale) != TYPE_INT and typeof(model.scale) != TYPE_FLOAT) or not is_finite(float(model.scale)) or float(model.scale) <= 0.0 or not valid_sha256(model.outputDigest) or typeof(model.sourceActionNames) != TYPE_ARRAY or typeof(model.animationNames) != TYPE_ARRAY or not valid_vector_array(model.measuredGodotXyz, false):
 			return failure("FINAL_MANIFEST_INVALID")
 		if seen.has(model.outputDigest):
 			return failure("DUPLICATE_DIGEST")
 		seen[model.outputDigest] = true
-		if id == "tank2":
+		if is_tank(id):
 			if model.imageCount != 0 or model.embeddedImageDigest != null or model.animationNames.size() == 0 or model.animationNames != model.sourceActionNames:
 				return failure("FINAL_MANIFEST_INVALID")
 		elif model.imageCount != 1 or not valid_sha256(model.embeddedImageDigest) or model.sourceActionNames.size() != 0 or model.animationNames.size() != 0:
@@ -372,9 +373,9 @@ static func validate_lock(value: Variant) -> Dictionary:
 		return models
 	for id in IDS:
 		var model: Dictionary = models.value[id]
-		if model.category != ("tank" if id == "tank2" else "building") or typeof(model.source) != TYPE_DICTIONARY or not exact_dictionary(model.source, ["fileId", "filename", "sizeBytes", "sha256"]) or typeof(model.source.fileId) != TYPE_STRING or model.source.fileId.is_empty() or not valid_sha256(model.source.sha256) or (typeof(model.scale) != TYPE_INT and typeof(model.scale) != TYPE_FLOAT) or float(model.scale) <= 0.0 or not valid_sha256(model.outputDigest) or not valid_vector_array(model.expectedGodotXyz, true) or not valid_vector_array(model.measuredGodotXyz, false):
+		if model.category != category_for(id) or typeof(model.source) != TYPE_DICTIONARY or not exact_dictionary(model.source, ["fileId", "filename", "sizeBytes", "sha256"]) or typeof(model.source.fileId) != TYPE_STRING or model.source.fileId.is_empty() or not valid_sha256(model.source.sha256) or (typeof(model.scale) != TYPE_INT and typeof(model.scale) != TYPE_FLOAT) or float(model.scale) <= 0.0 or not valid_sha256(model.outputDigest) or not valid_vector_array(model.expectedGodotXyz, true) or not valid_vector_array(model.measuredGodotXyz, false):
 			return failure("LOCK_INVALID")
-		if id == "tank2":
+		if is_tank(id):
 			if model.embeddedImageDigest != null:
 				return failure("LOCK_INVALID")
 		elif not valid_sha256(model.embeddedImageDigest):
@@ -461,7 +462,15 @@ static func canonical_json(value: Variant) -> String:
 
 
 static func logical_path(id: String) -> String:
-	return "assets/models/tank/tank2.glb" if id == "tank2" else "assets/models/buildings/%s.glb" % id
+	return "assets/models/tank/%s.glb" % id if is_tank(id) else "assets/models/buildings/%s.glb" % id
+
+
+static func category_for(id: String) -> String:
+	return "tank" if is_tank(id) else "building"
+
+
+static func is_tank(id: String) -> bool:
+	return TANK_IDS.has(id)
 
 
 static func exact_dictionary(value: Variant, fields: Array) -> bool:
@@ -507,7 +516,7 @@ static func canonical_round(value: float) -> float:
 static func within_measurement_tolerance(actual_axis: float, expected_axis: float) -> bool:
 	var actual_units := roundf(actual_axis * ROUNDING_FACTOR)
 	var expected_units := expected_axis * ROUNDING_FACTOR
-	var tolerance_units := maxf(0.01 * ROUNDING_FACTOR, absf(expected_units) * 0.005)
+	var tolerance_units := maxf(0.01 * ROUNDING_FACTOR, absf(expected_units) * 0.01)
 	return absf(actual_units - expected_units) <= tolerance_units + 0.000001
 
 

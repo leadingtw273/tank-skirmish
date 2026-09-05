@@ -55,7 +55,7 @@ func _validate(instance: Node) -> void:
 	var shot_event := observed_shots[0]
 	if not shot_event.is_valid() or not shot_event.direction.is_normalized() \
 			or not shot_event.muzzle_transform.is_equal_approx(tank.muzzle_point.global_transform) \
-			or shot_event.shooter_rid != tank.get_rid() or not is_equal_approx(shot_event.damage, 25.0):
+			or shot_event.shooter_rid != tank.get_rid() or not is_equal_approx(shot_event.damage, tank.shell_damage):
 		_fail("Tank must publish one closed ShotEvent with its final muzzle transform, direction, and RID.")
 		return
 	var projectile := projectiles.get_child(0) as TankProjectile
@@ -150,7 +150,7 @@ func _validate(instance: Node) -> void:
 	var impact_decal := impact_vfx.get_node_or_null("Decal") as Decal if impact_vfx != null else null
 	var impact_light := impact_vfx.get_node_or_null("Light") as OmniLight3D if impact_vfx != null else null
 	if impact_event.shot_event != shot_event or impact_event.collider != target or impact_vfx == null \
-			or not is_equal_approx(target_health.current_health, 75.0) \
+			or not is_equal_approx(target_health.current_health, target_health.maximum_health - shot_event.damage) \
 			or impact_vfx.scene_file_path != IMPACT_VFX_PATH \
 			or not bool(impact_vfx.get("one_shot")) or not bool(impact_vfx.get("autoplay")) \
 			or impact_core_mesh == null or not is_equal_approx(impact_core_mesh.radius, 0.5 * runtime.impact_vfx_scale) \

@@ -180,10 +180,10 @@ func _validate_variant(tank_id: String, contract: Dictionary) -> bool:
 		tank.shot_event_fired.connect(func(event: Variant) -> void: shots.append(event))
 		tank.request_fire()
 		valid = shots.size() == 1 and shots[0].is_valid() \
-			and is_equal_approx(float(shots[0].damage), 25.0) \
+			and is_equal_approx(float(shots[0].damage), float(tank.shell_damage)) \
 			and shots[0].direction.is_equal_approx(tank.muzzle_global_direction()) \
-			and receiver.receive_damage(25.0) \
-			and is_equal_approx(health.current_health, 75.0) \
+			and receiver.receive_damage(health.maximum_health * 0.25) \
+			and is_equal_approx(health.current_health, health.maximum_health * 0.75) \
 			and int(damage_visuals.active_damage_stage) == 75
 	tank.queue_free()
 	await process_frame

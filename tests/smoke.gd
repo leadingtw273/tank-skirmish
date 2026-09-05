@@ -783,10 +783,10 @@ func _validate_camera_shake(instance: Node) -> bool:
 		push_error("Camera shake must keep CameraShakePivot rotation at zero while returning")
 		return false
 	tank.turret_pivot.rotation.y += PI / 2.0
-	tank.request_fire()
-	if shot_events.size() != 2 or shake_pivot.position.length() > camera_controller.fire_shake_kick_distance + 0.001 \
+	camera_controller.play_shot_recoil(ShotEvent.new(tank.muzzle_point.global_transform, tank.muzzle_global_direction(), tank.get_rid()))
+	if shot_events.size() != 1 or shake_pivot.position.length() > camera_controller.fire_shake_kick_distance + 0.001 \
 			or not shake_pivot.rotation.is_zero_approx():
-		push_error("Repeated controlled-tank shots must replace the prior bounded position-only camera shake")
+		push_error("Repeated ShotEvents must replace the prior bounded position-only camera shake")
 		return false
 	for _frame in range(5):
 		camera_controller._process(0.05)
@@ -831,6 +831,7 @@ func _validate_visual_recoil(instance: Node) -> bool:
 		push_error("Tank visual recoil must retain a positive adjustable distance and approved timing")
 		return false
 
+	await create_timer(tank.fire_interval_seconds + 0.1, false, true).timeout
 	var rest_position := recoil_pivot.position
 	var root_transform := tank.global_transform
 	var collision_transform := collision.global_transform
@@ -858,12 +859,13 @@ func _validate_visual_recoil(instance: Node) -> bool:
 		push_error("Visual recoil must return exactly to its original local position")
 		return false
 
+	await create_timer(tank.fire_interval_seconds + 0.1, false, true).timeout
 	tank.request_fire()
 	await create_timer(tank.visual_recoil_kick_seconds + 0.01).timeout
 	await process_frame
 	tank.turret_pivot.rotation.y += PI / 2.0
 	var latest_direction: Vector3 = tank.muzzle_global_direction()
-	tank.request_fire()
+	tank._play_visual_recoil(latest_direction)
 	await create_timer(tank.visual_recoil_kick_seconds + 0.01).timeout
 	await process_frame
 	var latest_offset := recoil_pivot.global_position - tank.to_global(rest_position)
@@ -920,6 +922,7 @@ func _validate_projectile_firing(instance: Node) -> bool:
 		push_error("Projectile direction must use the MuzzlePoint world -X axis")
 		return false
 
+	await create_timer(tank.fire_interval_seconds + 0.1, false, true).timeout
 	var release_event := InputEventMouseButton.new()
 	release_event.button_index = MOUSE_BUTTON_LEFT
 	release_event.pressed = false
@@ -951,15 +954,21 @@ func _validate_projectile_firing(instance: Node) -> bool:
 	if direct_projectile == null:
 		push_error("Projectiles may only contain TankProjectile instances")
 		return false
+	direct_projectile.queue_free()
+	await process_frame
+	await create_timer(tank.fire_interval_seconds + 0.1, false, true).timeout
 
 	var press_event := InputEventMouseButton.new()
 	press_event.button_index = MOUSE_BUTTON_LEFT
 	press_event.pressed = true
+	# 等待裝填時砲口可能因後座歸位或瞄準而移動，以這一發的當下姿態驗證出生點。
+	muzzle_position = tank.muzzle_global_position()
+	muzzle_direction = tank.muzzle_global_direction()
 	player_controller._unhandled_input(press_event)
-	if shot_events.size() != 2 or projectiles.get_child_count() != 2:
+	if shot_events.size() != 2 or projectiles.get_child_count() != 1:
 		push_error("Each PlayerController fire request must emit one Shot Event and create one projectile")
 		return false
-	var projectile := projectiles.get_child(1) as TankProjectile
+	var projectile := projectiles.get_child(0) as TankProjectile
 	var muzzle_flash := tank.muzzle_point.get_node_or_null("MuzzleFlash") as Node3D
 	if projectile == null or muzzle_flash == null:
 		push_error("Left mouse press must create one projectile and one muzzle flash")
@@ -1011,11 +1020,11 @@ func _validate_projectile_firing(instance: Node) -> bool:
 		push_error("Ground ray height and stationary tank height must remain unchanged")
 		return false
 	projectile.queue_free()
-	direct_projectile.queue_free()
 	await process_frame
 	if projectiles.get_child_count() != 0 or effects.get_node_or_null("ImpactVFX") != null:
 		push_error("Queued shots must not create impact effects before a collision")
 		return false
+	await create_timer(tank.fire_interval_seconds + 0.1, false, true).timeout
 
 	var target := StaticBody3D.new()
 	target.name = "ProjectileSmokeTarget"

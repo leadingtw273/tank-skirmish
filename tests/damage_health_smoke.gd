@@ -149,7 +149,7 @@ func _validate_training_target() -> bool:
 	var depleted_explosion := root.find_child("TankDepletedExplosion", true, false) as Node3D
 	var explosion_core := depleted_explosion.get_node_or_null("Core") as MeshInstance3D if depleted_explosion != null else null
 	var explosion_decal := depleted_explosion.get_node_or_null("Decal") as Decal if depleted_explosion != null else null
-	if not label.text.ends_with("0 / 100") or receiver.enabled or int(damage_visuals.active_damage_stage) != 0 \
+	if not label.text.ends_with("\n0 / 100") or receiver.enabled or int(damage_visuals.active_damage_stage) != 0 \
 			or not is_equal_approx(turret_pivot.rotation.y, turret_yaw_before_depletion) \
 			or not is_equal_approx(gun_pitch_pivot.rotation.z, expected_depleted_pitch) \
 			or depleted_explosion == null \

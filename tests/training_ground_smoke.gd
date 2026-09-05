@@ -12,6 +12,7 @@ const TRAINING_TARGET_VARIANTS := {
 		"display_name": "輕型坦克",
 		"position": Vector3(-14, 0, -26),
 		"rotation_y": 1.5708,
+		"model_scale": Vector3.ONE * 0.9,
 	},
 	"TrainingTarget": {
 		"scene": TRAINING_TARGET_SCENE,
@@ -19,6 +20,7 @@ const TRAINING_TARGET_VARIANTS := {
 		"display_name": "中型坦克",
 		"position": Vector3(-2, 0, -26),
 		"rotation_y": 1.5708,
+		"model_scale": Vector3.ONE,
 	},
 	"Tank3TrainingTarget": {
 		"scene": "res://src/world/training_ground/training_target_tank3.tscn",
@@ -26,6 +28,7 @@ const TRAINING_TARGET_VARIANTS := {
 		"display_name": "重型坦克",
 		"position": Vector3(10, 0, -26),
 		"rotation_y": 1.5708,
+		"model_scale": Vector3.ONE * 1.1,
 	},
 	"Tank4TrainingTarget": {
 		"scene": "res://src/world/training_ground/training_target_tank4.tscn",
@@ -33,6 +36,7 @@ const TRAINING_TARGET_VARIANTS := {
 		"display_name": "驅逐坦克",
 		"position": Vector3(22, 0, -26),
 		"rotation_y": 1.5708,
+		"model_scale": Vector3.ONE,
 	},
 }
 const EXPECTED_GROUND_COLOR := Color(0.34, 0.36, 0.38, 1)
@@ -79,14 +83,15 @@ func _validate_training_ground() -> bool:
 		if training_target == null or training_target.scene_file_path != expected.scene \
 				or not training_target.position.is_equal_approx(expected.position) \
 				or not is_equal_approx(training_target.rotation.y, float(expected.rotation_y)) \
-				or target_tank == null or target_tank.collision_layer != 1 \
-				or target_model == null or not target_model.scale.is_equal_approx(Vector3.ONE) \
+				or target_tank == null or not target_tank.scale.is_equal_approx(Vector3.ONE) \
+				or target_tank.collision_layer != 1 \
+				or target_model == null or not target_model.scale.is_equal_approx(expected.model_scale) \
 				or target_shape == null or target_shape.size.x <= 0.0 or target_shape.size.y <= 0.0 or target_shape.size.z <= 0.0 \
 				or not is_equal_approx(target_collision.position.y, target_shape.size.y * 0.5) \
 				or health_label == null or health_label.font_size <= 0 or health_label.position.y <= target_shape.size.y * 0.5 \
 				or health_label.text != "%s\n100 / 100" % expected.display_name:
 			training_ground.free()
-			return _fail("%s must have a scale=1 stationary target with grounded collision, the expected facing, and a readable health label." % target_name)
+			return _fail("%s must preserve its authored model scale with grounded collision, the expected facing, and a readable health label." % target_name)
 
 	var ground := training_ground.get_node_or_null("Ground") as StaticBody3D
 	var visual := training_ground.get_node_or_null("Ground/Visual") as MeshInstance3D

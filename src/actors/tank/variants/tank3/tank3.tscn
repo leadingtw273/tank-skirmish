@@ -5,7 +5,7 @@
 [ext_resource type="PackedScene" path="res://src/actors/tank/variants/tank3/damage/tank3_damage_visuals.tscn" id="3_damage_visuals"]
 
 [sub_resource type="BoxShape3D" id="TankCollisionShape"]
-size = Vector3(6.6935, 3.04212, 4.7442)
+size = Vector3(7.36285, 3.346332, 5.21862)
 
 [node name="Tank" node_paths=PackedStringArray("tank_model", "tank_turret", "tank_gun", "tread_animation_player") instance=ExtResource("1_base")]
 variant_interface_enabled = true
@@ -18,32 +18,38 @@ tread_forward_animation = &"Tank_Forward"
 tread_backwards_animation = &"Tank_Backwards"
 tread_turning_left_animation = &"Tank_TurningLeft"
 tread_turning_right_animation = &"Tank_TurningRight"
-movement_speed = 4.8
-reverse_movement_speed = 2.4
-turn_speed = 0.32
+movement_speed = 4.32
+reverse_movement_speed = 2.16
+turn_speed = 0.288
 turning_movement_speed_ratio = 0.45
-tank_mass_tonnes = 70.0
+tank_mass_tonnes = 84.0
 engine_horsepower = 1400.0
 brake_force_kilonewtons = 330.0
 turn_response = 0.32
 tread_animation_reference_speed = 2.003816870375
 tread_animation_speed_multiplier = 2.5
-turret_turn_speed = 0.8
+turret_turn_speed = 0.96
 gun_pitch_speed = 0.4
-shell_damage = 25.0
+shell_damage = 15.0
+fire_interval_seconds = 0.833333333333
 visual_recoil_distance = 0.114503821164
 visual_recoil_return_seconds = 0.26
 max_camera_look_ahead_distance = 35.0
 muzzle_flash_scale = 1.145038211643
 
 [node name="Tank3Model" parent="VisualRecoilPivot/TankVisualSlot/HullVisual" instance=ExtResource("2_model")]
+scale = Vector3(1.1, 1.1, 1.1)
 
 [node name="CollisionShape3D" parent="." index="1"]
-position = Vector3(0, 1.52106, 0)
+position = Vector3(0, 1.673166, 0)
 shape = SubResource("TankCollisionShape")
 
 [node name="HealthComponent" parent="." index="2"]
-maximum_health = 100.0
+maximum_health = 120.0
 
 [node name="Tank3DamageVisuals" parent="." instance=ExtResource("3_damage_visuals")]
+depleted_explosion_local_offset = Vector3(0, 1.32, 0)
 depleted_explosion_scale = 1.5
+
+[node name="TrackContactEffects" parent="." index="4"]
+scale = Vector3(1.1, 1.1, 1.1)

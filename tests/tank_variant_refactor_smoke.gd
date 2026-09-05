@@ -2,9 +2,9 @@ extends SceneTree
 
 const TANK_BASE_SCENE := "res://src/actors/tank/tank_base.tscn"
 const VARIANTS := {
-	"tank1": {"scene": "res://src/actors/tank/variants/tank1/tank1.tscn", "collision": Vector3(7.74703, 3.37688, 4.54163), "damage": "Tank1DamageVisuals"},
+	"tank1": {"scene": "res://src/actors/tank/variants/tank1/tank1.tscn", "collision": Vector3(6.972327, 3.039192, 4.087467), "damage": "Tank1DamageVisuals"},
 	"tank2": {"scene": "res://src/actors/tank/variants/tank2/tank2.tscn", "collision": Vector3(7.955370303640, 2.079210193863, 4.541630211513), "damage": "Tank2DamageVisuals"},
-	"tank3": {"scene": "res://src/actors/tank/variants/tank3/tank3.tscn", "collision": Vector3(6.6935, 3.04212, 4.7442), "damage": "Tank3DamageVisuals"},
+	"tank3": {"scene": "res://src/actors/tank/variants/tank3/tank3.tscn", "collision": Vector3(7.36285, 3.346332, 5.21862), "damage": "Tank3DamageVisuals"},
 	"tank4": {"scene": "res://src/actors/tank/variants/tank4/tank4.tscn", "collision": Vector3(7.272, 2.69882, 4.4904), "damage": "Tank4DamageVisuals"},
 }
 const DAMAGE_STAGE_NAMES := [&"Damage75", &"Damage50", &"Damage25", &"Depleted"]
@@ -109,6 +109,13 @@ func _validate_variant(tank_id: String, contract: Dictionary) -> bool:
 		valid = _validate_variant_damage_effects(tank, tank_id)
 	if valid and tank_id == "tank1":
 		var fixed_body := tank.tank_model.find_child("Tank_body", true, false) as MeshInstance3D
+		var tank1_damage_visuals := tank.get_node_or_null("Tank1DamageVisuals")
+		var tank1_hull_fire := tank.get_node_or_null(
+			"VisualRecoilPivot/HullDamageVFXAnchor/Depleted/HullFireCriticalPrimary"
+		) as Node3D
+		var tank1_turret_fire := tank.get_node_or_null(
+			"VisualRecoilPivot/TurretPivot/TurretDamageVFXAnchor/Depleted/TurretFireCritical"
+		) as Node3D
 		var fixed_body_basis_before := fixed_body.global_basis if fixed_body != null else Basis()
 		var gun_basis_before: Basis = (tank.tank_gun as Node3D).global_basis
 		var turret_pivot := tank.get_node("VisualRecoilPivot/TurretPivot") as Node3D
@@ -118,12 +125,48 @@ func _validate_variant(tank_id: String, contract: Dictionary) -> bool:
 		var elevation_degrees := -rad_to_deg(gun_pitch_pivot.rotation.z)
 		tank.aim_gun_pitch_at_target(tank.muzzle_global_position() + Vector3(-100.0, -100.0, 0.0), 10.0)
 		var depression_degrees := -rad_to_deg(gun_pitch_pivot.rotation.z)
-		valid = fixed_body != null \
+		valid = tank.scale.is_equal_approx(Vector3.ONE) \
+			and tank.tank_model.scale.is_equal_approx(Vector3.ONE * 0.9) \
+			and collision_shape.size.is_equal_approx(Vector3(6.972327, 3.039192, 4.087467)) \
+			and contact_effects.scale.is_equal_approx(Vector3.ONE * 0.9) \
+			and is_equal_approx(float(tank.muzzle_flash_scale), 1.145038211643) \
+			and tank1_damage_visuals != null \
+			and tank1_damage_visuals.depleted_explosion_local_offset.is_equal_approx(Vector3(0, 1.08, 0)) \
+			and is_equal_approx(float(tank1_damage_visuals.depleted_explosion_scale), 1.5) \
+			and tank1_hull_fire != null \
+			and tank1_hull_fire.scale.is_equal_approx(Vector3.ONE * 1.505) \
+			and tank1_hull_fire.position.is_equal_approx(Vector3(2.1782592, -1.69863849, -0.4243023)) \
+			and tank1_turret_fire != null \
+			and tank1_turret_fire.scale.is_equal_approx(Vector3.ONE * 2.0) \
+			and tank1_turret_fire.position.is_equal_approx(Vector3(0.93263283, -0.329704002, 0.087042618)) \
+			and fixed_body != null \
 			and fixed_body.global_basis.is_equal_approx(fixed_body_basis_before) \
 			and not tank.tank_gun.global_basis.is_equal_approx(gun_basis_before) \
 			and is_equal_approx(absf(rad_to_deg(turret_pivot.rotation.y)), 8.0) \
 			and is_equal_approx(elevation_degrees, 10.0) \
 			and is_equal_approx(depression_degrees, -5.0)
+	if valid and tank_id == "tank3":
+		var tank3_damage_visuals := tank.get_node_or_null("Tank3DamageVisuals")
+		var tank3_hull_fire := tank.get_node_or_null(
+			"VisualRecoilPivot/HullDamageVFXAnchor/Depleted/HullFireCriticalPrimary"
+		) as Node3D
+		var tank3_turret_fire := tank.get_node_or_null(
+			"VisualRecoilPivot/TurretPivot/TurretDamageVFXAnchor/Depleted/TurretFireCriticalSecondary"
+		) as Node3D
+		valid = tank.scale.is_equal_approx(Vector3.ONE) \
+			and tank.tank_model.scale.is_equal_approx(Vector3.ONE * 1.1) \
+			and collision_shape.size.is_equal_approx(Vector3(7.36285, 3.346332, 5.21862)) \
+			and contact_effects.scale.is_equal_approx(Vector3.ONE * 1.1) \
+			and is_equal_approx(float(tank.muzzle_flash_scale), 1.145038211643) \
+			and tank3_damage_visuals != null \
+			and tank3_damage_visuals.depleted_explosion_local_offset.is_equal_approx(Vector3(0, 1.32, 0)) \
+			and is_equal_approx(float(tank3_damage_visuals.depleted_explosion_scale), 1.5) \
+			and tank3_hull_fire != null \
+			and tank3_hull_fire.scale.is_equal_approx(Vector3.ONE * 1.505) \
+			and tank3_hull_fire.position.is_equal_approx(Vector3(2.6623168, -2.07611371, -0.5185917)) \
+			and tank3_turret_fire != null \
+			and tank3_turret_fire.scale.is_equal_approx(Vector3.ONE * 2.0) \
+			and tank3_turret_fire.position.is_equal_approx(Vector3(-0.33295746, 0.240035444, 0.0476411815))
 	if valid:
 		for clip: StringName in clips:
 			if clip.is_empty() or not tank.tread_animation_player.has_animation(clip):

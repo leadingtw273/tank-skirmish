@@ -13,7 +13,7 @@ script = ExtResource("1_controller")
 depleted_explosion_scene = ExtResource("9_explosion")
 
 [node name="HullDamageVFXAnchor" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.2, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.52, 0)
 
 [node name="Damage75" type="Node3D" parent="HullDamageVFXAnchor"]
 visible = false
@@ -22,7 +22,7 @@ visible = false
 visible = false
 
 [node name="HullSmokeMedium" parent="HullDamageVFXAnchor/Damage50" instance=ExtResource("6_smoke")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.2146482, -1.6714287, -0.44229317)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.43611302, -1.83857157, -0.486522487)
 emission_amount = 10
 lifetime = 1.0
 speed_scale = 0.5
@@ -45,7 +45,7 @@ speed_scale = 0.5
 visible = false
 
 [node name="HullSmokeHeavyPrimary" parent="HullDamageVFXAnchor/Damage25" instance=ExtResource("6_smoke")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.2136898, -2.0999255, -0.8985901)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.43505878, -2.30991805, -0.98844911)
 emission_amount = 10
 lifetime = 1.0
 speed_scale = 0.5
@@ -65,7 +65,7 @@ speed_scale = 0.5
 
 
 [node name="HullSmokeHeavySecondary" parent="HullDamageVFXAnchor/Damage25" instance=ExtResource("6_smoke")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.436409, -1.7873971, -0.47926712)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.6800499, -1.96613681, -0.527193832)
 emission_amount = 15
 lifetime = 1.0
 speed_scale = 0.5
@@ -88,15 +88,15 @@ speed_scale = 0.5
 visible = false
 
 [node name="HullFireCriticalPrimary" parent="HullDamageVFXAnchor/Depleted" instance=ExtResource("8_soq6w")]
-transform = Transform3D(1.505, 0, 0, 0, 1.505, 0, 0, 0, 1.505, 2.420288, -1.8873761, -0.471447)
+transform = Transform3D(1.505, 0, 0, 0, 1.505, 0, 0, 0, 1.505, 2.6623168, -2.07611371, -0.5185917)
 
 
 [node name="HullFireCriticalSecondary" parent="HullDamageVFXAnchor/Depleted" instance=ExtResource("8_soq6w")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.8842754, -2.1568413, -0.9278717)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.07270294, -2.37252543, -1.02065887)
 
 
 [node name="HullSmokeCriticalPrimary" parent="HullDamageVFXAnchor/Depleted" instance=ExtResource("6_smoke")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.7440891, -2.2400231, -1.1225967)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.91849801, -2.46402541, -1.23485637)
 emission_amount = 10
 lifetime = 1.0
 speed_scale = 0.5
@@ -116,7 +116,7 @@ speed_scale = 0.5
 
 
 [node name="HullSmokeCriticalSecondary" parent="HullDamageVFXAnchor/Depleted" instance=ExtResource("6_smoke")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.3608665, -1.9851022, -0.44248772)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.59695315, -2.18361242, -0.486736492)
 emission_amount = 15
 lifetime = 1.0
 speed_scale = 0.5
@@ -136,13 +136,13 @@ speed_scale = 0.5
 
 
 [node name="TurretDamageVFXAnchor" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.88, 0)
 
 [node name="Damage75" type="Node3D" parent="TurretDamageVFXAnchor"]
 visible = false
 
 [node name="TurretSmokeLight" parent="TurretDamageVFXAnchor/Damage75" instance=ExtResource("5_smoke_thin")]
-transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 0.40454865, -0.345232, 0.5410557)
+transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 0.445003515, -0.3797552, 0.59516127)
 emission_amount = 10
 lifetime = 1.0
 speed_scale = 0.5
@@ -165,7 +165,7 @@ speed_scale = 0.5
 visible = false
 
 [node name="TurretSmokeMedium" parent="TurretDamageVFXAnchor/Damage50" instance=ExtResource("6_smoke")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.47416377, -0.3770678, 0.77267075)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.521580147, -0.41477458, 0.849937825)
 emission_amount = 15
 lifetime = 1.0
 speed_scale = 0.5
@@ -189,7 +189,7 @@ speed_scale = 0.5
 visible = false
 
 [node name="TurretSmokeHeavy" parent="TurretDamageVFXAnchor/Damage25" instance=ExtResource("6_smoke")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.47044277, -0.36185503, 0.5629597)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.517487047, -0.398040533, 0.61925567)
 emission_amount = 20
 lifetime = 1.0
 speed_scale = 0.5
@@ -212,11 +212,11 @@ speed_scale = 0.5
 visible = false
 
 [node name="TurretFireCriticalPrimary" parent="TurretDamageVFXAnchor/Depleted" instance=ExtResource("7_4o53o")]
-transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 1.0362587, -0.36633778, 0.09671402)
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 1.13988457, -0.402971558, 0.106385422)
 
 
 [node name="TurretSmokeCritical" parent="TurretDamageVFXAnchor/Depleted" instance=ExtResource("7_smoke_big")]
-transform = Transform3D(1.35, 0, 0, 0, 1.35, 0, 0, 0, 1.35, 0.43675613, -0.5822165, 0.48343658)
+transform = Transform3D(1.35, 0, 0, 0, 1.35, 0, 0, 0, 1.35, 0.480431743, -0.64043815, 0.531780238)
 emission_amount = 30
 lifetime = 2.0
 
@@ -233,7 +233,7 @@ lifetime = 2.0
 
 
 [node name="TurretFireCriticalSecondary" parent="TurretDamageVFXAnchor/Depleted" instance=ExtResource("7_4o53o")]
-transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, -0.3026886, 0.21821404, 0.043310165)
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, -0.33295746, 0.240035444, 0.0476411815)
 
 
 [editable path="TurretDamageVFXAnchor/Damage75/TurretSmokeLight"]

@@ -90,6 +90,10 @@ const ShotEvent := preload("res://src/combat/shot_event.gd")
 @export_category("坦克戰鬥")
 ## 每發砲彈命中時造成的傷害，單位為傷害點數；開火後會凍結到 ShotEvent。
 @export_range(0.01, 100000.0, 0.01) var shell_damage := 25.0
+## 兩次成功開火之間的最短時間，單位為秒；數值越小射速越快，裝填期間不接受或排隊開火。
+@export_range(0.01, 60.0, 0.01, "or_greater") var fire_interval_seconds := 1.0
+## 剩餘裝填時間依遊戲物理時間遞減；新生成的坦克可以立即開火。
+var _fire_cooldown_remaining := 0.0
 
 @export_category("砲口火焰")
 ## 已生成的砲口火焰在移除前的存活時間，單位為秒。
@@ -205,6 +209,7 @@ func _has_valid_variant_interface() -> bool:
 
 
 func _physics_process(delta: float) -> void:
+	_fire_cooldown_remaining = maxf(0.0, _fire_cooldown_remaining - delta)
 	## 以動力與煞車積分線／角速度，碰撞後讀回實際線速度，再讓履帶依實際動態更新。
 	var engine_acceleration := _engine_acceleration()
 	var brake_acceleration := _brake_acceleration()
@@ -480,6 +485,8 @@ func muzzle_global_direction() -> Vector3:
 
 ## 當連接有效時，發出一個 ShotEvent、舊版相容性資料載荷、砲口火焰與視覺後座。
 func request_fire() -> void:
+	if _fire_cooldown_remaining > 0.0:
+		return
 	if gun_pitch_pivot == null or muzzle_point == null:
 		push_error("Tank cannot fire: MuzzlePoint wiring is missing.")
 		return
@@ -489,6 +496,7 @@ func request_fire() -> void:
 		push_error("Tank cannot fire: MuzzlePoint has no valid forward direction.")
 		return
 
+	_fire_cooldown_remaining = maxf(0.01, fire_interval_seconds)
 	_apply_firing_movement_speed_loss()
 	_spawn_muzzle_flash(muzzle_position, muzzle_direction)
 	var shot_muzzle_transform := muzzle_point.global_transform

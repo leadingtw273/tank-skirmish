@@ -33,7 +33,8 @@ hull_aim_assist_enabled = true
 gun_pitch_speed = 0.6
 gun_max_elevation_degrees = 20.0
 gun_max_depression_degrees = 10.0
-shell_damage = 25.0
+shell_damage = 60.0
+fire_interval_seconds = 1.428571428571
 visual_recoil_distance = 0.114503821164
 visual_recoil_return_seconds = 0.26
 max_camera_look_ahead_distance = 35.0
@@ -49,7 +50,7 @@ position = Vector3(0, 1.34941, 0)
 shape = SubResource("TankCollisionShape")
 
 [node name="HealthComponent" parent="." index="2"]
-maximum_health = 100.0
+maximum_health = 60.0
 
 [node name="Tank4DamageVisuals" parent="." instance=ExtResource("3_damage_visuals")]
 depleted_explosion_scale = 1.5

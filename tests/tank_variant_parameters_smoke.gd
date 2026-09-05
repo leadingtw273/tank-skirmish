@@ -8,6 +8,10 @@ const VARIANTS := {
 	"tank1": {
 		"scene": "res://src/actors/tank/variants/tank1/tank1.tscn",
 		"damage_visuals": &"Tank1DamageVisuals",
+		"mass_tonnes": 36.0,
+		"forward_speed": 7.48,
+		"reverse_speed": 3.74,
+		"turn_speed": 0.638,
 	},
 	"tank2": {
 		"scene": "res://src/actors/tank/variants/tank2/tank2.tscn",
@@ -16,6 +20,11 @@ const VARIANTS := {
 	"tank3": {
 		"scene": "res://src/actors/tank/variants/tank3/tank3.tscn",
 		"damage_visuals": &"Tank3DamageVisuals",
+		"mass_tonnes": 84.0,
+		"forward_speed": 4.32,
+		"reverse_speed": 2.16,
+		"turn_speed": 0.288,
+		"turret_turn_speed": 0.96,
 	},
 	"tank4": {
 		"scene": "res://src/actors/tank/variants/tank4/tank4.tscn",
@@ -34,6 +43,7 @@ const TANK_PARAMETER_NAMES := [
 	"turret_turn_speed",
 	"gun_pitch_speed",
 	"shell_damage",
+	"fire_interval_seconds",
 ]
 
 
@@ -93,6 +103,24 @@ func _validate_variant(tank_id: String, contract: Dictionary) -> bool:
 		tank.queue_free()
 		await process_frame
 		return _fail("%s must expose legal movement, aiming, health, and shell-damage values." % tank_id)
+	if contract.has("mass_tonnes") and not is_equal_approx(float(tank.tank_mass_tonnes), float(contract.mass_tonnes)):
+		tank.queue_free()
+		await process_frame
+		return _fail("%s must preserve its approved mass in tonnes." % tank_id)
+	if contract.has("forward_speed") and (not is_equal_approx(float(tank.movement_speed), float(contract.forward_speed)) \
+			or not is_equal_approx(float(tank.reverse_movement_speed), float(contract.reverse_speed))):
+		tank.queue_free()
+		await process_frame
+		return _fail("%s must preserve its approved forward and reverse top speeds." % tank_id)
+	if contract.has("turn_speed") and not is_equal_approx(float(tank.turn_speed), float(contract.turn_speed)):
+		tank.queue_free()
+		await process_frame
+		return _fail("%s must preserve its approved hull turn speed." % tank_id)
+	if contract.has("turret_turn_speed") \
+			and not is_equal_approx(float(tank.turret_turn_speed), float(contract.turret_turn_speed)):
+		tank.queue_free()
+		await process_frame
+		return _fail("%s must preserve its approved turret turn speed." % tank_id)
 
 	var shots: Array = []
 	tank.shot_event_fired.connect(func(shot_event: Variant) -> void: shots.append(shot_event))
@@ -103,6 +131,18 @@ func _validate_variant(tank_id: String, contract: Dictionary) -> bool:
 		tank.queue_free()
 		await process_frame
 		return _fail("%s must freeze its local shell damage into ShotEvent." % tank_id)
+
+	# 裝填期間連點不增加砲彈，時間到也不會補射；之後再次點擊才發射。
+	tank.request_fire()
+	tank.request_fire()
+	if shots.size() != 1:
+		return _fail("%s must reject repeated fire requests during reload." % tank_id)
+	await create_timer(float(tank.fire_interval_seconds) + 0.1, false, true).timeout
+	if shots.size() != 1:
+		return _fail("%s must not queue shots during reload." % tank_id)
+	tank.request_fire()
+	if shots.size() != 2:
+		return _fail("%s must accept a new fire request after reload." % tank_id)
 
 	for expected_stage: int in [75, 50, 25, 0]:
 		health.apply_damage(health.maximum_health * 0.25)

@@ -101,7 +101,7 @@ func _validate_training_target() -> bool:
 			or not is_equal_approx(critical_shadow_particles.speed_scale, 0.5):
 		target.queue_free()
 		return _fail("Tank2 depleted smoke must preserve the accepted local tuning without modifying vendor assets.")
-	if label.text != "100 / 100" or not is_equal_approx(float(controller.reset_delay_seconds), 3.0):
+	if not label.text.ends_with("100 / 100") or not is_equal_approx(float(controller.reset_delay_seconds), 3.0):
 		target.queue_free()
 		return _fail("TrainingTarget must begin at 100 / 100 and use a three-second reset delay.")
 	controller.reset_delay_seconds = 0.01
@@ -149,7 +149,7 @@ func _validate_training_target() -> bool:
 	var depleted_explosion := root.find_child("TankDepletedExplosion", true, false) as Node3D
 	var explosion_core := depleted_explosion.get_node_or_null("Core") as MeshInstance3D if depleted_explosion != null else null
 	var explosion_decal := depleted_explosion.get_node_or_null("Decal") as Decal if depleted_explosion != null else null
-	if label.text != "0 / 100" or receiver.enabled or int(damage_visuals.active_damage_stage) != 0 \
+	if not label.text.ends_with("\n0 / 100") or receiver.enabled or int(damage_visuals.active_damage_stage) != 0 \
 			or not is_equal_approx(turret_pivot.rotation.y, turret_yaw_before_depletion) \
 			or not is_equal_approx(gun_pitch_pivot.rotation.z, expected_depleted_pitch) \
 			or depleted_explosion == null \
@@ -164,7 +164,7 @@ func _validate_training_target() -> bool:
 		return _fail("TrainingTarget must ignore damage while waiting to reset.")
 	await create_timer(0.02).timeout
 	await process_frame
-	var reset_is_valid := label.text == "100 / 100" and receiver.enabled \
+	var reset_is_valid := label.text.ends_with("100 / 100") and receiver.enabled \
 		and is_equal_approx(health.current_health, 100.0) \
 		and int(damage_visuals.active_damage_stage) == 100 \
 		and is_equal_approx(turret_pivot.rotation.y, turret_yaw_before_depletion) \

@@ -11,6 +11,8 @@ extends CharacterBody3D
 @export var tank_turret: Node3D
 ## 指向派生車型中要交給共用砲管樞紐的視覺節點。
 @export var tank_gun: MeshInstance3D
+## 匯入砲管模型中由砲尾指向砲口的本地座標軸；多數車型使用 -X，部分車型使用 -Y。
+@export var tank_gun_forward_local_axis := Vector3.LEFT
 ## 指向派生車型的履帶 AnimationPlayer。
 @export var tread_animation_player: AnimationPlayer
 ## 派生車型前進履帶動畫名稱。
@@ -53,6 +55,12 @@ extends CharacterBody3D
 @export_category("坦克砲塔")
 ## 追蹤目標時砲塔的偏航速度，單位為弧度／秒。
 @export var turret_turn_speed := 1.777778
+## 砲塔／砲管相對車身可左右旋轉的最大角度；180 度代表不限制一般旋轉。
+@export_range(0.0, 180.0, 0.5) var turret_max_yaw_degrees := 180.0
+## 固定砲塔車型是否在砲管水平尚未對齊時，提供車身輔助轉向意圖。
+@export var hull_aim_assist_enabled := false
+## 車身輔助瞄準視為水平對齊的最大角差，單位為度。
+@export_range(0.0, 5.0, 0.05) var hull_aim_alignment_tolerance_degrees := 0.25
 
 @export_category("坦克砲管")
 ## 砲管仰角與俯角的追蹤速度，單位為弧度／秒。
@@ -79,7 +87,14 @@ const MIN_AIM_DISTANCE_SQUARED := 0.001
 const TREAD_ANIMATION_MOTION_THRESHOLD := 0.01
 const MUZZLE_FLASH_SCENE := preload("res://src/vfx/muzzle/muzzle_flash_vfx.tscn")
 const ShotEvent := preload("res://src/combat/shot_event.gd")
-const SHELL_DAMAGE := 25.0
+@export_category("坦克戰鬥")
+## 每發砲彈命中時造成的傷害，單位為傷害點數；開火後會凍結到 ShotEvent。
+@export_range(0.01, 100000.0, 0.01) var shell_damage := 25.0
+## 兩次成功開火之間的最短時間，單位為秒；數值越小射速越快，裝填期間不接受或排隊開火。
+@export_range(0.01, 60.0, 0.01, "or_greater") var fire_interval_seconds := 1.0
+## 剩餘裝填時間依遊戲物理時間遞減；新生成的坦克可以立即開火。
+var _fire_cooldown_remaining := 0.0
+
 @export_category("砲口火焰")
 ## 已生成的砲口火焰在移除前的存活時間，單位為秒。
 @export var muzzle_flash_lifetime_seconds := 0.25
@@ -114,6 +129,7 @@ var tread_animation_paused := true
 var tread_animations_available := false
 var visual_recoil_rest_local_position := Vector3.ZERO
 var visual_recoil_tween: Tween
+var hull_aim_turn_input := 0.0
 
 
 func _ready() -> void:
@@ -131,13 +147,39 @@ func _ready() -> void:
 	gun_pitch_pivot.global_position = tank_gun.global_position
 	tank_gun.reparent(gun_visual, true)
 	var gun_aabb := tank_gun.get_aabb()
-	var local_muzzle := gun_aabb.get_center()
-	local_muzzle.x = gun_aabb.position.x
+	var local_gun_forward := tank_gun_forward_local_axis.normalized()
+	var local_muzzle := _aabb_endpoint(gun_aabb, local_gun_forward)
+	var world_gun_forward := (tank_gun.global_transform.basis * local_gun_forward).normalized()
 	muzzle_point.global_transform = Transform3D(
-		tank_gun.global_transform.basis,
+		_muzzle_basis(world_gun_forward),
 		tank_gun.global_transform * local_muzzle,
 	)
 	_setup_tread_animations()
+
+
+func _aabb_endpoint(bounds: AABB, direction: Vector3) -> Vector3:
+	## 依車型提供的主要本地軸，取得砲管包圍盒最前端，而不是假設所有模型都沿 -X 建模。
+	var endpoint := bounds.get_center()
+	var bounds_end := bounds.position + bounds.size
+	var absolute_direction := direction.abs()
+	if absolute_direction.x >= absolute_direction.y and absolute_direction.x >= absolute_direction.z:
+		endpoint.x = bounds_end.x if direction.x > 0.0 else bounds.position.x
+	elif absolute_direction.y >= absolute_direction.z:
+		endpoint.y = bounds_end.y if direction.y > 0.0 else bounds.position.y
+	else:
+		endpoint.z = bounds_end.z if direction.z > 0.0 else bounds.position.z
+	return endpoint
+
+
+func _muzzle_basis(world_forward: Vector3) -> Basis:
+	## MuzzlePoint 固定以本地 -X 表示射擊方向，同時移除匯入模型可能帶入的非均勻縮放。
+	var x_axis := -world_forward
+	var up_hint := Vector3.UP
+	if absf(x_axis.dot(up_hint)) > 0.99:
+		up_hint = Vector3.FORWARD
+	var z_axis := x_axis.cross(up_hint).normalized()
+	var y_axis := z_axis.cross(x_axis).normalized()
+	return Basis(x_axis, y_axis, z_axis)
 
 
 func _has_valid_variant_interface() -> bool:
@@ -153,6 +195,8 @@ func _has_valid_variant_interface() -> bool:
 		or tank_model == null
 		or tank_turret == null
 		or tank_gun == null
+		or not tank_gun_forward_local_axis.is_finite()
+		or tank_gun_forward_local_axis.is_zero_approx()
 		or tread_animation_player == null
 	):
 		push_error("Tank variant interface is incomplete.")
@@ -165,6 +209,7 @@ func _has_valid_variant_interface() -> bool:
 
 
 func _physics_process(delta: float) -> void:
+	_fire_cooldown_remaining = maxf(0.0, _fire_cooldown_remaining - delta)
 	## 以動力與煞車積分線／角速度，碰撞後讀回實際線速度，再讓履帶依實際動態更新。
 	var engine_acceleration := _engine_acceleration()
 	var brake_acceleration := _brake_acceleration()
@@ -343,18 +388,57 @@ func _update_tread_animation(next_animation: StringName, animation_speed_scale: 
 ## 在此影格中只將砲塔偏航轉向世界座標目標。
 func aim_turret_at(target_position: Vector3, delta: float) -> void:
 	if _is_target_inside_turret_dead_zone(target_position):
+		hull_aim_turn_input = 0.0
 		return
 	var target_direction := target_position - turret_pivot.global_position
 	target_direction.y = 0.0
 	if target_direction.length_squared() <= MIN_AIM_DISTANCE_SQUARED:
+		hull_aim_turn_input = 0.0
 		return
 
+	var maximum_yaw := deg_to_rad(clampf(turret_max_yaw_degrees, 0.0, 180.0))
+	if maximum_yaw < PI:
+		## 固定砲塔車型只讓砲管相對車身小幅左右擺動，不追蹤完整世界方位。
+		var local_target_direction := global_transform.basis.orthonormalized().inverse() * target_direction
+		var desired_local_target_yaw := atan2(local_target_direction.z, -local_target_direction.x)
+		var limited_local_target_yaw := clampf(desired_local_target_yaw, -maximum_yaw, maximum_yaw)
+		turret_pivot.rotation.y = rotate_toward(
+			turret_pivot.rotation.y,
+			limited_local_target_yaw,
+			turret_turn_speed * delta,
+		)
+		_update_hull_aim_turn_input(desired_local_target_yaw)
+		return
+
+	hull_aim_turn_input = 0.0
 	var target_yaw := atan2(target_direction.z, -target_direction.x)
 	turret_pivot.global_rotation.y = rotate_toward(
 		turret_pivot.global_rotation.y,
 		target_yaw,
 		turret_turn_speed * delta,
 	)
+
+
+func _update_hull_aim_turn_input(local_target_yaw: float) -> void:
+	## 車身只補水平角差；砲管已對齊就立即停止，不要求砲管回到中央。
+	if not hull_aim_assist_enabled:
+		hull_aim_turn_input = 0.0
+		return
+	var horizontal_error := angle_difference(turret_pivot.rotation.y, local_target_yaw)
+	var tolerance := deg_to_rad(maxf(hull_aim_alignment_tolerance_degrees, 0.0))
+	hull_aim_turn_input = 0.0 if absf(horizontal_error) <= tolerance else signf(horizontal_error)
+
+
+## 回傳固定砲塔車型目前要求的車身轉向意圖；未啟用或已對齊時為 0。
+func get_hull_aim_turn_input() -> float:
+	return hull_aim_turn_input if hull_aim_assist_enabled else 0.0
+
+
+## 只供玩家自動瞄準在對齊或被抑制時立即清除既有車身旋轉慣性。
+func stop_hull_aim_turn() -> void:
+	turn_command = 0.0
+	angular_speed = 0.0
+	actual_angular_speed = 0.0
 
 
 func _target_gun_pitch_for_world_target(target_position: Vector3) -> float:
@@ -401,6 +485,8 @@ func muzzle_global_direction() -> Vector3:
 
 ## 當連接有效時，發出一個 ShotEvent、舊版相容性資料載荷、砲口火焰與視覺後座。
 func request_fire() -> void:
+	if _fire_cooldown_remaining > 0.0:
+		return
 	if gun_pitch_pivot == null or muzzle_point == null:
 		push_error("Tank cannot fire: MuzzlePoint wiring is missing.")
 		return
@@ -410,10 +496,11 @@ func request_fire() -> void:
 		push_error("Tank cannot fire: MuzzlePoint has no valid forward direction.")
 		return
 
+	_fire_cooldown_remaining = maxf(0.01, fire_interval_seconds)
 	_apply_firing_movement_speed_loss()
 	_spawn_muzzle_flash(muzzle_position, muzzle_direction)
 	var shot_muzzle_transform := muzzle_point.global_transform
-	var shot_event := ShotEvent.new(shot_muzzle_transform, muzzle_direction, get_rid(), SHELL_DAMAGE)
+	var shot_event := ShotEvent.new(shot_muzzle_transform, muzzle_direction, get_rid(), shell_damage)
 	shot_event_fired.emit(shot_event)
 	shot_fired.emit(shot_event.to_legacy_dictionary())
 	_play_visual_recoil(muzzle_direction)

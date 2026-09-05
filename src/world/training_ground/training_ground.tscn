@@ -54,20 +54,20 @@ shape = SubResource("GroundCollisionShape")
 [node name="Targets" type="Node3D" parent="."]
 
 [node name="Tank1TrainingTarget" parent="Targets" instance=ExtResource("3_training_target_tank1")]
-position = Vector3(-40, 0, -24)
-rotation_y = 2.8
+position = Vector3(-14, 0, -26)
+rotation = Vector3(0, 1.5708, 0)
 
 [node name="TrainingTarget" parent="Targets" instance=ExtResource("2_training_target")]
-position = Vector3(-40, 0, -6)
-rotation_y = 2.8
+position = Vector3(-2, 0, -26)
+rotation = Vector3(0, 1.5708, 0)
 
 [node name="Tank3TrainingTarget" parent="Targets" instance=ExtResource("4_training_target_tank3")]
-position = Vector3(-40, 0, 12)
-rotation_y = 2.8
+position = Vector3(10, 0, -26)
+rotation = Vector3(0, 1.5708, 0)
 
 [node name="Tank4TrainingTarget" parent="Targets" instance=ExtResource("5_training_target_tank4")]
-position = Vector3(-40, 0, 30)
-rotation_y = 2.8
+position = Vector3(22, 0, -26)
+rotation = Vector3(0, 1.5708, 0)
 
 [node name="Lighting" type="Node3D" parent="."]
 

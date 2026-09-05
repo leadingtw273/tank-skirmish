@@ -191,6 +191,24 @@ run("tank-variant-refactor-smoke", godot, [
   "--script",
   "res://tests/tank_variant_refactor_smoke.gd",
 ], { scanGodotErrors: true });
+run("tank1-hull-aim-smoke", godot, [
+  "--headless",
+  "--audio-driver",
+  "Dummy",
+  "--path",
+  ".",
+  "--script",
+  "res://tests/tank1_hull_aim_smoke.gd",
+], { scanGodotErrors: true });
+run("tank-variant-parameters-smoke", godot, [
+  "--headless",
+  "--audio-driver",
+  "Dummy",
+  "--path",
+  ".",
+  "--script",
+  "res://tests/tank_variant_parameters_smoke.gd",
+], { scanGodotErrors: true });
 run("map960-components-smoke", godot, [
   "--headless",
   "--audio-driver",

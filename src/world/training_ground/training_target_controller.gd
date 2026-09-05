@@ -3,6 +3,8 @@
 extends Node
 class_name TrainingTargetController
 
+signal target_depleted(subject: Node3D)
+
 const HealthComponent := preload("res://src/combat/damage/health_component.gd")
 const DamageReceiver := preload("res://src/combat/damage/damage_receiver.gd")
 
@@ -14,6 +16,8 @@ const DamageReceiver := preload("res://src/combat/damage/damage_receiver.gd")
 @export var damage_receiver: DamageReceiver
 ## 第一版固定在坦克高度的暫用血量文字。
 @export var health_label: Label3D
+## 顯示在血量上方的訓練靶車種名稱。
+@export var target_display_name := "中型坦克"
 ## 血量歸零後恢復至最大值的等待秒數。
 @export_range(0.0, 30.0, 0.1) var reset_delay_seconds := 3.0
 ## 用來區別玩家坦克與訓練靶的整體材質。
@@ -41,6 +45,7 @@ func _on_depleted() -> void:
 		return
 	_reset_in_progress = true
 	damage_receiver.enabled = false
+	target_depleted.emit(subject)
 	_reset_after_delay()
 
 
@@ -54,7 +59,11 @@ func _reset_after_delay() -> void:
 
 
 func _update_label(current_health: float, maximum_health: float) -> void:
-	health_label.text = "%d / %d" % [roundi(current_health), roundi(maximum_health)]
+	health_label.text = "%s\n%d / %d" % [
+		target_display_name,
+		roundi(current_health),
+		roundi(maximum_health),
+	]
 
 
 func _apply_target_material(node: Node) -> void:

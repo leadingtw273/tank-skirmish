@@ -4,26 +4,43 @@ const TRAINING_GROUND_SCENE := "res://src/world/training_ground/training_ground.
 const TRAINING_GROUND_SHADER := "res://src/world/training_ground/training_ground_grid.gdshader"
 const TRAINING_GROUND_PLAYTEST_SCENE := "res://src/world/training_ground/training_ground_playtest.tscn"
 const TRAINING_TARGET_SCENE := "res://src/world/training_ground/training_target.tscn"
+const TANK1_SCENE := "res://src/actors/tank/variants/tank1/tank1.tscn"
 const TRAINING_TARGET_VARIANTS := {
 	"Tank1TrainingTarget": {
 		"scene": "res://src/world/training_ground/training_target_tank1.tscn",
 		"model": "Tank1Model",
-		"position": Vector3(-40, 0, -24),
+		"display_name": "輕型坦克",
+		"maximum_health": 80.0,
+		"position": Vector3(-14, 0, -26),
+		"rotation_y": 1.5708,
+		"model_scale": Vector3.ONE * 0.9,
 	},
 	"TrainingTarget": {
 		"scene": TRAINING_TARGET_SCENE,
 		"model": "Tank2Model",
-		"position": Vector3(-40, 0, -6),
+		"display_name": "中型坦克",
+		"maximum_health": 100.0,
+		"position": Vector3(-2, 0, -26),
+		"rotation_y": 1.5708,
+		"model_scale": Vector3.ONE,
 	},
 	"Tank3TrainingTarget": {
 		"scene": "res://src/world/training_ground/training_target_tank3.tscn",
 		"model": "Tank3Model",
-		"position": Vector3(-40, 0, 12),
+		"display_name": "重型坦克",
+		"maximum_health": 120.0,
+		"position": Vector3(10, 0, -26),
+		"rotation_y": 1.5708,
+		"model_scale": Vector3.ONE * 1.1,
 	},
 	"Tank4TrainingTarget": {
 		"scene": "res://src/world/training_ground/training_target_tank4.tscn",
 		"model": "Tank4Model",
-		"position": Vector3(-40, 0, 30),
+		"display_name": "驅逐坦克",
+		"maximum_health": 60.0,
+		"position": Vector3(22, 0, -26),
+		"rotation_y": 1.5708,
+		"model_scale": Vector3.ONE,
 	},
 }
 const EXPECTED_GROUND_COLOR := Color(0.34, 0.36, 0.38, 1)
@@ -69,13 +86,16 @@ func _validate_training_ground() -> bool:
 		var health_label := training_target.get_node_or_null("HealthLabel3D") as Label3D if training_target != null else null
 		if training_target == null or training_target.scene_file_path != expected.scene \
 				or not training_target.position.is_equal_approx(expected.position) \
-				or target_tank == null or target_tank.collision_layer != 1 \
-				or target_model == null or not target_model.scale.is_equal_approx(Vector3.ONE) \
+				or not is_equal_approx(training_target.rotation.y, float(expected.rotation_y)) \
+				or target_tank == null or not target_tank.scale.is_equal_approx(Vector3.ONE) \
+				or target_tank.collision_layer != 1 \
+				or target_model == null or not target_model.scale.is_equal_approx(expected.model_scale) \
 				or target_shape == null or target_shape.size.x <= 0.0 or target_shape.size.y <= 0.0 or target_shape.size.z <= 0.0 \
 				or not is_equal_approx(target_collision.position.y, target_shape.size.y * 0.5) \
-				or health_label == null or health_label.font_size <= 0 or health_label.position.y <= target_shape.size.y * 0.5:
+				or health_label == null or health_label.font_size <= 0 or health_label.position.y <= target_shape.size.y * 0.5 \
+				or health_label.text != "%s\n100 / 100" % expected.display_name:
 			training_ground.free()
-			return _fail("Each tank variant must have a scale=1 stationary target with grounded collision and a readable health label.")
+			return _fail("%s must preserve its authored model scale with grounded collision, the expected facing, and a readable health label." % target_name)
 
 	var ground := training_ground.get_node_or_null("Ground") as StaticBody3D
 	var visual := training_ground.get_node_or_null("Ground/Visual") as MeshInstance3D
@@ -134,6 +154,8 @@ func _validate_playtest_composition() -> bool:
 				has_existing_runtime = false
 				break
 	var targets := world.get_node_or_null("Targets") as Node3D if world != null else null
+	var original_player_tank := gameplay_runtime.get_node_or_null("Tank") as Node3D if gameplay_runtime != null else null
+	var original_player_transform := original_player_tank.global_transform if original_player_tank != null else Transform3D.IDENTITY
 	var valid := has_existing_runtime and world != null \
 		and world.scene_file_path == TRAINING_GROUND_SCENE \
 		and world.get_node_or_null("Ground") != null \
@@ -150,15 +172,52 @@ func _validate_playtest_composition() -> bool:
 					if target_tank != null else null
 			var health_label := training_target.get_node_or_null("HealthLabel3D") as Label3D \
 					if training_target != null else null
+			var expected_health: float = TRAINING_TARGET_VARIANTS[target_name].maximum_health
 			if training_target == null or target_tank == null or target_tank.collision_layer != 1 \
 					or target_tank.get_node_or_null("CollisionShape3D") == null \
 					or health == null or receiver == null or health_label == null \
+					or not is_equal_approx(health.maximum_health, expected_health) \
 					or not receiver.receive_damage(25.0) \
-					or not is_equal_approx(health.current_health, 75.0) \
-					or health_label.text != "75 / 100" \
+					or not is_equal_approx(health.current_health, expected_health - 25.0) \
+					or health_label.text != "%s\n%d / %d" % [TRAINING_TARGET_VARIANTS[target_name].display_name, int(expected_health - 25.0), int(expected_health)] \
 					or not _all_target_meshes_are_gray(training_target):
 				valid = false
 				break
+	if valid:
+		var tank1_target := targets.get_node_or_null("Tank1TrainingTarget") as Node3D
+		var tank1_subject := tank1_target.get_node_or_null("SubjectSlot/Tank") as Node3D if tank1_target != null else null
+		var tank1_health := tank1_subject.get_node_or_null("HealthComponent") as HealthComponent if tank1_subject != null else null
+		var tank1_receiver := tank1_subject.get_node_or_null("DamageReceiver") as DamageReceiver if tank1_subject != null else null
+		var pre_replacement_aim_controller := gameplay_runtime.get_node_or_null("PlayerRuntime/PlayerAimController") as Node
+		if pre_replacement_aim_controller != null:
+			## 本段只驗證換車瞬間保留 transform；避免新車在等待 read-back 的一幀內依滑鼠位置開始正常轉向。
+			pre_replacement_aim_controller.set_process(false)
+		if tank1_health == null or tank1_receiver == null or pre_replacement_aim_controller == null \
+				or not tank1_receiver.receive_damage(tank1_health.current_health):
+			valid = false
+		else:
+			await process_frame
+			var replacement_tank := gameplay_runtime.get_node_or_null("Tank") as Node3D
+			var player_runtime := gameplay_runtime.get_node_or_null("PlayerRuntime") as Node
+			var camera_controller := gameplay_runtime.get_node_or_null("CameraRig") as Node3D
+			var player_controller := gameplay_runtime.get_node_or_null("PlayerRuntime/PlayerController") as Node
+			var aim_controller := gameplay_runtime.get_node_or_null("PlayerRuntime/PlayerAimController") as Node
+			var aim_presentation := gameplay_runtime.get_node_or_null("PlayerRuntime/AimPresentation") as Node
+			var combat_runtime := gameplay_runtime.get_node_or_null("CombatRuntime") as CombatRuntime
+			var replacement_contacts := replacement_tank.get_node_or_null("TrackContactEffects") as Node \
+					if replacement_tank != null else null
+			var surface_effects := gameplay_runtime.get_node_or_null("SurfaceEffects") as Node
+			valid = replacement_tank != null and replacement_tank != original_player_tank \
+					and replacement_tank.scene_file_path == TANK1_SCENE \
+					and replacement_tank.global_transform.is_equal_approx(original_player_transform) \
+					and player_runtime.get("controlled_tank") == replacement_tank \
+					and camera_controller.get("follow_target") == replacement_tank \
+					and player_controller.get("controlled_tank") == replacement_tank \
+					and aim_controller.get("controlled_tank") == replacement_tank \
+					and aim_presentation.get("controlled_tank") == replacement_tank \
+					and combat_runtime.shot_sources == [replacement_tank] \
+					and replacement_contacts != null and surface_effects != null \
+					and replacement_contacts.is_connected("track_contact", surface_effects.consume_track_contact)
 	playtest.queue_free()
 	if not valid:
 		return _fail("Training ground playtest must reuse main gameplay and replace only World.")

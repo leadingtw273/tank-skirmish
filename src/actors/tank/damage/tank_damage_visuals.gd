@@ -90,6 +90,8 @@ func _fade_in_state_root(state_root: Node3D) -> void:
 	var tween: Tween
 	for node: Node in state_root.find_children("*", "GPUParticles3D", true, false):
 		var particles := node as GPUParticles3D
+		# 受損煙火屬於坦克本體；使用本地座標，避免車體／砲塔轉向後只剩陰影而看不到粒子。
+		particles.local_coords = true
 		particles.amount_ratio = 0.0
 		particles.emitting = true
 		particles.restart()

@@ -6,7 +6,7 @@ class_name HealthComponent
 signal health_changed(current_health: float, maximum_health: float)
 signal depleted
 
-## 此實體的最大血量；進入場景時目前血量會初始化為此值。
+## 此實體的最大血量，單位為生命點數；進入場景時目前血量會初始化為此值。
 @export_range(1.0, 100000.0, 1.0) var maximum_health := 100.0
 
 var _current_health := 0.0

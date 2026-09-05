@@ -10,6 +10,7 @@ const TRAINING_TARGET_VARIANTS := {
 		"scene": "res://src/world/training_ground/training_target_tank1.tscn",
 		"model": "Tank1Model",
 		"display_name": "輕型坦克",
+		"maximum_health": 80.0,
 		"position": Vector3(-14, 0, -26),
 		"rotation_y": 1.5708,
 		"model_scale": Vector3.ONE * 0.9,
@@ -18,6 +19,7 @@ const TRAINING_TARGET_VARIANTS := {
 		"scene": TRAINING_TARGET_SCENE,
 		"model": "Tank2Model",
 		"display_name": "中型坦克",
+		"maximum_health": 100.0,
 		"position": Vector3(-2, 0, -26),
 		"rotation_y": 1.5708,
 		"model_scale": Vector3.ONE,
@@ -26,6 +28,7 @@ const TRAINING_TARGET_VARIANTS := {
 		"scene": "res://src/world/training_ground/training_target_tank3.tscn",
 		"model": "Tank3Model",
 		"display_name": "重型坦克",
+		"maximum_health": 120.0,
 		"position": Vector3(10, 0, -26),
 		"rotation_y": 1.5708,
 		"model_scale": Vector3.ONE * 1.1,
@@ -34,6 +37,7 @@ const TRAINING_TARGET_VARIANTS := {
 		"scene": "res://src/world/training_ground/training_target_tank4.tscn",
 		"model": "Tank4Model",
 		"display_name": "驅逐坦克",
+		"maximum_health": 60.0,
 		"position": Vector3(22, 0, -26),
 		"rotation_y": 1.5708,
 		"model_scale": Vector3.ONE,
@@ -168,12 +172,14 @@ func _validate_playtest_composition() -> bool:
 					if target_tank != null else null
 			var health_label := training_target.get_node_or_null("HealthLabel3D") as Label3D \
 					if training_target != null else null
+			var expected_health: float = TRAINING_TARGET_VARIANTS[target_name].maximum_health
 			if training_target == null or target_tank == null or target_tank.collision_layer != 1 \
 					or target_tank.get_node_or_null("CollisionShape3D") == null \
 					or health == null or receiver == null or health_label == null \
+					or not is_equal_approx(health.maximum_health, expected_health) \
 					or not receiver.receive_damage(25.0) \
-					or not is_equal_approx(health.current_health, 75.0) \
-					or health_label.text != "%s\n75 / 100" % TRAINING_TARGET_VARIANTS[target_name].display_name \
+					or not is_equal_approx(health.current_health, expected_health - 25.0) \
+					or health_label.text != "%s\n%d / %d" % [TRAINING_TARGET_VARIANTS[target_name].display_name, int(expected_health - 25.0), int(expected_health)] \
 					or not _all_target_meshes_are_gray(training_target):
 				valid = false
 				break

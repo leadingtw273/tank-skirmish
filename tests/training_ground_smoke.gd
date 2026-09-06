@@ -62,9 +62,9 @@ func _validate_training_ground() -> bool:
 	var training_ground := training_ground_scene.instantiate() as Node3D if training_ground_scene != null else null
 	if training_ground == null or training_ground.name != "TrainingGround":
 		return _fail("Training ground scene must load as a TrainingGround Node3D.")
-	if training_ground.get_child_count() != 3:
+	if training_ground.get_child_count() != 4 or training_ground.get_node_or_null("Range") == null:
 		training_ground.free()
-		return _fail("Training ground must contain only Ground, Targets, and Lighting roots.")
+		return _fail("Training ground must contain Ground, Targets, Lighting, and the accuracy Range roots.")
 	if training_ground.get_node_or_null("Roads") != null or training_ground.get_node_or_null("Buildings") != null \
 			or training_ground.get_node_or_null("GrassField") != null:
 		training_ground.free()
@@ -162,6 +162,8 @@ func _validate_playtest_composition() -> bool:
 		and world.get_node_or_null("Roads") == null \
 		and targets != null and targets.get_child_count() == TRAINING_TARGET_VARIANTS.size()
 	if valid:
+		valid = await _validate_accuracy_range(gameplay_runtime)
+	if valid:
 		for target_name: String in TRAINING_TARGET_VARIANTS:
 			var training_target := targets.get_node_or_null(target_name) as Node3D
 			var target_tank := training_target.get_node_or_null("SubjectSlot/Tank") as CharacterBody3D \
@@ -221,6 +223,32 @@ func _validate_playtest_composition() -> bool:
 	playtest.queue_free()
 	if not valid:
 		return _fail("Training ground playtest must reuse main gameplay and replace only World.")
+	return true
+
+
+func _validate_accuracy_range(gameplay_runtime: Node3D) -> bool:
+	## 用真實投射物射線與 CombatRuntime 事件驗完整接線，不只直接呼叫靶子的回呼。
+	var accuracy_range := gameplay_runtime.get_node_or_null("World/Range") as Node3D
+	var combat := gameplay_runtime.get_node_or_null("CombatRuntime") as CombatRuntime
+	var tank := gameplay_runtime.get_node_or_null("Tank") as CharacterBody3D
+	if accuracy_range == null or combat == null or tank == null \
+			or not combat.impact_resolved.is_connected(accuracy_range.consume_impact):
+		return _fail("Training range must consume the existing runtime impact signal.")
+	await physics_frame
+	for target_name: String in ["MainTarget", "ClearTarget", "MainTarget"]:
+		var target := accuracy_range.get_node(target_name) as StaticBody3D
+		var destination := target.global_position + Vector3.BACK * 0.1
+		var shot := ShotEvent.new(Transform3D(Basis.IDENTITY, destination + Vector3.BACK * 10.0), Vector3.FORWARD, tank.get_rid())
+		combat._on_shot_fired(shot)
+		var projectile := combat.projectiles.get_child(combat.projectiles.get_child_count() - 1)
+		projectile.set_physics_process(false)
+		projectile._physics_process(0.1)
+		if not projectile.is_queued_for_deletion():
+			return _fail("A real projectile must collide with the non-damageable range target.")
+		await process_frame
+		var expected := 0 if target_name == "ClearTarget" else 1
+		if accuracy_range.get_marker_count() != expected:
+			return _fail("Runtime impact must add, clear, then add range markers without health components.")
 	return true
 
 

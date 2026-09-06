@@ -771,7 +771,7 @@ func _validate_camera_shake(instance: Node) -> bool:
 	tank.forward_speed = 0.0
 	tank.velocity = Vector3.ZERO
 	tank.angular_speed = 0.0
-	var expected_local_recoil := camera_controller.global_transform.basis.inverse() * -shot_events[0].direction
+	var expected_local_recoil := camera_controller.global_transform.basis.inverse() * shot_events[0].muzzle_transform.basis.x.normalized()
 	expected_local_recoil.y = 0.0
 	if expected_local_recoil.is_zero_approx() or shake_pivot.position.normalized().dot(expected_local_recoil.normalized()) < 0.999 \
 			or shake_pivot.position.length() > camera_controller.fire_shake_kick_distance + 0.001:
@@ -912,6 +912,10 @@ func _validate_projectile_firing(instance: Node) -> bool:
 		push_error("Tank physics layers must remain unchanged")
 		return false
 
+	## 此段保留原本精確沿砲口射線的回歸；非零擴散由 tank_aim_spread_smoke 固定 seed 獨立驗證。
+	tank.aim_spread_base_degrees = 0.0
+	tank.aim_spread_cap_degrees = 0.0
+	tank.current_spread_degrees = 0.0
 	var expected_muzzle: Vector3 = tank.muzzle_point.global_position
 	var muzzle_position: Vector3 = tank.muzzle_global_position()
 	var muzzle_direction: Vector3 = tank.muzzle_global_direction()

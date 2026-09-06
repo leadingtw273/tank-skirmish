@@ -69,15 +69,16 @@ func _validate(instance: Node) -> void:
 	var muzzle_smoke := effects.get_node_or_null("MuzzleSmokeVFX") as Node3D
 	var smoke_particles := muzzle_smoke.get_node_or_null("SmokeBigVFX_01/Smoke") as GPUParticles3D if muzzle_smoke != null else null
 	var smoke_process_material := smoke_particles.process_material as ParticleProcessMaterial if smoke_particles != null else null
-	var expected_smoke_position := shot_event.muzzle_transform.origin + shot_event.direction * runtime.muzzle_smoke_forward_offset
+	var physical_muzzle_direction := (-shot_event.muzzle_transform.basis.x).normalized()
+	var expected_smoke_position := shot_event.muzzle_transform.origin + physical_muzzle_direction * runtime.muzzle_smoke_forward_offset
 	if muzzle_smoke == null or muzzle_smoke.scene_file_path != MUZZLE_SMOKE_VFX_PATH \
 			or smoke_particles == null or not smoke_particles.one_shot or not smoke_particles.emitting \
 			or smoke_particles.transform_align != GPUParticles3D.TRANSFORM_ALIGN_Z_BILLBOARD \
 			or smoke_particles.local_coords or smoke_process_material == null \
 			or not muzzle_smoke.global_position.is_equal_approx(expected_smoke_position) \
 			or not is_equal_approx(muzzle_smoke.global_transform.basis.x.length(), runtime.muzzle_smoke_scale) \
-			or not smoke_process_material.direction.is_equal_approx(shot_event.direction):
-		_fail("CombatRuntime must restart one scaled, one-shot, camera-facing MuzzleSmokeVFX whose private process material emits along the world shot direction.")
+			or not smoke_process_material.direction.is_equal_approx(physical_muzzle_direction):
+		_fail("CombatRuntime must keep one-shot smoke on the physical muzzle axis rather than the dispersed projectile direction.")
 		return
 	var smoke_world_position := muzzle_smoke.global_position
 	tank.global_position += Vector3(10, 0, 0)
@@ -130,13 +131,16 @@ func _validate(instance: Node) -> void:
 	instance.add_child(target)
 	await physics_frame
 	var impact_events: Array[ImpactEvent] = []
+	var resolved_impacts: Array[ImpactEvent] = []
+	runtime.impact_resolved.connect(func(event: ImpactEvent) -> void: resolved_impacts.append(event))
 	runtime.impact_vfx_scale = 1.75
 	projectile.impact_detected.connect(func(impact_event: ImpactEvent) -> void: impact_events.append(impact_event))
 	projectile.global_position = Vector3(295, 2, 300)
 	projectile.direction = Vector3.RIGHT
 	projectile._physics_process(0.2)
 	projectile._physics_process(0.2)
-	if impact_events.size() != 1 or not projectile.is_queued_for_deletion():
+	if impact_events.size() != 1 or resolved_impacts.size() != 1 \
+			or impact_events[0] != resolved_impacts[0] or not projectile.is_queued_for_deletion():
 		_fail("The first projectile collision must publish exactly one ImpactEvent and clear the projectile.")
 		return
 	var impact_event := impact_events[0] as ImpactEvent

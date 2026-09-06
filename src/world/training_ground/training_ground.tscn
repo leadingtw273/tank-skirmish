@@ -1,10 +1,11 @@
-[gd_scene load_steps=11 format=3]
+[gd_scene load_steps=12 format=3]
 
 [ext_resource type="Shader" path="res://src/world/training_ground/training_ground_grid.gdshader" id="1_grid_shader"]
 [ext_resource type="PackedScene" path="res://src/world/training_ground/training_target.tscn" id="2_training_target"]
 [ext_resource type="PackedScene" path="res://src/world/training_ground/training_target_tank1.tscn" id="3_training_target_tank1"]
 [ext_resource type="PackedScene" path="res://src/world/training_ground/training_target_tank3.tscn" id="4_training_target_tank3"]
 [ext_resource type="PackedScene" path="res://src/world/training_ground/training_target_tank4.tscn" id="5_training_target_tank4"]
+[ext_resource type="PackedScene" path="res://src/world/training_ground/training_range.tscn" id="6_training_range"]
 
 [sub_resource type="ShaderMaterial" id="GridMaterial"]
 shader = ExtResource("1_grid_shader")
@@ -52,6 +53,9 @@ material_override = SubResource("GridMaterial")
 shape = SubResource("GroundCollisionShape")
 
 [node name="Targets" type="Node3D" parent="."]
+
+[node name="Range" parent="." instance=ExtResource("6_training_range")]
+position = Vector3(-45, 0, -92)
 
 [node name="Tank1TrainingTarget" parent="Targets" instance=ExtResource("3_training_target_tank1")]
 position = Vector3(-14, 0, -26)

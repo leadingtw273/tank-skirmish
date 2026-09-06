@@ -95,6 +95,25 @@ const ShotEvent := preload("res://src/combat/shot_event.gd")
 ## 剩餘裝填時間依遊戲物理時間遞減；新生成的坦克可以立即開火。
 var _fire_cooldown_remaining := 0.0
 
+@export_category("瞄準擴散")
+## 靜止時砲彈的圓錐半角，單位為度。
+@export_range(0.0, 45.0, 0.01) var aim_spread_base_degrees := 0.2
+## 依實際前後速度比例額外增加的圓錐半角，單位為度。
+@export_range(0.0, 45.0, 0.01) var aim_spread_movement_add_degrees := 1.5
+## 依實際車身偏航速度比例額外增加的圓錐半角，單位為度。
+@export_range(0.0, 45.0, 0.01) var aim_spread_turn_add_degrees := 1.0
+## 擴散圓錐可達到的最大半角，單位為度。
+@export_range(0.0, 45.0, 0.01) var aim_spread_cap_degrees := 2.5
+## 擴散朝目標增加的速度，單位為度／秒。
+@export_range(0.0, 90.0, 0.01) var aim_spread_grow_degrees_per_second := 4.0
+## 靜止時擴散朝目標恢復的速度，單位為度／秒。
+@export_range(0.0, 90.0, 0.01) var aim_spread_stationary_recovery_degrees_per_second := 1.2
+## 移動時擴散朝目標恢復的速度，單位為度／秒。
+@export_range(0.0, 90.0, 0.01) var aim_spread_moving_recovery_degrees_per_second := 0.6
+## 目前實際套用到每發砲彈的圓錐半角，單位為度。
+var current_spread_degrees := 0.2
+var _aim_spread_rng := RandomNumberGenerator.new()
+
 @export_category("砲口火焰")
 ## 已生成的砲口火焰在移除前的存活時間，單位為秒。
 @export var muzzle_flash_lifetime_seconds := 0.25
@@ -133,6 +152,8 @@ var hull_aim_turn_input := 0.0
 
 
 func _ready() -> void:
+	## 每次實例化都從此車型的 base 值開始，避免重生或場景覆用保留上次交戰擴散。
+	current_spread_degrees = clampf(aim_spread_base_degrees, 0.0, maxf(aim_spread_cap_degrees, 0.0))
 	if not variant_interface_enabled:
 		set_physics_process(false)
 		return
@@ -240,6 +261,7 @@ func _physics_process(delta: float) -> void:
 		forward_speed = actual_forward_speed
 	actual_linear_speed = actual_forward_speed
 	actual_angular_speed = angular_speed
+	update_aim_spread(delta, actual_linear_speed, actual_angular_speed)
 	var next_tread_animation := _tread_animation_for_motion(actual_forward_speed, angular_speed)
 	_update_tread_animation(
 		next_tread_animation,
@@ -255,6 +277,65 @@ func get_actual_linear_speed() -> float:
 ## 回傳物理步驟實際套用的車身偏航角速度，供 TrackContactEffects 計算原地旋轉強度。
 func get_actual_angular_speed() -> float:
 	return actual_angular_speed
+
+
+## 回傳目前每發砲彈實際使用的圓錐半角，單位為度。
+func get_current_spread_degrees() -> float:
+	return current_spread_degrees
+
+
+## 回傳以目前碰撞解算後的線／角速度計算的目標圓錐半角，單位為度。
+func get_target_spread_degrees() -> float:
+	return calculate_target_spread_degrees(actual_linear_speed, actual_angular_speed)
+
+
+## 設定私有亂數器種子，僅供可重現的自動測試使用。
+func set_aim_spread_seed(seed_value: int) -> void:
+	_aim_spread_rng.seed = seed_value
+
+
+## 以傳入的實際線／角速度計算目標擴散，供測試直接覆蓋物理輸入。
+func calculate_target_spread_degrees(measured_linear_speed: float, measured_angular_speed: float) -> float:
+	var cap := maxf(aim_spread_cap_degrees, 0.0)
+	var base := clampf(aim_spread_base_degrees, 0.0, cap)
+	var linear_top_speed := movement_speed if measured_linear_speed >= 0.0 else reverse_movement_speed
+	var speed_ratio := 0.0 if linear_top_speed <= 0.0 else clampf(absf(measured_linear_speed) / linear_top_speed, 0.0, 1.0)
+	var turn_ratio := 0.0 if turn_speed <= 0.0 else clampf(absf(measured_angular_speed) / turn_speed, 0.0, 1.0)
+	return minf(cap, base + maxf(aim_spread_movement_add_degrees, 0.0) * speed_ratio \
+		+ maxf(aim_spread_turn_add_degrees, 0.0) * turn_ratio)
+
+
+## 依 delta 朝實際速度對應的目標擴散逼近，供物理更新與單元測試共用。
+func update_aim_spread(delta: float, measured_linear_speed: float, measured_angular_speed: float) -> void:
+	var target := calculate_target_spread_degrees(measured_linear_speed, measured_angular_speed)
+	var step_delta := maxf(delta, 0.0)
+	if current_spread_degrees < target:
+		current_spread_degrees = move_toward(current_spread_degrees, target, maxf(aim_spread_grow_degrees_per_second, 0.0) * step_delta)
+		return
+	var linear_top_speed := movement_speed if measured_linear_speed >= 0.0 else reverse_movement_speed
+	var speed_ratio := 0.0 if linear_top_speed <= 0.0 else clampf(absf(measured_linear_speed) / linear_top_speed, 0.0, 1.0)
+	var recovery_rate := lerpf(
+		maxf(aim_spread_stationary_recovery_degrees_per_second, 0.0),
+		maxf(aim_spread_moving_recovery_degrees_per_second, 0.0),
+		speed_ratio,
+	)
+	current_spread_degrees = move_toward(current_spread_degrees, target, recovery_rate * step_delta)
+
+
+## 在砲口方向的圓錐內均勻取樣立體角，回傳本發砲彈的世界座標彈道方向。
+func sample_shot_direction(muzzle_direction: Vector3) -> Vector3:
+	var normalized_muzzle_direction := muzzle_direction.normalized()
+	if normalized_muzzle_direction.is_zero_approx():
+		return Vector3.ZERO
+	var half_angle := deg_to_rad(clampf(current_spread_degrees, 0.0, maxf(aim_spread_cap_degrees, 0.0)))
+	if is_zero_approx(half_angle):
+		return normalized_muzzle_direction
+	var cosine_theta := lerpf(cos(half_angle), 1.0, _aim_spread_rng.randf())
+	var sine_theta := sqrt(maxf(0.0, 1.0 - cosine_theta * cosine_theta))
+	var azimuth := _aim_spread_rng.randf_range(0.0, TAU)
+	var muzzle_basis := _basis_with_x_axis(normalized_muzzle_direction)
+	return (normalized_muzzle_direction * cosine_theta + muzzle_basis.y * cos(azimuth) * sine_theta \
+		+ muzzle_basis.z * sin(azimuth) * sine_theta).normalized()
 
 
 ## 儲存介於 -1 到 1 的前進／倒退指令，供下一個物理步驟使用。
@@ -500,7 +581,8 @@ func request_fire() -> void:
 	_apply_firing_movement_speed_loss()
 	_spawn_muzzle_flash(muzzle_position, muzzle_direction)
 	var shot_muzzle_transform := muzzle_point.global_transform
-	var shot_event := ShotEvent.new(shot_muzzle_transform, muzzle_direction, get_rid(), shell_damage)
+	var shot_direction := sample_shot_direction(muzzle_direction)
+	var shot_event := ShotEvent.new(shot_muzzle_transform, shot_direction, get_rid(), shell_damage)
 	shot_event_fired.emit(shot_event)
 	shot_fired.emit(shot_event.to_legacy_dictionary())
 	_play_visual_recoil(muzzle_direction)

@@ -56,7 +56,8 @@ func _process(delta: float) -> void:
 func play_shot_recoil(shot_event: ShotEvent) -> void:
 	if camera_shake_pivot == null or shot_event == null or not shot_event.is_valid():
 		return
-	var world_recoil_direction := -shot_event.direction
+	## 後座沿開火當下炮管的反方向，不因單發砲彈擴散而讓鏡頭隨機偏轉。
+	var world_recoil_direction := shot_event.muzzle_transform.basis.x.normalized()
 	world_recoil_direction.y = 0.0
 	if not world_recoil_direction.is_finite() or world_recoil_direction.is_zero_approx():
 		return

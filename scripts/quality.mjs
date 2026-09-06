@@ -182,6 +182,12 @@ run("damage-health-smoke", godot, [
   "--script",
   "res://tests/damage_health_smoke.gd",
 ], { scanGodotErrors: true });
+for (const testName of ["tank_aim_spread_smoke", "training_range_smoke"]) {
+  run(testName.replaceAll("_", "-"), godot, [
+    "--headless", "--audio-driver", "Dummy", "--path", ".",
+    "--script", `res://tests/${testName}.gd`,
+  ], { scanGodotErrors: true });
+}
 run("tank-variant-refactor-smoke", godot, [
   "--headless",
   "--audio-driver",

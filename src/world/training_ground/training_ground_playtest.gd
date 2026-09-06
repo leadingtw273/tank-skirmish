@@ -21,6 +21,17 @@ func _ready() -> void:
 	_gameplay_runtime.add_child(training_ground)
 	_gameplay_runtime.move_child(training_ground, world_index)
 	_connect_tank_replacement_targets(training_ground)
+	_connect_accuracy_range(training_ground)
+
+
+func _connect_accuracy_range(training_ground: Node3D) -> void:
+	## 只有訓練場組裝層認識測試靶；戰鬥執行期仍僅回報通用命中事件。
+	var accuracy_range := training_ground.get_node_or_null("Range")
+	var combat_runtime := _gameplay_runtime.get_node_or_null("CombatRuntime") as CombatRuntime
+	if accuracy_range == null or not accuracy_range.has_method("consume_impact") or combat_runtime == null:
+		push_error("TrainingGroundPlaytest requires its accuracy range and CombatRuntime.")
+		return
+	combat_runtime.impact_resolved.connect(accuracy_range.consume_impact)
 
 
 func _connect_tank_replacement_targets(training_ground: Node3D) -> void:

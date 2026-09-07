@@ -47,6 +47,9 @@ const TANK_PARAMETER_NAMES := [
 	"aim_spread_base_degrees",
 	"aim_spread_movement_add_degrees",
 	"aim_spread_turn_add_degrees",
+	"aim_spread_turret_turn_add_degrees",
+	"aim_spread_fire_add_degrees",
+	"aim_spread_fire_recovery_degrees_per_second",
 	"aim_spread_cap_degrees",
 	"aim_spread_grow_degrees_per_second",
 	"aim_spread_stationary_recovery_degrees_per_second",
@@ -174,6 +177,9 @@ func _has_legal_parameters(tank: CharacterBody3D, health: HealthComponent) -> bo
 		and tank.turn_response > 0.0 and tank.turret_turn_speed > 0.0 \
 		and tank.gun_pitch_speed > 0.0 and tank.shell_damage > 0.0 \
 		and tank.aim_spread_base_degrees >= 0.0 \
+		and tank.aim_spread_turret_turn_add_degrees >= 0.0 \
+		and tank.aim_spread_fire_add_degrees >= 0.0 \
+		and tank.aim_spread_fire_recovery_degrees_per_second >= 0.0 \
 		and tank.aim_spread_cap_degrees >= tank.aim_spread_base_degrees \
 		and tank.aim_spread_grow_degrees_per_second >= 0.0 \
 		and tank.aim_spread_stationary_recovery_degrees_per_second >= 0.0 \

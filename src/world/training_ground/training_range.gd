@@ -2,6 +2,8 @@
 extends Node3D
 class_name TrainingRange
 
+signal spread_preview_toggle_requested
+
 ## 主靶寬度（公尺）；格線會依此尺寸置中排列。
 @export_range(2.0, 20.0, 1.0) var target_width_m := 10.0:
 	set(value):
@@ -19,6 +21,7 @@ class_name TrainingRange
 
 @onready var main_target: StaticBody3D = $MainTarget
 @onready var clear_target: StaticBody3D = $ClearTarget
+@onready var spread_toggle_target: StaticBody3D = $SpreadToggleTarget
 @onready var markers: Node3D = $Markers
 @onready var target_grid: Node3D = $MainTarget/TargetGrid
 @onready var range_markings: Node3D = $RangeMarkings
@@ -34,6 +37,8 @@ func consume_impact(event: ImpactEvent) -> void:
 		return
 	if event.collider == clear_target:
 		clear_markers()
+	elif event.collider == spread_toggle_target:
+		spread_preview_toggle_requested.emit()
 	elif event.collider == main_target:
 		_add_marker(event.position, event.normal)
 
@@ -123,6 +128,10 @@ func _add_box_line(parent: Node3D, line_position: Vector3, line_size: Vector3, c
 	line.position = line_position
 	var material := StandardMaterial3D.new()
 	material.albedo_color = Color(0.75, 0.12, 0.08, 1.0) if center_line else Color(0.08, 0.08, 0.08, 1.0)
+	## 只有主靶黑色格線半透明；紅色靶心與地面距離線維持不透明。
+	if parent == target_grid and not center_line:
+		material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		material.albedo_color.a = 0.5
 	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	line.material_override = material
 	parent.add_child(line)

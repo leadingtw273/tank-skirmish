@@ -235,7 +235,29 @@ func _validate_accuracy_range(gameplay_runtime: Node3D) -> bool:
 			or not combat.impact_resolved.is_connected(accuracy_range.consume_impact):
 		return _fail("Training range must consume the existing runtime impact signal.")
 	await physics_frame
-	for target_name: String in ["MainTarget", "ClearTarget", "MainTarget"]:
+	## 遠處可見地板距攝影機超過 180m 時，仍要瞄地板而非懸空的射線終點。
+	var aim := gameplay_runtime.get_node("PlayerRuntime/PlayerAimController")
+	var camera: Camera3D = aim.camera
+	var far_screen := Vector2(camera.get_viewport().get_visible_rect().size.x * 0.5, 0.0)
+	var ray_origin := camera.project_ray_origin(far_screen)
+	var ray_direction := camera.project_ray_normal(far_screen)
+	var ground_distance := -ray_origin.y / ray_direction.y
+	if ground_distance <= aim.max_aim_distance:
+		return _fail("Far-ground aiming fixture must exceed the old camera-ray limit.")
+	var expected_ground := ray_origin + ray_direction * ground_distance
+	var picked_ground: Vector3 = aim.resolve_mouse_world_target(far_screen)
+	if picked_ground.distance_to(expected_ground) > 0.01:
+		return _fail("Visible distant ground must remain the mouse aim target beyond the old 180m camera-ray limit.")
+	var presentation := gameplay_runtime.get_node("PlayerRuntime/AimPresentation")
+	var initial_preview: bool = presentation.show_spread_cone
+	if initial_preview:
+		push_error("Training ground spread preview must also start disabled")
+		return false
+	var targets: Array[String] = ["MainTarget", "ClearTarget", "MainTarget", "SpreadToggleTarget", "SpreadToggleTarget", "ClearTarget"]
+	var expected_markers := [1, 0, 1, 1, 1, 0]
+	var expected_previews := [initial_preview, initial_preview, initial_preview, not initial_preview, initial_preview, initial_preview]
+	for index in range(targets.size()):
+		var target_name := targets[index]
 		var target := accuracy_range.get_node(target_name) as StaticBody3D
 		var destination := target.global_position + Vector3.BACK * 0.1
 		var shot := ShotEvent.new(Transform3D(Basis.IDENTITY, destination + Vector3.BACK * 10.0), Vector3.FORWARD, tank.get_rid())
@@ -246,9 +268,11 @@ func _validate_accuracy_range(gameplay_runtime: Node3D) -> bool:
 		if not projectile.is_queued_for_deletion():
 			return _fail("A real projectile must collide with the non-damageable range target.")
 		await process_frame
-		var expected := 0 if target_name == "ClearTarget" else 1
-		if accuracy_range.get_marker_count() != expected:
-			return _fail("Runtime impact must add, clear, then add range markers without health components.")
+		if accuracy_range.get_marker_count() != expected_markers[index]:
+			return _fail("Main/clear targets must retain marker behavior; blue target must not clear markers.")
+		if presentation.show_spread_cone != expected_previews[index] \
+				or presentation.spread_cone_preview.visible != expected_previews[index]:
+			return _fail("Each real blue-target hit must toggle the cone once; main/clear hits must not toggle it.")
 	return true
 
 

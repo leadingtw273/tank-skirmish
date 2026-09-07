@@ -36,7 +36,17 @@ extends Node
 ## 圓錐與可見地面相交的截面顏色；只標示接觸區，不影響彈道。
 @export var spread_cone_ground_contact_color := Color(0.02, 0.2, 0.8, 0.65)
 
+@export_category("四層擴散準星")
+## 沿砲口到白線終點顯示四層框，與暫時圓錐開關互相獨立。
+@export var show_spread_frames := true
+## 四層框的顏色與不透明度，A越小越透明。
+@export var spread_frames_color := Color(0.05, 0.06, 0.08, 0.9)
+## 框線的世界寬度，單位公尺；四層維持相同線寬。
+@export_range(0.005, 0.2, 0.005) var spread_frames_line_width := 0.08
+
 const AIM_VERTICAL_BASIS_THRESHOLD := 0.999
+const SpreadFrames = preload("res://src/player/aim_spread_frames.gd")
+var spread_frames: Node3D
 
 var controlled_tank: Node3D
 var actual_aim_line: MeshInstance3D
@@ -70,6 +80,11 @@ func initialize_presentation() -> void:
 		material.render_priority = Material.RENDER_PRIORITY_MAX - 1
 		spread_cone_preview.material_override = material
 	_apply_aim_cursor()
+	if spread_frames == null:
+		spread_frames = SpreadFrames.new()
+		spread_frames.name = "SpreadFrames"
+		add_child(spread_frames)
+		spread_frames.initialize()
 
 
 func _apply_aim_cursor() -> void:
@@ -137,6 +152,8 @@ func _update_aim_lines() -> void:
 	var actual_end := _aim_line_end(muzzle_position, actual_direction)
 	_set_aim_line_path(actual_aim_line, muzzle_position, actual_end)
 	_update_spread_cone(muzzle_position, actual_end)
+	if spread_frames != null:
+		spread_frames.update_frames(muzzle_position, actual_end, float(controlled_tank.call("get_current_spread_degrees")), show_spread_frames, spread_frames_color, spread_frames_line_width, aim_line_near_tank_hidden_distance)
 
 	var firing_target_offset := world_target - muzzle_position
 	if firing_target_offset.length_squared() <= 0.001:

@@ -611,6 +611,8 @@ func _validate_turret_aiming(instance: Node) -> bool:
 
 	if not _validate_spread_cone_preview(tank, presentation):
 		return false
+	if not _validate_spread_frames(tank, presentation):
+		return false
 	aim_target.queue_free()
 	await physics_frame
 
@@ -664,6 +666,37 @@ func _validate_spread_cone_preview(tank: Node3D, presentation: Node) -> bool:
 		return false
 	tank.set("current_spread_degrees", saved_spread)
 	presentation.call("set_world_target", origin + direction * 100.0)
+	return true
+
+
+func _validate_spread_frames(tank: Node3D, presentation: Node) -> bool:
+	var display = presentation.get("spread_frames")
+	if display == null or display.frames.size() != 4:
+		push_error("Spread presentation must create four cross-section frames")
+		return false
+	var saved_spread := float(tank.get("current_spread_degrees"))
+	var origin: Vector3 = tank.call("muzzle_global_position")
+	var direction: Vector3 = tank.call("muzzle_global_direction")
+	var end: Vector3 = presentation.call("_aim_line_end", origin, direction)
+	for half_angle: float in [1.0, 2.5, 1.0]:
+		tank.set("current_spread_degrees", half_angle)
+		presentation.call("set_world_target", end)
+		for index in range(4):
+			var frame: Node3D = display.frames[index]
+			var distance := origin.distance_to(end) * float(index + 1) / 4.0
+			if not frame.global_position.is_equal_approx(origin + direction * distance) \
+					or absf(frame.global_basis.z.normalized().dot(direction)) < 0.999 \
+					or not is_equal_approx(frame.global_basis.x.length(), distance * tan(deg_to_rad(half_angle))):
+				push_error("Four spread frames must follow the actual muzzle axis and distance-scaled spread")
+				return false
+	presentation.set("show_spread_frames", false)
+	presentation.call("set_world_target", end)
+	if display.visible:
+		push_error("Spread frames switch must hide all four layers")
+		return false
+	presentation.set("show_spread_frames", true)
+	tank.set("current_spread_degrees", saved_spread)
+	presentation.call("set_world_target", end)
 	return true
 
 

@@ -10,6 +10,10 @@ const TankProjectile := preload("res://src/combat/projectile.gd")
 const ShotEvent := preload("res://src/combat/shot_event.gd")
 const ImpactEvent := preload("res://src/combat/impact_event.gd")
 const DamageReceiver := preload("res://src/combat/damage/damage_receiver.gd")
+
+## 回報已確認的真實命中；靶場可記錄彈著，不需要成為可受傷實體。
+signal impact_resolved(impact_event: ImpactEvent)
+
 @export_category("場景連接")
 ## 會發出公開 shot_event_fired signal、供此戰鬥執行期消費的節點。
 @export var shot_sources: Array[Node]
@@ -29,7 +33,7 @@ const DamageReceiver := preload("res://src/combat/damage/damage_receiver.gd")
 @export_category("砲口硝煙")
 ## 砲口硝煙的均勻尺寸倍率，單位為原廠特效比例倍數。
 @export_range(0.1, 5.0, 0.05) var muzzle_smoke_scale := 1.0
-## 砲口硝煙沿 ShotEvent 射擊方向的前方偏移量，單位為公尺。
+## 砲口硝煙沿開火當下炮管實際朝向的前方偏移量，單位為公尺；不受彈道擴散影響。
 @export var muzzle_smoke_forward_offset := 0.9
 ## 已實體化砲口硝煙在釋放前的存活時間，單位為秒。
 @export var muzzle_smoke_lifetime_seconds := 1.2
@@ -115,13 +119,14 @@ func _spawn_muzzle_smoke(shot_event: ShotEvent) -> void:
 		push_error("CombatRuntime requires MuzzleSmokeVFX to provide Smoke particles with a ParticleProcessMaterial.")
 		muzzle_smoke.queue_free()
 		return
-	## 每次開火各自持有運動材質，讓煙霧用世界射擊方向移動；面片仍可獨立完整面向攝影機。
+	## 彈道可能偏離炮管；硝煙仍由凍結的砲口 -X 軸向前散去，不跟著隨機彈道偏轉。
+	var muzzle_direction := (-shot_event.muzzle_transform.basis.x).normalized()
 	var smoke_process_material := source_process_material.duplicate(true) as ParticleProcessMaterial
-	smoke_process_material.direction = shot_event.direction
+	smoke_process_material.direction = muzzle_direction
 	smoke_particles.process_material = smoke_process_material
 	smoke_particles.one_shot = true
 	effects.add_child(muzzle_smoke, true)
-	var smoke_position := shot_event.muzzle_transform.origin + shot_event.direction * muzzle_smoke_forward_offset
+	var smoke_position := shot_event.muzzle_transform.origin + muzzle_direction * muzzle_smoke_forward_offset
 	var smoke_basis := Basis.IDENTITY.scaled(Vector3.ONE * muzzle_smoke_scale)
 	muzzle_smoke.global_transform = Transform3D(smoke_basis, smoke_position)
 	## One Shot 播放結束後會自行把 Emitting 切回 false；每次生成時由執行期明確重新播放。
@@ -133,6 +138,7 @@ func _on_projectile_impact(impact_event: ImpactEvent) -> void:
 	## 命中特效沿世界座標表面法線微移，避免穿模，並由 SceneTree 計時器在播放後釋放。
 	if impact_event == null or not impact_event.is_valid():
 		return
+	impact_resolved.emit(impact_event)
 	_deliver_impact_damage(impact_event)
 	var impact := IMPACT_VFX_SCENE.instantiate() as Node3D
 	impact.name = "ImpactVFX"

@@ -609,9 +609,61 @@ func _validate_turret_aiming(instance: Node) -> bool:
 		push_error("Red mouse line must clear the tank and another 3m before becoming visible")
 		return false
 
+	if not _validate_spread_cone_preview(tank, presentation):
+		return false
 	aim_target.queue_free()
 	await physics_frame
 
+	return true
+
+
+func _validate_spread_cone_preview(tank: Node3D, presentation: Node) -> bool:
+	var cone := presentation.get("spread_cone_preview") as MeshInstance3D
+	if presentation.get("show_spread_cone") or (cone != null and cone.visible):
+		push_error("Spread cone must start disabled and hidden")
+		return false
+	presentation.set("show_spread_cone", true)
+	var mesh := cone.mesh as CylinderMesh if cone != null else null
+	var material := cone.material_override as ShaderMaterial if cone != null else null
+	if mesh == null or material == null or not is_zero_approx(mesh.bottom_radius) \
+			or not is_equal_approx(mesh.top_radius, 1.0) \
+			or material.shader == null \
+			or material.get_shader_parameter("cone_color").a <= 0.0 \
+			or material.get_shader_parameter("cone_color").a >= 1.0:
+		push_error("Temporary spread preview must be a translucent cone with its apex at local -Y")
+		return false
+	var saved_spread := float(tank.get("current_spread_degrees"))
+	var previous_radius := 0.0
+	var origin: Vector3 = tank.call("muzzle_global_position")
+	var direction: Vector3 = tank.call("muzzle_global_direction")
+	for half_angle: float in [1.0, 2.5]:
+		tank.set("current_spread_degrees", half_angle)
+		presentation.call("set_world_target", origin + direction * 100.0)
+		var basis := cone.global_transform.basis
+		var shader_inverse: Transform3D = material.get_shader_parameter("world_to_cone")
+		if not shader_inverse.is_equal_approx(cone.global_transform.affine_inverse()):
+			push_error("Ground contact preview must track the current cone transform")
+			return false
+		var radius := basis.x.length()
+		if not cone.visible or not (cone.global_transform * (Vector3.DOWN * 0.5)).is_equal_approx(origin) \
+				or basis.y.normalized().dot(direction) < 0.999 \
+				or not is_equal_approx(radius, basis.y.length() * tan(deg_to_rad(half_angle))) \
+				or radius <= previous_radius:
+			push_error("Spread cone must follow the actual muzzle and widen with the current half-angle")
+			return false
+		previous_radius = radius
+	tank.set("current_spread_degrees", 1.0)
+	presentation.call("set_world_target", origin + direction * 100.0)
+	if cone.global_transform.basis.x.length() >= previous_radius:
+		push_error("Spread cone must shrink as accuracy recovers")
+		return false
+	presentation.set("show_spread_cone", false)
+	presentation.call("set_world_target", origin + direction * 100.0)
+	if cone.visible:
+		push_error("Temporary spread cone toggle must hide the preview")
+		return false
+	tank.set("current_spread_degrees", saved_spread)
+	presentation.call("set_world_target", origin + direction * 100.0)
 	return true
 
 
@@ -771,7 +823,7 @@ func _validate_camera_shake(instance: Node) -> bool:
 	tank.forward_speed = 0.0
 	tank.velocity = Vector3.ZERO
 	tank.angular_speed = 0.0
-	var expected_local_recoil := camera_controller.global_transform.basis.inverse() * -shot_events[0].direction
+	var expected_local_recoil := camera_controller.global_transform.basis.inverse() * shot_events[0].muzzle_transform.basis.x.normalized()
 	expected_local_recoil.y = 0.0
 	if expected_local_recoil.is_zero_approx() or shake_pivot.position.normalized().dot(expected_local_recoil.normalized()) < 0.999 \
 			or shake_pivot.position.length() > camera_controller.fire_shake_kick_distance + 0.001:
@@ -912,6 +964,10 @@ func _validate_projectile_firing(instance: Node) -> bool:
 		push_error("Tank physics layers must remain unchanged")
 		return false
 
+	## 此段保留原本精確沿砲口射線的回歸；非零擴散由 tank_aim_spread_smoke 固定 seed 獨立驗證。
+	tank.aim_spread_base_degrees = 0.0
+	tank.aim_spread_cap_degrees = 0.0
+	tank.current_spread_degrees = 0.0
 	var expected_muzzle: Vector3 = tank.muzzle_point.global_position
 	var muzzle_position: Vector3 = tank.muzzle_global_position()
 	var muzzle_direction: Vector3 = tank.muzzle_global_direction()

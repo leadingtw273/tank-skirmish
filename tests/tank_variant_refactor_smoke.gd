@@ -177,6 +177,10 @@ func _validate_variant(tank_id: String, contract: Dictionary) -> bool:
 		valid = reverse_speed_scale < 0.0 if tank_id == "tank1" else reverse_speed_scale > 0.0
 	if valid:
 		var shots: Array = []
+		## 此處只驗既有車型的砲口軸接線；非零擴散交由專用固定種子測試驗證。
+		tank.aim_spread_base_degrees = 0.0
+		tank.aim_spread_cap_degrees = 0.0
+		tank.current_spread_degrees = 0.0
 		tank.shot_event_fired.connect(func(event: Variant) -> void: shots.append(event))
 		tank.request_fire()
 		valid = shots.size() == 1 and shots[0].is_valid() \

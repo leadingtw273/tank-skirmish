@@ -1,0 +1,90 @@
+[gd_scene load_steps=11 format=3]
+
+[ext_resource type="Script" path="res://src/world/training_ground/training_range.gd" id="1_script"]
+
+[sub_resource type="StandardMaterial3D" id="TargetMaterial"]
+albedo_color = Color(0.88, 0.82, 0.65, 1)
+roughness = 0.85
+
+[sub_resource type="BoxMesh" id="TargetMesh"]
+size = Vector3(10, 10, 0.2)
+material = SubResource("TargetMaterial")
+
+[sub_resource type="BoxShape3D" id="TargetShape"]
+size = Vector3(10, 10, 0.2)
+
+[sub_resource type="StandardMaterial3D" id="ClearMaterial"]
+albedo_color = Color(0.18, 0.48, 0.22, 1)
+roughness = 0.8
+
+[sub_resource type="BoxMesh" id="ClearMesh"]
+size = Vector3(4, 4, 0.2)
+material = SubResource("ClearMaterial")
+
+[sub_resource type="BoxShape3D" id="ClearShape"]
+size = Vector3(4, 4, 0.2)
+
+[sub_resource type="StandardMaterial3D" id="SpreadToggleMaterial"]
+albedo_color = Color(0.2, 0.8, 1, 1)
+roughness = 0.8
+
+[sub_resource type="BoxMesh" id="SpreadToggleMesh"]
+size = Vector3(4, 4, 0.2)
+material = SubResource("SpreadToggleMaterial")
+
+[sub_resource type="BoxShape3D" id="SpreadToggleShape"]
+size = Vector3(4, 4, 0.2)
+
+[node name="TrainingRange" type="Node3D"]
+script = ExtResource("1_script")
+
+[node name="MainTarget" type="StaticBody3D" parent="."]
+position = Vector3(0, 5, -0.1)
+collision_layer = 1
+collision_mask = 0
+
+[node name="TargetVisual" type="MeshInstance3D" parent="MainTarget"]
+mesh = SubResource("TargetMesh")
+
+[node name="TargetGrid" type="Node3D" parent="MainTarget"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MainTarget"]
+shape = SubResource("TargetShape")
+
+[node name="ClearTarget" type="StaticBody3D" parent="."]
+position = Vector3(-20, 5, 60)
+collision_layer = 1
+collision_mask = 0
+
+[node name="ClearVisual" type="MeshInstance3D" parent="ClearTarget"]
+mesh = SubResource("ClearMesh")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ClearTarget"]
+shape = SubResource("ClearShape")
+
+[node name="ClearLabel" type="Label3D" parent="ClearTarget"]
+position = Vector3(0, -3.25, 0.12)
+text = "清除彈著"
+font_size = 320
+outline_size = 40
+
+[node name="SpreadToggleTarget" type="StaticBody3D" parent="."]
+position = Vector3(-12, 5, 60)
+collision_layer = 1
+collision_mask = 0
+
+[node name="SpreadToggleVisual" type="MeshInstance3D" parent="SpreadToggleTarget"]
+mesh = SubResource("SpreadToggleMesh")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SpreadToggleTarget"]
+shape = SubResource("SpreadToggleShape")
+
+[node name="SpreadToggleLabel" type="Label3D" parent="SpreadToggleTarget"]
+position = Vector3(0, -3.25, 0.12)
+text = "圓錐開關"
+font_size = 320
+outline_size = 40
+
+[node name="RangeMarkings" type="Node3D" parent="."]
+
+[node name="Markers" type="Node3D" parent="."]

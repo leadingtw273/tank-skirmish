@@ -28,11 +28,20 @@ extends Node
 ## 低於此弧度角差時，滑鼠線會因與射擊線對齊而隱藏。
 @export var aim_aligned_angle_radians := 0.004363323
 
+@export_category("暫時擴散預覽")
+## 顯示實際砲口的擴散圓錐，只供試玩觀察，不影響彈道或命中判定。
+@export var show_spread_cone := false
+## 圓錐顏色與不透明度；A 越小越透明。
+@export var spread_cone_color := Color(0.2, 0.8, 1.0, 0.18)
+## 圓錐與可見地面相交的截面顏色；只標示接觸區，不影響彈道。
+@export var spread_cone_ground_contact_color := Color(0.02, 0.2, 0.8, 0.65)
+
 const AIM_VERTICAL_BASIS_THRESHOLD := 0.999
 
 var controlled_tank: Node3D
 var actual_aim_line: MeshInstance3D
 var mouse_aim_line: MeshInstance3D
+var spread_cone_preview: MeshInstance3D
 var scaled_aim_cursor_texture: ImageTexture
 var world_target := Vector3.ZERO
 
@@ -42,11 +51,24 @@ func set_controlled_tank(tank: Node3D) -> void:
 	controlled_tank = tank
 
 
-## 設定滑鼠準星，並一次建立兩個可重複使用的線條網格。
+## 設定滑鼠準星，並一次建立可重複使用的瞄準線與暫時擴散網格。
 func initialize_presentation() -> void:
 	if actual_aim_line == null:
 		actual_aim_line = _create_aim_line("ActualAimLine", Color.WHITE)
 		mouse_aim_line = _create_aim_line("MouseAimLine", Color.RED)
+	if spread_cone_preview == null:
+		spread_cone_preview = _create_aim_line("SpreadConePreview", spread_cone_color)
+		var cone := spread_cone_preview.mesh as CylinderMesh
+		## 本地 -Y 端為砲口尖端，+Y 端為擴散圓面；縮放由當下角度與長度決定。
+		cone.bottom_radius = 0.0
+		cone.top_radius = 1.0
+		cone.radial_segments = 48
+		var material := ShaderMaterial.new()
+		material.shader = preload("res://src/player/spread_cone_preview.gdshader")
+		material.set_shader_parameter("cone_color", spread_cone_color)
+		material.set_shader_parameter("ground_contact_color", spread_cone_ground_contact_color)
+		material.render_priority = Material.RENDER_PRIORITY_MAX - 1
+		spread_cone_preview.material_override = material
 	_apply_aim_cursor()
 
 
@@ -74,6 +96,12 @@ func _apply_aim_cursor() -> void:
 ## 更新滑鼠選取的世界目標，並重繪兩條瞄準線。
 func set_world_target(target: Vector3) -> void:
 	world_target = target
+	_update_aim_lines()
+
+
+## 供訓練場開關靶切換暫時預覽，只改顯示、不改坦克擴散或射擊。
+func toggle_spread_cone() -> void:
+	show_spread_cone = not show_spread_cone
 	_update_aim_lines()
 
 
@@ -106,7 +134,9 @@ func _update_aim_lines() -> void:
 		return
 	var muzzle_position := controlled_tank.call("muzzle_global_position") as Vector3
 	var actual_direction := controlled_tank.call("muzzle_global_direction") as Vector3
-	_set_aim_line_path(actual_aim_line, muzzle_position, _aim_line_end(muzzle_position, actual_direction))
+	var actual_end := _aim_line_end(muzzle_position, actual_direction)
+	_set_aim_line_path(actual_aim_line, muzzle_position, actual_end)
+	_update_spread_cone(muzzle_position, actual_end)
 
 	var firing_target_offset := world_target - muzzle_position
 	if firing_target_offset.length_squared() <= 0.001:
@@ -130,6 +160,28 @@ func _update_aim_lines() -> void:
 		_aim_line_end(mouse_line_origin, mouse_line_direction),
 		_tank_aim_line_clearance_distance(mouse_line_origin),
 	)
+
+
+func _update_spread_cone(origin: Vector3, end: Vector3) -> void:
+	## 只讀取當下擴散半角；圓面半徑 = 長度 × tan(半角)，不重新取樣彈道。
+	if spread_cone_preview == null:
+		return
+	var half_angle := float(controlled_tank.call("get_current_spread_degrees"))
+	if not show_spread_cone or half_angle <= 0.0:
+		spread_cone_preview.visible = false
+		return
+	_set_aim_line_segment(spread_cone_preview, origin, end)
+	if not spread_cone_preview.visible:
+		return
+	var radius := origin.distance_to(end) * tan(deg_to_rad(half_angle))
+	var cone_transform := spread_cone_preview.global_transform
+	cone_transform.basis.x *= radius
+	cone_transform.basis.z *= radius
+	spread_cone_preview.global_transform = cone_transform
+	var material := spread_cone_preview.material_override as ShaderMaterial
+	material.set_shader_parameter("cone_color", spread_cone_color)
+	material.set_shader_parameter("ground_contact_color", spread_cone_ground_contact_color)
+	material.set_shader_parameter("world_to_cone", cone_transform.affine_inverse())
 
 
 func _aim_line_end(origin: Vector3, direction: Vector3) -> Vector3:

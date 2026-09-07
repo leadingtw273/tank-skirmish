@@ -1,6 +1,7 @@
 extends Node
 
 @export_flags_3d_physics var aim_collision_mask := 129
+## 滑鼠未命中任何碰撞時的備用距離；不是砲彈射程或可見地面的偵測上限。
 @export var max_aim_distance := 180.0
 @export var aim_presentation: Node
 
@@ -47,7 +48,12 @@ func resolve_world_target_from_ray(ray_origin: Vector3, ray_direction: Vector3) 
 	if normalized_direction.is_zero_approx():
 		return ray_origin
 	var fallback_target := ray_origin + normalized_direction * maxf(max_aim_distance, 0.0)
-	var query := PhysicsRayQueryParameters3D.create(ray_origin, fallback_target, aim_collision_mask, [controlled_tank.get_rid()])
+	## 射線從攝影機出發，需涵蓋可見範圍，避免尚未碰到遠處地板就截斷。
+	var query_distance := maxf(max_aim_distance, 0.0)
+	if is_instance_valid(camera):
+		query_distance = maxf(query_distance, camera.far)
+	var query_end := ray_origin + normalized_direction * query_distance
+	var query := PhysicsRayQueryParameters3D.create(ray_origin, query_end, aim_collision_mask, [controlled_tank.get_rid()])
 	query.collide_with_bodies = true
 	query.collide_with_areas = false
 	query.hit_from_inside = true

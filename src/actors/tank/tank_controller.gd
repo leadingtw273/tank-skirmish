@@ -95,6 +95,33 @@ const ShotEvent := preload("res://src/combat/shot_event.gd")
 ## 剩餘裝填時間依遊戲物理時間遞減；新生成的坦克可以立即開火。
 var _fire_cooldown_remaining := 0.0
 
+@export_category("瞄準擴散")
+## 靜止時砲彈的圓錐半角，單位為度。
+@export_range(0.0, 45.0, 0.01) var aim_spread_base_degrees := 0.2
+## 依實際前後速度比例額外增加的圓錐半角，單位為度。
+@export_range(0.0, 45.0, 0.01) var aim_spread_movement_add_degrees := 1.5
+## 依實際車身偏航速度比例額外增加的圓錐半角，單位為度。
+@export_range(0.0, 45.0, 0.01) var aim_spread_turn_add_degrees := 1.0
+## 依砲塔相對車身的實際偏航速度比例額外增加的圓錐半角，單位為度。
+@export_range(0.0, 45.0, 0.01) var aim_spread_turret_turn_add_degrees := 1.0
+## 每次成功開火後加入目前擴散的圓錐半角，單位為度；只影響下一發及後續射擊。
+@export_range(0.0, 45.0, 0.01) var aim_spread_fire_add_degrees := 0.2
+## 開火額外擴散恢復的速度，單位為度／秒；與移動和轉向擴散分開調整。
+@export_range(0.0, 90.0, 0.01) var aim_spread_fire_recovery_degrees_per_second := 0.4
+## 擴散圓錐可達到的最大半角，單位為度。
+@export_range(0.0, 45.0, 0.01) var aim_spread_cap_degrees := 2.5
+## 擴散朝目標增加的速度，單位為度／秒。
+@export_range(0.0, 90.0, 0.01) var aim_spread_grow_degrees_per_second := 4.0
+## 靜止時擴散朝目標恢復的速度，單位為度／秒。
+@export_range(0.0, 90.0, 0.01) var aim_spread_stationary_recovery_degrees_per_second := 1.2
+## 移動時擴散朝目標恢復的速度，單位為度／秒。
+@export_range(0.0, 90.0, 0.01) var aim_spread_moving_recovery_degrees_per_second := 0.6
+## 目前實際套用到每發砲彈的圓錐半角，單位為度。
+var current_spread_degrees := 0.2
+## 尚未恢復的成功開火額外擴散；不包含移動、車身或砲塔造成的部分。
+var _fire_spread_degrees := 0.0
+var _aim_spread_rng := RandomNumberGenerator.new()
+
 @export_category("砲口火焰")
 ## 已生成的砲口火焰在移除前的存活時間，單位為秒。
 @export var muzzle_flash_lifetime_seconds := 0.25
@@ -124,6 +151,8 @@ var angular_speed := 0.0
 var actual_linear_speed := 0.0
 ## 物理步驟中實際套用的車身偏航角速度，供接地互動讀取，單位為弧度／秒。
 var actual_angular_speed := 0.0
+## 最近一次砲塔瞄準實際套用的相對車身偏航角速度，單位為弧度／秒。
+var actual_turret_angular_speed := 0.0
 var active_tread_animation := &""
 var tread_animation_paused := true
 var tread_animations_available := false
@@ -133,6 +162,9 @@ var hull_aim_turn_input := 0.0
 
 
 func _ready() -> void:
+	## 每次實例化都從此車型的 base 值開始，避免重生或場景覆用保留上次交戰擴散。
+	current_spread_degrees = clampf(aim_spread_base_degrees, 0.0, maxf(aim_spread_cap_degrees, 0.0))
+	_fire_spread_degrees = 0.0
 	if not variant_interface_enabled:
 		set_physics_process(false)
 		return
@@ -240,6 +272,7 @@ func _physics_process(delta: float) -> void:
 		forward_speed = actual_forward_speed
 	actual_linear_speed = actual_forward_speed
 	actual_angular_speed = angular_speed
+	update_aim_spread(delta, actual_linear_speed, actual_angular_speed, actual_turret_angular_speed)
 	var next_tread_animation := _tread_animation_for_motion(actual_forward_speed, angular_speed)
 	_update_tread_animation(
 		next_tread_animation,
@@ -255,6 +288,92 @@ func get_actual_linear_speed() -> float:
 ## 回傳物理步驟實際套用的車身偏航角速度，供 TrackContactEffects 計算原地旋轉強度。
 func get_actual_angular_speed() -> float:
 	return actual_angular_speed
+
+
+## 回傳最近一次瞄準實際套用的砲塔相對車身偏航角速度，單位為弧度／秒。
+func get_actual_turret_angular_speed() -> float:
+	return actual_turret_angular_speed
+
+
+## 回傳目前每發砲彈實際使用的圓錐半角，單位為度。
+func get_current_spread_degrees() -> float:
+	return current_spread_degrees
+
+
+## 回傳以目前碰撞解算後的線／角速度計算的目標圓錐半角，單位為度。
+func get_target_spread_degrees() -> float:
+	return calculate_target_spread_degrees(actual_linear_speed, actual_angular_speed, actual_turret_angular_speed)
+
+
+## 設定私有亂數器種子，僅供可重現的自動測試使用。
+func set_aim_spread_seed(seed_value: int) -> void:
+	_aim_spread_rng.seed = seed_value
+
+
+## 以傳入的實際線／角速度計算目標擴散，供測試直接覆蓋物理輸入。
+func calculate_target_spread_degrees(
+	measured_linear_speed: float,
+	measured_angular_speed: float,
+	measured_turret_angular_speed := 0.0,
+) -> float:
+	var cap := maxf(aim_spread_cap_degrees, 0.0)
+	var base := clampf(aim_spread_base_degrees, 0.0, cap)
+	var linear_top_speed := movement_speed if measured_linear_speed >= 0.0 else reverse_movement_speed
+	var speed_ratio := 0.0 if linear_top_speed <= 0.0 else clampf(absf(measured_linear_speed) / linear_top_speed, 0.0, 1.0)
+	var turn_ratio := 0.0 if turn_speed <= 0.0 else clampf(absf(measured_angular_speed) / turn_speed, 0.0, 1.0)
+	var turret_turn_ratio := 0.0 if turret_turn_speed <= 0.0 else clampf(absf(measured_turret_angular_speed) / turret_turn_speed, 0.0, 1.0)
+	return minf(cap, base + maxf(aim_spread_movement_add_degrees, 0.0) * speed_ratio \
+		+ maxf(aim_spread_turn_add_degrees, 0.0) * turn_ratio \
+		+ maxf(aim_spread_turret_turn_add_degrees, 0.0) * turret_turn_ratio)
+
+
+## 依 delta 朝實際速度對應的目標擴散逼近，供物理更新與單元測試共用。
+func update_aim_spread(
+	delta: float,
+	measured_linear_speed: float,
+	measured_angular_speed: float,
+	measured_turret_angular_speed := 0.0,
+) -> void:
+	var cap := maxf(aim_spread_cap_degrees, 0.0)
+	var target := calculate_target_spread_degrees(measured_linear_speed, measured_angular_speed, measured_turret_angular_speed)
+	var step_delta := maxf(delta, 0.0)
+	var total_spread := clampf(current_spread_degrees, 0.0, cap)
+	var fire_spread := clampf(_fire_spread_degrees, 0.0, total_spread)
+	var motion_spread := total_spread - fire_spread
+	if motion_spread < target:
+		motion_spread = move_toward(motion_spread, target, maxf(aim_spread_grow_degrees_per_second, 0.0) * step_delta)
+	else:
+		var linear_top_speed := movement_speed if measured_linear_speed >= 0.0 else reverse_movement_speed
+		var speed_ratio := 0.0 if linear_top_speed <= 0.0 else clampf(absf(measured_linear_speed) / linear_top_speed, 0.0, 1.0)
+		var recovery_rate := lerpf(
+			maxf(aim_spread_stationary_recovery_degrees_per_second, 0.0),
+			maxf(aim_spread_moving_recovery_degrees_per_second, 0.0),
+			speed_ratio,
+		)
+		motion_spread = move_toward(motion_spread, target, recovery_rate * step_delta)
+	fire_spread = move_toward(
+		fire_spread,
+		0.0,
+		maxf(aim_spread_fire_recovery_degrees_per_second, 0.0) * step_delta,
+	)
+	_fire_spread_degrees = clampf(fire_spread, 0.0, maxf(cap - motion_spread, 0.0))
+	current_spread_degrees = clampf(motion_spread + _fire_spread_degrees, 0.0, cap)
+
+
+## 在砲口方向的圓錐內均勻取樣立體角，回傳本發砲彈的世界座標彈道方向。
+func sample_shot_direction(muzzle_direction: Vector3) -> Vector3:
+	var normalized_muzzle_direction := muzzle_direction.normalized()
+	if normalized_muzzle_direction.is_zero_approx():
+		return Vector3.ZERO
+	var half_angle := deg_to_rad(clampf(current_spread_degrees, 0.0, maxf(aim_spread_cap_degrees, 0.0)))
+	if is_zero_approx(half_angle):
+		return normalized_muzzle_direction
+	var cosine_theta := lerpf(cos(half_angle), 1.0, _aim_spread_rng.randf())
+	var sine_theta := sqrt(maxf(0.0, 1.0 - cosine_theta * cosine_theta))
+	var azimuth := _aim_spread_rng.randf_range(0.0, TAU)
+	var muzzle_basis := _basis_with_x_axis(normalized_muzzle_direction)
+	return (normalized_muzzle_direction * cosine_theta + muzzle_basis.y * cos(azimuth) * sine_theta \
+		+ muzzle_basis.z * sin(azimuth) * sine_theta).normalized()
 
 
 ## 儲存介於 -1 到 1 的前進／倒退指令，供下一個物理步驟使用。
@@ -387,6 +506,7 @@ func _update_tread_animation(next_animation: StringName, animation_speed_scale: 
 
 ## 在此影格中只將砲塔偏航轉向世界座標目標。
 func aim_turret_at(target_position: Vector3, delta: float) -> void:
+	actual_turret_angular_speed = 0.0
 	if _is_target_inside_turret_dead_zone(target_position):
 		hull_aim_turn_input = 0.0
 		return
@@ -397,6 +517,7 @@ func aim_turret_at(target_position: Vector3, delta: float) -> void:
 		return
 
 	var maximum_yaw := deg_to_rad(clampf(turret_max_yaw_degrees, 0.0, 180.0))
+	var previous_local_yaw := turret_pivot.rotation.y
 	if maximum_yaw < PI:
 		## 固定砲塔車型只讓砲管相對車身小幅左右擺動，不追蹤完整世界方位。
 		var local_target_direction := global_transform.basis.orthonormalized().inverse() * target_direction
@@ -407,6 +528,7 @@ func aim_turret_at(target_position: Vector3, delta: float) -> void:
 			limited_local_target_yaw,
 			turret_turn_speed * delta,
 		)
+		_record_actual_turret_angular_speed(previous_local_yaw, delta)
 		_update_hull_aim_turn_input(desired_local_target_yaw)
 		return
 
@@ -417,6 +539,13 @@ func aim_turret_at(target_position: Vector3, delta: float) -> void:
 		target_yaw,
 		turret_turn_speed * delta,
 	)
+	_record_actual_turret_angular_speed(previous_local_yaw, delta)
+
+
+func _record_actual_turret_angular_speed(previous_local_yaw: float, delta: float) -> void:
+	if delta <= 0.0:
+		return
+	actual_turret_angular_speed = angle_difference(previous_local_yaw, turret_pivot.rotation.y) / delta
 
 
 func _update_hull_aim_turn_input(local_target_yaw: float) -> void:
@@ -500,9 +629,15 @@ func request_fire() -> void:
 	_apply_firing_movement_speed_loss()
 	_spawn_muzzle_flash(muzzle_position, muzzle_direction)
 	var shot_muzzle_transform := muzzle_point.global_transform
-	var shot_event := ShotEvent.new(shot_muzzle_transform, muzzle_direction, get_rid(), shell_damage)
+	var shot_direction := sample_shot_direction(muzzle_direction)
+	var shot_event := ShotEvent.new(shot_muzzle_transform, shot_direction, get_rid(), shell_damage)
 	shot_event_fired.emit(shot_event)
 	shot_fired.emit(shot_event.to_legacy_dictionary())
+	var cap := maxf(aim_spread_cap_degrees, 0.0)
+	var old_total := clampf(current_spread_degrees, 0.0, cap)
+	var new_total := clampf(old_total + maxf(aim_spread_fire_add_degrees, 0.0), 0.0, cap)
+	_fire_spread_degrees = clampf(_fire_spread_degrees, 0.0, old_total) + maxf(new_total - old_total, 0.0)
+	current_spread_degrees = new_total
 	_play_visual_recoil(muzzle_direction)
 
 

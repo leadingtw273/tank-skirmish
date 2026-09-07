@@ -62,9 +62,9 @@ func _validate_training_ground() -> bool:
 	var training_ground := training_ground_scene.instantiate() as Node3D if training_ground_scene != null else null
 	if training_ground == null or training_ground.name != "TrainingGround":
 		return _fail("Training ground scene must load as a TrainingGround Node3D.")
-	if training_ground.get_child_count() != 3:
+	if training_ground.get_child_count() != 4 or training_ground.get_node_or_null("Range") == null:
 		training_ground.free()
-		return _fail("Training ground must contain only Ground, Targets, and Lighting roots.")
+		return _fail("Training ground must contain Ground, Targets, Lighting, and the accuracy Range roots.")
 	if training_ground.get_node_or_null("Roads") != null or training_ground.get_node_or_null("Buildings") != null \
 			or training_ground.get_node_or_null("GrassField") != null:
 		training_ground.free()
@@ -162,6 +162,8 @@ func _validate_playtest_composition() -> bool:
 		and world.get_node_or_null("Roads") == null \
 		and targets != null and targets.get_child_count() == TRAINING_TARGET_VARIANTS.size()
 	if valid:
+		valid = await _validate_accuracy_range(gameplay_runtime)
+	if valid:
 		for target_name: String in TRAINING_TARGET_VARIANTS:
 			var training_target := targets.get_node_or_null(target_name) as Node3D
 			var target_tank := training_target.get_node_or_null("SubjectSlot/Tank") as CharacterBody3D \
@@ -221,6 +223,56 @@ func _validate_playtest_composition() -> bool:
 	playtest.queue_free()
 	if not valid:
 		return _fail("Training ground playtest must reuse main gameplay and replace only World.")
+	return true
+
+
+func _validate_accuracy_range(gameplay_runtime: Node3D) -> bool:
+	## 用真實投射物射線與 CombatRuntime 事件驗完整接線，不只直接呼叫靶子的回呼。
+	var accuracy_range := gameplay_runtime.get_node_or_null("World/Range") as Node3D
+	var combat := gameplay_runtime.get_node_or_null("CombatRuntime") as CombatRuntime
+	var tank := gameplay_runtime.get_node_or_null("Tank") as CharacterBody3D
+	if accuracy_range == null or combat == null or tank == null \
+			or not combat.impact_resolved.is_connected(accuracy_range.consume_impact):
+		return _fail("Training range must consume the existing runtime impact signal.")
+	await physics_frame
+	## 遠處可見地板距攝影機超過 180m 時，仍要瞄地板而非懸空的射線終點。
+	var aim := gameplay_runtime.get_node("PlayerRuntime/PlayerAimController")
+	var camera: Camera3D = aim.camera
+	var far_screen := Vector2(camera.get_viewport().get_visible_rect().size.x * 0.5, 0.0)
+	var ray_origin := camera.project_ray_origin(far_screen)
+	var ray_direction := camera.project_ray_normal(far_screen)
+	var ground_distance := -ray_origin.y / ray_direction.y
+	if ground_distance <= aim.max_aim_distance:
+		return _fail("Far-ground aiming fixture must exceed the old camera-ray limit.")
+	var expected_ground := ray_origin + ray_direction * ground_distance
+	var picked_ground: Vector3 = aim.resolve_mouse_world_target(far_screen)
+	if picked_ground.distance_to(expected_ground) > 0.01:
+		return _fail("Visible distant ground must remain the mouse aim target beyond the old 180m camera-ray limit.")
+	var presentation := gameplay_runtime.get_node("PlayerRuntime/AimPresentation")
+	var initial_preview: bool = presentation.show_spread_cone
+	if initial_preview:
+		push_error("Training ground spread preview must also start disabled")
+		return false
+	var targets: Array[String] = ["MainTarget", "ClearTarget", "MainTarget", "SpreadToggleTarget", "SpreadToggleTarget", "ClearTarget"]
+	var expected_markers := [1, 0, 1, 1, 1, 0]
+	var expected_previews := [initial_preview, initial_preview, initial_preview, not initial_preview, initial_preview, initial_preview]
+	for index in range(targets.size()):
+		var target_name := targets[index]
+		var target := accuracy_range.get_node(target_name) as StaticBody3D
+		var destination := target.global_position + Vector3.BACK * 0.1
+		var shot := ShotEvent.new(Transform3D(Basis.IDENTITY, destination + Vector3.BACK * 10.0), Vector3.FORWARD, tank.get_rid())
+		combat._on_shot_fired(shot)
+		var projectile := combat.projectiles.get_child(combat.projectiles.get_child_count() - 1)
+		projectile.set_physics_process(false)
+		projectile._physics_process(0.1)
+		if not projectile.is_queued_for_deletion():
+			return _fail("A real projectile must collide with the non-damageable range target.")
+		await process_frame
+		if accuracy_range.get_marker_count() != expected_markers[index]:
+			return _fail("Main/clear targets must retain marker behavior; blue target must not clear markers.")
+		if presentation.show_spread_cone != expected_previews[index] \
+				or presentation.spread_cone_preview.visible != expected_previews[index]:
+			return _fail("Each real blue-target hit must toggle the cone once; main/clear hits must not toggle it.")
 	return true
 
 

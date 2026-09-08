@@ -32,13 +32,43 @@ var follow_target_offset := Vector3.ZERO
 var look_ahead_offset := Vector3.ZERO
 var _shake_elapsed_seconds := INF
 var _shake_local_recoil_direction := Vector3.ZERO
+var _initial_camera_transform := Transform3D.IDENTITY
+var _initial_camera_size := 0.0
+var _initial_rig_global_basis := Basis.IDENTITY
+var _initial_follow_target_offset := Vector3.ZERO
+var _has_initial_follow_target_offset := false
+
+
+func _ready() -> void:
+	_initial_camera_transform = camera.transform
+	_initial_camera_size = camera.size
+	_initial_rig_global_basis = global_transform.basis
 
 
 ## 立即註冊要跟隨的節點，並重設先前的前視偏移量。
 func set_follow_target(target: Node3D) -> void:
 	follow_target = target
 	follow_target_offset = global_position - target.global_position
+	if not _has_initial_follow_target_offset:
+		_initial_follow_target_offset = follow_target_offset
+		_has_initial_follow_target_offset = true
 	look_ahead_offset = Vector3.ZERO
+
+
+## 將鏡頭還原到本次場景的初始構圖，供玩家重生後重新框取新坦克。
+func reset_to_initial_view() -> void:
+	if follow_target == null or not is_instance_valid(follow_target):
+		return
+	global_basis = _initial_rig_global_basis
+	global_position = follow_target.global_position + _initial_follow_target_offset
+	follow_target_offset = _initial_follow_target_offset
+	camera.transform = _initial_camera_transform
+	camera.size = _initial_camera_size
+	look_ahead_offset = Vector3.ZERO
+	_shake_elapsed_seconds = INF
+	_shake_local_recoil_direction = Vector3.ZERO
+	camera_shake_pivot.position = Vector3.ZERO
+	camera_shake_pivot.rotation = Vector3.ZERO
 
 
 func _process(delta: float) -> void:

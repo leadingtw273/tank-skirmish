@@ -1,4 +1,4 @@
-## 依坦克的血量比例切換車型提供的受損煙火，並在歸零時只讓砲管下垂。
+## 依坦克的血量比例切換車型提供的受損煙火，歸零時讓砲管下垂並將車身染成灰黑。
 ## 砲塔的水平朝向不會被本元件改動。
 extends Node
 class_name TankDamageVisuals
@@ -30,6 +30,7 @@ var _active_state_roots: Array[Node3D] = []
 var _root_transition_serials: Dictionary = {}
 var _gun_pitch_before_depletion := 0.0
 var _is_depleted := false
+var _materials_before_depletion: Dictionary[MeshInstance3D, Material] = {}
 
 
 func _ready() -> void:
@@ -160,10 +161,28 @@ func _set_depleted_pose(should_be_depleted: bool) -> void:
 	if should_be_depleted:
 		_gun_pitch_before_depletion = _gun_pitch_pivot.rotation.z
 		_gun_pitch_pivot.rotation.z = deg_to_rad(depleted_gun_depression_degrees)
+		_apply_depleted_material()
 		_play_depleted_explosion()
 	else:
 		_gun_pitch_pivot.rotation.z = _gun_pitch_before_depletion
+		for mesh: MeshInstance3D in _materials_before_depletion:
+			if is_instance_valid(mesh):
+				mesh.material_override = _materials_before_depletion[mesh]
+		_materials_before_depletion.clear()
 	_is_depleted = should_be_depleted
+
+
+func _apply_depleted_material() -> void:
+	# 與訓練靶相同的灰黑色；只替換實例 override，不修改共用原材質。
+	var material := StandardMaterial3D.new()
+	material.albedo_color = Color(0.16, 0.18, 0.2, 1)
+	material.roughness = 0.9
+	for node: Node in _tank.find_children("*", "MeshInstance3D", true, false):
+		if node.is_in_group("effect_mesh"):
+			continue
+		var mesh := node as MeshInstance3D
+		_materials_before_depletion[mesh] = mesh.material_override
+		mesh.material_override = material
 
 
 func _play_depleted_explosion() -> void:

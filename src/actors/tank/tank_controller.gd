@@ -26,6 +26,14 @@ extends CharacterBody3D
 ## 車型缺少倒車片段時，是否反向播放它提供的直行履帶動畫。
 @export var reverse_tread_animation_playback := false
 
+@export_category("坦克視野")
+## 車體周圍全向視野的水平半徑，單位公尺；近距也受遮擋限制。
+@export_range(0.0, 1000.0, 0.1, "or_greater") var vision_near_radius := 50.0
+## 沿砲塔前方的最遠水平視距，從車體中心計算，單位公尺。
+@export_range(0.0, 1000.0, 0.1, "or_greater") var vision_far_radius := 150.0
+## 遠距扇形的完整水平角度；30 度表示左右各 15 度。
+@export_range(0.0, 360.0, 0.1) var vision_field_of_view_degrees := 30.0
+
 @export_category("坦克移動")
 ## 滿前進輸入時車身的最高速度，單位為公尺／秒。
 @export var movement_speed := 15.0
@@ -504,6 +512,12 @@ func _update_tread_animation(next_animation: StringName, animation_speed_scale: 
 	tread_animation_paused = false
 
 
+## 取消控制端的瞄準意圖，保留目前姿態；供失去視野或停用控制時使用。
+func cancel_aim() -> void:
+	actual_turret_angular_speed = 0.0
+	hull_aim_turn_input = 0.0
+
+
 ## 在此影格中只將砲塔偏航轉向世界座標目標。
 func aim_turret_at(target_position: Vector3, delta: float) -> void:
 	actual_turret_angular_speed = 0.0
@@ -563,7 +577,7 @@ func get_hull_aim_turn_input() -> float:
 	return hull_aim_turn_input if hull_aim_assist_enabled else 0.0
 
 
-## 只供玩家自動瞄準在對齊或被抑制時立即清除既有車身旋轉慣性。
+## 供玩家或 AI 輔助瞄準在對齊或被抑制時立即清除既有車身旋轉慣性。
 func stop_hull_aim_turn() -> void:
 	turn_command = 0.0
 	angular_speed = 0.0

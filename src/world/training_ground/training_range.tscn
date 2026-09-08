@@ -63,7 +63,8 @@ mesh = SubResource("ClearMesh")
 shape = SubResource("ClearShape")
 
 [node name="ClearLabel" type="Label3D" parent="ClearTarget"]
-position = Vector3(0, -3.25, 0.12)
+position = Vector3(0, 3.25, 0.12)
+billboard = 1
 text = "清除彈著"
 font_size = 320
 outline_size = 40
@@ -80,7 +81,8 @@ mesh = SubResource("SpreadToggleMesh")
 shape = SubResource("SpreadToggleShape")
 
 [node name="SpreadToggleLabel" type="Label3D" parent="SpreadToggleTarget"]
-position = Vector3(0, -3.25, 0.12)
+position = Vector3(0, 3.25, 0.12)
+billboard = 1
 text = "圓錐開關"
 font_size = 320
 outline_size = 40

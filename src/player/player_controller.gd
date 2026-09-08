@@ -3,6 +3,18 @@ extends Node
 var controlled_tank: Node3D
 var left_shift_held := false
 var _hull_aim_assist_was_active := false
+var controls_enabled := true
+
+
+## 停用時清掉持續移動命令，讓既有煞車處理減速，不另外改速度或位置。
+func set_controls_enabled(enabled: bool) -> void:
+	controls_enabled = enabled
+	if not enabled and is_instance_valid(controlled_tank):
+		controlled_tank.call("set_movement_input", 0.0)
+		controlled_tank.call("set_turn_input", 0.0)
+		controlled_tank.call("cancel_aim")
+		_hull_aim_assist_was_active = false
+		left_shift_held = false
 
 
 func set_controlled_tank(tank: Node3D) -> void:
@@ -14,6 +26,8 @@ func set_controlled_tank(tank: Node3D) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if not controls_enabled:
+		return
 	var key_event := event as InputEventKey
 	if key_event != null:
 		var is_left_shift := (key_event.physical_keycode == KEY_SHIFT or key_event.keycode == KEY_SHIFT) \
@@ -39,6 +53,8 @@ func _physics_process(_delta: float) -> void:
 
 
 func apply_commands(movement_input: float, turn_input: float, should_request_fire: bool) -> void:
+	if not controls_enabled:
+		return
 	if not _has_active_tank():
 		return
 	var manual_turn_input := clampf(turn_input, -1.0, 1.0)

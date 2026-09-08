@@ -44,6 +44,18 @@ func _validate(instance: Node) -> void:
 	if runtime.shot_sources.size() != 1 or runtime.shot_sources[0] != tank:
 		_fail("Main scene must explicitly inject the Tank shot source into CombatRuntime.")
 		return
+	## shot_sources 是場景初始 seed；執行期註冊狀態只能經快照公開，且呼叫端不可藉快照改寫 registry。
+	if not runtime.has_method(&"get_registered_shot_sources"):
+		_fail("CombatRuntime must expose get_registered_shot_sources() for runtime registration inspection.")
+		return
+	var initial_registered_sources: Array[Node] = runtime.get_registered_shot_sources()
+	if initial_registered_sources != [tank]:
+		_fail("CombatRuntime must expose the initial Tank registration through a runtime snapshot.")
+		return
+	initial_registered_sources.clear()
+	if runtime.get_registered_shot_sources() != [tank]:
+		_fail("Clearing a registered-shot-source snapshot must not clear CombatRuntime's registry.")
+		return
 
 	var observed_shots: Array[ShotEvent] = []
 	tank.shot_event_fired.connect(func(shot_event: ShotEvent) -> void: observed_shots.append(shot_event))
@@ -96,6 +108,11 @@ func _validate(instance: Node) -> void:
 	instance.add_child(source)
 	runtime.register_shot_source(source)
 	runtime.register_shot_source(source)
+	var registered_with_source: Array[Node] = runtime.get_registered_shot_sources()
+	if registered_with_source.size() != 2 or registered_with_source.count(tank) != 1 \
+			or registered_with_source.count(source) != 1:
+		_fail("CombatRuntime runtime snapshots must contain each registered source exactly once.")
+		return
 	var source_shot := ShotEvent.new(Transform3D(Basis.IDENTITY, Vector3(500, 2, 500)), Vector3.RIGHT, tank.get_rid())
 	source.publish(source_shot)
 	if projectiles.get_child_count() != 2 or _count_named_children(effects, &"MuzzleSmokeVFX") != 1:
@@ -103,14 +120,14 @@ func _validate(instance: Node) -> void:
 		return
 	runtime.unregister_shot_source(source)
 	source.publish(source_shot)
-	if projectiles.get_child_count() != 2:
+	if projectiles.get_child_count() != 2 or runtime.get_registered_shot_sources() != [tank]:
 		_fail("Unregistering a source must remove its shot callback.")
 		return
 	runtime.unregister_shot_source(source)
 	runtime.register_shot_source(source)
 	source.queue_free()
 	await process_frame
-	if runtime._registered_shot_sources.size() != 1:
+	if runtime.get_registered_shot_sources() != [tank]:
 		_fail("A released source must leave no CombatRuntime callback registration.")
 		return
 

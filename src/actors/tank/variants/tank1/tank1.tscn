@@ -8,6 +8,9 @@
 size = Vector3(6.972327, 3.039192, 4.087467)
 
 [node name="Tank" node_paths=PackedStringArray("tank_model", "tank_turret", "tank_gun", "tread_animation_player") instance=ExtResource("1_base")]
+vision_near_radius = 80.0
+vision_far_radius = 180.0
+vision_field_of_view_degrees = 50.0
 variant_interface_enabled = true
 tank_model = NodePath("VisualRecoilPivot/TankVisualSlot/HullVisual/Tank1Model")
 tank_turret = NodePath("VisualRecoilPivot/TankVisualSlot/HullVisual/Tank1GunYawAdapter")

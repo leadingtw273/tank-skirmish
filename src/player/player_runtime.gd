@@ -2,6 +2,18 @@ extends Node
 
 const ShotEvent := preload("res://src/combat/shot_event.gd")
 
+## 換車後讓場景組裝層更新觀察／攻擊對象，不需要全域玩家登錄器。
+signal controlled_tank_changed(tank: Node3D)
+
+var controls_enabled := true
+
+
+## 統一切換移動、射擊與瞄準輸入；恢復時機由所在場景決定。
+func set_controls_enabled(enabled: bool) -> void:
+	controls_enabled = enabled
+	player_controller.call("set_controls_enabled", enabled)
+	player_aim_controller.call("set_controls_enabled", enabled)
+
 @export var controlled_tank: Node3D
 @export var camera_controller: Node3D
 @export var player_controller: Node
@@ -39,6 +51,8 @@ func set_controlled_tank(next_tank: Node3D) -> bool:
 	aim_presentation.call("set_controlled_tank", controlled_tank)
 	aim_presentation.call("initialize_presentation")
 	set_process(true)
+	set_controls_enabled(controls_enabled)
+	controlled_tank_changed.emit(controlled_tank)
 	return true
 
 

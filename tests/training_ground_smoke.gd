@@ -5,6 +5,7 @@ const TRAINING_GROUND_SHADER := "res://src/world/training_ground/training_ground
 const TRAINING_GROUND_PLAYTEST_SCENE := "res://src/world/training_ground/training_ground_playtest.tscn"
 const TRAINING_TARGET_SCENE := "res://src/world/training_ground/training_target.tscn"
 const TANK1_SCENE := "res://src/actors/tank/variants/tank1/tank1.tscn"
+const TANK2_SCENE := "res://src/actors/tank/variants/tank2/tank2.tscn"
 const TRAINING_TARGET_VARIANTS := {
 	"Tank1TrainingTarget": {
 		"scene": "res://src/world/training_ground/training_target_tank1.tscn",
@@ -142,9 +143,68 @@ func _validate_playtest_composition() -> bool:
 	var playtest := playtest_scene.instantiate() as Node3D if playtest_scene != null else null
 	if playtest == null:
 		return _fail("Training ground playtest scene must load.")
+	if not _validate_tank_vision_settings_are_instance_owned():
+		playtest.free()
+		return false
+	## 加入 SceneTree 前便須具備正確地圖，避免只有執行後才換圖而污染編輯預覽。
+	var preview_world := playtest.get_node_or_null("Main/World")
+	var preview_main := playtest.get_node_or_null("Main") as Node3D
+	var preview_encounter := playtest.get_node_or_null("Encounter") as Node3D
+	if preview_world == null or preview_world.scene_file_path != TRAINING_GROUND_SCENE \
+			or preview_world.get_node_or_null("Roads") != null \
+			or preview_main == null or preview_encounter == null \
+			or preview_encounter.get("gameplay_runtime") != preview_main:
+		playtest.free()
+		return _fail("Editor composition must inject Main into Encounter and contain the training World without the city before ready.")
 	root.add_child(playtest)
 	await process_frame
 	var gameplay_runtime := playtest.get_node_or_null("Main") as Node3D
+	var encounter := playtest.get_node_or_null("Encounter") as Node3D
+	var preview := playtest.get_node_or_null("Encounter/VisionPreview") as MeshInstance3D
+	var enemy_vision := playtest.get_node_or_null("Encounter/Vision")
+	var vision_observer := playtest.get_node_or_null("Encounter/Enemy") as Node3D
+	var preview_material := preview.material_override as ShaderMaterial if preview != null else null
+	if preview_material == null or enemy_vision == null or vision_observer == null or not preview.visible:
+		return _fail("Training scene must enable its theoretical vision preview.")
+	if not enemy_vision.has_method(&"get_horizontal_forward"):
+		return _fail("TankVision must expose get_horizontal_forward() for shared preview geometry.")
+	if _has_exported_property(enemy_vision, &"near_radius") \
+			or _has_exported_property(enemy_vision, &"far_radius") \
+			or _has_exported_property(enemy_vision, &"far_field_of_view_degrees"):
+		return _fail("Vision ranges must be configured on the observer tank, not exported by Vision.")
+	## 改觀察車的三項設定後，Preview 與 Vision getter 都必須同步讀到同一組值。
+	vision_observer.set("vision_near_radius", 37.0)
+	vision_observer.set("vision_far_radius", 123.0)
+	vision_observer.set("vision_field_of_view_degrees", 64.0)
+	preview.call("_process", 0.0)
+	if not is_equal_approx(float(preview_material.get_shader_parameter("near_radius")), float(vision_observer.get("vision_near_radius"))) \
+			or not is_equal_approx(float(preview_material.get_shader_parameter("far_radius")), float(vision_observer.get("vision_far_radius"))) \
+			or not is_equal_approx(float(preview_material.get_shader_parameter("half_angle_cos")), cos(deg_to_rad(float(vision_observer.get("vision_field_of_view_degrees")) * 0.5))) \
+			or not is_equal_approx(float(enemy_vision.get("near_radius")), float(vision_observer.get("vision_near_radius"))) \
+			or not is_equal_approx(float(enemy_vision.get("far_radius")), float(vision_observer.get("vision_far_radius"))) \
+			or not is_equal_approx(float(enemy_vision.get("far_field_of_view_degrees")), float(vision_observer.get("vision_field_of_view_degrees"))) \
+			or not is_equal_approx((preview_material.get_shader_parameter("tint") as Color).a, 0.15):
+		return _fail("Vision preview and Vision geometry must use the observer tank settings and 15 percent opacity.")
+	var preview_turret := playtest.get_node("Encounter/Enemy/VisualRecoilPivot/TurretPivot") as Node3D
+	var previous_rotation := preview_turret.rotation
+	preview_turret.rotate_y(0.5)
+	preview.call("_process", 0.0)
+	var expected_forward := Vector3(-preview_turret.global_basis.x.x, 0.0, -preview_turret.global_basis.x.z).normalized()
+	var horizontal_forward := enemy_vision.call("get_horizontal_forward") as Vector3
+	if not horizontal_forward.is_equal_approx(expected_forward) \
+			or not (preview_material.get_shader_parameter("forward_direction") as Vector2).is_equal_approx(Vector2(horizontal_forward.x, horizontal_forward.z)):
+		return _fail("Vision and its preview must share the turret's normalized XZ forward direction.")
+	preview_turret.rotation = previous_rotation
+	preview.set("display_enabled", false)
+	preview.call("_process", 0.0)
+	if preview.visible:
+		return _fail("Vision preview display switch must hide the overlay.")
+	preview.set("display_enabled", true)
+	preview.call("_process", 0.0)
+	var combat_ai := encounter.get_node_or_null("CombatAI") as Node if encounter != null else null
+	## 舊靶場回歸只驗既有靶與換車；關閉敵方避免測試期間改變玩家血量。
+	if combat_ai != null:
+		combat_ai.call("set_combat_enabled", false)
 	var world := gameplay_runtime.get_node_or_null("World") as Node3D if gameplay_runtime != null else null
 	var expected_runtime_nodes := [&"CameraRig", &"Tank", &"PlayerRuntime", &"CombatRuntime", &"SurfaceEffects", &"World"]
 	var has_existing_runtime := gameplay_runtime != null and gameplay_runtime.get_child_count() == expected_runtime_nodes.size()
@@ -156,7 +216,8 @@ func _validate_playtest_composition() -> bool:
 	var targets := world.get_node_or_null("Targets") as Node3D if world != null else null
 	var original_player_tank := gameplay_runtime.get_node_or_null("Tank") as Node3D if gameplay_runtime != null else null
 	var original_player_transform := original_player_tank.global_transform if original_player_tank != null else Transform3D.IDENTITY
-	var valid := has_existing_runtime and world != null \
+	var valid: bool = has_existing_runtime and encounter != null and encounter.get("gameplay_runtime") == gameplay_runtime \
+		and combat_ai != null and world != null \
 		and world.scene_file_path == TRAINING_GROUND_SCENE \
 		and world.get_node_or_null("Ground") != null \
 		and world.get_node_or_null("Roads") == null \
@@ -209,6 +270,7 @@ func _validate_playtest_composition() -> bool:
 			var replacement_contacts := replacement_tank.get_node_or_null("TrackContactEffects") as Node \
 					if replacement_tank != null else null
 			var surface_effects := gameplay_runtime.get_node_or_null("SurfaceEffects") as Node
+			var enemy := encounter.get_node_or_null("Enemy") as Node3D
 			valid = replacement_tank != null and replacement_tank != original_player_tank \
 					and replacement_tank.scene_file_path == TANK1_SCENE \
 					and replacement_tank.global_transform.is_equal_approx(original_player_transform) \
@@ -217,12 +279,59 @@ func _validate_playtest_composition() -> bool:
 					and player_controller.get("controlled_tank") == replacement_tank \
 					and aim_controller.get("controlled_tank") == replacement_tank \
 					and aim_presentation.get("controlled_tank") == replacement_tank \
-					and combat_runtime.shot_sources == [replacement_tank] \
+					and enemy != null and _has_exact_registered_sources(combat_runtime, [replacement_tank, enemy]) \
 					and replacement_contacts != null and surface_effects != null \
 					and replacement_contacts.is_connected("track_contact", surface_effects.consume_track_contact)
 	playtest.queue_free()
 	if not valid:
 		return _fail("Training ground playtest must reuse main gameplay and replace only World.")
+	return true
+
+
+func _validate_tank_vision_settings_are_instance_owned() -> bool:
+	## 不同車型的實例可各自調校，修改其中一台不能回寫另一台的視野資料。
+	var tank1_scene := load(TANK1_SCENE) as PackedScene
+	var tank2_scene := load(TANK2_SCENE) as PackedScene
+	var tank1 := tank1_scene.instantiate() as Node3D if tank1_scene != null else null
+	var tank2 := tank2_scene.instantiate() as Node3D if tank2_scene != null else null
+	if tank1 == null or tank2 == null:
+		if tank1 != null:
+			tank1.free()
+		if tank2 != null:
+			tank2.free()
+		return _fail("Tank1 and Tank2 must instantiate for independent vision configuration.")
+	tank1.set("vision_near_radius", 12.0)
+	tank1.set("vision_far_radius", 90.0)
+	tank1.set("vision_field_of_view_degrees", 70.0)
+	tank2.set("vision_near_radius", 24.0)
+	tank2.set("vision_far_radius", 180.0)
+	tank2.set("vision_field_of_view_degrees", 40.0)
+	tank1.set("vision_far_radius", 110.0)
+	var valid := is_equal_approx(float(tank1.get("vision_near_radius")), 12.0) \
+			and is_equal_approx(float(tank1.get("vision_far_radius")), 110.0) \
+			and is_equal_approx(float(tank1.get("vision_field_of_view_degrees")), 70.0) \
+			and is_equal_approx(float(tank2.get("vision_near_radius")), 24.0) \
+			and is_equal_approx(float(tank2.get("vision_far_radius")), 180.0) \
+			and is_equal_approx(float(tank2.get("vision_field_of_view_degrees")), 40.0)
+	tank1.free()
+	tank2.free()
+	return valid or _fail("Tank vision settings must remain independent across different tank instances.")
+
+
+func _has_exported_property(object: Object, property_name: StringName) -> bool:
+	for property: Dictionary in object.get_property_list():
+		if property.name == property_name and (int(property.usage) & PROPERTY_USAGE_EDITOR) != 0:
+			return true
+	return false
+
+
+func _has_exact_registered_sources(combat_runtime: CombatRuntime, expected_sources: Array[Node]) -> bool:
+	var registered_sources: Array[Node] = combat_runtime.get_registered_shot_sources()
+	if registered_sources.size() != expected_sources.size():
+		return false
+	for source in expected_sources:
+		if registered_sources.count(source) != 1:
+			return false
 	return true
 
 

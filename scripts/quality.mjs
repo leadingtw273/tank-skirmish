@@ -173,6 +173,15 @@ run("training-ground-smoke", godot, [
   "--script",
   "res://tests/training_ground_smoke.gd",
 ], { scanGodotErrors: true });
+run("enemy-combat-smoke", godot, [
+  "--headless",
+  "--audio-driver",
+  "Dummy",
+  "--path",
+  ".",
+  "--script",
+  "res://tests/enemy_combat_smoke.gd",
+], { scanGodotErrors: true });
 run("damage-health-smoke", godot, [
   "--headless",
   "--audio-driver",

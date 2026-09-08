@@ -15,7 +15,7 @@ const DamageReceiver := preload("res://src/combat/damage/damage_receiver.gd")
 signal impact_resolved(impact_event: ImpactEvent)
 
 @export_category("場景連接")
-## 會發出公開 shot_event_fired signal、供此戰鬥執行期消費的節點。
+## 場景啟動時會發出公開 shot_event_fired signal、供此戰鬥執行期註冊的初始來源。
 @export var shot_sources: Array[Node]
 ## 接收執行期 TankProjectile 節點的父節點。
 @export var projectiles: Node3D
@@ -48,6 +48,11 @@ func _ready() -> void:
 		return
 	for shot_source in shot_sources:
 		register_shot_source(shot_source)
+
+
+## 回傳目前註冊來源的快照；修改回傳陣列不會影響執行期 registry。
+func get_registered_shot_sources() -> Array[Node]:
+	return _registered_shot_sources.duplicate()
 
 
 func _exit_tree() -> void:

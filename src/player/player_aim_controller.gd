@@ -7,6 +7,14 @@ extends Node
 
 var controlled_tank: Node3D
 var camera: Camera3D
+var controls_enabled := true
+
+
+## 暫停滑鼠追蹤，不把恢復計時或訓練場規則放在輸入控制器。
+func set_controls_enabled(enabled: bool) -> void:
+	controls_enabled = enabled
+	if not enabled and is_instance_valid(controlled_tank):
+		controlled_tank.call("cancel_aim")
 
 
 func set_controlled_tank(tank: Node3D) -> void:
@@ -18,6 +26,8 @@ func set_camera(next_camera: Camera3D) -> void:
 
 
 func _process(delta: float) -> void:
+	if not controls_enabled:
+		return
 	if controlled_tank == null or not is_instance_valid(controlled_tank) or camera == null or not is_instance_valid(camera):
 		push_error("PlayerAimController requires an active controlled_tank and Camera3D.")
 		set_process(false)
@@ -26,6 +36,8 @@ func _process(delta: float) -> void:
 
 
 func apply_aim(target_position: Vector3, delta: float) -> void:
+	if not controls_enabled:
+		return
 	if controlled_tank == null or not is_instance_valid(controlled_tank):
 		push_error("PlayerAimController requires an active controlled_tank.")
 		set_process(false)

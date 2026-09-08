@@ -1,9 +1,180 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene format=3 uid="uid://b0pswq8l7mnvy"]
 
-[ext_resource type="Script" path="res://src/world/training_ground/training_ground_playtest.gd" id="1_playtest"]
-[ext_resource type="PackedScene" path="res://src/main.tscn" id="2_main"]
+[ext_resource type="Script" uid="uid://cbi8y0scxn6uv" path="res://src/world/training_ground/training_ground_playtest.gd" id="1_playtest"]
+[ext_resource type="PackedScene" path="res://src/gameplay_runtime.tscn" id="2_main"]
+[ext_resource type="PackedScene" path="res://src/world/training_ground/enemy_type_switch.tscn" id="12_enemy_switch"]
+[ext_resource type="Script" uid="uid://k25og2g2lj3e" path="res://src/world/training_ground/training_combat_encounter.gd" id="3_encounter"]
+[ext_resource type="PackedScene" path="res://src/actors/tank/variants/tank2/tank2.tscn" id="4_enemy"]
+[ext_resource type="Script" uid="uid://dqltshvrb2i4m" path="res://src/actors/tank/perception/tank_vision.gd" id="5_vision"]
+[ext_resource type="Script" uid="uid://c8p2hn1v607kf" path="res://src/ai/tank_combat_ai.gd" id="6_ai"]
+[ext_resource type="PackedScene" uid="uid://dhflopmr0be63" path="res://assets/models/buildings/1story.glb" id="7_one_story"]
+[ext_resource type="PackedScene" uid="uid://cuviukl1k5swe" path="res://assets/models/buildings/1story-gable-roof.glb" id="8_gable_roof"]
+[ext_resource type="PackedScene" uid="uid://cqifvecoexupw" path="res://assets/models/buildings/2story-wide.glb" id="9_two_story_wide"]
+[ext_resource type="PackedScene" path="res://src/world/training_ground/training_ground.tscn" id="10_training_world"]
+[ext_resource type="Shader" uid="uid://kh2pg1g1anxs" path="res://src/world/training_ground/vision_range_preview.gdshader" id="11_n3x13"]
+[ext_resource type="Script" uid="uid://jqq7gyr63ndy" path="res://src/world/training_ground/vision_range_preview.gd" id="11_vision_preview"]
 
-[node name="TrainingGroundPlaytest" type="Node3D"]
+[sub_resource type="BoxShape3D" id="OneStoryCollisionShape"]
+size = Vector3(7.75498, 6.02008, 7.82869)
+
+[sub_resource type="BoxShape3D" id="GableRoofCollisionShape"]
+size = Vector3(7.5789, 7.28842, 8.56847)
+
+[sub_resource type="BoxShape3D" id="TwoStoryWideCollisionShape"]
+size = Vector3(13.77076, 9.8926, 8.11907)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_n3x13"]
+render_priority = 0
+shader = ExtResource("11_n3x13")
+shader_parameter/tint = Color(1, 0.2, 0.2, 0.15)
+shader_parameter/radius = 150.0
+shader_parameter/near_radius = 50.0
+shader_parameter/far_radius = 150.0
+shader_parameter/forward_direction = Vector2(4.371139e-08, -1)
+shader_parameter/half_angle_cos = 0.9659258262890683
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_pssk3"]
+
+[node name="TrainingGroundPlaytest" type="Node3D" unique_id=208711764]
 script = ExtResource("1_playtest")
 
-[node name="Main" parent="." instance=ExtResource("2_main")]
+[node name="Main" parent="." unique_id=1929778273 instance=ExtResource("2_main")]
+
+[node name="World" parent="Main" unique_id=1419963957 instance=ExtResource("10_training_world")]
+
+[node name="SightBlockers" type="Node3D" parent="." unique_id=1209504869]
+
+[node name="BuildingRowA" type="Node3D" parent="SightBlockers" unique_id=867756296]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 57.7511, -7.6293945e-06, -13.666855)
+
+[node name="CentralOneStory" type="StaticBody3D" parent="SightBlockers/BuildingRowA" unique_id=1222072022]
+transform = Transform3D(0.9999905, 0, 0.0043514445, 0, 1, 0, -0.0043514445, 0, 0.9999905, 1.668953, 7.6293945e-06, -6.445112)
+collision_mask = 0
+
+[node name="Model" parent="SightBlockers/BuildingRowA/CentralOneStory" unique_id=1661666754 instance=ExtResource("7_one_story")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SightBlockers/BuildingRowA/CentralOneStory" unique_id=568349177]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.01004, 0)
+shape = SubResource("OneStoryCollisionShape")
+
+[node name="NorthGable" type="StaticBody3D" parent="SightBlockers/BuildingRowA" unique_id=1755871463]
+transform = Transform3D(0.9999905, 0, 0.0043514445, 0, 1, 0, -0.0043514445, 0, 0.9999905, 9.826126, 0, -6.7027454)
+collision_mask = 0
+
+[node name="Model" parent="SightBlockers/BuildingRowA/NorthGable" unique_id=931990736 instance=ExtResource("8_gable_roof")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SightBlockers/BuildingRowA/NorthGable" unique_id=510022237]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.64421, 0)
+shape = SubResource("GableRoofCollisionShape")
+
+[node name="SouthTwoStory" type="StaticBody3D" parent="SightBlockers/BuildingRowA" unique_id=813370176]
+transform = Transform3D(0.9999905, 0, 0.0043514445, 0, 1, 0, -0.0043514445, 0, 0.9999905, -9.560379, -6.67572e-06, -6.7607174)
+collision_mask = 0
+
+[node name="Model" parent="SightBlockers/BuildingRowA/SouthTwoStory" unique_id=1508540072 instance=ExtResource("9_two_story_wide")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SightBlockers/BuildingRowA/SouthTwoStory" unique_id=1378799021]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.9463, 0)
+shape = SubResource("TwoStoryWideCollisionShape")
+
+[node name="BuildingRowB" type="Node3D" parent="SightBlockers" unique_id=821651781]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 87.83442, -7.6293945e-06, -48.557083)
+
+[node name="CentralOneStory" type="StaticBody3D" parent="SightBlockers/BuildingRowB" unique_id=1354150827]
+transform = Transform3D(0.9999905, 0, 0.0043514445, 0, 1, 0, -0.0043514445, 0, 0.9999905, 1.668953, 7.6293945e-06, -6.445112)
+collision_mask = 0
+
+[node name="Model" parent="SightBlockers/BuildingRowB/CentralOneStory" unique_id=2087862473 instance=ExtResource("7_one_story")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SightBlockers/BuildingRowB/CentralOneStory" unique_id=1670935034]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.01004, 0)
+shape = SubResource("OneStoryCollisionShape")
+
+[node name="NorthGable" type="StaticBody3D" parent="SightBlockers/BuildingRowB" unique_id=770529621]
+transform = Transform3D(0.9999905, 0, 0.0043514445, 0, 1, 0, -0.0043514445, 0, 0.9999905, 9.826126, 0, -6.7027454)
+collision_mask = 0
+
+[node name="Model" parent="SightBlockers/BuildingRowB/NorthGable" unique_id=374317479 instance=ExtResource("8_gable_roof")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SightBlockers/BuildingRowB/NorthGable" unique_id=304978077]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.64421, 0)
+shape = SubResource("GableRoofCollisionShape")
+
+[node name="SouthTwoStory" type="StaticBody3D" parent="SightBlockers/BuildingRowB" unique_id=1719794433]
+transform = Transform3D(0.9999905, 0, 0.0043514445, 0, 1, 0, -0.0043514445, 0, 0.9999905, -9.560379, -6.67572e-06, -6.7607174)
+collision_mask = 0
+
+[node name="Model" parent="SightBlockers/BuildingRowB/SouthTwoStory" unique_id=1528908415 instance=ExtResource("9_two_story_wide")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SightBlockers/BuildingRowB/SouthTwoStory" unique_id=1243230802]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.9463, 0)
+shape = SubResource("TwoStoryWideCollisionShape")
+
+[node name="BuildingRowC" type="Node3D" parent="SightBlockers" unique_id=736483046]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 30.213696, -1.5258789e-05, -30.354063)
+
+[node name="CentralOneStory" type="StaticBody3D" parent="SightBlockers/BuildingRowC" unique_id=370564157]
+transform = Transform3D(0.9999905, 0, 0.0043514445, 0, 1, 0, -0.0043514445, 0, 0.9999905, 1.668953, 7.6293945e-06, -6.445112)
+collision_mask = 0
+
+[node name="Model" parent="SightBlockers/BuildingRowC/CentralOneStory" unique_id=1629586186 instance=ExtResource("7_one_story")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SightBlockers/BuildingRowC/CentralOneStory" unique_id=2065715959]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.01004, 0)
+shape = SubResource("OneStoryCollisionShape")
+
+[node name="NorthGable" type="StaticBody3D" parent="SightBlockers/BuildingRowC" unique_id=2061822288]
+transform = Transform3D(0.9999905, 0, 0.0043514445, 0, 1, 0, -0.0043514445, 0, 0.9999905, 9.826126, 0, -6.7027454)
+collision_mask = 0
+
+[node name="Model" parent="SightBlockers/BuildingRowC/NorthGable" unique_id=1301396917 instance=ExtResource("8_gable_roof")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SightBlockers/BuildingRowC/NorthGable" unique_id=1765413056]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.64421, 0)
+shape = SubResource("GableRoofCollisionShape")
+
+[node name="SouthTwoStory" type="StaticBody3D" parent="SightBlockers/BuildingRowC" unique_id=1408064987]
+transform = Transform3D(0.9999905, 0, 0.0043514445, 0, 1, 0, -0.0043514445, 0, 0.9999905, -9.560379, -6.67572e-06, -6.7607174)
+collision_mask = 0
+
+[node name="Model" parent="SightBlockers/BuildingRowC/SouthTwoStory" unique_id=1141688830 instance=ExtResource("9_two_story_wide")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SightBlockers/BuildingRowC/SouthTwoStory" unique_id=1737064384]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.9463, 0)
+shape = SubResource("TwoStoryWideCollisionShape")
+
+[node name="TrainingControls" type="Node3D" parent="."]
+
+[node name="PlayerSpawnPoint" type="Marker3D" parent="."]
+transform = Transform3D(0.9393727, 0, -0.3428978, 0, 1, 0, 0.3428978, 0, 0.9393727, 0, 0, 8)
+
+[node name="EnemyTypeSwitch" parent="TrainingControls" instance=ExtResource("12_enemy_switch")]
+position = Vector3(67.548942, 5, -13.869662)
+
+[node name="Encounter" type="Node3D" parent="." unique_id=1718929865 node_paths=PackedStringArray("player_runtime", "gameplay_runtime", "combat_runtime", "enemy_switch_target", "player_spawn_point")]
+script = ExtResource("3_encounter")
+player_runtime = NodePath("../Main/PlayerRuntime")
+gameplay_runtime = NodePath("../Main")
+combat_runtime = NodePath("../Main/CombatRuntime")
+enemy_switch_target = NodePath("../TrainingControls/EnemyTypeSwitch")
+player_spawn_point = NodePath("../PlayerSpawnPoint")
+
+[node name="Enemy" parent="Encounter" unique_id=375400699 instance=ExtResource("4_enemy")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 57.65064, 0, -42.685047)
+
+[node name="Vision" type="Node" parent="Encounter" unique_id=890877284 node_paths=PackedStringArray("observer")]
+script = ExtResource("5_vision")
+observer = NodePath("../Enemy")
+
+[node name="CombatAI" type="Node" parent="Encounter" unique_id=908344268 node_paths=PackedStringArray("controlled_tank", "vision")]
+script = ExtResource("6_ai")
+controlled_tank = NodePath("../Enemy")
+vision = NodePath("../Vision")
+
+[node name="VisionPreview" type="MeshInstance3D" parent="Encounter" unique_id=491323484 node_paths=PackedStringArray("vision")]
+transform = Transform3D(150, 0, 0, 0, 1, 0, 0, 0, 150, 57.65064, 0.04, -42.685047)
+material_override = SubResource("ShaderMaterial_n3x13")
+cast_shadow = 0
+mesh = SubResource("PlaneMesh_pssk3")
+script = ExtResource("11_vision_preview")
+vision = NodePath("../Vision")

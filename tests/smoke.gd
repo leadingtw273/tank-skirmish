@@ -174,6 +174,10 @@ func _validate_instance(instance: Node) -> void:
 		quit(1)
 		return
 
+	# 此測試等待多個物理影格，放在同步攝影機斷言之後，避免改變其初始狀態。
+	if not await preload("res://tests/aim_target_mode_smoke.gd").run(instance.get_node("PlayerRuntime/AimPresentation"), instance):
+		quit(1)
+		return
 	print("Tank Skirmish smoke validation passed.")
 	quit(0)
 
@@ -609,7 +613,7 @@ func _validate_turret_aiming(instance: Node) -> bool:
 		push_error("Red mouse line must clear the tank and another 3m before becoming visible")
 		return false
 
-	if not _validate_spread_cone_preview(tank, presentation):
+	if not _validate_spread_presentation(tank, presentation):
 		return false
 	aim_target.queue_free()
 	await physics_frame
@@ -617,54 +621,8 @@ func _validate_turret_aiming(instance: Node) -> bool:
 	return true
 
 
-func _validate_spread_cone_preview(tank: Node3D, presentation: Node) -> bool:
-	var cone := presentation.get("spread_cone_preview") as MeshInstance3D
-	if presentation.get("show_spread_cone") or (cone != null and cone.visible):
-		push_error("Spread cone must start disabled and hidden")
-		return false
-	presentation.set("show_spread_cone", true)
-	var mesh := cone.mesh as CylinderMesh if cone != null else null
-	var material := cone.material_override as ShaderMaterial if cone != null else null
-	if mesh == null or material == null or not is_zero_approx(mesh.bottom_radius) \
-			or not is_equal_approx(mesh.top_radius, 1.0) \
-			or material.shader == null \
-			or material.get_shader_parameter("cone_color").a <= 0.0 \
-			or material.get_shader_parameter("cone_color").a >= 1.0:
-		push_error("Temporary spread preview must be a translucent cone with its apex at local -Y")
-		return false
-	var saved_spread := float(tank.get("current_spread_degrees"))
-	var previous_radius := 0.0
-	var origin: Vector3 = tank.call("muzzle_global_position")
-	var direction: Vector3 = tank.call("muzzle_global_direction")
-	for half_angle: float in [1.0, 2.5]:
-		tank.set("current_spread_degrees", half_angle)
-		presentation.call("set_world_target", origin + direction * 100.0)
-		var basis := cone.global_transform.basis
-		var shader_inverse: Transform3D = material.get_shader_parameter("world_to_cone")
-		if not shader_inverse.is_equal_approx(cone.global_transform.affine_inverse()):
-			push_error("Ground contact preview must track the current cone transform")
-			return false
-		var radius := basis.x.length()
-		if not cone.visible or not (cone.global_transform * (Vector3.DOWN * 0.5)).is_equal_approx(origin) \
-				or basis.y.normalized().dot(direction) < 0.999 \
-				or not is_equal_approx(radius, basis.y.length() * tan(deg_to_rad(half_angle))) \
-				or radius <= previous_radius:
-			push_error("Spread cone must follow the actual muzzle and widen with the current half-angle")
-			return false
-		previous_radius = radius
-	tank.set("current_spread_degrees", 1.0)
-	presentation.call("set_world_target", origin + direction * 100.0)
-	if cone.global_transform.basis.x.length() >= previous_radius:
-		push_error("Spread cone must shrink as accuracy recovers")
-		return false
-	presentation.set("show_spread_cone", false)
-	presentation.call("set_world_target", origin + direction * 100.0)
-	if cone.visible:
-		push_error("Temporary spread cone toggle must hide the preview")
-		return false
-	tank.set("current_spread_degrees", saved_spread)
-	presentation.call("set_world_target", origin + direction * 100.0)
-	return true
+func _validate_spread_presentation(tank: Node3D, presentation: Node) -> bool:
+	return preload("res://tests/aim_spread_presentation_smoke.gd").run(tank, presentation)
 
 
 func _validate_camera_zoom(instance: Node) -> bool:

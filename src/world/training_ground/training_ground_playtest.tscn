@@ -13,6 +13,7 @@
 [ext_resource type="PackedScene" path="res://src/world/training_ground/training_ground.tscn" id="10_training_world"]
 [ext_resource type="Shader" uid="uid://kh2pg1g1anxs" path="res://src/world/training_ground/vision_range_preview.gdshader" id="11_n3x13"]
 [ext_resource type="Script" uid="uid://jqq7gyr63ndy" path="res://src/world/training_ground/vision_range_preview.gd" id="11_vision_preview"]
+[ext_resource type="PackedScene" path="res://src/world/regions/wreck_cleanup_zone.tscn" id="13_wreck_cleanup_zone"]
 
 [sub_resource type="BoxShape3D" id="OneStoryCollisionShape"]
 size = Vector3(7.75498, 6.02008, 7.82869)
@@ -34,6 +35,15 @@ shader_parameter/forward_direction = Vector2(4.371139e-08, -1)
 shader_parameter/half_angle_cos = 0.9659258262890683
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_pssk3"]
+
+[sub_resource type="StandardMaterial3D" id="SpawnFloorMaterial"]
+transparency = 1
+shading_mode = 0
+albedo_color = Color(0.2, 0.85, 0.3, 0.35)
+
+[sub_resource type="PlaneMesh" id="SpawnFloorMesh"]
+material = SubResource("SpawnFloorMaterial")
+size = Vector2(24, 24)
 
 [node name="TrainingGroundPlaytest" type="Node3D" unique_id=208711764]
 script = ExtResource("1_playtest")
@@ -147,6 +157,18 @@ shape = SubResource("TwoStoryWideCollisionShape")
 
 [node name="PlayerSpawnPoint" type="Marker3D" parent="."]
 transform = Transform3D(0.9393727, 0, -0.3428978, 0, 1, 0, 0.3428978, 0, 0.9393727, 0, 0, 8)
+
+[node name="SpawnFloorMarker" type="MeshInstance3D" parent="PlayerSpawnPoint"]
+position = Vector3(0, 0.025, 0)
+rotation = Vector3(0, 0.35, 0)
+cast_shadow = 0
+mesh = SubResource("SpawnFloorMesh")
+
+[node name="WreckCleanupZone" parent="PlayerSpawnPoint" instance=ExtResource("13_wreck_cleanup_zone")]
+rotation = Vector3(0, 0.35, 0)
+
+[node name="WreckCleanupRule" parent="PlayerSpawnPoint/WreckCleanupZone" index="1" node_paths=PackedStringArray("scene_root")]
+scene_root = NodePath("../../..")
 
 [node name="EnemyTypeSwitch" parent="TrainingControls" instance=ExtResource("12_enemy_switch")]
 position = Vector3(67.548942, 5, -13.869662)

@@ -195,15 +195,18 @@ func _validate_vision_geometry(playtest: Node3D, enemy: Node3D, player: Node3D, 
 	if bool(vision.call("can_see", player)):
 		_finish(playtest, "A distant target outside the turret sector must not be visible.")
 		return false
-	var blocker := _make_blocker(enemy.global_position + Vector3(5, 1.5, 0), Vector3(2, 4, 2))
-	playtest.add_child(blocker)
 	player.global_position = enemy.global_position + Vector3(10, 0, 0)
+	await physics_frame
+	var blocker := _make_blocker(Vector3.ZERO, Vector3.ONE)
+	playtest.add_child(blocker)
+	_configure_full_visibility_blocker(blocker, enemy, player)
 	await physics_frame
 	if bool(vision.call("can_see", player)):
 		_finish(playtest, "A near-radius target behind a physical blocker must not be visible.")
 		return false
-	blocker.position = enemy.global_position + Vector3(-25, 1.5, 0)
 	player.global_position = enemy.global_position + Vector3(-50, 0, 0)
+	await physics_frame
+	_configure_full_visibility_blocker(blocker, enemy, player)
 	await physics_frame
 	if bool(vision.call("can_see", player)):
 		_finish(playtest, "A distant sector target behind a physical blocker must not be visible.")
@@ -256,10 +259,30 @@ func _validate_near_hit_encounter_wiring(playtest: Node3D, main: Node3D, encount
 		return false
 	## 50m 側向命中仍在 Tank1 近圈內；物理遮擋保證玩家未被看見，命中位置本身也不在初始 FOV。
 	ai.call("set_combat_enabled", false)
+	## 這個幾何 fixture 要在固定姿態取樣；保留碰撞、生命與受傷處理。
+	## PlayerAimController 會每 frame 改玩家砲塔，砲塔／砲管 surface samples 會離開方才建立的小屏幕。
+	var player_aim := player_runtime.get_node_or_null("PlayerAimController") as Node
+	var player_was_physics_processing := player.is_physics_processing()
+	var player_aim_was_processing := player_aim.is_processing() if player_aim != null else false
+	player.set_physics_process(false)
+	if player_aim != null:
+		player_aim.set_process(false)
 	enemy.global_transform = Transform3D(Basis.IDENTITY, Vector3(0, 30, 0))
 	player.global_position = enemy.global_position + Vector3(0, 0, 50)
-	var blocker := _make_blocker(enemy.global_position + Vector3(0, 1.5, 25), Vector3(1, 5, 8))
-	playtest.add_child(blocker)
+	await physics_frame
+	await physics_frame
+	## 先鎖定原右側合法彈道，再遮住敵方眼睛到玩家的部位射線；遮擋不能順便擋掉來襲砲彈。
+	var hit_position := _find_side_hit_surface_point(player, enemy, vision.call("target_world_position", enemy) as Vector3)
+	if not hit_position.is_finite():
+		_finish(playtest, "Near-hit regression requires a finite right-side hit before installing the visibility screen.")
+		return false
+	var shot_origin := player.global_position + Vector3.UP * 1.5
+	var blockers := _make_near_hit_visibility_screen(enemy, player, shot_origin, hit_position)
+	if blockers.is_empty():
+		_finish(playtest, "Near-hit screen requires separated observation and incoming-shot rays.")
+		return false
+	for blocker in blockers:
+		playtest.add_child(blocker)
 	await physics_frame
 	await physics_frame
 	if bool(vision.call("can_see", player)):
@@ -268,14 +291,18 @@ func _validate_near_hit_encounter_wiring(playtest: Node3D, main: Node3D, encount
 	var health_before := health.current_health
 	var initial_hull_yaw := enemy.global_rotation.y
 	ai.call("set_combat_enabled", true)
-	var hit_position := vision.call("target_world_position", enemy) as Vector3 + Vector3(3, 0, 0)
+	var shot_query := PhysicsRayQueryParameters3D.create(shot_origin, hit_position, 129, [player.get_rid()])
+	if enemy.get_world_3d().direct_space_state.intersect_ray(shot_query).get("collider") != enemy:
+		_finish(playtest, "Near-hit screen must preserve the real incoming projectile ray to the enemy side.")
+		return false
 	if not await _fire_projectile_at_node(combat, player, enemy, hit_position) \
 			or not await _wait_for_health_loss(health, health_before, 120) \
 			or (ai.get("_inspection_direction") as Vector3).is_zero_approx() \
 			or not await _wait_for_hull_rotation(enemy, initial_hull_yaw, 180):
 		_finish(playtest, "A hidden side hit inside Tank1's authored 80m near radius must damage it and start hull inspection.")
 		return false
-	blocker.queue_free()
+	for blocker in blockers:
+		blocker.queue_free()
 	await physics_frame
 	await physics_frame
 	## 已可見時仍必須走正常交戰而非保留查看方向；既有 LOS priority fixture 繼續驗證實際開火。
@@ -286,6 +313,9 @@ func _validate_near_hit_encounter_wiring(playtest: Node3D, main: Node3D, encount
 	if not await _fire_projectile_at(combat, player, switch_target) or not await _wait_for_enemy_scene(encounter, TANK2_SCENE):
 		_finish(playtest, "Near-hit regression must restore Tank2 for the remaining smoke cases.")
 		return false
+	player.set_physics_process(player_was_physics_processing)
+	if player_aim != null:
+		player_aim.set_process(player_aim_was_processing)
 	return true
 
 func _fire_projectile_at_node(combat: CombatRuntime, shooter: Node3D, target: Node3D, target_position: Vector3) -> bool:
@@ -303,6 +333,54 @@ func _fire_projectile_at_node(combat: CombatRuntime, shooter: Node3D, target: No
 	if combat.impact_resolved.is_connected(impact_callback):
 		combat.impact_resolved.disconnect(impact_callback)
 	return false
+
+
+## 本 fixture 的眼睛→玩家射線與玩家→受擊部位彈道不同；以兩條線的實際距離構造遮光尺寸。
+## 屏幕位於 50m 側向玩家前方 10% 距離，不進入玩家幾何；不移動任何正式場景障礙。
+func _make_near_hit_visibility_screen(observer: CharacterBody3D, subject: CharacterBody3D, shot_origin: Vector3, shot_target: Vector3) -> Array[StaticBody3D]:
+	var origin := (observer.get_node("VisualRecoilPivot/TurretPivot") as Node3D).global_position
+	var points: PackedVector3Array = subject.call("part_world_surface_points") as PackedVector3Array
+	points.append(subject.call("stable_world_center") as Vector3)
+	var placements: Array[Vector4] = []
+	var blockers: Array[StaticBody3D] = []
+	for point_index in points.size():
+		var point := points[point_index]
+		var position := origin.lerp(point, 0.9)
+		var closest := Geometry3D.get_closest_point_to_segment(position, shot_origin, shot_target)
+		var clearance := position.distance_to(closest)
+		if clearance <= 0.002:
+			return blockers
+		## 盒的半對角線 < clearance，保證新 blocker 與已選來襲彈道不相交。
+		var half_size := minf(0.05, clearance * 0.25)
+		placements.append(Vector4(position.x, position.y, position.z, half_size * 2.0))
+	for placement in placements:
+		blockers.append(_make_blocker(Vector3(placement.x, placement.y, placement.z), Vector3.ONE * placement.w))
+	return blockers
+func _find_side_hit_surface_point(shooter: Node3D, target: CharacterBody3D, stable_center: Vector3) -> Vector3:
+	## 舊 Box 的 center + X 3 可能落在真實凸形外；只從離線烘焙且固定排序的表面 sample 選擇。
+	if shooter == null or target == null or target.get_world_3d() == null or not target.has_method(&"part_world_surface_points"):
+		return Vector3.INF
+	var origin := shooter.global_position + Vector3.UP * 1.5
+	var preferred_side := stable_center + Vector3.RIGHT * 3.0
+	var selected := Vector3.INF
+	var selected_score := INF
+	var samples: PackedVector3Array = target.call("part_world_surface_points") as PackedVector3Array
+	for sample in samples:
+		var local_offset := sample - stable_center
+		## 保留原 fixture 的右側命中意圖，避免退化為正面或後方中心射擊。
+		if local_offset.x <= 0.1 or absf(local_offset.x) < absf(local_offset.z):
+			continue
+		var query := PhysicsRayQueryParameters3D.create(origin, sample, 129, [shooter.get_rid()])
+		query.collide_with_bodies = true
+		query.collide_with_areas = false
+		var hit := target.get_world_3d().direct_space_state.intersect_ray(query)
+		if hit.get("collider") != target:
+			continue
+		var score := sample.distance_squared_to(preferred_side)
+		if score < selected_score:
+			selected = sample
+			selected_score = score
+	return selected
 
 
 func _validate_hit_inspection_behavior(playtest: Node3D) -> bool:
@@ -512,8 +590,9 @@ func _validate_fixed_turret_ai_hull_aim(playtest: Node3D, scene_path: String, la
 			return false
 		if cancellation_case == &"lost_sight":
 			var view_origin := (observer.get_node("VisualRecoilPivot/TurretPivot") as Node3D).global_position
-			var blocker := _make_blocker(view_origin.lerp(vision.call("target_world_position", target) as Vector3, 0.5), Vector3(1, 4, 1))
+			var blocker := _make_blocker(Vector3.ZERO, Vector3.ONE)
 			fixture["root"].add_child(blocker)
+			_configure_full_visibility_blocker(blocker, observer, target)
 			await physics_frame
 			await physics_frame
 			if bool(vision.call("can_see", target)):
@@ -719,8 +798,9 @@ func _validate_combat_and_recovery(playtest: Node3D, main: Node3D, encounter: No
 	enemy.set("turret_turn_speed", original_turn_speed)
 	enemy.set("gun_pitch_speed", original_pitch_speed)
 	await physics_frame
-	var sight_blocker := _make_blocker(enemy.global_position.lerp(player.global_position, 0.5) + Vector3.UP * 1.5, Vector3(4, 5, 4))
+	var sight_blocker := _make_blocker(Vector3.ZERO, Vector3.ONE)
 	playtest.add_child(sight_blocker)
+	_configure_full_visibility_blocker(sight_blocker, enemy, player, Vector3(0, 0, 1))
 	await physics_frame
 	shots_before_block = shots.size()
 	var lost_yaw := turret.global_rotation.y
@@ -741,7 +821,18 @@ func _validate_combat_and_recovery(playtest: Node3D, main: Node3D, encounter: No
 	## R1-R5：死亡車留下，新實例於可編輯出生標記重生；鏡頭、無敵和操作都恢復。
 	## 移出視野，避免重生時被下一發擊中而誤判；瞬移後至少讓物理世界同步一次。
 	player.global_position = enemy.global_position + Vector3(150, 0, 0)
-	await physics_frame
+	var cleanup_zone := playtest.get_node_or_null("PlayerSpawnPoint/WreckCleanupZone") as Node3D
+	var cleanup_area := cleanup_zone.get_node_or_null("RegionVolume") as Area3D if cleanup_zone != null else null
+	var left_cleanup_area := false
+	for _physics_step in 4:
+		await physics_frame
+		await process_frame
+		if cleanup_area != null and not cleanup_area.get_overlapping_bodies().has(player):
+			left_cleanup_area = true
+			break
+	if cleanup_area == null or not left_cleanup_area:
+		_finish(playtest, "Player respawn fixture must synchronize its moved live tank outside WreckCleanupZone within four physics updates.")
+		return false
 	var spawn_point := playtest.get_node_or_null("PlayerSpawnPoint") as Node3D
 	var camera_rig := player_runtime.get("camera_controller") as Node3D
 	var camera := camera_rig.get("camera") as Camera3D if camera_rig != null else null
@@ -875,7 +966,7 @@ func _validate_combat_and_recovery(playtest: Node3D, main: Node3D, encounter: No
 	var active_player := main.get_node_or_null("Tank") as Node3D
 	if not await _validate_enemy_type_switch(playtest, main, encounter, enemy, active_player, vision, ai, player_runtime, combat, initial_enemy_transform):
 		return false
-	if not await _validate_respawn_wreck_clearance(playtest, main, encounter, player_runtime):
+	if not await _validate_respawn_wreck_clearance(playtest, main, encounter, player_runtime, combat):
 		return false
 	return true
 
@@ -900,6 +991,20 @@ func _validate_enemy_type_switch(playtest: Node3D, main: Node3D, encounter: Node
 		return false
 	var recovering_player := player_runtime.get("controlled_tank") as Node3D
 	var player_health := recovering_player.get_node_or_null("HealthComponent") as HealthComponent if recovering_player != null else null
+	var switch_cleanup_zone := playtest.get_node_or_null("PlayerSpawnPoint/WreckCleanupZone") as Node3D
+	var switch_cleanup_area := switch_cleanup_zone.get_node_or_null("RegionVolume") as Area3D if switch_cleanup_zone != null else null
+	if recovering_player != null:
+		recovering_player.global_position += Vector3(150, 0, 0)
+	var switch_player_left_cleanup_area := false
+	for _physics_step in 4:
+		await physics_frame
+		await process_frame
+		if switch_cleanup_area != null and recovering_player != null and not switch_cleanup_area.get_overlapping_bodies().has(recovering_player):
+			switch_player_left_cleanup_area = true
+			break
+	if switch_cleanup_area == null or not switch_player_left_cleanup_area:
+		_finish(playtest, "Enemy-switch recovery fixture must synchronize its live player outside WreckCleanupZone within four physics updates.")
+		return false
 	if recovering_player == null or player_health == null or not player_health.apply_damage(player_health.current_health):
 		_finish(playtest, "Enemy switch recovery fixture requires a live player health component.")
 		return false
@@ -975,44 +1080,78 @@ func _has_exact_registered_sources(combat: CombatRuntime, expected_sources: Arra
 	return true
 
 
-func _validate_respawn_wreck_clearance(playtest: Node3D, main: Node3D, encounter: Node3D, player_runtime: Node) -> bool:
-	## R8：只有實際佔住出生體積的玩家殘骸可清除；附近與遠處殘骸連碰撞都必須保留。
+func _validate_respawn_wreck_clearance(playtest: Node3D, main: Node3D, encounter: Node3D, player_runtime: Node, combat: CombatRuntime) -> bool:
+	## R8 改由固定區域：區內死亡車可早於三秒移除，重生流程不得依賴舊節點。
 	var spawn_point := playtest.get_node_or_null("PlayerSpawnPoint") as Node3D
+	var zone := playtest.get_node_or_null("PlayerSpawnPoint/WreckCleanupZone") as Node3D
+	var area := zone.get_node_or_null("RegionVolume") as Area3D if zone != null else null
 	var player := main.get_node_or_null("Tank") as Node3D
 	var player_health := player.get_node_or_null("HealthComponent") as HealthComponent if player != null else null
 	var player_controller := player_runtime.get_node_or_null("PlayerController") as Node
-	if spawn_point == null or player == null or player_health == null or player_controller == null:
-		_finish(playtest, "R8 requires the authored PlayerSpawnPoint and a currently controlled complete player tank.")
+	var ai := encounter.get_node_or_null("CombatAI") as Node
+	var camera_rig := player_runtime.get("camera_controller") as Node
+	var player_scene_path := player.scene_file_path if player != null else ""
+	if spawn_point == null or zone == null or area == null or player == null or player_health == null or player_controller == null \
+			or ai == null or camera_rig == null:
+		_finish(playtest, "R8 requires the authored PlayerSpawnPoint, WreckCleanupZone, and a currently controlled complete player tank.")
 		return false
-	var near_wreck := _make_player_wreck_fixture(main, load(TANK1_SCENE), spawn_point.global_position + Vector3(10, 0, 0))
-	var far_wreck := _make_player_wreck_fixture(main, load(TANK1_SCENE), spawn_point.global_position + Vector3(35, 0, 0))
-	if near_wreck == null or far_wreck == null:
-		_finish(playtest, "R8 requires complete tank fixtures for non-overlapping player wrecks.")
+	var outside_wreck := _make_player_wreck_fixture(main, load(TANK1_SCENE), spawn_point.global_position + Vector3(35, 0, 0))
+	var outside_health := outside_wreck.get_node_or_null("HealthComponent") as HealthComponent if outside_wreck != null else null
+	if outside_wreck == null or outside_health == null or not outside_health.apply_damage(outside_health.current_health):
+		_finish(playtest, "R8 requires a real dead corpse outside the authored cleanup area.")
 		return false
 	await physics_frame
-	var near_collision := near_wreck.find_child("CollisionShape3D", true, false) as CollisionShape3D
-	var far_collision := far_wreck.find_child("CollisionShape3D", true, false) as CollisionShape3D
-	if near_collision == null or far_collision == null or near_collision.disabled or far_collision.disabled:
-		_finish(playtest, "R8 wreck fixtures must keep their original active collision shapes before respawn.")
-		return false
-	## 實際死亡車正好覆蓋出生標記，這一台是唯一允許被清除的玩家殘骸。
+	## 實際死亡車在區內；不假定 render frame 等於 physics frame，逐步等待安全 queue_free。
 	player.global_transform = spawn_point.global_transform
 	await physics_frame
 	if not player_health.apply_damage(player_health.current_health):
-		_finish(playtest, "R8 requires the controlled tank to become a real depleted wreck at PlayerSpawnPoint.")
+		_finish(playtest, "R8 requires the controlled tank to become a real depleted wreck inside WreckCleanupZone.")
 		return false
-	if not await _wait_for_frames(120) or main.get_node_or_null("Tank") != player \
-			or player_health.current_health != 0.0 or player.is_in_group("player_wreck"):
-		_finish(playtest, "R8 must retain the depleted controlled tank unchanged throughout the countdown.")
+	var freed_early := false
+	for _frame in 12:
+		await physics_frame
+		await process_frame
+		if not is_instance_valid(player):
+			freed_early = true
+			break
+	if not freed_early or main.get_node_or_null("Tank") != null or player_runtime.get("controlled_tank") != null \
+			or bool(player_runtime.get("controls_enabled")) or bool(ai.get("combat_enabled")):
+		_finish(playtest, "R8 zone cleanup must early-free the dead player while leaving recovery safely unbound and disabled.")
 		return false
-	var respawned := await _wait_for_player_replacement(main, player, 100)
-	if respawned == null or is_instance_valid(player) or not is_instance_valid(near_wreck) \
-			or not is_instance_valid(far_wreck) or near_collision.disabled or far_collision.disabled:
-		_finish(playtest, "Only the player wreck physically overlapping PlayerSpawnPoint may clear; nearby and far wrecks must retain collision.")
+	var respawned := await _wait_for_player_replacement(main, null, 220)
+	var respawned_health := respawned.get_node_or_null("HealthComponent") as HealthComponent if respawned != null else null
+	var respawned_receiver := respawned.get_node_or_null("DamageReceiver") as Node if respawned != null else null
+	if respawned == null or respawned.scene_file_path != player_scene_path or respawned_health == null or respawned_receiver == null \
+			or not is_equal_approx(respawned_health.current_health, respawned_health.maximum_health) \
+			or not bool(player_runtime.get("controls_enabled")) or player_runtime.get("controlled_tank") != respawned \
+			or ai.get("target") != respawned or camera_rig.get("follow_target") != respawned \
+			or bool(respawned_receiver.get("enabled")) or not combat.get_registered_shot_sources().has(respawned):
+		_finish(playtest, "R8 early zone cleanup must still produce the same full-health controlled respawn with AI and shot-source rebindings.")
 		return false
 	player_controller.call("apply_commands", 1.0, 0.0, true)
 	if is_zero_approx(float(respawned.get("movement_command"))):
-		_finish(playtest, "The R8 replacement tank must be able to move after overlapping wreck clearance.")
+		_finish(playtest, "The R8 replacement tank must be controllable after early cleanup.")
+		return false
+	if not is_instance_valid(outside_wreck):
+		_finish(playtest, "R8 must preserve a corpse outside the cleanup area; respawn is not a global cleanup event.")
+		return false
+	## physics_frame 早於計時 callback；兩秒邊界留兩步同步，不改產品保護時間。
+	if not await _wait_for_frames(122) or not bool(respawned_receiver.get("enabled")) \
+			or not bool(respawned_receiver.call("receive_damage", 1.0)):
+		_finish(playtest, "R8 early cleanup respawn must retain its two-second protection, then restore real damage reception.")
+		return false
+	## 獨立流程：區外死車被外部手動 queue_free，仍必須正常走既有三秒重生。
+	respawned.global_position = spawn_point.global_position + Vector3(100, 0, 0)
+	await physics_frame
+	if not respawned_health.apply_damage(respawned_health.current_health):
+		_finish(playtest, "R8 independent-flow fixture requires a real outside-zone player death.")
+		return false
+	respawned.queue_free()
+	await process_frame
+	var manual_replacement := await _wait_for_player_replacement(main, null, 220)
+	var manual_health := manual_replacement.get_node_or_null("HealthComponent") as HealthComponent if manual_replacement != null else null
+	if manual_replacement == null or manual_health == null or not is_equal_approx(manual_health.current_health, manual_health.maximum_health):
+		_finish(playtest, "R8 manual removal outside WreckCleanupZone must not break the independent three-second respawn flow.")
 		return false
 	return true
 
@@ -1022,8 +1161,8 @@ func _make_player_wreck_fixture(parent: Node3D, tank_scene: PackedScene, positio
 	if parent == null or wreck == null:
 		return null
 	wreck.name = "FixturePlayerWreck"
+	wreck.position = parent.to_local(position)
 	parent.add_child(wreck)
-	wreck.global_position = position
 	wreck.add_to_group("player_wreck")
 	return wreck
 
@@ -1093,6 +1232,44 @@ func _has_default_turret_and_gun_pose(enemy: Node3D, scene_path: String) -> bool
 	return matches
 
 
+func _configure_full_visibility_blocker(blocker: StaticBody3D, observer: Node3D, subject: Node3D, additional_subject_offset := Vector3.ZERO) -> void:
+	## 舊案例的單中心盒不足以遮住新 Vision 的所有表面射線；以視線中段平面與各射線交點包圍建屏。
+	var origin := (observer.get_node("VisualRecoilPivot/TurretPivot") as Node3D).global_position
+	var points: PackedVector3Array = subject.call("part_world_surface_points") as PackedVector3Array
+	var stable_center := subject.call("stable_world_center") as Vector3
+	points.append(stable_center)
+	var normal := (stable_center - origin).normalized()
+	var tangent_x := normal.cross(Vector3.UP).normalized()
+	if tangent_x.is_zero_approx():
+		tangent_x = normal.cross(Vector3.RIGHT).normalized()
+	var tangent_y := normal.cross(tangent_x).normalized()
+	var screen_center := origin.lerp(stable_center, 0.5)
+	var screen_depth := normal.dot(screen_center - origin)
+	var half_width := 0.0
+	var half_height := 0.0
+	for point in points:
+		var candidate_points := PackedVector3Array([point, point + additional_subject_offset])
+		for candidate in candidate_points:
+			var ray := candidate - origin
+			var denominator := normal.dot(ray)
+			assert(denominator > 0.0001, "Full visibility blocker requires every target point beyond its screen plane.")
+			var intersection := origin + ray * (screen_depth / denominator)
+			var offset := intersection - screen_center
+			half_width = maxf(half_width, absf(offset.dot(tangent_x)))
+			half_height = maxf(half_height, absf(offset.dot(tangent_y)))
+	blocker.global_transform = Transform3D(Basis(tangent_x, tangent_y, normal), screen_center)
+	var collision := blocker.get_node("CollisionShape3D") as CollisionShape3D
+	## 只在射線法線方向保留 0.2m 厚度，避免世界軸 AABB 的長邊回頭接觸觀察車。
+	(collision.shape as BoxShape3D).size = Vector3(half_width * 2.0 + 0.2, half_height * 2.0 + 0.2, 0.2)
+	var overlap_query := PhysicsShapeQueryParameters3D.new()
+	overlap_query.shape = collision.shape
+	overlap_query.transform = blocker.global_transform
+	overlap_query.collision_mask = 129
+	overlap_query.exclude = [blocker.get_rid()]
+	for overlap in observer.get_world_3d().direct_space_state.intersect_shape(overlap_query, 64):
+		assert(overlap.get("collider") != observer, "Full visibility blocker must not overlap or push its observer fixture.")
+
+
 func _make_blocker(position: Vector3, size: Vector3) -> StaticBody3D:
 	var blocker := StaticBody3D.new()
 	var collision := CollisionShape3D.new()
@@ -1128,6 +1305,7 @@ func _wait_for_health_loss(health: HealthComponent, previous_health: float, maxi
 
 
 func _finish(playtest: Node3D, message: String) -> void:
+	Input.set_custom_mouse_cursor(null)
 	playtest.queue_free()
 	_fail(message)
 

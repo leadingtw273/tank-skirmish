@@ -261,5 +261,23 @@ run("documentation-and-exports-smoke", godot, [
   "res://tests/documentation_and_exports_smoke.gd",
 ], { scanGodotErrors: true });
 
+for (const testName of [
+  "tank_part_geometry_smoke",
+  "tank_motion_guard_fixture",
+  "tank_motion_guard_smoke",
+  "tank_motion_guard_wall_smoke",
+  "tank_contact_response_smoke",
+  "contact_review_regression_smoke",
+  "partial_visibility_smoke",
+  "partial_visibility_combat_smoke",
+  "vision_preview_smoke",
+  "region_wreck_cleanup_smoke",
+]) {
+  run(testName.replaceAll("_", "-"), godot, [
+    "--headless", "--audio-driver", "Dummy", "--path", ".",
+    "--script", `res://tests/${testName}.gd`,
+  ], { scanGodotErrors: true });
+}
+
 run("protected-project-diff", "git", ["diff", "--exit-code", "--", "project.godot"]);
 console.log("Tank Skirmish quality gate passed.");

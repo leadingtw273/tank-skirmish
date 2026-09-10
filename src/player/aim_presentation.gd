@@ -105,6 +105,22 @@ func set_controlled_tank(tank: Node3D) -> void:
 	controlled_tank = tank
 
 
+## 暫時沒有受控車時清除既有世界線框，避免留下已刪除坦克的瞄準呈現。
+func hide_presentation() -> void:
+	if actual_aim_line != null:
+		actual_aim_line.visible = false
+	if mouse_aim_line != null:
+		mouse_aim_line.visible = false
+	if spread_cone_preview != null:
+		spread_cone_preview.visible = false
+	if spread_frames != null:
+		spread_frames.visible = false
+	if ground_spread_outline != null:
+		ground_spread_outline.visible = false
+	if slice_ground_markers != null:
+		slice_ground_markers.visible = false
+
+
 ## 設定滑鼠準星，並一次建立可重複使用的瞄準線與暫時擴散網格。
 func initialize_presentation() -> void:
 	if actual_aim_line == null:
@@ -411,16 +427,13 @@ func _set_aim_line_path(line: MeshInstance3D, origin: Vector3, end: Vector3, hid
 
 
 func _tank_aim_line_clearance_distance(origin: Vector3) -> float:
-	## 以碰撞盒所有世界座標角點的最遠距離決定隱藏量，讓任意砲塔角度都能避開車身。
-	var tank_collision := controlled_tank.get("tank_collision") as CollisionShape3D
-	var collision_box := tank_collision.shape as BoxShape3D
-	if collision_box == null:
+	## 以全部部位凸形的保守世界 bounds 決定隱藏量，不再把車體假設為單一 BoxShape3D。
+	if controlled_tank == null or not controlled_tank.has_method("part_world_bounds"):
 		return origin.distance_to(controlled_tank.call("muzzle_global_position") as Vector3) + aim_line_near_tank_hidden_distance
-	var half_size := collision_box.size * 0.5
+	var bounds: AABB = controlled_tank.call("part_world_bounds")
+	if bounds.size.is_zero_approx():
+		return origin.distance_to(controlled_tank.call("muzzle_global_position") as Vector3) + aim_line_near_tank_hidden_distance
 	var farthest_corner_distance := 0.0
-	for x_sign in [-1.0, 1.0]:
-		for y_sign in [-1.0, 1.0]:
-			for z_sign in [-1.0, 1.0]:
-				var corner := tank_collision.global_transform * Vector3(half_size.x * x_sign, half_size.y * y_sign, half_size.z * z_sign)
-				farthest_corner_distance = maxf(farthest_corner_distance, origin.distance_to(corner))
+	for corner_index in 8:
+		farthest_corner_distance = maxf(farthest_corner_distance, origin.distance_to(bounds.get_endpoint(corner_index)))
 	return farthest_corner_distance + aim_line_near_tank_hidden_distance

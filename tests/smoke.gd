@@ -595,19 +595,13 @@ func _validate_turret_aiming(instance: Node) -> bool:
 		return false
 	var mouse_line_start := mouse_line.global_transform.origin - mouse_line.global_transform.basis.y * 0.5
 	var mouse_line_direction := (current_muzzle + Vector3.RIGHT * 20.0 - turret_pivot.global_position).normalized()
-	var tank_collision := tank.get_node("CollisionShape3D") as CollisionShape3D
-	var tank_collision_box := tank_collision.shape as BoxShape3D
-	var tank_collision_half_size := tank_collision_box.size * 0.5
+	var tank_bounds: AABB = tank.part_world_bounds()
+	if tank_bounds.size.is_zero_approx():
+		push_error("Aim-line clearance requires non-empty tank part bounds")
+		return false
 	var tank_corner_radius := 0.0
-	for x_sign in [-1.0, 1.0]:
-		for y_sign in [-1.0, 1.0]:
-			for z_sign in [-1.0, 1.0]:
-				var corner := tank_collision.global_transform * Vector3(
-					tank_collision_half_size.x * x_sign,
-					tank_collision_half_size.y * y_sign,
-					tank_collision_half_size.z * z_sign,
-				)
-				tank_corner_radius = maxf(tank_corner_radius, turret_pivot.global_position.distance_to(corner))
+	for corner_index in 8:
+		tank_corner_radius = maxf(tank_corner_radius, turret_pivot.global_position.distance_to(tank_bounds.get_endpoint(corner_index)))
 	var mouse_clearance_distance := tank_corner_radius + 3.0
 	if not mouse_line_start.is_equal_approx(turret_pivot.global_position + mouse_line_direction * mouse_clearance_distance):
 		push_error("Red mouse line must clear the tank and another 3m before becoming visible")
@@ -1100,14 +1094,10 @@ func _validate_collision_layout(instance: Node) -> bool:
 		push_error("Tank must be a CharacterBody3D")
 		return false
 	var tank_model := tank.get_node_or_null("VisualRecoilPivot/TankVisualSlot/HullVisual/Tank2Model") as Node3D
-	var tank_collision := tank.get_node_or_null("CollisionShape3D") as CollisionShape3D
-	var tank_shape := tank_collision.shape as BoxShape3D if tank_collision != null else null
 	if tank.movement_speed <= 0.0 or tank.reverse_movement_speed <= 0.0 or not is_equal_approx(tank.turn_speed, 0.4) \
 			or tank_model == null or not tank_model.scale.is_equal_approx(Vector3.ONE) \
-			or tank_collision == null or tank_collision.disabled or tank_shape == null \
-			or tank_shape.size.x <= 0.0 or tank_shape.size.y <= 0.0 or tank_shape.size.z <= 0.0 \
-			or not is_equal_approx(tank_collision.position.y, tank_shape.size.y * 0.5):
-		push_error("Tank must use scale=1 with a positive, grounded collision box and adjustable linear speed exports")
+			or not _has_valid_tank_part_geometry(tank, Vector3(0, 1.039605154183, 0)):
+		push_error("Tank must use scale=1 with valid grounded part collisions, its stable old center, and adjustable linear speed exports")
 		return false
 
 	for building_name: String in BUILDING_MODELS:
@@ -1472,3 +1462,23 @@ func _validate_box_collision(body: CollisionObject3D, expected_size: Vector3) ->
 		return false
 	var shape := collision.shape as BoxShape3D
 	return shape != null and shape.size.is_equal_approx(expected_size)
+
+
+func _has_valid_tank_part_geometry(tank: CharacterBody3D, expected_center: Vector3) -> bool:
+	var geometry := tank.part_geometry as TankPartGeometry
+	if geometry == null or not geometry.is_valid_geometry() \
+			or not tank.stable_world_center().is_equal_approx(tank.global_transform * expected_center):
+		return false
+	var expected_shape_count := 0
+	for part in geometry.parts:
+		expected_shape_count += part.convex_shapes.size()
+	var actual_shape_count := 0
+	for child in tank.get_children():
+		if child is CollisionShape3D:
+			var collision := child as CollisionShape3D
+			if collision.disabled or not collision.shape is ConvexPolygonShape3D or collision.get_parent() != tank:
+				return false
+			actual_shape_count += 1
+	return expected_shape_count > 0 and actual_shape_count == expected_shape_count \
+		and tank.part_shape_world_transforms().size() == expected_shape_count \
+		and not tank.part_world_bounds().size.is_zero_approx()

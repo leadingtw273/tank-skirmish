@@ -48,6 +48,10 @@ func _ready() -> void:
 ## 立即註冊要跟隨的節點，並重設先前的前視偏移量。
 func set_follow_target(target: Node3D) -> void:
 	follow_target = target
+	if follow_target == null:
+		## 暫時失去坦克時保留當前鏡頭位置與初始構圖，直到新車完成重綁。
+		look_ahead_offset = Vector3.ZERO
+		return
 	follow_target_offset = global_position - target.global_position
 	if not _has_initial_follow_target_offset:
 		_initial_follow_target_offset = follow_target_offset

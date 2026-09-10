@@ -25,6 +25,8 @@ extends CharacterBody3D
 @export var tread_turning_right_animation: StringName
 ## 車型缺少倒車片段時，是否反向播放它提供的直行履帶動畫。
 @export var reverse_tread_animation_playback := false
+## 車型離線烘焙的真實部位幾何；共用 controller 不保存任何車型節點名稱。
+@export var part_geometry: TankPartGeometry
 
 @export_category("坦克視野")
 ## 車體周圍全向視野的水平半徑，單位公尺；近距也受遮擋限制。
@@ -93,6 +95,9 @@ extends CharacterBody3D
 const MODEL_FORWARD_LOCAL_AXIS := Vector3.LEFT
 const MIN_AIM_DISTANCE_SQUARED := 0.001
 const TREAD_ANIMATION_MOTION_THRESHOLD := 0.01
+const CONTACT_TREAD_ANIMATION_SCALE := 0.5
+const TankMotionGuard := preload("res://src/actors/tank/geometry/tank_motion_guard.gd")
+const TankContactResponse := preload("res://src/actors/tank/geometry/tank_contact_response.gd")
 const MUZZLE_FLASH_SCENE := preload("res://src/vfx/muzzle/muzzle_flash_vfx.tscn")
 const ShotEvent := preload("res://src/combat/shot_event.gd")
 @export_category("坦克戰鬥")
@@ -154,10 +159,11 @@ signal shot_event_fired(shot_event: ShotEvent)
 var movement_command := 0.0
 var turn_command := 0.0
 var forward_speed := 0.0
+## 僅保存引擎／手動／車身輔助的持續偏航狀態；接觸 auto-yaw 不回寫到此值。
 var angular_speed := 0.0
 ## 碰撞解算後沿坦克前後軸的實際線速度，供接地互動讀取，單位為公尺／秒。
 var actual_linear_speed := 0.0
-## 物理步驟中實際套用的車身偏航角速度，供接地互動讀取，單位為弧度／秒。
+## 物理步驟中實際套用的總車身偏航角速度（含接觸 auto-yaw），供接地互動讀取，單位為弧度／秒。
 var actual_angular_speed := 0.0
 ## 最近一次砲塔瞄準實際套用的相對車身偏航角速度，單位為弧度／秒。
 var actual_turret_angular_speed := 0.0
@@ -167,6 +173,27 @@ var tread_animations_available := false
 var visual_recoil_rest_local_position := Vector3.ZERO
 var visual_recoil_tween: Tween
 var hull_aim_turn_input := 0.0
+var _part_collision_shapes: Array[CollisionShape3D] = []
+## 在 bind 時一次保留每個離線 convex 的頂點；旋轉 guard 不會在 physics step 重建 debug mesh。
+var _part_shape_vertices: Array[PackedVector3Array] = []
+var _hull_anchor_local := Transform3D.IDENTITY
+var _turret_anchor_local := Transform3D.IDENTITY
+var _gun_anchor_local := Transform3D.IDENTITY
+var _motion_guard := TankMotionGuard.new()
+var _motion_guard_attempt_stats := {
+	&"root": {"query_count": 0, "substeps": 0, "accepted_substeps": 0, "shape_count": 0, "blocked_reason": "no-attempt", "elapsed_usec": 0},
+	&"turret": {"query_count": 0, "substeps": 0, "accepted_substeps": 0, "shape_count": 0, "blocked_reason": "no-attempt", "elapsed_usec": 0},
+	&"gun": {"query_count": 0, "substeps": 0, "accepted_substeps": 0, "shape_count": 0, "blocked_reason": "no-attempt", "elapsed_usec": 0},
+}
+## 僅保留當前或前一 physics step 的真實 move_and_slide 接觸；不推動其他 body。
+var _contact_records: Array[Dictionary] = []
+var _contact_frames_since_contact := 2
+var _contact_slide_velocity := Vector3.ZERO
+var _contact_manual_turn_active := false
+var _contact_auto_yaw_requested := 0.0
+var _contact_auto_yaw_applied := 0.0
+var _contact_reason := "no-contact"
+var _contact_count := 0
 
 
 func _ready() -> void:
@@ -186,6 +213,9 @@ func _ready() -> void:
 	tank_turret.reparent(turret_visual, true)
 	gun_pitch_pivot.global_position = tank_gun.global_position
 	tank_gun.reparent(gun_visual, true)
+	if not _bind_part_geometry():
+		set_physics_process(false)
+		return
 	var gun_aabb := tank_gun.get_aabb()
 	var local_gun_forward := tank_gun_forward_local_axis.normalized()
 	var local_muzzle := _aabb_endpoint(gun_aabb, local_gun_forward)
@@ -195,6 +225,218 @@ func _ready() -> void:
 		tank_gun.global_transform * local_muzzle,
 	)
 	_setup_tread_animations()
+
+
+## 回傳與舊單一碰撞盒相同語意的固定車體中心，不從任一部位 shape 推導。
+func stable_world_center() -> Vector3:
+	return global_transform * part_geometry.stable_center if part_geometry != null else global_position
+
+
+## 所有部位凸形在目前 root／砲塔／砲管姿態的世界轉換；Task 2 的候選姿態查詢共用此資料。
+func part_shape_world_transforms() -> Array[Transform3D]:
+	var transforms: Array[Transform3D] = []
+	if part_geometry == null:
+		return transforms
+	for part in part_geometry.parts:
+		var anchor_transform := _current_anchor_transform(part.anchor)
+		for local_transform in part.convex_transforms:
+			transforms.append(anchor_transform * part.anchor_transform * local_transform)
+	return transforms
+
+
+## 有限可見表面點的固定排序世界座標；不以包圍盒角點冒充模型表面。
+func part_world_surface_points() -> PackedVector3Array:
+	var points := PackedVector3Array()
+	if part_geometry == null:
+		return points
+	for part in part_geometry.parts:
+		var part_transform := _current_anchor_transform(part.anchor) * part.anchor_transform
+		for point in part.surface_points:
+			points.append(part_transform * point)
+	return points
+
+
+## 使用完整凸形頂點的保守世界 bounds；與最多十二個 surface samples 分離。
+func part_world_bounds() -> AABB:
+	var has_point := false
+	var minimum := Vector3.ZERO
+	var maximum := Vector3.ZERO
+	if part_geometry == null:
+		return AABB()
+	for part in part_geometry.parts:
+		var part_transform := _current_anchor_transform(part.anchor) * part.anchor_transform
+		for index in part.convex_shapes.size():
+			var shape := part.convex_shapes[index]
+			var shape_transform := part_transform * part.convex_transforms[index]
+			for point in shape.points:
+				var world_point := shape_transform * point
+				if not has_point:
+					minimum = world_point
+					maximum = world_point
+					has_point = true
+				else:
+					minimum = minimum.min(world_point)
+					maximum = maximum.max(world_point)
+	return AABB(minimum, maximum - minimum) if has_point else AABB()
+
+
+## Task 2 可用的候選 root transform 入口；gun_pitch 是正仰角（等於 -GunPitchPivot.rotation.z）。
+func candidate_part_shape_world_transforms(candidate_root: Transform3D, turret_yaw: float, gun_pitch: float) -> Array[Transform3D]:
+	var transforms: Array[Transform3D] = []
+	if part_geometry == null:
+		return transforms
+	var hull_anchor := candidate_root * _hull_anchor_local
+	var turret_anchor := candidate_root * _turret_anchor_local.rotated_local(Vector3.UP, turret_yaw)
+	var gun_anchor := turret_anchor * _gun_anchor_local.rotated_local(Vector3.FORWARD, gun_pitch)
+	for part in part_geometry.parts:
+		var anchor_transform := hull_anchor if part.anchor == "hull" else turret_anchor if part.anchor == "turret" else gun_anchor
+		for local_transform in part.convex_transforms:
+			transforms.append(anchor_transform * part.anchor_transform * local_transform)
+	return transforms
+
+
+func _bind_part_geometry() -> bool:
+	if part_geometry == null or not part_geometry.is_valid_geometry():
+		push_error("Tank variant requires valid offline part geometry.")
+		return false
+	_hull_anchor_local = global_transform.affine_inverse() * _mechanical_global_transform(tank_model.global_transform)
+	_turret_anchor_local = global_transform.affine_inverse() * _mechanical_global_transform(turret_pivot.global_transform)
+	_gun_anchor_local = turret_pivot.global_transform.affine_inverse() * gun_pitch_pivot.global_transform
+	for shape_node in _part_collision_shapes:
+		shape_node.queue_free()
+	_part_collision_shapes.clear()
+	_part_shape_vertices.clear()
+	var shape_index := 0
+	for part in part_geometry.parts:
+		for convex_index in part.convex_shapes.size():
+			var collision := tank_collision if shape_index == 0 else CollisionShape3D.new()
+			if shape_index > 0:
+				collision.name = "PartCollision_%s_%d" % [part.id, convex_index]
+				add_child(collision)
+			collision.shape = part.convex_shapes[convex_index]
+			_part_collision_shapes.append(collision)
+			_part_shape_vertices.append(_convex_debug_vertices(part.convex_shapes[convex_index]))
+			shape_index += 1
+	_sync_part_collision_shapes()
+	return not _part_collision_shapes.is_empty()
+
+
+func _convex_debug_vertices(shape: ConvexPolygonShape3D) -> PackedVector3Array:
+	var vertices := PackedVector3Array()
+	var debug_mesh := shape.get_debug_mesh()
+	if debug_mesh == null or debug_mesh.get_surface_count() == 0:
+		return vertices
+	var arrays := debug_mesh.surface_get_arrays(0)
+	var raw_vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
+	for vertex in raw_vertices:
+		if not vertices.has(vertex):
+			vertices.append(vertex)
+	return vertices
+
+
+func _current_anchor_transform(anchor: String) -> Transform3D:
+	match anchor:
+		"hull":
+			return _mechanical_global_transform(tank_model.global_transform)
+		"turret":
+			return _mechanical_global_transform(turret_pivot.global_transform)
+		"gun":
+			return _mechanical_global_transform(gun_pitch_pivot.global_transform)
+	return global_transform
+
+
+func _mechanical_global_transform(visual_global: Transform3D) -> Transform3D:
+	## 所有 visual anchor 都在 VisualRecoilPivot 下；移除當前 tween 位移並回復其靜止 transform。
+	var current_recoil := Transform3D(visual_recoil_pivot.basis, visual_recoil_pivot.position)
+	var rest_recoil := Transform3D(visual_recoil_pivot.basis, visual_recoil_rest_local_position)
+	return global_transform * rest_recoil * current_recoil.affine_inverse() * global_transform.affine_inverse() * visual_global
+
+
+func _sync_part_collision_shapes() -> void:
+	if part_geometry == null:
+		return
+	var shape_index := 0
+	for part in part_geometry.parts:
+		var anchor_transform := _current_anchor_transform(part.anchor)
+		for local_transform in part.convex_transforms:
+			if shape_index >= _part_collision_shapes.size():
+				return
+			_part_collision_shapes[shape_index].global_transform = anchor_transform * part.anchor_transform * local_transform
+			shape_index += 1
+
+
+## 僅供 Task 2 fixture 讀取最近一筆 root／turret／gun guard 計數；不會逐幀輸出。
+func get_motion_guard_attempt_stats(kind: StringName) -> Dictionary:
+	return (_motion_guard_attempt_stats.get(kind, _empty_motion_guard_stats("unknown-kind")) as Dictionary).duplicate(true)
+
+
+func _empty_motion_guard_stats(reason: String) -> Dictionary:
+	return {
+		"query_count": 0,
+		"substeps": 0,
+		"accepted_substeps": 0,
+		"shape_count": 0,
+		"blocked_reason": reason,
+		"elapsed_usec": 0,
+	}
+
+
+func _record_motion_guard_noop(kind: StringName) -> void:
+	_motion_guard_attempt_stats[kind] = _empty_motion_guard_stats("no-op")
+
+
+func _attempt_rotation_guard(
+	kind: StringName,
+	angle_delta: float,
+	affected_anchors: Array[StringName],
+	pivot: Vector3,
+	candidate_transforms_at_fraction: Callable,
+) -> float:
+	if is_zero_approx(angle_delta):
+		_record_motion_guard_noop(kind)
+		return 0.0
+	var start_transforms := part_shape_world_transforms()
+	var shapes: Array[Dictionary] = []
+	var shape_index := 0
+	for part in part_geometry.parts:
+		for convex_index in part.convex_shapes.size():
+			if part.anchor in affected_anchors:
+				if shape_index >= start_transforms.size() or shape_index >= _part_shape_vertices.size():
+					_motion_guard_attempt_stats[kind] = _empty_motion_guard_stats("invalid-shape-cache")
+					return 0.0
+				var radius := 0.0
+				for local_vertex in _part_shape_vertices[shape_index]:
+					radius = maxf(radius, pivot.distance_to(start_transforms[shape_index] * local_vertex))
+				shapes.append({
+					"shape": part.convex_shapes[convex_index],
+					"start_transform": start_transforms[shape_index],
+					"radius": radius,
+				})
+			shape_index += 1
+	if shapes.is_empty() or get_world_3d() == null:
+		_motion_guard_attempt_stats[kind] = _empty_motion_guard_stats("no-affected-shapes")
+		return 0.0
+	_motion_guard.configure(get_world_3d().direct_space_state, get_rid(), collision_mask, get_tree().get_node_count())
+	var result := _motion_guard.attempt(angle_delta, shapes, candidate_transforms_at_fraction)
+	_motion_guard_attempt_stats[kind] = (result.stats as Dictionary).duplicate(true)
+	return float(result.actual_angle)
+
+
+func _candidate_transforms_for_anchors(
+	candidate_root: Transform3D,
+	candidate_turret_yaw: float,
+	candidate_gun_pitch: float,
+	affected_anchors: Array[StringName],
+) -> Array[Transform3D]:
+	var all_transforms := candidate_part_shape_world_transforms(candidate_root, candidate_turret_yaw, candidate_gun_pitch)
+	var selected: Array[Transform3D] = []
+	var shape_index := 0
+	for part in part_geometry.parts:
+		for unused in part.convex_shapes:
+			if part.anchor in affected_anchors:
+				selected.append(all_transforms[shape_index])
+			shape_index += 1
+	return selected
 
 
 func _aabb_endpoint(bounds: AABB, direction: Vector3) -> Vector3:
@@ -271,20 +513,78 @@ func _physics_process(delta: float) -> void:
 		brake_acceleration * turn_response,
 		delta,
 	)
-	rotate_y(angular_speed * delta)
 	var forward_direction := transform.basis * MODEL_FORWARD_LOCAL_AXIS
+	var contact_normals := _contact_active_normals()
+	## 接觸 auto-yaw 必須依旋轉前的意圖決定，避免本幀已旋轉姿態回饋進候選角度。
+	var pre_rotation_intent_direction := _contact_intent_direction(forward_direction)
+	var auto_yaw_gain := _contact_response_gain(pre_rotation_intent_direction, contact_normals)
+	var auto_yaw_rate := _contact_auto_yaw_rate(pre_rotation_intent_direction, contact_normals, auto_yaw_gain)
+	var base_requested_root_angle := angular_speed * delta
+	_contact_auto_yaw_requested = 0.0
+	if not _contact_manual_turn_active and is_zero_approx(turn_command) and is_zero_approx(hull_aim_turn_input):
+		_contact_auto_yaw_requested = auto_yaw_rate * delta
+	var requested_root_angle := base_requested_root_angle + _contact_auto_yaw_requested
+	var root_candidate := func(fraction: float) -> Array[Transform3D]:
+		return _candidate_transforms_for_anchors(
+			global_transform.rotated_local(Vector3.UP, requested_root_angle * fraction),
+			turret_pivot.rotation.y,
+			-gun_pitch_pivot.rotation.z,
+			[&"hull", &"turret", &"gun"],
+		)
+	var actual_root_angle := _attempt_rotation_guard(
+		&"root",
+		requested_root_angle,
+		[&"hull", &"turret", &"gun"],
+		global_position,
+		root_candidate,
+	)
+	rotate_y(actual_root_angle)
+	_contact_auto_yaw_applied = _contact_auto_yaw_requested * (actual_root_angle / requested_root_angle) if not is_zero_approx(requested_root_angle) else 0.0
+	## 持續角速度排除本幀 guard 成功套用的接觸 auto-yaw；真實角速度仍保留完整總旋轉。
+	angular_speed = (actual_root_angle - _contact_auto_yaw_applied) / delta if delta > 0.0 else 0.0
+	actual_angular_speed = actual_root_angle / delta if delta > 0.0 else 0.0
+	_sync_part_collision_shapes()
+	## 旋轉完成後，移動、滑移與真實速度量測一律使用新車頭方向。
+	forward_direction = transform.basis * MODEL_FORWARD_LOCAL_AXIS
+	var intent_direction := _contact_intent_direction(forward_direction)
+	var contact_gain := _contact_response_gain(intent_direction, contact_normals)
 	velocity = forward_direction * forward_speed
+	if not contact_normals.is_empty() and contact_gain > 0.0:
+		var target_slide := Vector3.ZERO
+		for normal in contact_normals:
+			target_slide += TankContactResponse.slide_target(intent_direction, normal, movement_speed_limit, movement_command, contact_gain)
+		target_slide = TankContactResponse.remove_inward_components(target_slide, contact_normals)
+		var slide_speed_cap := maxf(movement_speed_limit, 0.0) * absf(movement_command) * TankContactResponse.SLIDE_SPEED_RATIO
+		target_slide = target_slide.limit_length(slide_speed_cap)
+		var response_rate := engine_acceleration if not target_slide.is_zero_approx() else brake_acceleration
+		_contact_slide_velocity = _contact_slide_velocity.move_toward(target_slide, response_rate * delta)
+		_contact_slide_velocity = TankContactResponse.remove_inward_components(_contact_slide_velocity, contact_normals)
+		_contact_slide_velocity = _contact_slide_velocity.limit_length(slide_speed_cap)
+		velocity.x = _contact_slide_velocity.x
+		velocity.z = _contact_slide_velocity.z
+		_contact_reason = "sliding-contact"
+	else:
+		_contact_slide_velocity = Vector3.ZERO
+		if contact_normals.is_empty():
+			_contact_reason = "no-active-contact"
+		elif _contact_intent_pushes_inward(intent_direction, contact_normals):
+			## 正面死區已確認接觸時不可把完整前進速度交回 move_and_slide，否則仍會沿牆滑動。
+			velocity.x = 0.0
+			velocity.z = 0.0
+			_contact_reason = "dead-zone-blocked"
+		else:
+			_contact_reason = "dead-zone-or-outward"
 	move_and_slide()
 	var actual_forward_speed := get_real_velocity().dot(forward_direction)
-	if get_slide_collision_count() > 0:
+	_capture_contact_records()
+	if get_slide_collision_count() > 0 or _contact_frames_since_contact <= 1:
 		forward_speed = actual_forward_speed
 	actual_linear_speed = actual_forward_speed
-	actual_angular_speed = angular_speed
 	update_aim_spread(delta, actual_linear_speed, actual_angular_speed, actual_turret_angular_speed)
-	var next_tread_animation := _tread_animation_for_motion(actual_forward_speed, angular_speed)
+	var next_tread_animation := _tread_animation_for_motion(actual_forward_speed, actual_angular_speed)
 	_update_tread_animation(
 		next_tread_animation,
-		_tread_animation_speed_scale(next_tread_animation, actual_forward_speed, angular_speed),
+		_tread_animation_speed_scale(next_tread_animation, actual_forward_speed, actual_angular_speed),
 	)
 
 
@@ -394,6 +694,111 @@ func set_turn_input(input_value: float) -> void:
 	turn_command = clampf(input_value, -1.0, 1.0)
 
 
+## PlayerController 提供的 A/D 來源通知；AI 不讀鍵盤且維持 false。
+func set_manual_turn_active(active: bool) -> void:
+	_contact_manual_turn_active = active
+
+
+## 控制停用或換車時清除短暫接觸資料，避免離牆後殘留反應。
+func clear_contact_response_state() -> void:
+	_contact_records.clear()
+	_contact_frames_since_contact = 2
+	_contact_slide_velocity = Vector3.ZERO
+	_contact_manual_turn_active = false
+	_contact_auto_yaw_requested = 0.0
+	_contact_auto_yaw_applied = 0.0
+	_contact_count = 0
+	_contact_reason = "cleared"
+
+
+## 僅供有限 smoke 讀取最近一次接觸反應；不逐幀輸出。
+func get_contact_response_stats() -> Dictionary:
+	return {
+		"active": _contact_frames_since_contact <= 1 and not _contact_records.is_empty(),
+		"contact_count": _contact_count,
+		"auto_yaw_requested": _contact_auto_yaw_requested,
+		"auto_yaw_applied": _contact_auto_yaw_applied,
+		"slide_velocity": _contact_slide_velocity,
+		"reason": _contact_reason,
+	}
+
+
+func _contact_active_normals() -> Array[Vector3]:
+	var normals: Array[Vector3] = []
+	if _contact_frames_since_contact > 1:
+		return normals
+	for record in _contact_records:
+		var normal := TankContactResponse.horizontal_normal(record.normal as Vector3)
+		if not normal.is_zero_approx() and not normals.has(normal):
+			normals.append(normal)
+	return normals
+
+
+func _contact_intent_direction(forward_direction: Vector3) -> Vector3:
+	if is_zero_approx(movement_command):
+		return Vector3.ZERO
+	var horizontal := Vector3(forward_direction.x, 0.0, forward_direction.z)
+	return horizontal.normalized() * signf(movement_command) if not horizontal.is_zero_approx() else Vector3.ZERO
+
+
+func _contact_response_gain(intent_direction: Vector3, normals: Array[Vector3]) -> float:
+	var gain := 0.0
+	for normal in normals:
+		gain = maxf(gain, TankContactResponse.response_gain(intent_direction, normal))
+	return gain
+
+
+func _contact_intent_pushes_inward(intent_direction: Vector3, normals: Array[Vector3]) -> bool:
+	if intent_direction.is_zero_approx():
+		return false
+	for normal in normals:
+		if intent_direction.dot(normal) < -TankContactResponse.HORIZONTAL_EPSILON:
+			return true
+	return false
+
+
+func _contact_auto_yaw_rate(intent_direction: Vector3, normals: Array[Vector3], gain: float) -> float:
+	if intent_direction.is_zero_approx() or normals.is_empty() or gain <= 0.0:
+		return 0.0
+	var radius := _contact_conservative_radius()
+	var moment := 0.0
+	for record in _contact_records:
+		var normal := TankContactResponse.horizontal_normal(record.normal as Vector3)
+		if normal.is_zero_approx():
+			continue
+		moment += TankContactResponse.auto_yaw_moment(record.position as Vector3, stable_world_center(), normal, intent_direction, movement_command, radius, gain)
+	return clampf(moment, -1.0, 1.0) * minf(deg_to_rad(12.0), turn_speed * 0.35)
+
+
+func _contact_conservative_radius() -> float:
+	if part_geometry == null:
+		return 1.0
+	var radius := 0.0
+	for transform in part_shape_world_transforms():
+		radius = maxf(radius, stable_world_center().distance_to(transform.origin))
+	return maxf(radius, 0.001)
+
+
+func _capture_contact_records() -> void:
+	var captured: Array[Dictionary] = []
+	for collision_index in get_slide_collision_count():
+		var collision := get_slide_collision(collision_index)
+		if collision == null:
+			continue
+		var normal := TankContactResponse.horizontal_normal(collision.get_normal())
+		if normal.is_zero_approx():
+			continue
+		captured.append({"position": collision.get_position(), "normal": normal, "rid": collision.get_collider_rid()})
+	if captured.is_empty():
+		_contact_frames_since_contact += 1
+		if _contact_frames_since_contact > 1:
+			_contact_records.clear()
+	else:
+		_contact_records = captured
+		_contact_frames_since_contact = 0
+	_contact_count = _contact_records.size()
+
+
 ## 回傳供 CameraController 使用且不為負值的鏡頭前視上限，單位為公尺。
 func get_max_camera_look_ahead_distance() -> float:
 	return maxf(max_camera_look_ahead_distance, 0.0)
@@ -483,9 +888,11 @@ func _tread_animation_for_motion(actual_forward_speed: float, actual_angular_spe
 
 func _tread_animation_speed_scale(next_animation: StringName, actual_forward_speed: float, actual_angular_speed: float = 0.0) -> float:
 	## 直行依縮小後的實際線速度與 Inspector 基準速度播放；轉向依實際角速度與最高偏航速度同步。
+	## 接觸緩移僅減少履帶視覺繞動，不改真實位移、接觸反應或散布輸入。
+	var visual_multiplier := tread_animation_speed_multiplier * (CONTACT_TREAD_ANIMATION_SCALE if _contact_reason == "sliding-contact" else 1.0)
 	if absf(actual_angular_speed) > TREAD_ANIMATION_MOTION_THRESHOLD:
-		return absf(actual_angular_speed) / maxf(absf(turn_speed), 0.001) * tread_animation_speed_multiplier
-	var speed_scale := absf(actual_forward_speed) / tread_animation_reference_speed * tread_animation_speed_multiplier
+		return absf(actual_angular_speed) / maxf(absf(turn_speed), 0.001) * visual_multiplier
+	var speed_scale := absf(actual_forward_speed) / tread_animation_reference_speed * visual_multiplier
 	if reverse_tread_animation_playback and actual_forward_speed < 0.0:
 		return -speed_scale
 	return speed_scale
@@ -515,6 +922,7 @@ func _update_tread_animation(next_animation: StringName, animation_speed_scale: 
 ## 取消控制端的瞄準意圖，保留目前姿態；供失去視野或停用控制時使用。
 func cancel_aim() -> void:
 	actual_turret_angular_speed = 0.0
+	_record_motion_guard_noop(&"turret")
 	hull_aim_turn_input = 0.0
 
 
@@ -523,11 +931,13 @@ func aim_turret_at(target_position: Vector3, delta: float) -> void:
 	actual_turret_angular_speed = 0.0
 	if _is_target_inside_turret_dead_zone(target_position):
 		hull_aim_turn_input = 0.0
+		_record_motion_guard_noop(&"turret")
 		return
 	var target_direction := target_position - turret_pivot.global_position
 	target_direction.y = 0.0
 	if target_direction.length_squared() <= MIN_AIM_DISTANCE_SQUARED:
 		hull_aim_turn_input = 0.0
+		_record_motion_guard_noop(&"turret")
 		return
 
 	var maximum_yaw := deg_to_rad(clampf(turret_max_yaw_degrees, 0.0, 180.0))
@@ -537,23 +947,50 @@ func aim_turret_at(target_position: Vector3, delta: float) -> void:
 		var local_target_direction := global_transform.basis.orthonormalized().inverse() * target_direction
 		var desired_local_target_yaw := atan2(local_target_direction.z, -local_target_direction.x)
 		var limited_local_target_yaw := clampf(desired_local_target_yaw, -maximum_yaw, maximum_yaw)
-		turret_pivot.rotation.y = rotate_toward(
-			turret_pivot.rotation.y,
-			limited_local_target_yaw,
-			turret_turn_speed * delta,
+		var requested_local_yaw := rotate_toward(turret_pivot.rotation.y, limited_local_target_yaw, turret_turn_speed * delta)
+		var requested_turret_angle := requested_local_yaw - previous_local_yaw
+		var fixed_turret_candidate := func(fraction: float) -> Array[Transform3D]:
+			return _candidate_transforms_for_anchors(
+				global_transform,
+				previous_local_yaw + requested_turret_angle * fraction,
+				-gun_pitch_pivot.rotation.z,
+				[&"turret", &"gun"],
+			)
+		var actual_turret_angle := _attempt_rotation_guard(
+			&"turret",
+			requested_turret_angle,
+			[&"turret", &"gun"],
+			turret_pivot.global_position,
+			fixed_turret_candidate,
 		)
+		turret_pivot.rotation.y = previous_local_yaw + actual_turret_angle
 		_record_actual_turret_angular_speed(previous_local_yaw, delta)
 		_update_hull_aim_turn_input(desired_local_target_yaw)
+		_sync_part_collision_shapes()
 		return
 
 	hull_aim_turn_input = 0.0
 	var target_yaw := atan2(target_direction.z, -target_direction.x)
-	turret_pivot.global_rotation.y = rotate_toward(
-		turret_pivot.global_rotation.y,
-		target_yaw,
-		turret_turn_speed * delta,
+	var previous_world_yaw := turret_pivot.global_rotation.y
+	var requested_world_yaw := rotate_toward(previous_world_yaw, target_yaw, turret_turn_speed * delta)
+	var requested_turret_angle := angle_difference(previous_world_yaw, requested_world_yaw)
+	var world_turret_candidate := func(fraction: float) -> Array[Transform3D]:
+		return _candidate_transforms_for_anchors(
+			global_transform,
+			previous_local_yaw + requested_turret_angle * fraction,
+			-gun_pitch_pivot.rotation.z,
+			[&"turret", &"gun"],
+		)
+	var actual_turret_angle := _attempt_rotation_guard(
+		&"turret",
+		requested_turret_angle,
+		[&"turret", &"gun"],
+		turret_pivot.global_position,
+		world_turret_candidate,
 	)
+	turret_pivot.global_rotation.y = previous_world_yaw + actual_turret_angle
 	_record_actual_turret_angular_speed(previous_local_yaw, delta)
+	_sync_part_collision_shapes()
 
 
 func _record_actual_turret_angular_speed(previous_local_yaw: float, delta: float) -> void:
@@ -613,7 +1050,23 @@ func aim_gun_pitch_at_target(target_position: Vector3, delta: float) -> void:
 	var current_pitch := -gun_pitch_pivot.rotation.z
 	var target_pitch := _target_gun_pitch_for_world_target(target_position)
 	var next_pitch := move_toward(current_pitch, target_pitch, maxf(gun_pitch_speed, 0.0) * maxf(delta, 0.0))
-	gun_pitch_pivot.rotation.z = -clampf(next_pitch, minimum_pitch, maximum_pitch)
+	var requested_pitch_angle := clampf(next_pitch, minimum_pitch, maximum_pitch) - current_pitch
+	var gun_candidate := func(fraction: float) -> Array[Transform3D]:
+		return _candidate_transforms_for_anchors(
+			global_transform,
+			turret_pivot.rotation.y,
+			current_pitch + requested_pitch_angle * fraction,
+			[&"gun"],
+		)
+	var actual_pitch_angle := _attempt_rotation_guard(
+		&"gun",
+		requested_pitch_angle,
+		[&"gun"],
+		gun_pitch_pivot.global_position,
+		gun_candidate,
+	)
+	gun_pitch_pivot.rotation.z = -(current_pitch + actual_pitch_angle)
+	_sync_part_collision_shapes()
 
 
 ## 回傳 MuzzlePoint 目前的世界座標投射物起點。

@@ -10,6 +10,10 @@ var controls_enabled := true
 func set_controls_enabled(enabled: bool) -> void:
 	controls_enabled = enabled
 	if not enabled and is_instance_valid(controlled_tank):
+		if controlled_tank.has_method("set_manual_turn_active"):
+			controlled_tank.call("set_manual_turn_active", false)
+		if controlled_tank.has_method("clear_contact_response_state"):
+			controlled_tank.call("clear_contact_response_state")
 		controlled_tank.call("set_movement_input", 0.0)
 		controlled_tank.call("set_turn_input", 0.0)
 		controlled_tank.call("cancel_aim")
@@ -18,11 +22,21 @@ func set_controls_enabled(enabled: bool) -> void:
 
 
 func set_controlled_tank(tank: Node3D) -> void:
+	if controlled_tank != null and is_instance_valid(controlled_tank):
+		if controlled_tank.has_method("set_manual_turn_active"):
+			controlled_tank.call("set_manual_turn_active", false)
+		if controlled_tank.has_method("clear_contact_response_state"):
+			controlled_tank.call("clear_contact_response_state")
 	if _hull_aim_assist_was_active and controlled_tank != null and is_instance_valid(controlled_tank) \
 			and controlled_tank.has_method("stop_hull_aim_turn"):
 		controlled_tank.call("stop_hull_aim_turn")
 	controlled_tank = tank
 	_hull_aim_assist_was_active = false
+	if controlled_tank != null and is_instance_valid(controlled_tank):
+		if controlled_tank.has_method("set_manual_turn_active"):
+			controlled_tank.call("set_manual_turn_active", false)
+		if controlled_tank.has_method("clear_contact_response_state"):
+			controlled_tank.call("clear_contact_response_state")
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -58,6 +72,8 @@ func apply_commands(movement_input: float, turn_input: float, should_request_fir
 	if not _has_active_tank():
 		return
 	var manual_turn_input := clampf(turn_input, -1.0, 1.0)
+	if controlled_tank.has_method("set_manual_turn_active"):
+		controlled_tank.call("set_manual_turn_active", not is_zero_approx(manual_turn_input))
 	var effective_turn_input := manual_turn_input
 	var using_hull_aim_assist := false
 	if is_zero_approx(movement_input) and is_zero_approx(manual_turn_input) and not left_shift_held \

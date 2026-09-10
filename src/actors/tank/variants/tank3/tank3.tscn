@@ -3,15 +3,14 @@
 [ext_resource type="PackedScene" path="res://src/actors/tank/tank_base.tscn" id="1_base"]
 [ext_resource type="PackedScene" path="res://assets/models/tank/tank3.glb" id="2_model"]
 [ext_resource type="PackedScene" path="res://src/actors/tank/variants/tank3/damage/tank3_damage_visuals.tscn" id="3_damage_visuals"]
-
-[sub_resource type="BoxShape3D" id="TankCollisionShape"]
-size = Vector3(7.36285, 3.346332, 5.21862)
+[ext_resource type="Resource" path="res://src/actors/tank/variants/tank3/tank3_part_geometry.tres" id="4_geometry"]
 
 [node name="Tank" node_paths=PackedStringArray("tank_model", "tank_turret", "tank_gun", "tread_animation_player") instance=ExtResource("1_base")]
 vision_near_radius = 50.0
 vision_far_radius = 100.0
 vision_field_of_view_degrees = 25.0
 variant_interface_enabled = true
+part_geometry = ExtResource("4_geometry")
 tank_model = NodePath("VisualRecoilPivot/TankVisualSlot/HullVisual/Tank3Model")
 tank_turret = NodePath("VisualRecoilPivot/TankVisualSlot/HullVisual/Tank3Model/AgentTeamScaleRoot/Tank_Turret")
 tank_gun = NodePath("VisualRecoilPivot/TankVisualSlot/HullVisual/Tank3Model/AgentTeamScaleRoot/Tank_Gun")
@@ -52,10 +51,6 @@ muzzle_flash_scale = 1.145038211643
 
 [node name="Tank3Model" parent="VisualRecoilPivot/TankVisualSlot/HullVisual" instance=ExtResource("2_model")]
 scale = Vector3(1.1, 1.1, 1.1)
-
-[node name="CollisionShape3D" parent="." index="1"]
-position = Vector3(0, 1.673166, 0)
-shape = SubResource("TankCollisionShape")
 
 [node name="HealthComponent" parent="." index="2"]
 maximum_health = 120.0

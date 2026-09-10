@@ -135,6 +135,7 @@ func _validate_variant_overrides() -> bool:
 				or not is_equal_approx(tank.aim_spread_fire_recovery_degrees_per_second, 0.2) \
 				or not is_equal_approx(tank.aim_spread_cap_degrees, 2.5):
 			return _fail("Each tank variant must start with the approved spread values.")
+		tank.position.x = float(tanks.size()) * 100.0
 		root.add_child(tank)
 		await process_frame
 		await process_frame

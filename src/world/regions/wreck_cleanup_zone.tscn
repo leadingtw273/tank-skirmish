@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://src/world/regions/region_volume.tscn" id="1_region"]
+[ext_resource type="Script" path="res://src/world/regions/wreck_cleanup_rule.gd" id="2_rule"]
+
+[node name="WreckCleanupZone" type="Node3D"]
+
+[node name="RegionVolume" parent="." instance=ExtResource("1_region")]
+position = Vector3(0, 4, 0)
+
+[node name="WreckCleanupRule" type="Node" parent="." node_paths=PackedStringArray("area")]
+script = ExtResource("2_rule")
+area = NodePath("../RegionVolume")

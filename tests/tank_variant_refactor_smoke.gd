@@ -2,10 +2,10 @@ extends SceneTree
 
 const TANK_BASE_SCENE := "res://src/actors/tank/tank_base.tscn"
 const VARIANTS := {
-	"tank1": {"scene": "res://src/actors/tank/variants/tank1/tank1.tscn", "collision": Vector3(6.972327, 3.039192, 4.087467), "damage": "Tank1DamageVisuals"},
-	"tank2": {"scene": "res://src/actors/tank/variants/tank2/tank2.tscn", "collision": Vector3(7.955370303640, 2.079210193863, 4.541630211513), "damage": "Tank2DamageVisuals"},
-	"tank3": {"scene": "res://src/actors/tank/variants/tank3/tank3.tscn", "collision": Vector3(7.36285, 3.346332, 5.21862), "damage": "Tank3DamageVisuals"},
-	"tank4": {"scene": "res://src/actors/tank/variants/tank4/tank4.tscn", "collision": Vector3(7.272, 2.69882, 4.4904), "damage": "Tank4DamageVisuals"},
+	"tank1": {"scene": "res://src/actors/tank/variants/tank1/tank1.tscn", "stable_center": Vector3(0, 1.519596, 0), "damage": "Tank1DamageVisuals"},
+	"tank2": {"scene": "res://src/actors/tank/variants/tank2/tank2.tscn", "stable_center": Vector3(0, 1.039605154183, 0), "damage": "Tank2DamageVisuals"},
+	"tank3": {"scene": "res://src/actors/tank/variants/tank3/tank3.tscn", "stable_center": Vector3(0, 1.673166, 0), "damage": "Tank3DamageVisuals"},
+	"tank4": {"scene": "res://src/actors/tank/variants/tank4/tank4.tscn", "stable_center": Vector3(0, 1.34941, 0), "damage": "Tank4DamageVisuals"},
 }
 const DAMAGE_STAGE_NAMES := [&"Damage75", &"Damage50", &"Damage25", &"Depleted"]
 const VARIANT_DAMAGE_EFFECT_COUNTS := {
@@ -69,8 +69,6 @@ func _validate_variant(tank_id: String, contract: Dictionary) -> bool:
 	var turret_visual := tank.get_node_or_null("VisualRecoilPivot/TurretPivot/TurretVisual") as Node3D
 	var gun_visual := tank.get_node_or_null("VisualRecoilPivot/TurretPivot/GunPitchPivot/GunVisual") as Node3D
 	var muzzle_point := tank.get_node_or_null("VisualRecoilPivot/TurretPivot/GunPitchPivot/MuzzlePoint") as Marker3D
-	var collision := tank.get_node_or_null("CollisionShape3D") as CollisionShape3D
-	var collision_shape := collision.shape as BoxShape3D if collision != null else null
 	var health := tank.get_node_or_null("HealthComponent") as HealthComponent
 	var receiver := tank.get_node_or_null("DamageReceiver") as DamageReceiver
 	var contact_effects := tank.get_node_or_null("TrackContactEffects") as Node3D
@@ -96,9 +94,7 @@ func _validate_variant(tank_id: String, contract: Dictionary) -> bool:
 		and gun_visual != null
 		and muzzle_point != null
 		and tank.muzzle_global_direction().dot(Vector3.LEFT) > 0.999
-		and collision_shape != null
-		and collision_shape.size.is_equal_approx(contract.collision)
-		and is_equal_approx(collision.position.y, contract.collision.y * 0.5)
+		and _has_valid_tank_part_geometry(tank, contract.stable_center as Vector3)
 		and health != null
 		and receiver != null
 		and contact_effects != null
@@ -126,8 +122,8 @@ func _validate_variant(tank_id: String, contract: Dictionary) -> bool:
 		tank.aim_gun_pitch_at_target(tank.muzzle_global_position() + Vector3(-100.0, -100.0, 0.0), 10.0)
 		var depression_degrees := -rad_to_deg(gun_pitch_pivot.rotation.z)
 		valid = tank.scale.is_equal_approx(Vector3.ONE) \
+			and tank.stable_world_center().is_equal_approx(tank.global_transform * (contract.stable_center as Vector3)) \
 			and tank.tank_model.scale.is_equal_approx(Vector3.ONE * 0.9) \
-			and collision_shape.size.is_equal_approx(Vector3(6.972327, 3.039192, 4.087467)) \
 			and contact_effects.scale.is_equal_approx(Vector3.ONE * 0.9) \
 			and is_equal_approx(float(tank.muzzle_flash_scale), 1.145038211643) \
 			and tank1_damage_visuals != null \
@@ -154,8 +150,8 @@ func _validate_variant(tank_id: String, contract: Dictionary) -> bool:
 			"VisualRecoilPivot/TurretPivot/TurretDamageVFXAnchor/Depleted/TurretFireCriticalSecondary"
 		) as Node3D
 		valid = tank.scale.is_equal_approx(Vector3.ONE) \
+			and tank.stable_world_center().is_equal_approx(tank.global_transform * (contract.stable_center as Vector3)) \
 			and tank.tank_model.scale.is_equal_approx(Vector3.ONE * 1.1) \
-			and collision_shape.size.is_equal_approx(Vector3(7.36285, 3.346332, 5.21862)) \
 			and contact_effects.scale.is_equal_approx(Vector3.ONE * 1.1) \
 			and is_equal_approx(float(tank.muzzle_flash_scale), 1.145038211643) \
 			and tank3_damage_visuals != null \
@@ -200,6 +196,26 @@ func _has_visible_geometry(root_node: Node3D) -> bool:
 	## 砲塔介面必須真的包含可見 Mesh；空 Adapter 雖會旋轉，畫面上的砲塔仍不會動。
 	return root_node is MeshInstance3D \
 		or not root_node.find_children("*", "MeshInstance3D", true, false).is_empty()
+
+
+func _has_valid_tank_part_geometry(tank: CharacterBody3D, expected_center: Vector3) -> bool:
+	var geometry := tank.part_geometry as TankPartGeometry
+	if geometry == null or not geometry.is_valid_geometry() \
+			or not tank.stable_world_center().is_equal_approx(tank.global_transform * expected_center):
+		return false
+	var expected_shape_count := 0
+	for part in geometry.parts:
+		expected_shape_count += part.convex_shapes.size()
+	var actual_shape_count := 0
+	for child in tank.get_children():
+		if child is CollisionShape3D:
+			var collision := child as CollisionShape3D
+			if collision.disabled or not collision.shape is ConvexPolygonShape3D or collision.get_parent() != tank:
+				return false
+			actual_shape_count += 1
+	return expected_shape_count > 0 and actual_shape_count == expected_shape_count \
+		and tank.part_shape_world_transforms().size() == expected_shape_count \
+		and not tank.part_world_bounds().size.is_zero_approx()
 
 
 func _validate_variant_damage_effects(tank: CharacterBody3D, tank_id: String) -> bool:

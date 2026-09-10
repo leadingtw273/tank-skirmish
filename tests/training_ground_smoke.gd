@@ -79,9 +79,7 @@ func _validate_training_ground() -> bool:
 		var training_target := targets.get_node_or_null(target_name) as Node3D
 		var target_tank := training_target.get_node_or_null("SubjectSlot/Tank") as CharacterBody3D \
 				if training_target != null else null
-		var target_collision := target_tank.get_node_or_null("CollisionShape3D") as CollisionShape3D \
-				if target_tank != null else null
-		var target_shape := target_collision.shape as BoxShape3D if target_collision != null else null
+		var target_geometry := target_tank.part_geometry as TankPartGeometry if target_tank != null else null
 		var target_model_path := "VisualRecoilPivot/TankVisualSlot/HullVisual/%s" % expected.model
 		var target_model := target_tank.get_node_or_null(target_model_path) as Node3D if target_tank != null else null
 		var health_label := training_target.get_node_or_null("HealthLabel3D") as Label3D if training_target != null else null
@@ -91,9 +89,9 @@ func _validate_training_ground() -> bool:
 				or target_tank == null or not target_tank.scale.is_equal_approx(Vector3.ONE) \
 				or target_tank.collision_layer != 1 \
 				or target_model == null or not target_model.scale.is_equal_approx(expected.model_scale) \
-				or target_shape == null or target_shape.size.x <= 0.0 or target_shape.size.y <= 0.0 or target_shape.size.z <= 0.0 \
-				or not is_equal_approx(target_collision.position.y, target_shape.size.y * 0.5) \
-				or health_label == null or health_label.font_size <= 0 or health_label.position.y <= target_shape.size.y * 0.5 \
+				or target_geometry == null or not target_geometry.is_valid_geometry() \
+				or not target_geometry.stable_center.is_equal_approx(_stable_center_for_target(target_name)) \
+				or health_label == null or health_label.font_size <= 0 or health_label.position.y <= target_geometry.stable_center.y \
 				or health_label.text != "%s\n100 / 100" % expected.display_name:
 			training_ground.free()
 			return _fail("%s must preserve its authored model scale with grounded collision, the expected facing, and a readable health label." % target_name)
@@ -163,45 +161,14 @@ func _validate_playtest_composition() -> bool:
 	var preview := playtest.get_node_or_null("Encounter/VisionPreview") as MeshInstance3D
 	var enemy_vision := playtest.get_node_or_null("Encounter/Vision")
 	var vision_observer := playtest.get_node_or_null("Encounter/Enemy") as Node3D
-	var preview_material := preview.material_override as ShaderMaterial if preview != null else null
-	if preview_material == null or enemy_vision == null or vision_observer == null or not preview.visible:
-		return _fail("Training scene must enable its theoretical vision preview.")
-	if not enemy_vision.has_method(&"get_horizontal_forward"):
-		return _fail("TankVision must expose get_horizontal_forward() for shared preview geometry.")
-	if _has_exported_property(enemy_vision, &"near_radius") \
-			or _has_exported_property(enemy_vision, &"far_radius") \
-			or _has_exported_property(enemy_vision, &"far_field_of_view_degrees"):
-		return _fail("Vision ranges must be configured on the observer tank, not exported by Vision.")
-	## 改觀察車的三項設定後，Preview 與 Vision getter 都必須同步讀到同一組值。
-	vision_observer.set("vision_near_radius", 37.0)
-	vision_observer.set("vision_far_radius", 123.0)
-	vision_observer.set("vision_field_of_view_degrees", 64.0)
-	preview.call("_process", 0.0)
-	if not is_equal_approx(float(preview_material.get_shader_parameter("near_radius")), float(vision_observer.get("vision_near_radius"))) \
-			or not is_equal_approx(float(preview_material.get_shader_parameter("far_radius")), float(vision_observer.get("vision_far_radius"))) \
-			or not is_equal_approx(float(preview_material.get_shader_parameter("half_angle_cos")), cos(deg_to_rad(float(vision_observer.get("vision_field_of_view_degrees")) * 0.5))) \
-			or not is_equal_approx(float(enemy_vision.get("near_radius")), float(vision_observer.get("vision_near_radius"))) \
-			or not is_equal_approx(float(enemy_vision.get("far_radius")), float(vision_observer.get("vision_far_radius"))) \
-			or not is_equal_approx(float(enemy_vision.get("far_field_of_view_degrees")), float(vision_observer.get("vision_field_of_view_degrees"))) \
-			or not is_equal_approx((preview_material.get_shader_parameter("tint") as Color).a, 0.15):
-		return _fail("Vision preview and Vision geometry must use the observer tank settings and 15 percent opacity.")
-	var preview_turret := playtest.get_node("Encounter/Enemy/VisualRecoilPivot/TurretPivot") as Node3D
-	var previous_rotation := preview_turret.rotation
-	preview_turret.rotate_y(0.5)
-	preview.call("_process", 0.0)
-	var expected_forward := Vector3(-preview_turret.global_basis.x.x, 0.0, -preview_turret.global_basis.x.z).normalized()
-	var horizontal_forward := enemy_vision.call("get_horizontal_forward") as Vector3
-	if not horizontal_forward.is_equal_approx(expected_forward) \
-			or not (preview_material.get_shader_parameter("forward_direction") as Vector2).is_equal_approx(Vector2(horizontal_forward.x, horizontal_forward.z)):
-		return _fail("Vision and its preview must share the turret's normalized XZ forward direction.")
-	preview_turret.rotation = previous_rotation
-	preview.set("display_enabled", false)
-	preview.call("_process", 0.0)
-	if preview.visible:
-		return _fail("Vision preview display switch must hide the overlay.")
-	preview.set("display_enabled", true)
-	preview.call("_process", 0.0)
+	var player := gameplay_runtime.get_node_or_null("Tank") as CharacterBody3D if gameplay_runtime != null else null
 	var combat_ai := encounter.get_node_or_null("CombatAI") as Node if encounter != null else null
+	## 預覽 read-back 期間固定 observer 姿態，避免 AI 瞄準／開火使 snapshot 前提漂移。
+	if combat_ai != null:
+		combat_ai.call("set_combat_enabled", false)
+	if not await _validate_preview_published_outline(preview, enemy_vision, vision_observer):
+		playtest.queue_free()
+		return false
 	## 舊靶場回歸只驗既有靶與換車；關閉敵方避免測試期間改變玩家血量。
 	if combat_ai != null:
 		combat_ai.call("set_combat_enabled", false)
@@ -237,8 +204,8 @@ func _validate_playtest_composition() -> bool:
 					if training_target != null else null
 			var expected_health: float = TRAINING_TARGET_VARIANTS[target_name].maximum_health
 			if training_target == null or target_tank == null or target_tank.collision_layer != 1 \
-					or target_tank.get_node_or_null("CollisionShape3D") == null \
-					or health == null or receiver == null or health_label == null \
+				or not _has_valid_tank_part_geometry(target_tank, _stable_center_for_target(target_name)) \
+				or health == null or receiver == null or health_label == null \
 					or not is_equal_approx(health.maximum_health, expected_health) \
 					or not receiver.receive_damage(25.0) \
 					or not is_equal_approx(health.current_health, expected_health - 25.0) \
@@ -286,6 +253,108 @@ func _validate_playtest_composition() -> bool:
 	if not valid:
 		return _fail("Training ground playtest must reuse main gameplay and replace only World.")
 	return true
+
+
+
+func _validate_preview_published_outline(preview: MeshInstance3D, vision: Node, observer: Node3D) -> bool:
+	var saved_max_physics_steps_per_frame := Engine.max_physics_steps_per_frame
+	Engine.max_physics_steps_per_frame = 1
+	var valid: bool = await _validate_preview_published_outline_with_fixed_physics(preview, vision, observer)
+	Engine.max_physics_steps_per_frame = saved_max_physics_steps_per_frame
+	return valid
+
+
+func _validate_preview_published_outline_with_fixed_physics(preview: MeshInstance3D, vision: Node, observer: Node3D) -> bool:
+	if preview == null or vision == null or observer == null:
+		return _fail("Training scene must retain its preview, observer Vision, and observer tank.")
+	if not vision.has_method(&"capture_visibility_state"):
+		return _fail("TankVision must expose capture_visibility_state() for the horizontal preview.")
+	if _has_exported_property(vision, &"near_radius") \
+			or _has_exported_property(vision, &"far_radius") \
+			or _has_exported_property(vision, &"far_field_of_view_degrees"):
+		return _fail("Vision ranges must remain configured on the observer tank.")
+	for wanted: StringName in [&"vision", &"display_enabled", &"tint", &"ground_height",
+		&"published_snapshot", &"published_outline", &"published_angles", &"published_distances",
+		&"completed_updates", &"last_update_elapsed_ms", &"last_update_ray_count", &"frame_work_times_ms"]:
+		if not _has_property(preview, wanted):
+			return _fail("VisionPreview must expose the horizontal-outline contract.")
+	for removed: StringName in [&"reference_target", &"published_mask", &"completed_batches",
+		&"last_batch_elapsed_ms", &"last_batch_ray_count"]:
+		if _has_property(preview, removed):
+			return _fail("VisionPreview must not retain the replaced reference/grid/batch API.")
+	## 對齊 physics 訊號後才開始變更與逐步量測，避免從 process 回呼提早讀值。
+	await physics_frame
+	observer.set("vision_near_radius", 37.0)
+	observer.set("vision_far_radius", 123.0)
+	observer.set("vision_field_of_view_degrees", 64.0)
+	var initial_before := int(preview.get("completed_updates"))
+	await physics_frame
+	if int(preview.get("completed_updates")) != initial_before + 1:
+		return _fail("VisionPreview must complete the next full physics-frame outline update.")
+	var snapshot := preview.get("published_snapshot") as Dictionary
+	var state := snapshot.get("observer_state", {}) as Dictionary
+	var outline := preview.get("published_outline") as PackedVector3Array
+	var angles := preview.get("published_angles") as PackedFloat64Array
+	var distances := preview.get("published_distances") as PackedFloat64Array
+	var material := preview.material_override as ShaderMaterial
+	var origin := snapshot.get("origin", Vector3.INF) as Vector3
+	var valid: bool = snapshot.get("observer_instance_id", -1) == observer.get_instance_id() \
+		and state.get("view_origin", Vector3.ZERO) is Vector3 \
+		and state.get("forward", Vector3.ZERO) is Vector3 \
+		and is_equal_approx(float(state.get("near_radius", -1.0)), 37.0) \
+		and is_equal_approx(float(state.get("far_radius", -1.0)), 123.0) \
+		and is_equal_approx(float(state.get("far_field_of_view_degrees", -1.0)), 64.0) \
+		and is_equal_approx(origin.y, float(preview.get("ground_height"))) \
+		and outline.size() >= 3 and outline.size() == angles.size() and angles.size() == distances.size() \
+		and int(preview.get("last_update_ray_count")) > 0 and int(preview.get("last_update_ray_count")) <= 2048 \
+		and (preview.get("frame_work_times_ms") as Array).size() <= 240 \
+		and material != null and is_equal_approx((material.get_shader_parameter("tint") as Color).a, 0.15)
+	if not valid:
+		return _fail("Published horizontal outline must bind one observer capture, ordered endpoints, alpha .15, and bounded measurements.")
+	var previous_angle := -1.0
+	for index in angles.size():
+		var endpoint := outline[index]
+		var angle := float(angles[index])
+		var distance := float(distances[index])
+		if not is_finite(endpoint.x) or not is_finite(endpoint.y) or not is_finite(endpoint.z) \
+				or not is_finite(angle) or angle < 0.0 or angle >= TAU or angle < previous_angle \
+				or not is_finite(distance) or distance <= 0.0 \
+				or not is_equal_approx(endpoint.y, float(preview.get("ground_height"))) \
+				or not is_equal_approx(Vector2(endpoint.x - origin.x, endpoint.z - origin.z).length(), distance):
+			return _fail("Published outline endpoints must be finite ordered ground points with matching XZ distances.")
+		previous_angle = angle
+	if outline[0].is_equal_approx(outline[outline.size() - 1]):
+		return _fail("Published outline must not repeat its closing endpoint.")
+	var turret := observer.get_node_or_null("VisualRecoilPivot/TurretPivot") as Node3D
+	if turret == null:
+		return _fail("Training scene must retain the observer turret.")
+	var previous_rotation := turret.rotation
+	var before_turn := int(preview.get("completed_updates"))
+	turret.rotate_y(0.5)
+	await physics_frame
+	var turned_state := (preview.get("published_snapshot") as Dictionary).get("observer_state", {}) as Dictionary
+	var expected_forward := Vector3(-turret.global_basis.x.x, 0.0, -turret.global_basis.x.z).normalized()
+	if int(preview.get("completed_updates")) != before_turn + 1 \
+			or not (turned_state.get("forward", Vector3.ZERO) as Vector3).is_equal_approx(expected_forward):
+		return _fail("VisionPreview must publish the next full turret-turn capture.")
+	turret.rotation = previous_rotation
+	var before_disabled := int(preview.get("completed_updates"))
+	var saved_snapshot := (preview.get("published_snapshot") as Dictionary).duplicate(true)
+	preview.set("display_enabled", false)
+	await physics_frame
+	if preview.visible or int(preview.get("completed_updates")) != before_disabled \
+			or preview.get("published_snapshot") != saved_snapshot:
+		return _fail("Vision preview display switch must hide and stop queries without changing its last successful state.")
+	preview.set("display_enabled", true)
+	await physics_frame
+	return int(preview.get("completed_updates")) == before_disabled + 1
+
+
+func _has_property(object: Object, wanted: StringName) -> bool:
+	for property: Dictionary in object.get_property_list():
+		if property.name == wanted:
+			return true
+	return false
 
 
 func _validate_tank_vision_settings_are_instance_owned() -> bool:
@@ -404,3 +473,36 @@ func _all_target_meshes_are_gray(root_node: Node) -> bool:
 func _fail(message: String) -> bool:
 	push_error(message)
 	return false
+
+
+func _stable_center_for_target(target_name: String) -> Vector3:
+	match target_name:
+		"Tank1TrainingTarget":
+			return Vector3(0, 1.519596, 0)
+		"TrainingTarget":
+			return Vector3(0, 1.039605154183, 0)
+		"Tank3TrainingTarget":
+			return Vector3(0, 1.673166, 0)
+		"Tank4TrainingTarget":
+			return Vector3(0, 1.34941, 0)
+	return Vector3.INF
+
+
+func _has_valid_tank_part_geometry(tank: CharacterBody3D, expected_center: Vector3) -> bool:
+	var geometry := tank.part_geometry as TankPartGeometry
+	if geometry == null or not geometry.is_valid_geometry() \
+			or not tank.stable_world_center().is_equal_approx(tank.global_transform * expected_center):
+		return false
+	var expected_shape_count := 0
+	for part in geometry.parts:
+		expected_shape_count += part.convex_shapes.size()
+	var actual_shape_count := 0
+	for child in tank.get_children():
+		if child is CollisionShape3D:
+			var collision := child as CollisionShape3D
+			if collision.disabled or not collision.shape is ConvexPolygonShape3D or collision.get_parent() != tank:
+				return false
+			actual_shape_count += 1
+	return expected_shape_count > 0 and actual_shape_count == expected_shape_count \
+		and tank.part_shape_world_transforms().size() == expected_shape_count \
+		and not tank.part_world_bounds().size.is_zero_approx()

@@ -1,0 +1,32 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://src/world/regions/region_volume.gd" id="1_region"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_region"]
+resource_local_to_scene = true
+size = Vector3(24, 8, 24)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_preview"]
+transparency = 1
+shading_mode = 0
+albedo_color = Color(0.2, 1, 0.35, 0.22)
+
+[sub_resource type="BoxMesh" id="BoxMesh_preview"]
+resource_local_to_scene = true
+material = SubResource("StandardMaterial3D_preview")
+size = Vector3(24, 8, 24)
+
+[node name="RegionVolume" type="Area3D"]
+collision_layer = 0
+collision_mask = 1
+monitoring = true
+monitorable = false
+script = ExtResource("1_region")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_region")
+
+[node name="EditorPreview" type="MeshInstance3D" parent="."]
+visible = false
+cast_shadow = 0
+mesh = SubResource("BoxMesh_preview")

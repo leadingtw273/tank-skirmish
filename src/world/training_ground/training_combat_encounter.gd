@@ -21,6 +21,7 @@ const PLAYER_INVULNERABILITY_BLINK_SECONDS := 0.15
 @onready var enemy: Node3D = $Enemy
 @onready var combat_ai: Node = $CombatAI
 @onready var vision: Node = $Vision
+@onready var vision_preview: Node = $VisionPreview
 const ENEMY_VARIANTS: Array[PackedScene] = [
 	preload("res://src/actors/tank/variants/tank1/tank1.tscn"),
 	preload("res://src/actors/tank/variants/tank2/tank2.tscn"),
@@ -80,9 +81,11 @@ func _cycle_enemy() -> void:
 		return
 	combat_ai.call("set_combat_enabled", false)
 	var previous := enemy
-	combat_runtime.unregister_shot_source(previous)
-	remove_child(previous)
-	previous.queue_free()
+	if is_instance_valid(previous):
+		combat_runtime.unregister_shot_source(previous)
+		if previous.get_parent() == self:
+			remove_child(previous)
+		previous.queue_free()
 	replacement.name = "Enemy"
 	## 加入樹前先套用初始姿態，讓坦克的 ready 在正確位置完成模型接線。
 	replacement.transform = global_transform.affine_inverse() * _enemy_spawn_transform
@@ -101,6 +104,13 @@ func _bind_player(tank: Node3D) -> void:
 	## 換車解除舊血量訂閱，再把同一個 AI 指向新玩家；不重建敵方或整個 runtime。
 	if is_instance_valid(_player_health) and _player_health.depleted.is_connected(_on_player_depleted):
 		_player_health.depleted.disconnect(_on_player_depleted)
+	if tank == null:
+		## 死亡車可被區域規則提早清除；既有車型、倒數與無敵剩時皆由協調器保留。
+		_player_health = null
+		combat_ai.call("set_target", null)
+		player_runtime.call("set_controls_enabled", false)
+		combat_ai.call("set_combat_enabled", false)
+		return
 	_player_health = tank.get_node("HealthComponent") as HealthComponent
 	_player_health.depleted.connect(_on_player_depleted)
 	if _invulnerability_remaining > 0.0:

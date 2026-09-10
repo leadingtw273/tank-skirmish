@@ -50,7 +50,8 @@ func _physics_process(delta: float) -> void:
 		_inspection_direction = Vector3.ZERO
 		_cancel_aim()
 		return
-	if not vision.call("can_see", target):
+	var visible_points: PackedVector3Array = vision.call("visible_target_points", target) as PackedVector3Array
+	if visible_points.is_empty():
 		if not _inspection_direction.is_zero_approx():
 			_turn_to_inspection(delta)
 		else:
@@ -58,12 +59,35 @@ func _physics_process(delta: float) -> void:
 		return
 	## 正常視野優先；一旦看見目標，就不再保留先前受擊側的查看意圖。
 	_inspection_direction = Vector3.ZERO
-	var target_position := vision.call("target_world_position", target) as Vector3
-	controlled_tank.call("aim_turret_at", target_position, delta)
-	controlled_tank.call("aim_gun_pitch_at_target", target_position, delta)
+	var selected_aim: Dictionary = _select_aim_target(visible_points)
+	var selected_point: Vector3 = selected_aim.get("position", Vector3.ZERO) as Vector3
+	var can_fire: bool = bool(selected_aim.get("can_fire", false))
+	controlled_tank.call("aim_turret_at", selected_point, delta)
+	controlled_tank.call("aim_gun_pitch_at_target", selected_point, delta)
 	_apply_hull_aim_assist()
-	if _is_muzzle_aligned_and_clear(target_position):
+	if can_fire and _is_muzzle_aligned_and_clear(selected_point):
 		controlled_tank.call("request_fire")
+
+
+func _select_aim_target(visible_points: PackedVector3Array) -> Dictionary:
+	## 候選順序由 Vision 決定：可射時取第一個，全部被砲口遮擋時仍瞄準第一個可見點。
+	var selection: Dictionary = {"position": visible_points[0], "can_fire": false}
+	for point in visible_points:
+		if _has_ideal_muzzle_line_of_fire(point):
+			selection["position"] = point
+			selection["can_fire"] = true
+			break
+	return selection
+
+
+func _has_ideal_muzzle_line_of_fire(point: Vector3) -> bool:
+	## 這只供候選排序；最後開火仍由實際砲口方向、角度與首命中 gate 驗證。
+	var muzzle_position := controlled_tank.call("muzzle_global_position") as Vector3
+	if muzzle_position.distance_squared_to(point) <= 0.0001 or controlled_tank.get_world_3d() == null:
+		return false
+	var query := PhysicsRayQueryParameters3D.create(muzzle_position, point, 129, [controlled_tank.get_rid()])
+	var hit := controlled_tank.get_world_3d().direct_space_state.intersect_ray(query)
+	return hit.get("collider") == target
 
 
 func _apply_hull_aim_assist() -> void:
@@ -120,6 +144,7 @@ func _can_operate() -> bool:
 		and controlled_tank.has_method(&"set_turn_input")
 		and controlled_tank.has_method(&"stop_hull_aim_turn")
 		and vision.has_method(&"can_see")
+		and vision.has_method(&"visible_target_points")
 		and vision.has_method(&"target_world_position")
 		and _is_alive(controlled_tank)
 		and _is_alive(target)

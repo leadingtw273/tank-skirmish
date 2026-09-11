@@ -4,7 +4,7 @@ extends SceneTree
 const PLAYTEST := preload("res://src/world/training_ground/training_ground_playtest.tscn")
 const TankNavigation := preload("res://src/ai/tank_navigation.gd")
 const TANK2 := preload("res://src/actors/tank/variants/tank2/tank2.tscn")
-const NAV_RADIUS := 6.1790233
+const NAV_RADIUS := 3.6427174
 const TANK_SCENES := [
 	preload("res://src/actors/tank/variants/tank1/tank1.tscn"),
 	TANK2,
@@ -62,7 +62,7 @@ func _run() -> void:
 
 func _validate_conservative_bake(mesh: NavigationMesh) -> void:
 	if mesh.agent_radius < NAV_RADIUS - 0.001:
-		_fail("Navigation mesh radius must retain the measured 6.1790233m four-tank envelope.")
+		_fail("Navigation mesh radius must retain the measured 3.6427174m four-tank envelope.")
 	if mesh.get_polygon_count() <= 0:
 		_fail("Navigation mesh has no traversable polygons.")
 
@@ -85,7 +85,7 @@ func _validate_training_route(map: RID) -> void:
 
 
 func _validate_narrow_gap(map: RID) -> void:
-	## Central and north buildings in Row A leave a physical gap narrower than 2 * 6.1790233m.
+	## Row A retains the authored ~0.5m physical gap; it must remain unusable even at the smaller envelope.
 	var from := Vector3(57.0, 0.0, -2.0)
 	var to := Vector3(57.0, 0.0, -26.0)
 	var path := NavigationServer3D.map_get_path(map, from, to, true, 1)

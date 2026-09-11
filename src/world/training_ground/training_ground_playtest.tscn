@@ -56,7 +56,7 @@ navigation_mesh = ExtResource("14_navigation_mesh")
 
 [node name="World" parent="Main" unique_id=1419963957 instance=ExtResource("10_training_world")]
 
-[node name="SightBlockers" type="Node3D" parent="." unique_id=1209504869]
+[node name="SightBlockers" type="Node3D" parent="." unique_id=1209504869 groups=["training_navigation_source"]]
 
 [node name="BuildingRowA" type="Node3D" parent="SightBlockers" unique_id=867756296]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 57.7511, -7.6293945e-06, -13.666855)

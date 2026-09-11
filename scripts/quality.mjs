@@ -271,10 +271,11 @@ for (const testName of [
   "partial_visibility_smoke",
   "partial_visibility_combat_smoke",
   "last_seen_target_smoke",
+  "navigation_editor_bake_smoke",
   "enemy_navigation_smoke",
   "enemy_movement_smoke",
-  "enemy_gap_shortcut_smoke",
-  "enemy_local_route_smoke",
+  "enemy_navmesh_gap_smoke",
+  "enemy_recovery_smoke",
   "vision_preview_smoke",
   "region_wreck_cleanup_smoke",
 ]) {

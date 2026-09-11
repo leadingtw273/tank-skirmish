@@ -324,18 +324,29 @@ func _a9_terminal_navigation_and_stuck() -> bool:
 	await physics_frame
 	await physics_frame
 	await _tick(fixture.ai)
-	## 真 physics stuck：導航平面允許直走，但實體牆使坦克三秒不足 0.5m。
+	## 真牆受阻：先執行兩次有限倒車，第三次無進展才進入終端 stuck。
 	var wall := _wall_at(Vector3(-12, 1.5, 0), Vector3(2, 4, 20))
 	fixture.root.add_child(wall)
 	await physics_frame
 	var saw_stuck := false
-	for unused in 600:
+	var reverse_attempts := 0
+	var was_reversing := false
+	var actually_reversed := false
+	var previous_position := tank.global_position
+	for unused in 1800:
 		await _tick(fixture.ai)
+		var reversing: bool = float(tank.movement_command) < -0.05
+		if reversing and not was_reversing:
+			reverse_attempts += 1
+		actually_reversed = actually_reversed or (reversing and tank.global_position.x > previous_position.x + 0.001)
+		was_reversing = reversing
+		previous_position = tank.global_position
 		saw_stuck = saw_stuck or fixture.ai.get("movement_status") == &"stuck"
 		if saw_stuck:
 			break
-	if not saw_stuck or not is_zero_approx(tank.movement_command):
-		return await _dispose_fail(fixture, "A9 true collision fixture must stop as stuck after 3s with <0.5m progress.")
+	print("A9_RECOVERY attempts=%d actual_reverse=%s final_status=%s" % [reverse_attempts, actually_reversed, fixture.ai.get("movement_status")])
+	if not saw_stuck or reverse_attempts != 2 or not actually_reversed or not is_zero_approx(tank.movement_command) or not is_zero_approx(tank.turn_command):
+		return await _dispose_fail(fixture, "A9 true collision fixture must make exactly two real reverse attempts, then stop as stuck with zero body commands.")
 	var stopped := tank.global_position
 	for unused in 300:
 		await _tick(fixture.ai)

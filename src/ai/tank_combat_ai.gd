@@ -183,7 +183,10 @@ func _has_ideal_muzzle_line_of_fire(point: Vector3) -> bool:
 
 func _submit_navigation_intent(intent: Dictionary, facing_position: Vector3) -> void:
 	movement_status = intent.get("status", &"idle")
-	var moving := movement_status == &"moving"
+	var moving := movement_status in [&"moving", &"recovering"]
+	if movement_status == &"stuck":
+		_submit_body_commands(0.0, 0.0)
+		return
 	var turn := float(intent.get("turn", 0.0)) if moving else _stationary_facing_input(facing_position)
 	_submit_body_commands(float(intent.get("movement", 0.0)) if moving else 0.0, turn)
 
@@ -206,7 +209,7 @@ func _submit_body_commands(movement: float, turn: float) -> void:
 	if not is_instance_valid(controlled_tank):
 		return
 	if controlled_tank.has_method(&"set_movement_input"):
-		controlled_tank.call("set_movement_input", clampf(movement, 0.0, 1.0))
+		controlled_tank.call("set_movement_input", clampf(movement, -1.0, 1.0))
 	if is_zero_approx(turn) and controlled_tank.has_method(&"stop_hull_aim_turn"):
 		controlled_tank.call("stop_hull_aim_turn")
 	elif controlled_tank.has_method(&"set_turn_input"):

@@ -271,6 +271,8 @@ for (const testName of [
   "partial_visibility_smoke",
   "partial_visibility_combat_smoke",
   "last_seen_target_smoke",
+  "enemy_navigation_smoke",
+  "enemy_movement_smoke",
   "vision_preview_smoke",
   "region_wreck_cleanup_smoke",
 ]) {

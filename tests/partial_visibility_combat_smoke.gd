@@ -231,6 +231,10 @@ func _run(scene: Node3D) -> void:
 func _one_tick(ai: Node, vision: CountingVision) -> bool:
 	var before := vision.visible_calls
 	ai.call("_physics_process", 1.0 / 60.0)
+	## LEA-175 會要求停車朝敵。本案例用固定砲口幾何校準微型遮擋物，
+	## 因此只固定車身姿態；保留坦克物理更新、冷卻與真實彈道／傷害流程。
+	## 移動及轉正中的射擊另由 enemy_movement_smoke 覆蓋。
+	(ai.get("controlled_tank") as Node3D).call("stop_hull_aim_turn")
 	return vision.visible_calls == before + 1
 
 func _first_hit(observer: Node3D, from: Vector3, to: Vector3) -> Object:

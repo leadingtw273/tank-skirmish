@@ -28,6 +28,12 @@ extends CharacterBody3D
 ## 車型離線烘焙的真實部位幾何；共用 controller 不保存任何車型節點名稱。
 @export var part_geometry: TankPartGeometry
 
+@export_category("AI 交戰距離")
+## AI 接近可見敵人的停止距離；只影響AI，不改玩家操控或武器射程。
+@export_range(0.1, 1000.0, 0.1, "or_greater") var ai_stop_distance := 40.0
+## 停車後敵人超過此距離才恢復追近，必須大於停止距離。
+@export_range(0.1, 1000.0, 0.1, "or_greater") var ai_resume_distance := 55.0
+
 @export_category("坦克視野")
 ## 車體周圍全向視野的水平半徑，單位公尺；近距也受遮擋限制。
 @export_range(0.0, 1000.0, 0.1, "or_greater") var vision_near_radius := 50.0

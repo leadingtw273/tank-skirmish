@@ -640,12 +640,19 @@ func _validate_rotating_turret_ai_hull_aim(playtest: Node3D, scene_path: String,
 	var initial_position := observer.global_position
 	var initial_yaw := observer.global_rotation.y
 	ai.call("set_combat_enabled", true)
-	if not await _wait_for_frames(45) or not is_zero_approx(float(observer.call("get_hull_aim_turn_input"))) \
-			or not is_zero_approx(observer.turn_command) or not is_zero_approx(observer.angular_speed) \
+	## LEA-175：停車交戰時所有車型都必須讓車頭朝敵；旋轉砲塔仍可自行轉動，
+	## 但不能再以「車身永遠不轉」當成正確行為。
+	var facing := false
+	for frame in 300:
+		await physics_frame
+		if _horizontal_angle_to(observer, target.global_position) <= deg_to_rad(5.0):
+			facing = true
+			break
+	if not facing \
 			or observer.global_position.distance_to(initial_position) > 0.02 \
-			or absf(angle_difference(initial_yaw, observer.global_rotation.y)) > 0.001:
-		print("rotating turret hull aim: label=", label, " requested=", observer.call("get_hull_aim_turn_input"), " turn=", observer.turn_command, " angular=", observer.angular_speed, " start=", initial_position, " current=", observer.global_position, " yaw=", initial_yaw, "/", observer.global_rotation.y, " target=", target.global_position)
-		_finish(playtest, "%s must keep hull aim disabled while its rotating turret tracks the same near target." % label)
+			or _horizontal_angle_to(observer, target.global_position) > deg_to_rad(5.0):
+		print("rotating turret stop-facing: label=", label, " requested=", observer.call("get_hull_aim_turn_input"), " turn=", observer.turn_command, " angular=", observer.angular_speed, " start=", initial_position, " current=", observer.global_position, " yaw=", initial_yaw, "/", observer.global_rotation.y, " target=", target.global_position)
+		_finish(playtest, "%s must rotate its stationary hull to face the visible near target within five degrees." % label)
 		return false
 	fixture["root"].queue_free()
 	await physics_frame

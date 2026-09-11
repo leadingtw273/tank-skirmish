@@ -3,6 +3,8 @@ extends RefCounted
 
 const COLLISION_MASK := 1
 const CLEARANCE := 1.15
+const WAYPOINT_TOLERANCE := 0.4
+const MAX_TRAVEL_SAMPLE_DISTANCE := 1.0
 const MAX_TURN_STEP_RADIANS := deg_to_rad(2.0)
 const MOTION_EPSILON := 0.0001
 
@@ -12,6 +14,8 @@ var _gun_pitch_pivot: Node3D
 var _geometry: Resource
 var _shapes: Array[ConvexPolygonShape3D] = []
 var _queries: Array[PhysicsShapeQueryParameters3D] = []
+var _planning_exclusions: Array[RID] = []
+var _planning_allowance := 0.0
 
 
 func setup(tank: Node3D) -> void:
@@ -60,13 +64,16 @@ func setup(tank: Node3D) -> void:
 
 ## 以目前砲塔／砲管相對車身姿態，檢查 root 繞本地 UP 的最短完整轉向掃掠。
 func can_turn(angle: float) -> bool:
+	return _can_turn_from(_tank.global_transform, angle) if is_instance_valid(_tank) else false
+
+
+func _can_turn_from(current_root: Transform3D, angle: float) -> bool:
 	var space := _space_state()
 	if space == null or not _ready_for_query():
 		return false
 	var turn_angle := angle_difference(0.0, angle)
 	var steps := maxi(1, ceili(absf(turn_angle) / MAX_TURN_STEP_RADIANS))
 	var step_angle := absf(turn_angle) / float(steps)
-	var current_root := _tank.global_transform
 	var current_transforms := _candidate_transforms(current_root, _turret_pivot.rotation.y, -_gun_pitch_pivot.rotation.z)
 	if not _valid_transforms(current_transforms):
 		return false
@@ -83,13 +90,19 @@ func can_turn(angle: float) -> bool:
 
 ## 檢查候選 root／砲塔姿態從穩定中心朝 goal 的完整水平直線掃掠。
 func can_travel(goal: Vector3, stop_distance: float, root_angle: float = 0.0, straighten_turret: bool = false) -> bool:
+	if not is_instance_valid(_tank):
+		return false
+	var candidate_root := _tank.global_transform.rotated_local(Vector3.UP, angle_difference(0.0, root_angle))
+	return _can_travel_from(candidate_root, goal, stop_distance, straighten_turret)
+
+
+func _can_travel_from(candidate_root: Transform3D, goal: Vector3, stop_distance: float, straighten_turret: bool = false) -> bool:
 	var space := _space_state()
 	if space == null or not _ready_for_query():
 		return false
 	var stable_center_local: Variant = _geometry.get("stable_center")
 	if not (stable_center_local is Vector3):
 		return false
-	var candidate_root := _tank.global_transform.rotated_local(Vector3.UP, angle_difference(0.0, root_angle))
 	var turret_yaw := 0.0 if straighten_turret else _turret_pivot.rotation.y
 	var transforms := _candidate_transforms(candidate_root, turret_yaw, -_gun_pitch_pivot.rotation.z)
 	if not _valid_transforms(transforms) or not _pose_is_clear(space, transforms, _clearance_margins()):
@@ -103,6 +116,39 @@ func can_travel(goal: Vector3, stop_distance: float, root_angle: float = 0.0, st
 	if distance > end_distance and distance > MOTION_EPSILON:
 		travel = toward_goal / distance * (distance - end_distance)
 	return _translation_is_clear(space, transforms, travel)
+
+
+## 只規劃固定障礙；其他車輛不成為永久封路。執行仍走上述全碰撞 queries。
+## 不移動坦克、不讀目標節點，所有位置只來自呼叫端的已知目的地。
+func can_route_via(waypoint: Vector3, goal: Vector3, stop_distance: float) -> bool:
+	if not is_instance_valid(_tank) or not _ready_for_query():
+		return false
+	_planning_exclusions.clear()
+	## 中繼允許在0.4m內煞停；候選額外涵蓋這段位置誤差，不假設精確踩點。
+	_planning_allowance = WAYPOINT_TOLERANCE
+	for body in _tank.get_tree().root.find_children("*", "CharacterBody3D", true, false):
+		_planning_exclusions.append((body as CharacterBody3D).get_rid())
+	var root := _tank.global_transform
+	var angle := _angle_to(root, waypoint)
+	var first_root := root.rotated_local(Vector3.UP, angle)
+	var safe := _can_turn_from(root, angle) and _can_travel_from(first_root, waypoint, 0.0)
+	if safe:
+		var center: Vector3 = first_root * (_geometry.get("stable_center") as Vector3)
+		first_root.origin += Vector3(waypoint.x - center.x, 0.0, waypoint.z - center.z)
+		var second_angle := _angle_to(first_root, goal)
+		safe = _can_turn_from(first_root, second_angle) and _can_travel_from(first_root.rotated_local(Vector3.UP, second_angle), goal, stop_distance)
+	_planning_exclusions.clear()
+	_planning_allowance = 0.0
+	return safe
+
+
+func _angle_to(root: Transform3D, goal: Vector3) -> float:
+	var center: Vector3 = root * (_geometry.get("stable_center") as Vector3)
+	var direction := goal - center
+	direction.y = 0.0
+	var forward := root.basis * Vector3.LEFT
+	forward.y = 0.0
+	return atan2(forward.cross(direction).y, forward.dot(direction))
 
 
 func _ready_for_query() -> bool:
@@ -133,7 +179,7 @@ func _valid_transforms(transforms: Array) -> bool:
 func _clearance_margins() -> Array[float]:
 	var margins: Array[float] = []
 	for unused in _shapes:
-		margins.append(CLEARANCE)
+		margins.append(CLEARANCE + _planning_allowance)
 	return margins
 
 
@@ -144,7 +190,7 @@ func _turn_margins(transforms: Array, root: Vector3, step_angle: float) -> Array
 		for point in _shapes[index].points:
 			radius = maxf(radius, root.distance_to(transforms[index] * point))
 		## 將取樣間的最壞弧長納入每一形狀的 query margin，避免端點漏碰。
-		margins.append(CLEARANCE + radius * step_angle)
+		margins.append(CLEARANCE + _planning_allowance + radius * step_angle)
 	return margins
 
 
@@ -166,7 +212,7 @@ func _translation_is_clear(space: PhysicsDirectSpaceState3D, transforms: Array, 
 		return false
 	for index in _queries.size():
 		var query := _queries[index]
-		_configure_query(query, transforms[index], CLEARANCE, self_rid)
+		_configure_query(query, transforms[index], CLEARANCE + _planning_allowance, self_rid)
 		## 零位移仍已在前置 intersect_shape 驗過候選姿態，無須依賴 cast 的未定義結果。
 		if motion.length_squared() <= MOTION_EPSILON * MOTION_EPSILON:
 			continue
@@ -174,6 +220,16 @@ func _translation_is_clear(space: PhysicsDirectSpaceState3D, transforms: Array, 
 		var cast := space.cast_motion(query)
 		if cast.size() < 2 or cast[0] < 1.0 - MOTION_EPSILON:
 			return false
+		## Godot Physics 的 cast_motion 不足以保證 margin；同姿態實測有中段漏報。
+		## 任意平移點距最近sample最多半步，將半步加進margin覆蓋完整間隔。
+		var steps := maxi(1, ceili(motion.length() / MAX_TRAVEL_SAMPLE_DISTANCE))
+		var half_step := motion.length() / float(steps) * 0.5
+		for step in range(steps + 1):
+			var sampled: Transform3D = transforms[index]
+			sampled.origin += motion * (float(step) / float(steps))
+			_configure_query(query, sampled, CLEARANCE + _planning_allowance + half_step, self_rid)
+			if not space.intersect_shape(query, 1).is_empty():
+				return false
 	return true
 
 
@@ -190,5 +246,9 @@ func _configure_query(query: PhysicsShapeQueryParameters3D, transform: Transform
 	query.margin = margin
 	query.collision_mask = COLLISION_MASK
 	query.exclude = [self_rid]
+	if not _planning_exclusions.is_empty():
+		var exclusions: Array[RID] = [self_rid]
+		exclusions.append_array(_planning_exclusions)
+		query.exclude = exclusions
 	query.collide_with_bodies = true
 	query.collide_with_areas = false

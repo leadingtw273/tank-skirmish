@@ -274,6 +274,7 @@ for (const testName of [
   "enemy_navigation_smoke",
   "enemy_movement_smoke",
   "enemy_gap_shortcut_smoke",
+  "enemy_local_route_smoke",
   "vision_preview_smoke",
   "region_wreck_cleanup_smoke",
 ]) {

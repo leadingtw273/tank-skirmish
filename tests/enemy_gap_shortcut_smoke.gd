@@ -222,7 +222,7 @@ func _g4_ai_last_seen_uses_direct_gap() -> void:
 		overlaps += int(frame_clearance.gable <= 0.0) + int(frame_clearance.two_story <= 0.0)
 		ai.call("_physics_process", DT)
 		var navigation: RefCounted = ai.get("_navigation") as RefCounted
-		direct = direct or (navigation != null and bool(navigation.get("_direct_active")))
+		direct = direct or (navigation != null and navigation.get("_shortcut_kind") == &"direct")
 		memory_changed = memory_changed or _xz_distance(ai.get("_last_seen_position") as Vector3, remembered) > 0.1
 		status = ai.get("movement_status")
 		await physics_frame

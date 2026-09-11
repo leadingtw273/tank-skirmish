@@ -2,6 +2,8 @@
 extends RefCounted
 
 const DirectClearance := preload("res://src/ai/tank_direct_clearance.gd")
+const LocalRouteSearch := preload("res://src/ai/tank_local_route_search.gd")
+const WAYPOINT_DISTANCE := DirectClearance.WAYPOINT_TOLERANCE
 const AGENT_NAME := &"TankNavigationAgent"
 const MAP_READY_ITERATION := 0
 const GOAL_REFRESH_SECONDS := 0.25
@@ -23,11 +25,17 @@ var _terminal := false
 var _stuck_elapsed := 0.0
 var _stuck_origin := Vector3.ZERO
 var _clearance: RefCounted
-var _direct_active := false
-var _direct_aligning := false
-var _direct_braking := false
-var _direct_checked := false
-var _direct_checked_goal := Vector3.ZERO
+var _shortcut_kind: StringName = &"none"
+var _shortcut_points: Array[Vector3] = []
+var _shortcut_index := 0
+var _local_search: RefCounted
+var _local_pending := false
+var _local_started := false
+var _guard_rejoin := false
+var _shortcut_aligning := false
+var _shortcut_braking := false
+var _shortcut_checked := false
+var _shortcut_checked_goal := Vector3.ZERO
 
 
 func setup(tank: Node3D) -> void:
@@ -44,6 +52,7 @@ func setup(tank: Node3D) -> void:
 	_agent.set_navigation_map(_tank.get_world_3d().navigation_map)
 	_clearance = DirectClearance.new()
 	_clearance.setup(_tank)
+	_local_search = LocalRouteSearch.new()
 	clear()
 
 
@@ -52,6 +61,7 @@ func dispose() -> void:
 		_agent.queue_free()
 	_agent = null
 	_clearance = null
+	_local_search = null
 	_tank = null
 	clear()
 
@@ -65,7 +75,7 @@ func clear() -> void:
 	_terminal = false
 	_stuck_elapsed = 0.0
 	_stuck_origin = Vector3.ZERO
-	_reset_direct_route()
+	_reset_shortcut_route()
 
 
 func drive(goal: Vector3, generation: int, stop_distance: float, delta: float) -> Dictionary:
@@ -90,7 +100,7 @@ func drive(goal: Vector3, generation: int, stop_distance: float, delta: float) -
 		_terminal = false
 		_status = &"moving"
 		_reset_stuck()
-		_reset_direct_route()
+		_reset_shortcut_route()
 		_agent.target_position = horizontal_goal
 	elif _terminal:
 		return _command(0.0, 0.0, _status)
@@ -110,46 +120,72 @@ func drive(goal: Vector3, generation: int, stop_distance: float, delta: float) -
 	var next := _agent.get_next_path_position()
 	## 世界原點是合法路徑點；無路由空路徑判定，不能把零座標當哨兵。
 	var path := _agent.get_current_navigation_path()
-	if path.is_empty() and not _direct_active and not _direct_braking:
+	if path.is_empty() and not _has_shortcut() and not _shortcut_braking:
 		return _finish(&"no_path")
 	var remaining := _remaining_path_distance(position)
+	if _shortcut_checked and _horizontal_distance(horizontal_goal, _shortcut_checked_goal) >= GOAL_REFRESH_DISTANCE:
+		_reset_shortcut_route()
 	var forward := _horizontal(_tank.global_transform.basis * Vector3.LEFT).normalized()
 	var direct_direction := (horizontal_goal - position).normalized()
 	var direct_angle := atan2(forward.cross(direct_direction).y, forward.dot(direct_direction))
-	if _direct_checked and _horizontal_distance(horizontal_goal, _direct_checked_goal) >= GOAL_REFRESH_DISTANCE:
-		_direct_checked = false
-	## 保留原保守地圖；只有完整姿態掃掠證明短路安全，才覆蓋它的繞行需求。
-	if not _direct_active and not _direct_braking and not _direct_checked and remaining > direct_distance + SHORTCUT_SAVING_METRES:
-		_direct_checked = true
-		_direct_checked_goal = horizontal_goal
+	if not _has_shortcut() and not _shortcut_braking and not _shortcut_checked and remaining > direct_distance + SHORTCUT_SAVING_METRES:
+		_shortcut_checked = true
+		_shortcut_checked_goal = horizontal_goal
 		if _clearance.can_travel(horizontal_goal, stop_distance, direct_angle, true) and _clearance.can_turn(direct_angle):
-			_direct_active = true
-			_direct_aligning = true
-	if _direct_braking:
+			_activate_shortcut(&"direct", [horizontal_goal])
+		elif direct_distance <= LocalRouteSearch.MAX_DISTANCE:
+			_local_pending = true
+	if _local_pending:
+		## 固定候選搜尋期間先煞停，避免候選的起點在查詢間漂移。
+		_reset_stuck()
 		if speed > 0.1:
 			return _command(0.0, 0.0, &"moving")
-		_direct_braking = false
-	if _direct_active:
-		## 可見目標改位造成方向大變時，重回煞停／轉正，不能沿新方向切彎。
-		if absf(direct_angle) > DIRECT_ALIGNMENT_RADIANS * 3.0:
-			_direct_aligning = true
-		if _direct_aligning:
+		if not _local_started:
+			_local_search.begin(position, horizontal_goal, stop_distance, remaining)
+			_local_started = true
+		var result: Dictionary = _local_search.step(_clearance)
+		if result.status == &"pending":
+			return _command(0.0, 0.0, &"moving")
+		_local_pending = false
+		if result.status == &"found":
+			_activate_shortcut(&"local", [result.point, horizontal_goal])
+	if _shortcut_braking:
+		if speed > 0.1:
+			return _command(0.0, 0.0, &"moving")
+		_shortcut_braking = false
+	var leg_stop := stop_distance
+	if _has_shortcut():
+		_shortcut_points[-1] = horizontal_goal
+		if _shortcut_index < _shortcut_points.size() - 1 and _horizontal_distance(position, _shortcut_points[_shortcut_index]) <= WAYPOINT_DISTANCE:
+			if speed > 0.1:
+				return _command(0.0, 0.0, &"moving")
+			_shortcut_index += 1
+			_shortcut_aligning = true
+			_reset_stuck()
+		next = _shortcut_points[_shortcut_index]
+		leg_stop = 0.25 if _shortcut_index < _shortcut_points.size() - 1 else stop_distance
+		var leg_direction := (next - position).normalized()
+		var leg_angle := atan2(forward.cross(leg_direction).y, forward.dot(leg_direction))
+		if absf(leg_angle) > DIRECT_ALIGNMENT_RADIANS * 3.0:
+			_shortcut_aligning = true
+		if _shortcut_aligning:
 			_reset_stuck()
 			if speed > 0.1:
 				return _command(0.0, 0.0, &"moving")
-			if not _clearance.can_turn(direct_angle):
-				_reject_direct_route()
+			if not _clearance.can_turn(leg_angle):
+				_reject_shortcut_route()
 				return _command(0.0, 0.0, &"moving")
-			if absf(direct_angle) > DIRECT_ALIGNMENT_RADIANS:
-				return _command(0.0, clampf(direct_angle / TURN_IN_PLACE_RADIANS, -1.0, 1.0), &"moving")
-			_direct_aligning = false
-		## AI 已先更新砲塔／砲管；每步使用真實當前姿態，不把候選姿態當通行保證。
-		if not _clearance.can_turn(direct_angle) or not _clearance.can_travel(horizontal_goal, stop_distance):
-			_reject_direct_route()
+			if absf(leg_angle) > DIRECT_ALIGNMENT_RADIANS:
+				return _command(0.0, clampf(leg_angle / TURN_IN_PLACE_RADIANS, -1.0, 1.0), &"moving")
+			_shortcut_aligning = false
+		## 規劃只排除可移動車輛，執行則重新檢查真實姿態與所有實物。
+		if not _clearance.can_turn(leg_angle) or not _clearance.can_travel(next, leg_stop):
+			_reject_shortcut_route()
 			return _command(0.0, 0.0, &"moving")
-		next = horizontal_goal
-		remaining = direct_distance
-	if not _direct_active and (remaining <= 0.5 or _agent.is_navigation_finished()):
+		remaining = _horizontal_distance(position, next)
+		for index in range(_shortcut_index + 1, _shortcut_points.size()):
+			remaining += _horizontal_distance(_shortcut_points[index - 1], _shortcut_points[index])
+	if not _has_shortcut() and (remaining <= 0.5 or _agent.is_navigation_finished()):
 		## 真正抵達只由上面的原始世界位置判斷；投影末端不冒充目擊點。
 		return _finish(&"partial_end") if speed <= 0.1 else _command(0.0, 0.0, &"moving")
 	var desired := _horizontal(next) - position
@@ -159,6 +195,10 @@ func drive(goal: Vector3, generation: int, stop_distance: float, delta: float) -
 		return _finish(&"partial_end" if not _agent.is_target_reachable() else &"arrived")
 	var direction := desired.normalized()
 	var angle := atan2(forward.cross(direction).y, forward.dot(direction))
+	## 離開navmesh的近路失效後，不能直接切向投影路點穿過建築。
+	if _guard_rejoin and not _has_shortcut():
+		if not _clearance.can_turn(angle) or not _clearance.can_travel(next, 0.3, angle):
+			return _finish(&"stuck")
 	var turn := clampf(angle / TURN_IN_PLACE_RADIANS, -1.0, 1.0)
 	var braking_distance := _braking_distance()
 	var movement := 0.0
@@ -166,6 +206,8 @@ func drive(goal: Vector3, generation: int, stop_distance: float, delta: float) -
 	if absf(angle) <= TURN_IN_PLACE_RADIANS:
 		## 交戰半徑作用於原始目標，不能從「部分路線」長度扣40m而提早卡死。
 		var available := minf(maxf(direct_distance - maxf(stop_distance - 0.2, 0.0), 0.0), maxf(remaining - 0.3, 0.0))
+		if _has_shortcut():
+			available = minf(available, maxf(_horizontal_distance(position, next) - maxf(leg_stop - 0.2, 0.0), 0.0))
 		var mass := maxf(float(_tank.get("tank_mass_tonnes")), 0.001)
 		var deceleration := maxf(float(_tank.get("brake_force_kilonewtons")) / mass, 0.001)
 		var speed_limit := maxf(float(_tank.get("movement_speed")), 0.01)
@@ -173,7 +215,7 @@ func drive(goal: Vector3, generation: int, stop_distance: float, delta: float) -
 		var desired_speed := minf(speed_limit, sqrt(2.0 * deceleration * available))
 		## 折角前預留煞車距離；進入下一段後才原地轉向，不能滿速切建築角。
 		var index := _agent.get_current_navigation_path_index()
-		if not _direct_active and index < path.size() - 1:
+		if not _has_shortcut() and index < path.size() - 1:
 			var following := _horizontal(path[index + 1] - path[index])
 			if not following.is_zero_approx() and direction.angle_to(following.normalized()) > deg_to_rad(10.0):
 				var corner_distance := maxf(_horizontal_distance(position, next) - 0.5, 0.0)
@@ -201,21 +243,42 @@ func _finish(status: StringName) -> Dictionary:
 
 func _command(movement: float, turn: float, status: StringName) -> Dictionary:
 	return {"movement": clampf(movement, 0.0, 1.0), "turn": clampf(turn, -1.0, 1.0), "status": status,
-		"route": &"direct" if _direct_active else &"navmesh"}
+		"route": _shortcut_kind if _has_shortcut() else &"navmesh"}
 
 
-func _reset_direct_route() -> void:
-	_direct_active = false
-	_direct_aligning = false
-	_direct_braking = false
-	_direct_checked = false
-	_direct_checked_goal = Vector3.ZERO
+func _has_shortcut() -> bool:
+	return _shortcut_kind != &"none"
 
 
-func _reject_direct_route() -> void:
-	_direct_active = false
-	_direct_aligning = false
-	_direct_braking = true
+func _activate_shortcut(kind: StringName, points: Array[Vector3]) -> void:
+	_shortcut_kind = kind
+	_shortcut_points = points
+	_shortcut_index = 0
+	_shortcut_aligning = true
+
+
+func _reset_shortcut_route() -> void:
+	_guard_rejoin = false
+	_local_pending = false
+	_local_started = false
+	if _local_search != null:
+		_local_search.clear()
+	_shortcut_kind = &"none"
+	_shortcut_points.clear()
+	_shortcut_index = 0
+	_shortcut_aligning = false
+	_shortcut_braking = false
+	_shortcut_checked = false
+	_shortcut_checked_goal = Vector3.ZERO
+
+
+func _reject_shortcut_route() -> void:
+	_guard_rejoin = _guard_rejoin or _shortcut_kind == &"local"
+	_shortcut_kind = &"none"
+	_shortcut_points.clear()
+	_shortcut_index = 0
+	_shortcut_aligning = false
+	_shortcut_braking = true
 	_reset_stuck()
 
 

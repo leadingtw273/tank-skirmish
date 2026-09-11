@@ -273,6 +273,7 @@ for (const testName of [
   "last_seen_target_smoke",
   "enemy_navigation_smoke",
   "enemy_movement_smoke",
+  "enemy_gap_shortcut_smoke",
   "vision_preview_smoke",
   "region_wreck_cleanup_smoke",
 ]) {

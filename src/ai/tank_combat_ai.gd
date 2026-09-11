@@ -100,9 +100,9 @@ func _physics_process(delta: float) -> void:
 		if not _inspection_direction.is_zero_approx():
 			_turn_to_inspection(delta)
 		elif _has_last_seen_position:
+			_aim_at_position(_last_seen_position, delta)
 			var search_intent: Dictionary = _navigation.call("drive", _last_seen_position,
 				_navigation_generation, SEARCH_ARRIVAL_DISTANCE, delta)
-			_aim_at_position(_last_seen_position, delta)
 			_submit_navigation_intent(search_intent, _last_seen_position)
 		else:
 			movement_status = &"idle"
@@ -128,6 +128,11 @@ func _physics_process(delta: float) -> void:
 		_pursuing = false
 		_new_navigation_goal()
 	_was_visible = true
+	var selected_aim: Dictionary = _select_aim_target(visible_points)
+	var selected_point: Vector3 = selected_aim.get("position", Vector3.ZERO) as Vector3
+	var can_fire: bool = bool(selected_aim.get("can_fire", false))
+	## 姿態依原目標更新後才做通道安全檢查；不鎖砲塔、不放寬射擊門檻。
+	_aim_at_position(selected_point, delta)
 	var move_intent := {"movement": 0.0, "turn": 0.0, "status": &"holding"}
 	if _pursuing:
 		## 停止後同一目標不能每幀重啟；只有可見位置確實改變才重試。
@@ -140,10 +145,6 @@ func _physics_process(delta: float) -> void:
 		elif status in [&"partial_end", &"no_path", &"stuck"] and not _blocked_goal_valid:
 			_blocked_goal = _last_seen_position
 			_blocked_goal_valid = true
-	var selected_aim: Dictionary = _select_aim_target(visible_points)
-	var selected_point: Vector3 = selected_aim.get("position", Vector3.ZERO) as Vector3
-	var can_fire: bool = bool(selected_aim.get("can_fire", false))
-	_aim_at_position(selected_point, delta)
 	_submit_navigation_intent(move_intent, _last_seen_position)
 	if can_fire and _is_muzzle_aligned_and_clear(selected_point):
 		controlled_tank.call("request_fire")

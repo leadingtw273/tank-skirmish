@@ -21,6 +21,9 @@ func _init() -> void:
 func _run() -> void:
 	var scene := PLAYTEST.instantiate() as Node3D
 	scene.process_mode = Node.PROCESS_MODE_DISABLED
+	## 停用互動腳本，但不能把要驗證的 StaticBody 一起從物理世界移除。
+	scene.get_node("SightBlockers").process_mode = Node.PROCESS_MODE_ALWAYS
+	scene.get_node("Main/World/Ground").process_mode = Node.PROCESS_MODE_ALWAYS
 	root.add_child(scene)
 	await physics_frame
 	await physics_frame
@@ -36,6 +39,9 @@ func _run() -> void:
 		if NavigationServer3D.map_get_iteration_id(map) <= 0:
 			_fail("Navigation map did not become ready.")
 		else:
+			var ray := PhysicsRayQueryParameters3D.create(Vector3(43, 1, -20), Vector3(76, 1, -20), 1)
+			if scene.get_world_3d().direct_space_state.intersect_ray(ray).is_empty():
+				_fail("A8 fixture must retain the authored building in the real physics world.")
 			_validate_conservative_bake(region.navigation_mesh)
 			_validate_training_route(map)
 			_validate_narrow_gap(map)
@@ -63,8 +69,9 @@ func _validate_conservative_bake(mesh: NavigationMesh) -> void:
 
 func _validate_training_route(map: RID) -> void:
 	## Row A CentralOneStory sits at about (59.4, -20.1); endpoints are on its two sides.
-	var start := Vector3(43.0, 0.0, -20.0)
-	var goal := Vector3(76.0, 0.0, -20.0)
+	## 起終點置於三列建築以外，避免相鄰旋轉建築覆蓋局部側邊測點。
+	var start := Vector3(0.0, 0.0, -20.0)
+	var goal := Vector3(110.0, 0.0, -20.0)
 	print("NAV_ROUTE training_query start=%s goal=%s" % [start, goal])
 	var path := NavigationServer3D.map_get_path(map, start, goal, true, 1)
 	if path.size() < 2:
@@ -131,8 +138,8 @@ func _validate_driver(scene: Node3D) -> void:
 
 ## A8：讓四台正式坦克各自用真物理駛過原場景建築，不只驗路徑線段。
 func _validate_four_tank_driving() -> void:
-	var start := Vector3(43, 0, -20)
-	var goal := Vector3(76, 0, -20)
+	var start := Vector3(0, 0, -20)
+	var goal := Vector3(110, 0, -20)
 	for model in TANK_SCENES.size():
 		var tank := TANK_SCENES[model].instantiate() as CharacterBody3D
 		tank.position = start
@@ -140,6 +147,8 @@ func _validate_four_tank_driving() -> void:
 		var driver := TankNavigation.new()
 		driver.setup(tank)
 		await physics_frame
+		if not _initial_pose_clear(tank):
+			_fail("A8 initial tank pose must be outside all authored building collisions.")
 		var command: Dictionary
 		var furthest_from_line := 0.0
 		for tick in 5400:
@@ -165,11 +174,13 @@ func _validate_four_tank_driving() -> void:
 
 func _validate_partial_endpoint() -> void:
 	var tank := TANK2.instantiate() as CharacterBody3D
-	tank.position = Vector3(43, 0, -20)
+	tank.position = Vector3(0, 0, -20)
 	root.add_child(tank)
 	var driver := TankNavigation.new()
 	driver.setup(tank)
 	await physics_frame
+	if not _initial_pose_clear(tank):
+		_fail("A9 initial tank pose must be outside all authored building collisions.")
 	var goal := Vector3(59.4, 0, -20.1)
 	var command: Dictionary
 	for tick in 3600:
@@ -197,6 +208,19 @@ func _validate_partial_endpoint() -> void:
 	tank.queue_free()
 	await process_frame
 	await physics_frame
+
+
+func _initial_pose_clear(tank: CharacterBody3D) -> bool:
+	for child in tank.get_children():
+		if child is CollisionShape3D and not child.disabled:
+			var query := PhysicsShapeQueryParameters3D.new()
+			query.shape = child.shape
+			query.transform = child.global_transform
+			query.collision_mask = 1
+			query.exclude = [tank.get_rid()]
+			if not tank.get_world_3d().direct_space_state.intersect_shape(query, 1).is_empty():
+				return false
+	return true
 
 
 func _path_distance(path: PackedVector3Array) -> float:

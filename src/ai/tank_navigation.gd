@@ -1,6 +1,7 @@
 ## 將原生導航路線轉成坦克車身的「需求」，不直接寫入任何載具控制欄位。
 extends RefCounted
 
+const DirectClearance := preload("res://src/ai/tank_direct_clearance.gd")
 const AGENT_NAME := &"TankNavigationAgent"
 const MAP_READY_ITERATION := 0
 const GOAL_REFRESH_SECONDS := 0.25
@@ -8,6 +9,8 @@ const GOAL_REFRESH_DISTANCE := 1.0
 const TURN_IN_PLACE_RADIANS := deg_to_rad(32.0)
 const STUCK_SECONDS := 3.0
 const STUCK_PROGRESS_METRES := 0.5
+const DIRECT_ALIGNMENT_RADIANS := deg_to_rad(1.0)
+const SHORTCUT_SAVING_METRES := 2.0
 
 var _tank: Node3D
 var _agent: NavigationAgent3D
@@ -19,6 +22,12 @@ var _status: StringName = &"waiting_map"
 var _terminal := false
 var _stuck_elapsed := 0.0
 var _stuck_origin := Vector3.ZERO
+var _clearance: RefCounted
+var _direct_active := false
+var _direct_aligning := false
+var _direct_braking := false
+var _direct_checked := false
+var _direct_checked_goal := Vector3.ZERO
 
 
 func setup(tank: Node3D) -> void:
@@ -33,6 +42,8 @@ func setup(tank: Node3D) -> void:
 	_agent.target_desired_distance = 0.5
 	_tank.add_child(_agent)
 	_agent.set_navigation_map(_tank.get_world_3d().navigation_map)
+	_clearance = DirectClearance.new()
+	_clearance.setup(_tank)
 	clear()
 
 
@@ -40,6 +51,7 @@ func dispose() -> void:
 	if is_instance_valid(_agent):
 		_agent.queue_free()
 	_agent = null
+	_clearance = null
 	_tank = null
 	clear()
 
@@ -53,6 +65,7 @@ func clear() -> void:
 	_terminal = false
 	_stuck_elapsed = 0.0
 	_stuck_origin = Vector3.ZERO
+	_reset_direct_route()
 
 
 func drive(goal: Vector3, generation: int, stop_distance: float, delta: float) -> Dictionary:
@@ -77,6 +90,7 @@ func drive(goal: Vector3, generation: int, stop_distance: float, delta: float) -
 		_terminal = false
 		_status = &"moving"
 		_reset_stuck()
+		_reset_direct_route()
 		_agent.target_position = horizontal_goal
 	elif _terminal:
 		return _command(0.0, 0.0, _status)
@@ -96,10 +110,46 @@ func drive(goal: Vector3, generation: int, stop_distance: float, delta: float) -
 	var next := _agent.get_next_path_position()
 	## 世界原點是合法路徑點；無路由空路徑判定，不能把零座標當哨兵。
 	var path := _agent.get_current_navigation_path()
-	if path.is_empty():
+	if path.is_empty() and not _direct_active and not _direct_braking:
 		return _finish(&"no_path")
 	var remaining := _remaining_path_distance(position)
-	if remaining <= 0.5 or _agent.is_navigation_finished():
+	var forward := _horizontal(_tank.global_transform.basis * Vector3.LEFT).normalized()
+	var direct_direction := (horizontal_goal - position).normalized()
+	var direct_angle := atan2(forward.cross(direct_direction).y, forward.dot(direct_direction))
+	if _direct_checked and _horizontal_distance(horizontal_goal, _direct_checked_goal) >= GOAL_REFRESH_DISTANCE:
+		_direct_checked = false
+	## 保留原保守地圖；只有完整姿態掃掠證明短路安全，才覆蓋它的繞行需求。
+	if not _direct_active and not _direct_braking and not _direct_checked and remaining > direct_distance + SHORTCUT_SAVING_METRES:
+		_direct_checked = true
+		_direct_checked_goal = horizontal_goal
+		if _clearance.can_travel(horizontal_goal, stop_distance, direct_angle, true) and _clearance.can_turn(direct_angle):
+			_direct_active = true
+			_direct_aligning = true
+	if _direct_braking:
+		if speed > 0.1:
+			return _command(0.0, 0.0, &"moving")
+		_direct_braking = false
+	if _direct_active:
+		## 可見目標改位造成方向大變時，重回煞停／轉正，不能沿新方向切彎。
+		if absf(direct_angle) > DIRECT_ALIGNMENT_RADIANS * 3.0:
+			_direct_aligning = true
+		if _direct_aligning:
+			_reset_stuck()
+			if speed > 0.1:
+				return _command(0.0, 0.0, &"moving")
+			if not _clearance.can_turn(direct_angle):
+				_reject_direct_route()
+				return _command(0.0, 0.0, &"moving")
+			if absf(direct_angle) > DIRECT_ALIGNMENT_RADIANS:
+				return _command(0.0, clampf(direct_angle / TURN_IN_PLACE_RADIANS, -1.0, 1.0), &"moving")
+			_direct_aligning = false
+		## AI 已先更新砲塔／砲管；每步使用真實當前姿態，不把候選姿態當通行保證。
+		if not _clearance.can_turn(direct_angle) or not _clearance.can_travel(horizontal_goal, stop_distance):
+			_reject_direct_route()
+			return _command(0.0, 0.0, &"moving")
+		next = horizontal_goal
+		remaining = direct_distance
+	if not _direct_active and (remaining <= 0.5 or _agent.is_navigation_finished()):
 		## 真正抵達只由上面的原始世界位置判斷；投影末端不冒充目擊點。
 		return _finish(&"partial_end") if speed <= 0.1 else _command(0.0, 0.0, &"moving")
 	var desired := _horizontal(next) - position
@@ -107,7 +157,6 @@ func drive(goal: Vector3, generation: int, stop_distance: float, delta: float) -
 		desired = horizontal_goal - position
 	if desired.length_squared() <= 0.0001:
 		return _finish(&"partial_end" if not _agent.is_target_reachable() else &"arrived")
-	var forward := _horizontal(_tank.global_transform.basis * Vector3.LEFT).normalized()
 	var direction := desired.normalized()
 	var angle := atan2(forward.cross(direction).y, forward.dot(direction))
 	var turn := clampf(angle / TURN_IN_PLACE_RADIANS, -1.0, 1.0)
@@ -124,7 +173,7 @@ func drive(goal: Vector3, generation: int, stop_distance: float, delta: float) -
 		var desired_speed := minf(speed_limit, sqrt(2.0 * deceleration * available))
 		## 折角前預留煞車距離；進入下一段後才原地轉向，不能滿速切建築角。
 		var index := _agent.get_current_navigation_path_index()
-		if index < path.size() - 1:
+		if not _direct_active and index < path.size() - 1:
 			var following := _horizontal(path[index + 1] - path[index])
 			if not following.is_zero_approx() and direction.angle_to(following.normalized()) > deg_to_rad(10.0):
 				var corner_distance := maxf(_horizontal_distance(position, next) - 0.5, 0.0)
@@ -151,7 +200,23 @@ func _finish(status: StringName) -> Dictionary:
 
 
 func _command(movement: float, turn: float, status: StringName) -> Dictionary:
-	return {"movement": clampf(movement, 0.0, 1.0), "turn": clampf(turn, -1.0, 1.0), "status": status}
+	return {"movement": clampf(movement, 0.0, 1.0), "turn": clampf(turn, -1.0, 1.0), "status": status,
+		"route": &"direct" if _direct_active else &"navmesh"}
+
+
+func _reset_direct_route() -> void:
+	_direct_active = false
+	_direct_aligning = false
+	_direct_braking = false
+	_direct_checked = false
+	_direct_checked_goal = Vector3.ZERO
+
+
+func _reject_direct_route() -> void:
+	_direct_active = false
+	_direct_aligning = false
+	_direct_braking = true
+	_reset_stuck()
 
 
 func _stable_center() -> Vector3:

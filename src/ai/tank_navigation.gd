@@ -2,6 +2,7 @@
 extends RefCounted
 
 const Recovery := preload("res://src/ai/tank_recovery.gd")
+const DrivingPredictor := preload("res://src/ai/tank_driving_predictor.gd")
 const AGENT_NAME := &"TankNavigationAgent"
 const MAP_READY_ITERATION := 0
 const GOAL_REFRESH_SECONDS := 0.25
@@ -19,11 +20,13 @@ var _status: StringName = &"waiting_map"
 var _terminal := false
 var _recovery := Recovery.new()
 var _attempt_goal := Vector3.ZERO
+var _predictor := DrivingPredictor.new()
 
 
 func setup(tank: Node3D) -> void:
 	dispose()
 	_tank = tank
+	_predictor.setup(tank)
 	if _tank == null:
 		return
 	_agent = NavigationAgent3D.new()
@@ -41,6 +44,7 @@ func dispose() -> void:
 		_agent.queue_free()
 	_agent = null
 	_tank = null
+	_predictor.setup(null)
 	clear()
 
 
@@ -53,6 +57,7 @@ func clear() -> void:
 	_terminal = false
 	_attempt_goal = Vector3.ZERO
 	_recovery.reset()
+	_predictor.reset()
 
 
 func drive(goal: Vector3, generation: int, stop_distance: float, delta: float) -> Dictionary:
@@ -70,15 +75,7 @@ func drive(goal: Vector3, generation: int, stop_distance: float, delta: float) -
 			return _command(0.0, 0.0, &"waiting_map")
 	var horizontal_goal := _horizontal(goal)
 	if generation != _generation or _horizontal_distance(horizontal_goal, _attempt_goal) >= RETRY_GOAL_DISTANCE:
-		_generation = generation
-		_goal = horizontal_goal
-		_last_route_goal = horizontal_goal
-		_route_refresh_age = 0.0
-		_terminal = false
-		_status = &"moving"
-		_attempt_goal = horizontal_goal
-		_recovery.reset(_horizontal(_stable_center()), _forward_direction())
-		_agent.target_position = horizontal_goal
+		_start_goal(horizontal_goal, generation)
 	elif _terminal:
 		return _command(0.0, 0.0, _status)
 	else:
@@ -135,17 +132,72 @@ func drive(goal: Vector3, generation: int, stop_distance: float, delta: float) -
 		braking = desired_speed < speed - 0.05
 	## 正常轉向有角度進展就不算卡住；轉向被牆阻擋則也必須能進入脫困。
 	var contacts: Array[Dictionary] = _tank.call("get_recovery_contacts") if _tank.has_method("get_recovery_contacts") else []
-	_recovery.observe(position, forward, 0.0 if braking else movement, turn, delta, contacts)
+	var safe := _predictor.choose(movement, turn, next, delta)
+	## 觀察原始需求，而非被安全檢查改成的零油門；否則預防性煞停會永久掩蓋受阻。
+	_recovery.observe(position, forward, 0.0 if braking else movement, turn, delta, contacts, not bool(safe.get("intervened", false)))
 	if _recovery.phase != &"normal":
 		return _drive_recovery(delta)
 	_status = &"moving"
-	return _command(movement, turn, _status)
+	return _command(float(safe.movement), float(safe.turn), _status)
+
+
+## 停車面敵也可能被玩家追撞，與行進共用預測及同一份有限脫困預算。
+func hold(turn: float, delta: float, target_position: Vector3 = Vector3.INF, generation: int = -1) -> Dictionary:
+	if not is_instance_valid(_tank):
+		return _command(0.0, 0.0, &"holding")
+	if target_position.is_finite() and (generation != _generation or _horizontal_distance(target_position, _attempt_goal) >= RETRY_GOAL_DISTANCE):
+		_start_goal(_horizontal(target_position), generation)
+	if _terminal and _status == &"stuck":
+		return _command(0.0, 0.0, &"stuck")
+	if _recovery.phase != &"normal":
+		return _drive_recovery(delta)
+	var position := _horizontal(_stable_center())
+	var forward := _forward_direction()
+	var safe := _predictor.choose(0.0, turn, _stable_center() + forward * 3.0, delta)
+	var contacts: Array[Dictionary] = _tank.call("get_recovery_contacts") if _tank.has_method("get_recovery_contacts") else []
+	var contact := bool(safe.get("contact", false)) or not contacts.is_empty()
+	_recovery.observe(position, forward, 1.0 if contact else 0.0, turn, delta, contacts, not bool(safe.get("intervened", false)))
+	if _recovery.phase != &"normal":
+		return _drive_recovery(delta)
+	return _command(float(safe.movement), float(safe.turn), &"moving" if contact or bool(safe.get("intervened", false)) else &"holding")
+
+
+func get_prediction_stats() -> Dictionary:
+	return _predictor.get_stats()
+
+
+## 同目標在追擊／holding 間切換只取消當前動作，不重新發給兩次脫困額度。
+func cancel_movement_preserving_budget() -> void:
+	if _terminal and _status == &"stuck":
+		return
+	var attempts := _recovery.attempts
+	_recovery.reset(_horizontal(_stable_center()), _forward_direction())
+	_recovery.attempts = attempts
+	_predictor.reset()
+	_terminal = false
+	_route_refresh_age = INF
+	if is_instance_valid(_agent):
+		_agent.target_position = _goal
+
+
+func _start_goal(goal: Vector3, generation: int) -> void:
+	_generation = generation
+	_goal = goal
+	_last_route_goal = goal
+	_route_refresh_age = 0.0
+	_terminal = false
+	_status = &"moving"
+	_attempt_goal = goal
+	_recovery.reset(_horizontal(_stable_center()), _forward_direction())
+	_predictor.reset()
+	_agent.target_position = goal
 
 
 func _finish(status: StringName) -> Dictionary:
 	_status = status
 	_terminal = true
 	_recovery.reset()
+	_predictor.reset()
 	return _command(0.0, 0.0, status)
 
 
@@ -184,7 +236,9 @@ func _drive_recovery(delta: float) -> Dictionary:
 	if result.get("status") == &"stuck":
 		return _finish(&"stuck")
 	_status = &"recovering"
-	return _command(float(result.get("movement", 0.0)), float(result.get("turn", 0.0)), _status)
+	## 不把既有倒退／側轉階段替換成另一種動作，只允許安全執行或煞停。
+	var safe := _predictor.choose(float(result.get("movement", 0.0)), float(result.get("turn", 0.0)), _goal, delta, true, false)
+	return _command(float(safe.movement), float(safe.turn), _status)
 
 
 func _forward_direction() -> Vector3:

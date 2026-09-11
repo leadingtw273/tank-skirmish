@@ -301,6 +301,64 @@ func candidate_part_shape_world_transforms(candidate_root: Transform3D, turret_y
 	return transforms
 
 
+## 預測駕駛的當幀唯讀快照；shape 資源與 transform 均不會回寫控制器或場景節點。
+func predictive_driving_snapshot() -> Dictionary:
+	var shapes: Array[Shape3D] = []
+	if part_geometry == null:
+		return {}
+	for part in part_geometry.parts:
+		for shape in part.convex_shapes:
+			shapes.append(shape)
+	var transforms := part_shape_world_transforms()
+	var local_transforms: Array[Transform3D] = []
+	var part_ranges: Array[Dictionary] = []
+	var root_inverse := global_transform.affine_inverse()
+	for shape_transform in transforms:
+		local_transforms.append(root_inverse * shape_transform)
+	var shape_start := 0
+	for part in part_geometry.parts:
+		var shape_count := part.convex_shapes.size()
+		part_ranges.append({"start": shape_start, "count": shape_count})
+		shape_start += shape_count
+	return {
+		"root": global_transform,
+		"turret_yaw": turret_pivot.rotation.y,
+		"gun_pitch": -gun_pitch_pivot.rotation.z,
+		"shapes": shapes,
+		"transforms": transforms,
+		## 預測 root 後只以此快照重建，不能重讀未來砲塔／砲管 live pose。
+		"root_local_transforms": local_transforms,
+		"part_ranges": part_ranges,
+		"forward_speed": forward_speed,
+		"angular_speed": actual_angular_speed,
+		"collision_mask": collision_mask,
+		"self_rid": get_rid(),
+		"contacts": get_recovery_contacts(),
+	}
+
+
+## 與物理步同一套加減速／轉向上限的純預測步進；不改速度、transform 或 command。
+func predictive_driving_step(
+		current_forward_speed: float,
+		current_angular_speed: float,
+		movement_input: float,
+		turn_input: float,
+		delta: float,
+) -> Dictionary:
+	var safe_delta := maxf(delta, 0.0)
+	var speed_limit := _movement_speed_limit_for_turn(movement_input, turn_input)
+	return {
+		"forward_speed": _approach_motion_speed(
+			current_forward_speed, movement_input, speed_limit,
+			_engine_acceleration(), _brake_acceleration(), safe_delta, true,
+		),
+		"angular_speed": _approach_motion_speed(
+			current_angular_speed, turn_input, turn_speed,
+			_engine_acceleration() * turn_response, _brake_acceleration() * turn_response, safe_delta,
+		),
+	}
+
+
 func _bind_part_geometry() -> bool:
 	if part_geometry == null or not part_geometry.is_valid_geometry():
 		push_error("Tank variant requires valid offline part geometry.")

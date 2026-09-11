@@ -39,14 +39,15 @@ func reset_progress(position: Vector3, forward: Vector3) -> void:
 	_observed_escape_forward = Vector3.ZERO
 
 
-func observe(position: Vector3, forward: Vector3, movement: float, turn: float, delta: float, contacts: Array[Dictionary] = []) -> void:
+func observe(position: Vector3, forward: Vector3, movement: float, turn: float, delta: float, contacts: Array[Dictionary] = [], allow_heading_progress: bool = true) -> void:
 	if phase != &"normal":
 		return
 	if absf(movement) <= 0.05 and absf(turn) <= 0.05:
 		reset_progress(position, forward)
 		return
 	var observed := _choose_escape_forward(position, forward, contacts)
-	if position.distance_to(_origin) >= PROGRESS_METRES or forward.angle_to(_forward) >= PROGRESS_RADIANS:
+	# 預測介入的原地調向不能反覆洗掉停滯計時；正常路徑轉向仍算進展。
+	if position.distance_to(_origin) >= PROGRESS_METRES or (allow_heading_progress and forward.angle_to(_forward) >= PROGRESS_RADIANS):
 		reset_progress(position, forward)
 		_observed_escape_forward = observed
 		return

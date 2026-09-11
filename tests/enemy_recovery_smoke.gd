@@ -206,6 +206,37 @@ func _validate_rear_wall_collision() -> void:
 		tank.queue_free()
 		scene.queue_free()
 		return
+	## 直接 controller guard 仍須在同樣 25cm 後方牆距證明：負命令可真實後退、
+	## 靠近牆，且物理形狀不穿透。這不是 predictive recovery 的成功條件。
+	var guard_tank := TANK1.instantiate() as CharacterBody3D
+	guard_tank.process_mode = Node.PROCESS_MODE_ALWAYS
+	scene.add_child(guard_tank)
+	guard_tank.global_position = tank.global_position + Vector3(0.0, 0.0, 20.0)
+	guard_tank.rotation.y = 0.0
+	await physics_frame
+	var guard_rear_edge := _max_part_x(guard_tank)
+	var guard_wall := _wall_at(Vector3(guard_rear_edge + 0.75, 3.0, guard_tank.global_position.z), Vector3(1.0, 8.0, 12.0))
+	guard_wall.process_mode = Node.PROCESS_MODE_ALWAYS
+	scene.add_child(guard_wall)
+	await physics_frame
+	var guard_start: Vector3 = guard_tank.stable_world_center() as Vector3
+	var guard_reversed := false
+	var guard_reached_wall := false
+	var guard_crossed := false
+	var guard_wall_min_x := guard_wall.global_position.x - 0.5
+	for unused in 140:
+		guard_tank.set_movement_input(-1.0)
+		guard_tank.set_turn_input(0.0)
+		await physics_frame
+		guard_reversed = guard_reversed or guard_tank.stable_world_center().x > guard_start.x + 0.1
+		guard_reached_wall = guard_reached_wall or _max_part_x(guard_tank) >= guard_wall_min_x - 0.05
+		guard_crossed = guard_crossed or _max_part_x(guard_tank) > guard_wall_min_x + 0.03
+	guard_tank.set_movement_input(0.0)
+	if not guard_reversed or not guard_reached_wall or guard_crossed or _part_hits_wall(guard_tank, guard_wall):
+		_fail("Rear-wall direct controller guard must accept a real negative command, reach the 25cm wall gap, and never penetrate; reversed=%s reached=%s crossed=%s." % [guard_reversed, guard_reached_wall, guard_crossed])
+	guard_wall.queue_free()
+	guard_tank.queue_free()
+	await physics_frame
 	var driver := TankNavigation.new()
 	driver.setup(tank)
 	var goal: Vector3 = tank.stable_world_center() + Vector3.LEFT * 30.0
@@ -215,32 +246,26 @@ func _validate_rear_wall_collision() -> void:
 	recovery.set("phase", &"reversing")
 	recovery.call("reset_progress", tank.stable_world_center(), tank.global_basis * Vector3.LEFT)
 	var wall_min_x := wall.global_position.x - 0.5
-	var reverse_start: Vector3 = tank.stable_world_center()
-	var reversed := false
-	var moved_backward := false
-	var reached_wall_side := false
+	var saw_predictive_block := false
 	var saw_settling := false
-	var crossed_wall := false
-	for unused in 140: ## >2 seconds: reverse timer must settle even when a real wall is behind it.
-		var command: Dictionary = driver.drive(goal, 1, 3.0, DT)
-		reversed = reversed or float(command.get("movement", 0.0)) < -0.05
+	var issued_unsafe_reverse := false
+	var last_prediction_stats: Dictionary = {}
+	for unused in 140: ## 保留原本自然 >2 秒 reverse timeout/settling；預測煞停不能永遠卡在 reversing。
+		var predicted: Dictionary = driver.drive(goal, 1, 3.0, DT)
+		var prediction_stats: Dictionary = driver.get_prediction_stats()
+		last_prediction_stats = prediction_stats
+		saw_predictive_block = saw_predictive_block or (StringName(prediction_stats.get("reason", &"")) == &"blocked" and not bool(prediction_stats.get("at_cap", false)))
+		issued_unsafe_reverse = issued_unsafe_reverse or float(predicted.get("movement", 0.0)) < -0.05
 		saw_settling = saw_settling or recovery.get("phase") == &"settling"
-		tank.set_movement_input(float(command.get("movement", 0.0)))
-		tank.set_turn_input(float(command.get("turn", 0.0)))
+		tank.set_movement_input(float(predicted.get("movement", 0.0)))
+		tank.set_turn_input(float(predicted.get("turn", 0.0)))
 		await physics_frame
-		moved_backward = moved_backward or tank.stable_world_center().x > reverse_start.x + 0.1
-		reached_wall_side = reached_wall_side or _max_part_x(tank) >= wall_min_x - 0.05
-		crossed_wall = crossed_wall or _max_part_x(tank) > wall_min_x + 0.03
-	if not reversed:
-		_fail("Rear-wall fixture must receive a real negative recovering command.")
-	if not moved_backward:
-		_fail("Rear-wall fixture must produce actual backward tank displacement, not only a negative command.")
-	if not reached_wall_side:
-		_fail("Rear-wall fixture must drive into the wall side; a no-wall reverse would be a false green.")
+	if not saw_predictive_block or issued_unsafe_reverse:
+		_fail("Predictive recovery must explicitly block the unsafe 25cm rear-wall reverse, not merely output arbitrary zero; blocked=%s unsafe_reverse=%s stats=%s." % [saw_predictive_block, issued_unsafe_reverse, last_prediction_stats])
 	if not saw_settling:
-		_fail("Recovery reverse must reach settling after its 2-second cap even while pressed against the wall.")
-	if crossed_wall or _part_hits_wall(tank, wall):
-		_fail("A real rear wall must prevent recovery reverse from penetrating its collision shape.")
+		_fail("Predictive-blocked recovery reverse must still naturally reach settling after its bounded timeout.")
+	if _part_hits_wall(tank, wall) or _max_part_x(tank) > wall_min_x + 0.03:
+		_fail("Predictive-blocked rear-wall fixture must remain physically clear of the authored wall.")
 	## Driver terminal gate: same generation/goal remains stopped; an exactly-3m target move resets budget.
 	recovery.set("phase", &"blocked")
 	recovery.set("attempts", Recovery.MAX_ATTEMPTS)

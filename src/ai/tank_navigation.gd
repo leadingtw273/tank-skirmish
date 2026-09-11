@@ -134,7 +134,8 @@ func drive(goal: Vector3, generation: int, stop_distance: float, delta: float) -
 		## 只有實際需要減速才排除受阻計時；接近終點但靜止的正向需求仍可能被牆擋住。
 		braking = desired_speed < speed - 0.05
 	## 正常轉向有角度進展就不算卡住；轉向被牆阻擋則也必須能進入脫困。
-	_recovery.observe(position, forward, 0.0 if braking else movement, turn, delta)
+	var contacts: Array[Dictionary] = _tank.call("get_recovery_contacts") if _tank.has_method("get_recovery_contacts") else []
+	_recovery.observe(position, forward, 0.0 if braking else movement, turn, delta, contacts)
 	if _recovery.phase != &"normal":
 		return _drive_recovery(delta)
 	_status = &"moving"
@@ -174,7 +175,8 @@ func _drive_recovery(delta: float) -> Dictionary:
 	var mass := maxf(float(_tank.get("tank_mass_tonnes")), 0.001)
 	var deceleration := maxf(float(_tank.get("brake_force_kilonewtons")) / mass, 0.001)
 	var result := _recovery.drive(_horizontal(_stable_center()), _forward_direction(),
-		float(_tank.get("forward_speed")), float(_tank.get("reverse_movement_speed")), deceleration, delta)
+		float(_tank.get("forward_speed")), float(_tank.get("reverse_movement_speed")), deceleration, delta,
+		float(_tank.get("movement_speed")), float(_tank.get("actual_angular_speed")))
 	if result.get("replan", false):
 		_agent.target_position = _goal
 		_last_route_goal = _goal
@@ -182,7 +184,7 @@ func _drive_recovery(delta: float) -> Dictionary:
 	if result.get("status") == &"stuck":
 		return _finish(&"stuck")
 	_status = &"recovering"
-	return _command(float(result.get("movement", 0.0)), 0.0, _status)
+	return _command(float(result.get("movement", 0.0)), float(result.get("turn", 0.0)), _status)
 
 
 func _forward_direction() -> Vector3:

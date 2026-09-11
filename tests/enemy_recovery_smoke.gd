@@ -146,10 +146,10 @@ func _validate_combat_ai_intent_and_lifecycle() -> void:
 		_fail("CombatAI recovery integration fixture requires Encounter/CombatAI, Enemy, and Main/Tank.")
 	else:
 		ai.set_physics_process(false)
-		## Recovering must retain negative body demand and zero turn; stationary facing must not replace it.
-		ai.call("_submit_navigation_intent", {"movement": -0.5, "turn": 0.0, "status": &"recovering"}, player.stable_world_center())
-		if float(tank.get("movement_command")) >= 0.0 or not is_zero_approx(float(tank.get("turn_command"))):
-			_fail("CombatAI must pass recovering negative movement with turn=0 to the tank.")
+		## Recovering commands own both body axes; stationary target-facing must not replace a side-turn.
+		ai.call("_submit_navigation_intent", {"movement": -0.5, "turn": 0.4, "status": &"recovering"}, player.stable_world_center())
+		if float(tank.get("movement_command")) >= 0.0 or not is_equal_approx(float(tank.get("turn_command")), 0.4):
+			_fail("CombatAI must pass recovering negative movement and non-zero turn without target-facing overwrite.")
 		## A stuck intent has precedence over stationary-facing correction even when target is off-heading.
 		ai.call("_submit_navigation_intent", {"movement": 0.0, "turn": 0.0, "status": &"stuck"}, tank.stable_world_center() + Vector3.FORWARD * 30.0)
 		if not is_zero_approx(float(tank.get("movement_command"))) or not is_zero_approx(float(tank.get("turn_command"))):
@@ -161,20 +161,22 @@ func _validate_combat_ai_intent_and_lifecycle() -> void:
 			_fail("CombatAI must own a TankNavigation recovery instance.")
 		else:
 			recovery.set("phase", &"reversing")
+			recovery.set("_escape_forward", Vector3.FORWARD)
 			ai.call("_submit_navigation_intent", {"movement": -0.5, "turn": 0.0, "status": &"recovering"}, player.stable_world_center())
 			if float(tank.get("movement_command")) >= 0.0:
 				_fail("set_combat_enabled lifecycle setup must begin from an actual recovering negative command.")
 			ai.call("set_combat_enabled", false)
-			if recovery.get("phase") != &"normal" or not is_zero_approx(float(tank.get("movement_command"))):
-				_fail("set_combat_enabled(false) must cancel an in-flight reverse and stop the tank.")
+			if recovery.get("phase") != &"normal" or not (recovery.get("_escape_forward") as Vector3).is_zero_approx() or not is_zero_approx(float(tank.get("movement_command"))):
+				_fail("set_combat_enabled(false) must cancel an in-flight reverse, side direction, and stop the tank.")
 			ai.call("set_combat_enabled", true)
 			recovery.set("phase", &"reversing")
+			recovery.set("_escape_forward", Vector3.FORWARD)
 			ai.call("_submit_navigation_intent", {"movement": -0.5, "turn": 0.0, "status": &"recovering"}, player.stable_world_center())
 			if float(tank.get("movement_command")) >= 0.0:
 				_fail("set_target lifecycle setup must begin from an actual recovering negative command.")
 			ai.call("set_target", null)
-			if recovery.get("phase") != &"normal" or not is_zero_approx(float(tank.get("movement_command"))):
-				_fail("set_target replacement must cancel an in-flight reverse and stop the tank.")
+			if recovery.get("phase") != &"normal" or not (recovery.get("_escape_forward") as Vector3).is_zero_approx() or not is_zero_approx(float(tank.get("movement_command"))):
+				_fail("set_target replacement must cancel an in-flight reverse, side direction, and stop the tank.")
 	scene.queue_free()
 	await physics_frame
 

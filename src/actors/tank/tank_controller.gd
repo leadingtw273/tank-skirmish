@@ -729,6 +729,13 @@ func get_contact_response_stats() -> Dictionary:
 	}
 
 
+## 提供脫困起點的接觸快照；呼叫方不能改動控制器持有的紀錄。
+func get_recovery_contacts() -> Array[Dictionary]:
+	if _contact_frames_since_contact > 1:
+		return []
+	return _contact_records.duplicate(true)
+
+
 func _contact_active_normals() -> Array[Vector3]:
 	var normals: Array[Vector3] = []
 	if _contact_frames_since_contact > 1:

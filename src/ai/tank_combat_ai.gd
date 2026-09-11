@@ -1,4 +1,4 @@
-## 原地坦克可受擊轉向查看；目標可見才瞄準開火，固定砲塔沿用車體輔助轉向。
+## 原地坦克依可見目標、受擊查看、最後目擊位置瞄準；只有可見目標可以開火。
 extends Node
 
 ## 由此 AI 控制砲塔、砲管、原地輔助轉向與開火請求的完整坦克。
@@ -14,11 +14,16 @@ var target: Node3D
 var combat_enabled := true
 ## 命中當下車體中心指向受擊點的世界水平方向；零代表沒有待完成的查看。
 var _inspection_direction := Vector3.ZERO
+## 最後實際目擊時的穩定車身中心世界座標；失視後不再讀取目標位置。
+var _last_seen_position := Vector3.ZERO
+## 世界原點亦為合法位置，記憶有效性不能由座標是否為零判斷。
+var _has_last_seen_position := false
 
 
 ## 指定唯一戰鬥目標；第一版不執行敵我辨識或多目標選擇。
 func set_target(next_target: Node3D) -> void:
 	_inspection_direction = Vector3.ZERO
+	_clear_last_seen_position()
 	_cancel_aim()
 	target = next_target
 
@@ -28,6 +33,7 @@ func set_combat_enabled(enabled: bool) -> void:
 	combat_enabled = enabled
 	if not combat_enabled:
 		_inspection_direction = Vector3.ZERO
+		_clear_last_seen_position()
 		_cancel_aim()
 
 
@@ -42,31 +48,47 @@ func inspect_hit_position(hit_position: Vector3) -> void:
 		return
 	if forward.angle_to(hit_direction) <= deg_to_rad(float(vision.get("far_field_of_view_degrees")) * 0.5):
 		return
+	_clear_last_seen_position()
 	_inspection_direction = hit_direction.normalized()
 
 
 func _physics_process(delta: float) -> void:
 	if not _can_operate():
 		_inspection_direction = Vector3.ZERO
+		_clear_last_seen_position()
 		_cancel_aim()
 		return
 	var visible_points: PackedVector3Array = vision.call("visible_target_points", target) as PackedVector3Array
 	if visible_points.is_empty():
 		if not _inspection_direction.is_zero_approx():
 			_turn_to_inspection(delta)
+		elif _has_last_seen_position:
+			_aim_at_position(_last_seen_position, delta)
 		else:
 			_cancel_aim()
 		return
 	## 正常視野優先；一旦看見目標，就不再保留先前受擊側的查看意圖。
 	_inspection_direction = Vector3.ZERO
+	## 只露出部位時第一個可見點未必是車身中心，必須分開取得中心快照。
+	_last_seen_position = vision.call("target_world_position", target) as Vector3
+	_has_last_seen_position = true
 	var selected_aim: Dictionary = _select_aim_target(visible_points)
 	var selected_point: Vector3 = selected_aim.get("position", Vector3.ZERO) as Vector3
 	var can_fire: bool = bool(selected_aim.get("can_fire", false))
-	controlled_tank.call("aim_turret_at", selected_point, delta)
-	controlled_tank.call("aim_gun_pitch_at_target", selected_point, delta)
-	_apply_hull_aim_assist()
+	_aim_at_position(selected_point, delta)
 	if can_fire and _is_muzzle_aligned_and_clear(selected_point):
 		controlled_tank.call("request_fire")
+
+
+func _clear_last_seen_position() -> void:
+	_has_last_seen_position = false
+	_last_seen_position = Vector3.ZERO
+
+
+func _aim_at_position(position: Vector3, delta: float) -> void:
+	controlled_tank.call("aim_turret_at", position, delta)
+	controlled_tank.call("aim_gun_pitch_at_target", position, delta)
+	_apply_hull_aim_assist()
 
 
 func _select_aim_target(visible_points: PackedVector3Array) -> Dictionary:

@@ -599,9 +599,12 @@ func _validate_fixed_turret_ai_hull_aim(playtest: Node3D, scene_path: String, la
 				print("hull aim lost sight: label=", label, " origin=", view_origin, " target=", vision.call("target_world_position", target), " blocker=", blocker.global_position)
 				_finish(playtest, "%s hull-aim lost-sight fixture must block the original Vision ray." % label)
 				return false
-			if not await _wait_for_hull_stop(observer, 10):
-				print("hull aim lost sight stop: label=", label, " turn=", observer.turn_command, " angular=", observer.angular_speed, " movement=", observer.movement_command)
-				_finish(playtest, "Losing sight must immediately clear %s hull-turn command and inertia." % label)
+			var hidden_yaw := observer.global_rotation.y
+			var shots_before_hidden := shots.size()
+			if not await _wait_for_frames(10) or absf(angle_difference(hidden_yaw, observer.global_rotation.y)) <= deg_to_rad(1.0) \
+					or shots.size() != shots_before_hidden or not is_zero_approx(observer.movement_command):
+				print("hull aim last-seen: label=", label, " turn=", observer.turn_command, " angular=", observer.angular_speed, " movement=", observer.movement_command, " shots=", shots.size())
+				_finish(playtest, "Losing sight with a last-seen position must keep %s turning in place without firing." % label)
 				return false
 			blocker.queue_free()
 			await physics_frame

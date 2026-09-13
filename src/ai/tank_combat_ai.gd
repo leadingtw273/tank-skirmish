@@ -1,14 +1,28 @@
-## 原地坦克依可見目標、受擊查看、最後目擊位置瞄準；只有可見目標可以開火。
+## 依可見目標、受擊查看、最後目擊位置決定追近／搜索；統一提交車身命令。
 extends Node
 
-## 由此 AI 控制砲塔、砲管、原地輔助轉向與開火請求的完整坦克。
-@export var controlled_tank: Node3D
+const TankNavigation := preload("res://src/ai/tank_navigation.gd")
+const SEARCH_ARRIVAL_DISTANCE := 3.0
+const HULL_FACING_TOLERANCE_DEGREES := 5.0
+
+## 換車先清舊車命令與路徑，不把上一台車的記憶帶到新車。
+@export var controlled_tank: Node3D:
+	set(value):
+		if controlled_tank == value:
+			return
+		_cancel_aim()
+		_submit_body_commands(0.0, 0.0)
+		_release_navigation()
+		controlled_tank = value
+		_inspection_direction = Vector3.ZERO
+		_clear_last_seen_position()
+		_reset_movement()
 ## 提供目標可見性與車體中心位置的共用視野元件。
 @export var vision: Node
 ## 砲口方向與目標方向可允許的最大三維角度誤差，單位為度。
 @export_range(0.0, 45.0, 0.1) var alignment_tolerance_degrees := 3.0
 
-## 此固定位置 AI 目前唯一追蹤的目標，可由場景協調器在換車後更新。
+## 唯一追蹤目標；導航只收到可用位置，不持有或讀取這個目標節點。
 var target: Node3D
 ## 場景協調器控制的戰鬥開關；關閉時停止追蹤與開火但保留目前砲塔姿態。
 var combat_enabled := true
@@ -18,13 +32,41 @@ var _inspection_direction := Vector3.ZERO
 var _last_seen_position := Vector3.ZERO
 ## 世界原點亦為合法位置，記憶有效性不能由座標是否為零判斷。
 var _has_last_seen_position := false
+## 供測試／偵錯觀察的當前移動結果，不是另一套狀態權威。
+var movement_status: StringName = &"idle"
+var _navigation: RefCounted
+var _navigation_generation := 0
+var _was_visible := false
+var _pursuing := false
+var _trace_submit_frame := -1
+var _trace_submitted: Dictionary = {}
+var _weapon_pose_mode: StringName = &"idle"
+
+
+## 只讀快取，不重新索敵或尋路；真實玩家位置由紀錄器另取。
+func get_driving_trace_state() -> Dictionary:
+	return {
+		"status": movement_status, "combat_enabled": combat_enabled,
+		"target_id": target.get_instance_id() if is_instance_valid(target) else 0,
+		"visible": _was_visible, "pursuing": _pursuing,
+		"last_seen_valid": _has_last_seen_position, "last_seen_position": _last_seen_position,
+		"inspection_direction": _inspection_direction, "generation": _navigation_generation,
+		"weapon_pose_mode": _weapon_pose_mode,
+		"submit_frame": _trace_submit_frame, "submitted": _trace_submitted.duplicate(),
+		"navigation": _navigation.call("get_driving_trace_state") if _navigation != null else {},
+	}
 
 
 ## 指定唯一戰鬥目標；第一版不執行敵我辨識或多目標選擇。
 func set_target(next_target: Node3D) -> void:
+	if target == next_target:
+		return
 	_inspection_direction = Vector3.ZERO
 	_clear_last_seen_position()
+	_reset_movement()
 	_cancel_aim()
+	_weapon_pose_mode = &"idle"
+	_submit_body_commands(0.0, 0.0)
 	target = next_target
 
 
@@ -34,7 +76,10 @@ func set_combat_enabled(enabled: bool) -> void:
 	if not combat_enabled:
 		_inspection_direction = Vector3.ZERO
 		_clear_last_seen_position()
+		_reset_movement()
 		_cancel_aim()
+		_weapon_pose_mode = &"idle"
+		_submit_body_commands(0.0, 0.0)
 
 
 ## 只知道自己哪一側被打中，不使用彈道方向或攻擊者位置作為查看朝向。
@@ -49,33 +94,81 @@ func inspect_hit_position(hit_position: Vector3) -> void:
 	if forward.angle_to(hit_direction) <= deg_to_rad(float(vision.get("far_field_of_view_degrees")) * 0.5):
 		return
 	_clear_last_seen_position()
+	_new_navigation_goal(true)
 	_inspection_direction = hit_direction.normalized()
+	movement_status = &"inspection"
+	_submit_body_commands(0.0, 0.0)
 
 
 func _physics_process(delta: float) -> void:
 	if not _can_operate():
 		_inspection_direction = Vector3.ZERO
 		_clear_last_seen_position()
+		_reset_movement()
 		_cancel_aim()
+		_weapon_pose_mode = &"idle"
+		_submit_body_commands(0.0, 0.0)
 		return
+	_ensure_navigation()
 	var visible_points: PackedVector3Array = vision.call("visible_target_points", target) as PackedVector3Array
 	if visible_points.is_empty():
+		if _was_visible:
+			_was_visible = false
+			_pursuing = false
+			_new_navigation_goal(true, true)
 		if not _inspection_direction.is_zero_approx():
+			_weapon_pose_mode = &"inspection"
 			_turn_to_inspection(delta)
 		elif _has_last_seen_position:
-			_aim_at_position(_last_seen_position, delta)
+			var center := controlled_tank.call("stable_world_center") as Vector3
+			var terminal := bool(_navigation.call("is_terminal_for_goal", _last_seen_position, _navigation_generation))
+			if _horizontal_distance(center, _last_seen_position) > SEARCH_ARRIVAL_DISTANCE and not terminal:
+				_weapon_pose_mode = &"travel"
+				_aim_travel_turret(delta)
+			else:
+				_weapon_pose_mode = &"last_seen"
+				_aim_at_position(_last_seen_position, delta)
+			var search_intent: Dictionary = _navigation.call("drive", _last_seen_position,
+				_navigation_generation, SEARCH_ARRIVAL_DISTANCE, delta)
+			_submit_navigation_intent(search_intent, _last_seen_position, delta)
 		else:
+			movement_status = &"idle"
+			_weapon_pose_mode = &"idle"
 			_cancel_aim()
+			_submit_body_commands(0.0, 0.0)
 		return
 	## 正常視野優先；一旦看見目標，就不再保留先前受擊側的查看意圖。
 	_inspection_direction = Vector3.ZERO
+	_weapon_pose_mode = &"visible"
 	## 只露出部位時第一個可見點未必是車身中心，必須分開取得中心快照。
 	_last_seen_position = vision.call("target_world_position", target) as Vector3
 	_has_last_seen_position = true
+	var center := controlled_tank.call("stable_world_center") as Vector3
+	var distance := _horizontal_distance(center, _last_seen_position)
+	var stop_distance := maxf(float(controlled_tank.get("ai_stop_distance")), 0.1)
+	var resume_distance := maxf(float(controlled_tank.get("ai_resume_distance")), stop_distance + 0.1)
+	if not _was_visible:
+		_new_navigation_goal(true, true)
+		_pursuing = distance > resume_distance
+	elif not _pursuing and distance > resume_distance:
+		_navigation.call("cancel_movement_preserving_budget")
+		_pursuing = true
+	elif _pursuing and distance <= stop_distance:
+		_pursuing = false
+		_navigation.call("cancel_movement_preserving_budget")
+	_was_visible = true
 	var selected_aim: Dictionary = _select_aim_target(visible_points)
 	var selected_point: Vector3 = selected_aim.get("position", Vector3.ZERO) as Vector3
 	var can_fire: bool = bool(selected_aim.get("can_fire", false))
+	## 姿態依原目標更新後才做通道安全檢查；不鎖砲塔、不放寬射擊門檻。
 	_aim_at_position(selected_point, delta)
+	var move_intent := {"movement": 0.0, "turn": 0.0, "status": &"holding"}
+	if _pursuing:
+		move_intent = _navigation.call("drive", _last_seen_position, _navigation_generation, stop_distance, delta)
+		var status: StringName = move_intent.get("status", &"idle")
+		if status == &"arrived":
+			_pursuing = false
+	_submit_navigation_intent(move_intent, _last_seen_position, delta)
 	if can_fire and _is_muzzle_aligned_and_clear(selected_point):
 		controlled_tank.call("request_fire")
 
@@ -88,7 +181,17 @@ func _clear_last_seen_position() -> void:
 func _aim_at_position(position: Vector3, delta: float) -> void:
 	controlled_tank.call("aim_turret_at", position, delta)
 	controlled_tank.call("aim_gun_pitch_at_target", position, delta)
-	_apply_hull_aim_assist()
+
+
+## travel 僅水平回正；不寫 rotation，也不觸碰砲管 pitch。
+func _aim_travel_turret(delta: float) -> void:
+	var turret := controlled_tank.get_node_or_null("VisualRecoilPivot/TurretPivot") as Node3D
+	if turret == null:
+		return
+	var forward := controlled_tank.global_basis * Vector3.LEFT
+	forward.y = 0.0
+	if not forward.is_zero_approx():
+		controlled_tank.call("aim_turret_at", turret.global_position + forward.normalized() * 100.0, delta)
 
 
 func _select_aim_target(visible_points: PackedVector3Array) -> Dictionary:
@@ -112,15 +215,85 @@ func _has_ideal_muzzle_line_of_fire(point: Vector3) -> bool:
 	return hit.get("collider") == target
 
 
-func _apply_hull_aim_assist() -> void:
-	## 車型自己判斷是否需要轉車體；一般旋轉砲塔車型會回傳 0，不以型號寫特例。
-	controlled_tank.call("set_movement_input", 0.0)
-	var turn_input := clampf(float(controlled_tank.call("get_hull_aim_turn_input")), -1.0, 1.0)
-	if is_zero_approx(turn_input):
-		## 對齊就清除既有旋轉慣性，與玩家輔助瞄準使用同一個停止介面。
+func _submit_navigation_intent(intent: Dictionary, facing_position: Vector3, delta: float = 1.0 / 60.0) -> void:
+	movement_status = intent.get("status", &"idle")
+	var moving := movement_status in [&"moving", &"recovering"]
+	if movement_status == &"stuck":
+		_submit_body_commands(0.0, 0.0)
+		return
+	var turn := float(intent.get("turn", 0.0)) if moving else _stationary_facing_input(facing_position)
+	if not moving and movement_status in [&"holding", &"arrived"] and _navigation != null:
+		var adjusted: Dictionary = _navigation.call("hold", turn, delta, facing_position, _navigation_generation)
+		var adjusted_status: StringName = adjusted.get("status", &"holding")
+		# 無碰撞介入的原地保持不應抹掉導航已抵達的終止狀態。
+		if adjusted_status != &"holding":
+			movement_status = adjusted_status
+		_submit_body_commands(float(adjusted.get("movement", 0.0)), float(adjusted.get("turn", 0.0)))
+		return
+	_submit_body_commands(float(intent.get("movement", 0.0)) if moving else 0.0, turn)
+
+
+func _stationary_facing_input(position: Vector3) -> float:
+	var direction := position - (controlled_tank.call("stable_world_center") as Vector3)
+	direction.y = 0.0
+	if not direction.is_zero_approx():
+		var forward := -controlled_tank.global_basis.x
+		forward.y = 0.0
+		var error := forward.normalized().signed_angle_to(direction.normalized(), Vector3.UP)
+		if absf(error) > deg_to_rad(HULL_FACING_TOLERANCE_DEGREES):
+			return clampf(error / deg_to_rad(20.0), -1.0, 1.0)
+	## 固定砲塔仍可依原機械精度微調，不把車頭5度容差當成射擊資格。
+	return clampf(float(controlled_tank.call("get_hull_aim_turn_input")), -1.0, 1.0)
+
+
+## 所有正常物理更新與生命週期停止都經過這個唯一命令出口。
+func _submit_body_commands(movement: float, turn: float) -> void:
+	if not is_instance_valid(controlled_tank):
+		return
+	_trace_submit_frame = Engine.get_physics_frames()
+	_trace_submitted = {"movement": clampf(movement, -1.0, 1.0), "turn": clampf(turn, -1.0, 1.0)}
+	if controlled_tank.has_method(&"set_movement_input"):
+		controlled_tank.call("set_movement_input", clampf(movement, -1.0, 1.0))
+	if is_zero_approx(turn) and controlled_tank.has_method(&"stop_hull_aim_turn"):
 		controlled_tank.call("stop_hull_aim_turn")
-	else:
-		controlled_tank.call("set_turn_input", turn_input)
+	elif controlled_tank.has_method(&"set_turn_input"):
+		controlled_tank.call("set_turn_input", clampf(turn, -1.0, 1.0))
+
+
+func _ensure_navigation() -> void:
+	if _navigation == null:
+		_navigation = TankNavigation.new()
+		_navigation.call("setup", controlled_tank)
+
+
+func _new_navigation_goal(preserve_episode := true, preserve_action := false) -> void:
+	_navigation_generation += 1
+	if _navigation != null:
+		_navigation.call("clear", preserve_episode, preserve_action)
+
+
+func _reset_movement() -> void:
+	_new_navigation_goal(false)
+	_was_visible = false
+	_pursuing = false
+	movement_status = &"idle"
+	_weapon_pose_mode = &"idle"
+
+
+func _release_navigation() -> void:
+	if _navigation != null:
+		_navigation.call("dispose")
+		_navigation = null
+
+
+func _exit_tree() -> void:
+	_cancel_aim()
+	_submit_body_commands(0.0, 0.0)
+	_release_navigation()
+
+
+func _horizontal_distance(a: Vector3, b: Vector3) -> float:
+	return Vector2(a.x - b.x, a.z - b.z).length()
 
 
 func _turn_to_inspection(delta: float) -> void:
@@ -128,14 +301,18 @@ func _turn_to_inspection(delta: float) -> void:
 	if turret == null:
 		_inspection_direction = Vector3.ZERO
 		_cancel_aim()
+		_submit_body_commands(0.0, 0.0)
 		return
 	## 朝固定方向的遠處虛擬點偏航，避免把車身受擊點直接交給近距瞄準死區。
 	controlled_tank.call("aim_turret_at", turret.global_position + _inspection_direction * 100.0, delta)
 	if _turret_forward().angle_to(_inspection_direction) <= deg_to_rad(maxf(alignment_tolerance_degrees, 0.0)):
 		_inspection_direction = Vector3.ZERO
+		movement_status = &"idle"
 		_cancel_aim()
+		_submit_body_commands(0.0, 0.0)
 	else:
-		_apply_hull_aim_assist()
+		movement_status = &"inspection"
+		_submit_body_commands(0.0, float(controlled_tank.call("get_hull_aim_turn_input")))
 
 
 func _turret_forward() -> Vector3:
@@ -165,6 +342,7 @@ func _can_operate() -> bool:
 		and controlled_tank.has_method(&"set_movement_input")
 		and controlled_tank.has_method(&"set_turn_input")
 		and controlled_tank.has_method(&"stop_hull_aim_turn")
+		and controlled_tank.has_method(&"stable_world_center")
 		and vision.has_method(&"can_see")
 		and vision.has_method(&"visible_target_points")
 		and vision.has_method(&"target_world_position")
@@ -204,8 +382,3 @@ func _cancel_aim() -> void:
 	## Tank 的取消介面只清除持續瞄準輸入，不重設已保留的砲塔與砲管姿態。
 	if controlled_tank != null and is_instance_valid(controlled_tank) and controlled_tank.has_method(&"cancel_aim"):
 		controlled_tank.call(&"cancel_aim")
-		## 沒有查看意圖、死亡或被停用時也須清除車體轉向，不能只取消砲管瞄準。
-		if controlled_tank.has_method(&"set_movement_input"):
-			controlled_tank.call("set_movement_input", 0.0)
-		if controlled_tank.has_method(&"stop_hull_aim_turn"):
-			controlled_tank.call("stop_hull_aim_turn")

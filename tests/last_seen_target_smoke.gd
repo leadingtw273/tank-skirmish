@@ -364,7 +364,6 @@ func _a1_four_tanks() -> bool:
 		var gun := turret.get_node("GunPitchPivot") as Node3D
 		await _manual_tick(f.ai)
 		_hide_by_range(observer)
-		var initial_position := observer.global_position
 		var initial_yaw := observer.global_rotation.y
 		var initial_gun_pitch := gun.rotation.z
 		var initial_turret_yaw := turret.global_rotation.y
@@ -373,8 +372,11 @@ func _a1_four_tanks() -> bool:
 		for tick in 45:
 			await _manual_tick(f.ai)
 			observer.call("_physics_process", 1.0 / 60.0)
-			if not is_zero_approx(float(observer.get("movement_command"))) or observer.global_position.distance_to(initial_position) > 0.01:
-				return _fail("A1 Tank%d last-seen aiming must remain in place." % (model + 1))
+			## LEA-175 的最後目擊行為會在 map ready 時移向記憶點；本舊 fixture 沒有
+			## NavigationRegion3D，因此只保留不倒車與具名狀態的回歸，不再把靜止當契約。
+			if float(observer.get("movement_command")) < -0.0001 \
+					or not (f.ai.get("movement_status") in [&"waiting_map", &"moving", &"arrived", &"partial_end", &"no_path", &"stuck"]):
+				return _fail("A1 Tank%d last-seen search must remain a non-reversing, named movement state." % (model + 1))
 			if absf(turret.rotation.y) > deg_to_rad(float(observer.get("turret_max_yaw_degrees"))) + 0.001 \
 					or -gun.rotation.z > deg_to_rad(float(observer.get("gun_max_elevation_degrees"))) + 0.001 \
 					or -gun.rotation.z < -deg_to_rad(float(observer.get("gun_max_depression_degrees"))) - 0.001:
@@ -384,8 +386,9 @@ func _a1_four_tanks() -> bool:
 		if model == 0 or model == 3:
 			if absf(angle_difference(initial_yaw, observer.global_rotation.y)) < deg_to_rad(2.0):
 				return _fail("A1 fixed Tank%d must keep its existing hull assist." % (model + 1))
-		elif absf(angle_difference(initial_turret_yaw, turret.global_rotation.y)) < deg_to_rad(2.0) or not is_equal_approx(initial_yaw, observer.global_rotation.y):
-			return _fail("A1 rotating Tank%d must turn turret without turning hull." % (model + 1))
+		elif absf(angle_difference(initial_turret_yaw, turret.global_rotation.y)) < deg_to_rad(2.0) \
+				or absf(angle_difference(initial_yaw, observer.global_rotation.y)) < deg_to_rad(2.0):
+			return _fail("A1 rotating Tank%d must aim its turret and face its stopped hull toward the remembered point." % (model + 1))
 		await _dispose(f)
 	return true
 

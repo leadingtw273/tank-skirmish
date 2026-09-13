@@ -17,6 +17,10 @@ extends Node3D
 ## 新車生成後可正常操作、但拒絕傷害的秒數。
 @export_range(0.1, 10.0, 0.1) var player_invulnerability_seconds := 2.0
 const PLAYER_INVULNERABILITY_BLINK_SECONDS := 0.15
+const DrivingTraceRecorder := preload("res://src/debug/driving_trace_recorder.gd")
+
+## Debug GUI 預設可記錄；headless/release 是否實際啟用由 recorder 自己守門。
+@export var driving_trace_enabled := true
 
 @onready var enemy: Node3D = $Enemy
 @onready var combat_ai: Node = $CombatAI
@@ -54,6 +58,12 @@ func _ready() -> void:
 	player_runtime.connect("controlled_tank_changed", _bind_player)
 	_bind_player(player_runtime.get("controlled_tank") as Node3D)
 	combat_runtime.impact_resolved.connect(_on_impact_resolved)
+	if driving_trace_enabled:
+		call_deferred("_attach_driving_trace")
+
+
+func _attach_driving_trace() -> void:
+	DrivingTraceRecorder.attach(self)
 
 
 func _on_impact_resolved(event: ImpactEvent) -> void:

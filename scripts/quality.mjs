@@ -278,6 +278,9 @@ for (const testName of [
   "enemy_recovery_smoke",
   "enemy_corner_recovery_smoke",
   "enemy_predictive_driving_smoke",
+  "driving_trace_smoke",
+  "driving_trace_v2_smoke",
+  "driving_trace_rotation_smoke",
   "vision_preview_smoke",
   "region_wreck_cleanup_smoke",
 ]) {

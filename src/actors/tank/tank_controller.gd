@@ -194,6 +194,10 @@ var _motion_guard_attempt_stats := {
 ## 僅保留當前或前一 physics step 的真實 move_and_slide 接觸；不推動其他 body。
 var _contact_records: Array[Dictionary] = []
 var _contact_frames_since_contact := 2
+## 供 recorder／predictor 明確協調的診斷開關；預設關閉且不改既有行為。
+var _driving_trace_enabled := false
+var _trace_physics_frame := -1
+var _trace_applied_input: Dictionary = {}
 var _contact_slide_velocity := Vector3.ZERO
 var _contact_manual_turn_active := false
 var _contact_auto_yaw_requested := 0.0
@@ -318,7 +322,7 @@ func predictive_driving_snapshot() -> Dictionary:
 	var shape_start := 0
 	for part in part_geometry.parts:
 		var shape_count := part.convex_shapes.size()
-		part_ranges.append({"start": shape_start, "count": shape_count})
+		part_ranges.append({"start": shape_start, "count": shape_count, "part_id": String(part.id), "anchor": String(part.anchor)})
 		shape_start += shape_count
 	return {
 		"root": global_transform,
@@ -555,6 +559,8 @@ func _has_valid_variant_interface() -> bool:
 
 
 func _physics_process(delta: float) -> void:
+	_trace_physics_frame = Engine.get_physics_frames()
+	_trace_applied_input = {"movement": movement_command, "turn": turn_command, "hull_aim_turn": hull_aim_turn_input}
 	_fire_cooldown_remaining = maxf(0.0, _fire_cooldown_remaining - delta)
 	## 以動力與煞車積分線／角速度，碰撞後讀回實際線速度，再讓履帶依實際動態更新。
 	var engine_acceleration := _engine_acceleration()
@@ -794,6 +800,88 @@ func get_recovery_contacts() -> Array[Dictionary]:
 	return _contact_records.duplicate(true)
 
 
+## 由 recorder 在 session 開始時開關；controller 本身不據此改變駕駛或碰撞語意。
+func set_driving_trace_enabled(enabled: bool) -> void:
+	_driving_trace_enabled = enabled
+
+
+func is_driving_trace_enabled() -> bool:
+	return _driving_trace_enabled
+
+
+## 一次性車型描述；資源與物理設定均直接讀取 controller 現有欄位。
+func get_driving_trace_descriptor() -> Dictionary:
+	var shape_map: Array[Dictionary] = []
+	for shape_index in _part_collision_shapes.size():
+		shape_map.append(_driving_trace_part_metadata(shape_index))
+	return {
+		"vehicle_type": _driving_trace_vehicle_type(),
+		"scene": scene_file_path,
+		"geometry_resource": part_geometry.resource_path if part_geometry != null else "",
+		"physics": {
+			"collision_layer": collision_layer,
+			"collision_mask": collision_mask,
+			"movement_speed": movement_speed,
+			"reverse_movement_speed": reverse_movement_speed,
+			"turn_speed": turn_speed,
+			"turning_movement_speed_ratio": turning_movement_speed_ratio,
+			"firing_movement_speed_loss_ratio": firing_movement_speed_loss_ratio,
+			"tank_mass_tonnes": tank_mass_tonnes,
+			"engine_horsepower": engine_horsepower,
+			"brake_force_kilonewtons": brake_force_kilonewtons,
+			"turn_response": turn_response,
+			"turret_turn_speed": turret_turn_speed,
+			"turret_max_yaw_degrees": turret_max_yaw_degrees,
+			"gun_pitch_speed": gun_pitch_speed,
+			"gun_max_elevation_degrees": gun_max_elevation_degrees,
+			"gun_max_depression_degrees": gun_max_depression_degrees,
+		},
+		"shape_map": shape_map,
+	}
+
+
+## 每個物理步的最小狀態，供 recorder 保存提交與實際套用的時序。
+func get_driving_trace_frame() -> Dictionary:
+	return {
+		"id": get_instance_id(),
+		"physics_frame": _trace_physics_frame,
+		"position": global_position,
+		"position_reference": "root_origin",
+		"root_transform": global_transform,
+		"angles": _driving_trace_angles(),
+		"applied_input": _trace_applied_input.duplicate(),
+		"velocity": get_real_velocity(),
+	}
+
+
+## 只讀現有機械／碰撞結果，不新增物理查詢或修改輸入。
+func get_driving_trace_state() -> Dictionary:
+	var contacts: Array[Dictionary] = get_recovery_contacts()
+	for contact in contacts:
+		contact["rid"] = (contact.rid as RID).get_id()
+		contact["age"] = _contact_frames_since_contact
+	return {
+		"id": get_instance_id(), "path": str(get_path()), "scene": scene_file_path,
+		"vehicle_type": _driving_trace_vehicle_type(),
+		"position": stable_world_center(), "rotation": global_rotation,
+		"position_reference": "stable_center",
+		"root_transform": global_transform, "angles": _driving_trace_angles(),
+		"forward": global_basis * Vector3.LEFT, "velocity": get_real_velocity(),
+		"forward_speed": forward_speed, "actual_linear_speed": actual_linear_speed,
+		"actual_angular_speed": actual_angular_speed, "actual_turret_angular_speed": actual_turret_angular_speed,
+		"movement_command": movement_command,
+		"turn_command": turn_command, "hull_aim_turn_input": hull_aim_turn_input,
+		"physics_frame": _trace_physics_frame, "applied_input": _trace_applied_input.duplicate(),
+		"turret_yaw": turret_pivot.rotation.y if is_instance_valid(turret_pivot) else 0.0,
+		"gun_pitch": -gun_pitch_pivot.rotation.z if is_instance_valid(gun_pitch_pivot) else 0.0,
+		"muzzle_valid": is_instance_valid(muzzle_point),
+		"muzzle_transform": muzzle_point.global_transform if is_instance_valid(muzzle_point) else Transform3D.IDENTITY,
+		"contact_age": _contact_frames_since_contact, "contacts": contacts,
+		"contact_response": get_contact_response_stats(),
+		"motion_guard": _motion_guard_attempt_stats.duplicate(true),
+	}
+
+
 func _contact_active_normals() -> Array[Vector3]:
 	var normals: Array[Vector3] = []
 	if _contact_frames_since_contact > 1:
@@ -859,7 +947,17 @@ func _capture_contact_records() -> void:
 		var normal := TankContactResponse.horizontal_normal(collision.get_normal())
 		if normal.is_zero_approx():
 			continue
-		captured.append({"position": collision.get_position(), "normal": normal, "rid": collision.get_collider_rid()})
+		var collider := collision.get_collider() as Node
+		var local_shape := collision.get_local_shape() as CollisionShape3D
+		var local_shape_index := _driving_trace_local_shape_index(local_shape)
+		var shape_metadata := _driving_trace_part_metadata_from_local_shape(local_shape)
+		captured.append({"position": collision.get_position(), "normal": normal, "rid": collision.get_collider_rid(),
+			"collider_id": collision.get_collider_id(),
+			"collider_path": str(collider.get_path()) if is_instance_valid(collider) and collider.is_inside_tree() else "",
+			"local_shape_index": local_shape_index,
+			"collider_shape_index": collision.get_collider_shape_index(),
+			"shape_index": shape_metadata["shape_index"],
+			"part_id": shape_metadata["part_id"], "anchor": shape_metadata["anchor"]})
 	if captured.is_empty():
 		_contact_frames_since_contact += 1
 		if _contact_frames_since_contact > 1:
@@ -868,6 +966,69 @@ func _capture_contact_records() -> void:
 		_contact_records = captured
 		_contact_frames_since_contact = 0
 	_contact_count = _contact_records.size()
+
+
+## local_shape 是 KinematicCollision3D 回傳的 Object；直接對照實際掛載的 CollisionShape3D。
+func _driving_trace_part_metadata_from_local_shape(local_shape: CollisionShape3D) -> Dictionary:
+	if local_shape == null:
+		return _driving_trace_unknown_shape_metadata()
+	var shape_index := _part_collision_shapes.find(local_shape)
+	return _driving_trace_part_metadata(shape_index)
+
+
+## 只有 owner 確定僅有一個 shape 時，才將 Object 轉回引擎 local shape index。
+func _driving_trace_local_shape_index(local_shape: CollisionShape3D) -> int:
+	if local_shape == null:
+		return -1
+	for owner_id in get_shape_owners():
+		if shape_owner_get_owner(owner_id) != local_shape:
+			continue
+		if shape_owner_get_shape_count(owner_id) != 1:
+			return -1
+		return shape_owner_get_shape_index(owner_id, 0)
+	return -1
+
+
+## shape_index 是 controller 建立 part geometry 時的扁平索引，與 descriptor 的 shape_map 一致。
+func _driving_trace_part_metadata(shape_index: int) -> Dictionary:
+	if part_geometry == null or shape_index < 0:
+		return _driving_trace_unknown_shape_metadata()
+	var next_shape_index := 0
+	for part in part_geometry.parts:
+		for part_shape_index in part.convex_shapes.size():
+			if next_shape_index == shape_index:
+				return {"shape_index": shape_index, "part_id": String(part.id), "anchor": String(part.anchor), "part_shape_index": part_shape_index}
+			next_shape_index += 1
+	return _driving_trace_unknown_shape_metadata()
+
+
+func _driving_trace_unknown_shape_metadata() -> Dictionary:
+	return {"shape_index": -1, "part_id": "unknown", "anchor": "unknown", "part_shape_index": -1}
+
+
+func _driving_trace_vehicle_type() -> String:
+	return scene_file_path.get_file().get_basename() if not scene_file_path.is_empty() else "unknown"
+
+
+## hull=CharacterBody 世界 yaw；turret local=TurretPivot.rotation.y；gun local 的正仰角為 -rotation.z。
+func _driving_trace_angles() -> Dictionary:
+	var hull_world_yaw := global_transform.basis.get_euler().y
+	var turret_local_yaw := turret_pivot.rotation.y if is_instance_valid(turret_pivot) else 0.0
+	var turret_world_yaw := turret_pivot.global_transform.basis.get_euler().y if is_instance_valid(turret_pivot) else hull_world_yaw
+	var gun_local_pitch := -gun_pitch_pivot.rotation.z if is_instance_valid(gun_pitch_pivot) else 0.0
+	return {
+		"unit": "radians",
+		"hull_world_yaw": hull_world_yaw,
+		"turret_local_yaw": turret_local_yaw,
+		"turret_world_yaw": turret_world_yaw,
+		"gun_local_pitch": gun_local_pitch,
+		"degrees": {
+			"hull_world_yaw": rad_to_deg(hull_world_yaw),
+			"turret_local_yaw": rad_to_deg(turret_local_yaw),
+			"turret_world_yaw": rad_to_deg(turret_world_yaw),
+			"gun_local_pitch": rad_to_deg(gun_local_pitch),
+		},
+	}
 
 
 ## 回傳供 CameraController 使用且不為負值的鏡頭前視上限，單位為公尺。

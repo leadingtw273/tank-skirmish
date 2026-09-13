@@ -1,159 +1,191 @@
-## 只處理有限次受阻恢復，不尋找捷徑、不直接改載具物理。
+## 有限次受阻恢復；物理查詢與導航交接由 Predictor／Navigation 擁有。
 extends RefCounted
 
 const STUCK_SECONDS := 3.0
-const PROGRESS_METRES := 0.5
+const PROGRESS_METRES := .5
 const PROGRESS_RADIANS := deg_to_rad(3.0)
-const MAX_ATTEMPTS := 2
+const MAX_ATTEMPTS := 3
+const ATTEMPT_SECONDS := 16.0
 const REVERSE_METRES := 2.0
 const REVERSE_SECONDS := 2.0
 const REVERSE_SPEED := 1.5
-const STOP_SPEED := 0.1
+const STOP_SPEED := .1
 const ESCAPE_ANGLE := deg_to_rad(30.0)
 const ALIGN_TOLERANCE := deg_to_rad(3.0)
-const TURN_SECONDS := 3.0
+const TURN_SECONDS := 7.0
 const ESCAPE_METRES := 2.0
 const ESCAPE_SECONDS := 2.5
-const STOP_ANGULAR_SPEED := 0.02
+const STOP_ANGULAR_SPEED := .02
 
 var phase: StringName = &"normal"
 var attempts := 0
+var blocked_origin := Vector3.ZERO
+var blocked_forward := Vector3.LEFT
+var escape_heading := Vector3.ZERO
+var advance_origin := Vector3.ZERO
+var positive_advance := 0.0
+var rejoin_reason: StringName = &""
+var episode_active := false
+var confirmation_active := false
+var confirmation_elapsed := 0.0
+var confirmation_origin := Vector3.ZERO
 var _elapsed := 0.0
+var _attempt_elapsed := 0.0
 var _origin := Vector3.ZERO
 var _forward := Vector3.LEFT
-var _escape_forward := Vector3.ZERO
-var _observed_escape_forward := Vector3.ZERO
-
+var _observed_side := 0.0
+var _attempt_side := 1.0
+var _failed_heading := Vector3.ZERO
 
 func reset(position := Vector3.ZERO, forward := Vector3.LEFT) -> void:
-	phase = &"normal"
-	attempts = 0
-	_escape_forward = Vector3.ZERO
+	phase = &"normal"; attempts = 0; blocked_origin = position; blocked_forward = forward
+	escape_heading = Vector3.ZERO; advance_origin = Vector3.ZERO; positive_advance = 0.0; rejoin_reason = &""; _failed_heading = Vector3.ZERO; _attempt_side = 1.0
+	episode_active = false; interrupt_confirmation(position)
 	reset_progress(position, forward)
 
+
+func cancel_action_preserving_episode(position: Vector3, forward: Vector3) -> void:
+	phase = &"normal"; escape_heading = Vector3.ZERO; advance_origin = Vector3.ZERO; positive_advance = 0.0
+	_attempt_elapsed = 0.0; _failed_heading = Vector3.ZERO; _attempt_side = 1.0
+	interrupt_confirmation(position)
+	reset_progress(position, forward)
+
+
+func interrupt_confirmation(position := Vector3.ZERO) -> void:
+	confirmation_active = false; confirmation_elapsed = 0.0; confirmation_origin = position
+
+
+func observe_confirmation(position: Vector3, nominal_movement: float, contacts: Array[Dictionary], predictor_contact: bool, intervened: bool, delta: float) -> void:
+	if not episode_active or phase != &"normal" or nominal_movement <= .05 or not contacts.is_empty() or predictor_contact or intervened:
+		interrupt_confirmation(position)
+		return
+	if not confirmation_active:
+		confirmation_active = true; confirmation_origin = position; confirmation_elapsed = 0.0
+	confirmation_elapsed += maxf(delta, 0.0)
+	if confirmation_elapsed >= STUCK_SECONDS and _horizontal_distance(position, confirmation_origin) >= PROGRESS_METRES:
+		attempts = 0; episode_active = false; _failed_heading = Vector3.ZERO; _attempt_side = 1.0; interrupt_confirmation(position)
 
 func reset_progress(position: Vector3, forward: Vector3) -> void:
-	_elapsed = 0.0
-	_origin = position
-	_forward = forward
-	_observed_escape_forward = Vector3.ZERO
+	_elapsed = 0.0; _origin = position; _forward = forward; _observed_side = 0.0
 
-
-func observe(position: Vector3, forward: Vector3, movement: float, turn: float, delta: float, contacts: Array[Dictionary] = [], allow_heading_progress: bool = true) -> void:
-	if phase != &"normal":
-		return
-	if absf(movement) <= 0.05 and absf(turn) <= 0.05:
-		reset_progress(position, forward)
-		return
-	var observed := _choose_escape_forward(position, forward, contacts)
-	# 預測介入的原地調向不能反覆洗掉停滯計時；正常路徑轉向仍算進展。
+func observe(position: Vector3, forward: Vector3, movement: float, turn: float, delta: float, contacts: Array[Dictionary] = [], allow_heading_progress := true) -> void:
+	if phase != &"normal": return
+	if absf(movement) <= .05 and absf(turn) <= .05: reset_progress(position, forward); return
+	var preferred_side := _preferred_side(position, forward, contacts)
+	if not is_zero_approx(preferred_side): _observed_side = preferred_side
 	if position.distance_to(_origin) >= PROGRESS_METRES or (allow_heading_progress and forward.angle_to(_forward) >= PROGRESS_RADIANS):
 		reset_progress(position, forward)
-		_observed_escape_forward = observed
+		if not is_zero_approx(preferred_side): _observed_side = preferred_side
 		return
-	if not observed.is_zero_approx():
-		## 保存本次無進展觀測窗中的接觸；物理碰撞不保證每幀都回報。
-		_observed_escape_forward = observed
 	_elapsed += maxf(delta, 0.0)
-	if _elapsed >= STUCK_SECONDS:
-		if attempts >= MAX_ATTEMPTS:
-			phase = &"blocked"
-		else:
-			attempts += 1
-			phase = &"braking"
-			_escape_forward = _observed_escape_forward
-		_elapsed = 0.0
+	if _elapsed >= STUCK_SECONDS: _start_attempt(position, forward)
 
+func needs_escape_selection() -> bool: return phase == &"selecting_escape"
+func escape_candidates() -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	for side in [_attempt_side, -_attempt_side]:
+		for angle in [ESCAPE_ANGLE, ESCAPE_ANGLE * 2.0]:
+			var heading := blocked_forward.rotated(Vector3.UP, side * angle).normalized()
+			if _failed_heading.is_zero_approx() or heading.angle_to(_failed_heading) > ALIGN_TOLERANCE: result.append({"side": side, "angle": angle})
+	return result
+func select_escape(candidate: Dictionary) -> void:
+	escape_heading = blocked_forward.rotated(Vector3.UP, float(candidate.get("side", _attempt_side)) * float(candidate.get("angle", ESCAPE_ANGLE))).normalized()
+	phase = &"turning"; _elapsed = 0.0
+func handoff_ready() -> bool: return phase == &"rejoining" and positive_advance >= PROGRESS_METRES
+func accept_handoff(reason: StringName, position := advance_origin) -> void:
+	rejoin_reason = reason; phase = &"normal"; escape_heading = Vector3.ZERO; interrupt_confirmation(position); reset_progress(position, blocked_forward)
+func reject_handoff(reason: StringName, position: Vector3, forward: Vector3) -> void: rejoin_reason = reason; _fail_attempt(position, forward)
+func escape_profile_state() -> Dictionary:
+	return {"heading":escape_heading,"phase":phase,"advance_origin":advance_origin,"positive_advance":positive_advance,
+		"phase_elapsed":_elapsed,"attempt_elapsed":_attempt_elapsed}
 
-## 回傳空字典表示正常導航；側轉與前移完成並停穩後才交回原生導航。
-func drive(position: Vector3, forward: Vector3, speed: float, reverse_limit: float, deceleration: float, delta: float, forward_limit: float = 15.0, angular_speed: float = 0.0) -> Dictionary:
-	if phase == &"normal":
-		return {}
-	if phase == &"blocked":
-		return {"movement": 0.0, "turn": 0.0, "status": &"stuck"}
-	var command := {"movement": 0.0, "turn": 0.0, "status": &"recovering"}
+## 真車與 staged profile 共用；期限與可觀測狀態由呼叫端持有。
+static func escape_action(current: StringName, forward: Vector3, heading: Vector3, speed: float, angular: float, advance: float, deceleration: float, forward_limit: float) -> Dictionary:
+	var error := forward.signed_angle_to(heading, Vector3.UP)
+	if current == &"turning": return {"phase": &"align_settling" if absf(error) <= ALIGN_TOLERANCE else &"turning", "movement": 0.0, "turn": clampf(error / ESCAPE_ANGLE, -.5, .5)}
+	if current == &"align_settling": return {"phase": &"advancing" if absf(speed) <= STOP_SPEED and absf(angular) <= STOP_ANGULAR_SPEED else &"align_settling", "movement": 0.0, "turn": 0.0}
+	if current == &"advancing":
+		if ESCAPE_METRES - advance <= speed * speed / (2.0 * maxf(deceleration,.001)) + .1 or absf(error) > deg_to_rad(10.0): return {"phase": &"escape_settling", "movement": 0.0, "turn": 0.0}
+		return {"phase": &"advancing", "movement": clampf(REVERSE_SPEED / maxf(forward_limit,.01),0.0,1.0), "turn": clampf(error / ESCAPE_ANGLE,-.3,.3)}
+	if current == &"escape_settling": return {"phase": &"rejoining" if absf(speed) <= STOP_SPEED and absf(angular) <= STOP_ANGULAR_SPEED else &"escape_settling", "movement": 0.0, "turn": 0.0}
+	return {"phase": current, "movement": 0.0, "turn": 0.0}
+
+## 真車與 Predictor 的唯一 escape phase/deadline transition。attempt_elapsed 已包含本 frame delta；
+## 回傳的 phase_elapsed 則在這裡只累加一次，呼叫端不可再次計時。
+static func escape_transition(current: StringName, phase_elapsed: float, attempt_elapsed: float, forward: Vector3,
+		heading: Vector3, speed: float, angular: float, advance: float, deceleration: float,
+		forward_limit: float, delta: float) -> Dictionary:
+	if attempt_elapsed >= ATTEMPT_SECONDS:
+		return {"phase":current,"phase_elapsed":phase_elapsed,"movement":0.0,"turn":0.0,"failed":true}
+	var elapsed := phase_elapsed + maxf(delta, 0.0)
+	if current == &"turning" and elapsed >= TURN_SECONDS:
+		return {"phase":current,"phase_elapsed":elapsed,"movement":0.0,"turn":0.0,"failed":true}
+	if current == &"advancing" and elapsed >= ESCAPE_SECONDS:
+		return {"phase":&"escape_settling","phase_elapsed":0.0,"movement":0.0,"turn":0.0,"failed":false}
+	var action := escape_action(current, forward, heading, speed, angular, advance, deceleration, forward_limit)
+	var next_phase := StringName(action.phase)
+	return {"phase":next_phase,"phase_elapsed":0.0 if next_phase != current else elapsed,
+		"movement":float(action.movement),"turn":float(action.turn),"failed":false}
+
+func drive(position: Vector3, forward: Vector3, speed: float, reverse_limit: float, deceleration: float, delta: float, forward_limit := 15.0, angular_speed := 0.0) -> Dictionary:
+	if phase == &"normal": return {}
+	if phase == &"blocked": return {"movement":0.0,"turn":0.0,"status":&"stuck"}
+	_tick_attempt(delta)
+	if phase == &"blocked": return {"movement":0.0,"turn":0.0,"status":&"stuck"}
+	var command := {"movement":0.0,"turn":0.0,"status":&"recovering"}
 	if phase == &"braking":
-		if absf(speed) <= STOP_SPEED:
-			phase = &"reversing"
-			reset_progress(position, forward)
+		if absf(speed) <= STOP_SPEED: phase = &"reversing"; reset_progress(position,forward)
 	elif phase == &"reversing":
-		_elapsed += maxf(delta, 0.0)
-		var remaining := maxf(REVERSE_METRES - position.distance_to(_origin), 0.0)
-		var stopping_distance := speed * speed / (2.0 * maxf(deceleration, 0.001))
-		if remaining <= stopping_distance + 0.1 or _elapsed >= REVERSE_SECONDS:
-			phase = &"settling"
+		_elapsed += delta
+		if REVERSE_METRES-position.distance_to(_origin) <= speed*speed/(2.0*maxf(deceleration,.001))+.1 or _elapsed >= REVERSE_SECONDS: phase = &"settling"
+		else: command.movement = -clampf(REVERSE_SPEED/maxf(reverse_limit,.01),0.0,1.0)
+	elif phase == &"settling" and absf(speed) <= STOP_SPEED: phase = &"selecting_escape"
+	elif phase != &"selecting_escape" and phase != &"rejoining":
+		var transition := escape_transition(phase,_elapsed,_attempt_elapsed,forward,escape_heading,speed,angular_speed,
+			positive_advance,deceleration,forward_limit,delta)
+		if bool(transition.failed):
+			_fail_attempt(position,forward)
 		else:
-			command.movement = -clampf(REVERSE_SPEED / maxf(reverse_limit, 0.01), 0.0, 1.0)
-	elif phase == &"settling" and absf(speed) <= STOP_SPEED:
-		if _escape_forward.is_zero_approx():
-			_finish_attempt(position, forward, command)
-		else:
-			phase = &"turning"
-			_elapsed = 0.0
-	elif phase == &"turning":
-		_elapsed += maxf(delta, 0.0)
-		var error := forward.signed_angle_to(_escape_forward, Vector3.UP)
-		if _elapsed >= TURN_SECONDS:
-			## 另一側也被阻擋時不強行前進；停穩後交回導航，保留有限次數。
-			phase = &"escape_settling"
-		elif absf(error) <= ALIGN_TOLERANCE:
-			phase = &"align_settling"
-			_elapsed = 0.0
-		elif absf(speed) <= STOP_SPEED:
-			command.turn = clampf(error / ESCAPE_ANGLE, -0.5, 0.5)
-	elif phase == &"align_settling":
-		_elapsed += maxf(delta, 0.0)
-		if _elapsed >= TURN_SECONDS:
-			phase = &"escape_settling"
-		elif absf(speed) <= STOP_SPEED and absf(angular_speed) <= STOP_ANGULAR_SPEED:
-			phase = &"advancing"
-			reset_progress(position, forward)
-	elif phase == &"advancing":
-		_elapsed += maxf(delta, 0.0)
-		var remaining := maxf(ESCAPE_METRES - position.distance_to(_origin), 0.0)
-		var stopping_distance := speed * speed / (2.0 * maxf(deceleration, 0.001))
-		var error := forward.signed_angle_to(_escape_forward, Vector3.UP)
-		if remaining <= stopping_distance + 0.1 or _elapsed >= ESCAPE_SECONDS or absf(error) > deg_to_rad(10.0):
-			phase = &"escape_settling"
-		else:
-			command.movement = clampf(REVERSE_SPEED / maxf(forward_limit, 0.01), 0.0, 1.0)
-			command.turn = clampf(error / ESCAPE_ANGLE, -0.3, 0.3)
-	elif phase == &"escape_settling" and absf(speed) <= STOP_SPEED and absf(angular_speed) <= STOP_ANGULAR_SPEED:
-		_finish_attempt(position, forward, command)
+			var prior_phase := phase
+			phase = StringName(transition.phase); _elapsed = float(transition.phase_elapsed)
+			if phase == &"advancing" and prior_phase != phase: advance_origin = position
+			command.movement = float(transition.movement); command.turn = float(transition.turn)
+	if not advance_origin.is_zero_approx():
+		var offset := position-advance_origin; offset.y=0.0; positive_advance=maxf(0.0,offset.dot(escape_heading))
 	return command
 
-
-func _finish_attempt(position: Vector3, forward: Vector3, command: Dictionary) -> void:
-	phase = &"normal"
-	_escape_forward = Vector3.ZERO
-	reset_progress(position, forward)
-	command.replan = true
-
-
-func _choose_escape_forward(position: Vector3, forward: Vector3, contacts: Array[Dictionary]) -> Vector3:
+func _tick_attempt(delta: float) -> void:
+	_attempt_elapsed += maxf(delta,0.0)
+	if _attempt_elapsed >= ATTEMPT_SECONDS: _fail_attempt(_origin,_forward)
+func _start_attempt(position: Vector3, forward: Vector3) -> void:
+	if attempts >= MAX_ATTEMPTS: phase=&"blocked"; return
+	if not is_zero_approx(_observed_side): _attempt_side = _observed_side
+	attempts += 1; episode_active=true; interrupt_confirmation(position); blocked_origin=position; blocked_forward=forward; escape_heading=Vector3.ZERO; advance_origin=Vector3.ZERO; positive_advance=0.0; _attempt_elapsed=0.0; _elapsed=0.0; phase=&"braking"
+func _fail_attempt(position: Vector3, forward: Vector3) -> void:
+	_failed_heading=escape_heading
+	if attempts >= MAX_ATTEMPTS: phase=&"blocked"; return
+	_start_attempt(position,forward)
+static func _preferred_side(position: Vector3, forward: Vector3, contacts: Array[Dictionary]) -> float:
 	var side := Vector3.UP.cross(forward).normalized()
 	var strongest := 0.0
 	var away := 0.0
 	var point_strength := 0.0
 	var point_away := 0.0
 	for contact in contacts:
-		var normal: Vector3 = contact.get("normal", Vector3.ZERO)
-		normal.y = 0.0
-		if normal.is_zero_approx() or normal.normalized().dot(forward) > 0.1:
-			continue
-		## 側牆直接取外法線；正面牆角則由接觸點位於左／右履帶判斷避開方向。
+		var normal := contact.get("normal",Vector3.ZERO) as Vector3; normal.y=0.0
+		if normal.is_zero_approx() or normal.normalized().dot(forward) > .1: continue
 		var lateral := normal.normalized().dot(side)
 		if absf(lateral) > strongest:
-			strongest = absf(lateral)
-			away = signf(lateral)
-		var point: Vector3 = contact.get("position", position)
-		var point_side := -(point - position).dot(side)
+			strongest=absf(lateral); away=signf(lateral)
+		var point := contact.get("position",position) as Vector3
+		var point_side := -(point-position).dot(side)
 		if absf(point_side) > point_strength:
-			point_strength = absf(point_side)
-			point_away = signf(point_side)
-	## 真正的側牆法線優先；不能讓公尺單位的接觸點偏移蓋過單位法線。
-	if strongest < 0.1:
-		if point_strength < 0.1:
-			return Vector3.ZERO
-		away = point_away
-	return forward.rotated(Vector3.UP, away * ESCAPE_ANGLE).normalized()
+			point_strength=absf(point_side); point_away=signf(point_side)
+	## 單位法線的最強側向分量優先；正面接觸才退回接觸點位於車身哪一側。
+	if strongest >= .1: return away
+	if point_strength >= .1: return point_away
+	return 0.0
+
+
+static func _horizontal_distance(a: Vector3, b: Vector3) -> float:
+	return Vector2(a.x - b.x, a.z - b.z).length()

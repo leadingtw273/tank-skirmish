@@ -350,9 +350,9 @@ func _p5_bounded_recovery_and_lifecycle_cancellation() -> void:
 	var same_goal_hold: Dictionary = navigation.hold(0.0, DT, Vector3(-80.0, 0.0, 0.0), 11)
 	var changed_goal_hold: Dictionary = navigation.hold(0.0, DT, Vector3(-70.0, 0.0, 10.0), 12)
 	print("PREDICTIVE_METRIC P5 attempts=%d cancelled_same_goal=%s final=%s same_goal_hold=%s changed_goal_hold=%s stats_before_reset=%s" % [reverse_attempts, cancelled_same_goal, final, same_goal_hold, changed_goal_hold, stats_before])
-	if not cancelled_same_goal or final.get("status", &"") != &"stuck" or reverse_attempts != 2 \
-			or same_goal_hold.get("status", &"") != &"stuck" or changed_goal_hold.get("status", &"") == &"stuck":
-		_fail("P5 same-goal cancel must preserve the two-attempt budget and stuck hold; only changed target may reset it. attempts=%d cancelled=%s final=%s same=%s changed=%s." % [reverse_attempts, cancelled_same_goal, final, same_goal_hold, changed_goal_hold])
+	if not cancelled_same_goal or final.get("status", &"") != &"stuck" or reverse_attempts != 3 \
+		or same_goal_hold.get("status", &"") != &"stuck" or changed_goal_hold.get("status", &"") == &"stuck":
+		_fail("P5 same-goal cancel must preserve the three-attempt budget and stuck hold; only changed target may reset it. attempts=%d cancelled=%s final=%s same=%s changed=%s." % [reverse_attempts, cancelled_same_goal, final, same_goal_hold, changed_goal_hold])
 	navigation.clear()
 	var stats_after_clear := navigation.get_prediction_stats()
 	if not stats_after_clear.is_empty() and int(stats_after_clear.get("query_count", 0)) != 0:

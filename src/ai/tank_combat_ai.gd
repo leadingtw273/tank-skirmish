@@ -4,7 +4,6 @@ extends Node
 const TankNavigation := preload("res://src/ai/tank_navigation.gd")
 const SEARCH_ARRIVAL_DISTANCE := 3.0
 const HULL_FACING_TOLERANCE_DEGREES := 5.0
-const BLOCKED_TARGET_RETRY_DISTANCE := 3.0
 
 ## 換車先清舊車命令與路徑，不把上一台車的記憶帶到新車。
 @export var controlled_tank: Node3D:
@@ -39,16 +38,34 @@ var _navigation: RefCounted
 var _navigation_generation := 0
 var _was_visible := false
 var _pursuing := false
-var _blocked_goal := Vector3.ZERO
-var _blocked_goal_valid := false
+var _trace_submit_frame := -1
+var _trace_submitted: Dictionary = {}
+var _weapon_pose_mode: StringName = &"idle"
+
+
+## 只讀快取，不重新索敵或尋路；真實玩家位置由紀錄器另取。
+func get_driving_trace_state() -> Dictionary:
+	return {
+		"status": movement_status, "combat_enabled": combat_enabled,
+		"target_id": target.get_instance_id() if is_instance_valid(target) else 0,
+		"visible": _was_visible, "pursuing": _pursuing,
+		"last_seen_valid": _has_last_seen_position, "last_seen_position": _last_seen_position,
+		"inspection_direction": _inspection_direction, "generation": _navigation_generation,
+		"weapon_pose_mode": _weapon_pose_mode,
+		"submit_frame": _trace_submit_frame, "submitted": _trace_submitted.duplicate(),
+		"navigation": _navigation.call("get_driving_trace_state") if _navigation != null else {},
+	}
 
 
 ## 指定唯一戰鬥目標；第一版不執行敵我辨識或多目標選擇。
 func set_target(next_target: Node3D) -> void:
+	if target == next_target:
+		return
 	_inspection_direction = Vector3.ZERO
 	_clear_last_seen_position()
 	_reset_movement()
 	_cancel_aim()
+	_weapon_pose_mode = &"idle"
 	_submit_body_commands(0.0, 0.0)
 	target = next_target
 
@@ -61,6 +78,7 @@ func set_combat_enabled(enabled: bool) -> void:
 		_clear_last_seen_position()
 		_reset_movement()
 		_cancel_aim()
+		_weapon_pose_mode = &"idle"
 		_submit_body_commands(0.0, 0.0)
 
 
@@ -76,7 +94,7 @@ func inspect_hit_position(hit_position: Vector3) -> void:
 	if forward.angle_to(hit_direction) <= deg_to_rad(float(vision.get("far_field_of_view_degrees")) * 0.5):
 		return
 	_clear_last_seen_position()
-	_reset_movement()
+	_new_navigation_goal(true)
 	_inspection_direction = hit_direction.normalized()
 	movement_status = &"inspection"
 	_submit_body_commands(0.0, 0.0)
@@ -88,6 +106,7 @@ func _physics_process(delta: float) -> void:
 		_clear_last_seen_position()
 		_reset_movement()
 		_cancel_aim()
+		_weapon_pose_mode = &"idle"
 		_submit_body_commands(0.0, 0.0)
 		return
 	_ensure_navigation()
@@ -96,21 +115,31 @@ func _physics_process(delta: float) -> void:
 		if _was_visible:
 			_was_visible = false
 			_pursuing = false
-			_new_navigation_goal()
+			_new_navigation_goal(true, true)
 		if not _inspection_direction.is_zero_approx():
+			_weapon_pose_mode = &"inspection"
 			_turn_to_inspection(delta)
 		elif _has_last_seen_position:
-			_aim_at_position(_last_seen_position, delta)
+			var center := controlled_tank.call("stable_world_center") as Vector3
+			var terminal := bool(_navigation.call("is_terminal_for_goal", _last_seen_position, _navigation_generation))
+			if _horizontal_distance(center, _last_seen_position) > SEARCH_ARRIVAL_DISTANCE and not terminal:
+				_weapon_pose_mode = &"travel"
+				_aim_travel_turret(delta)
+			else:
+				_weapon_pose_mode = &"last_seen"
+				_aim_at_position(_last_seen_position, delta)
 			var search_intent: Dictionary = _navigation.call("drive", _last_seen_position,
 				_navigation_generation, SEARCH_ARRIVAL_DISTANCE, delta)
 			_submit_navigation_intent(search_intent, _last_seen_position, delta)
 		else:
 			movement_status = &"idle"
+			_weapon_pose_mode = &"idle"
 			_cancel_aim()
 			_submit_body_commands(0.0, 0.0)
 		return
 	## 正常視野優先；一旦看見目標，就不再保留先前受擊側的查看意圖。
 	_inspection_direction = Vector3.ZERO
+	_weapon_pose_mode = &"visible"
 	## 只露出部位時第一個可見點未必是車身中心，必須分開取得中心快照。
 	_last_seen_position = vision.call("target_world_position", target) as Vector3
 	_has_last_seen_position = true
@@ -119,7 +148,7 @@ func _physics_process(delta: float) -> void:
 	var stop_distance := maxf(float(controlled_tank.get("ai_stop_distance")), 0.1)
 	var resume_distance := maxf(float(controlled_tank.get("ai_resume_distance")), stop_distance + 0.1)
 	if not _was_visible:
-		_new_navigation_goal()
+		_new_navigation_goal(true, true)
 		_pursuing = distance > resume_distance
 	elif not _pursuing and distance > resume_distance:
 		_navigation.call("cancel_movement_preserving_budget")
@@ -135,16 +164,10 @@ func _physics_process(delta: float) -> void:
 	_aim_at_position(selected_point, delta)
 	var move_intent := {"movement": 0.0, "turn": 0.0, "status": &"holding"}
 	if _pursuing:
-		## 停止後同一目標不能每幀重啟；只有可見位置確實改變才重試。
-		if _blocked_goal_valid and _horizontal_distance(_blocked_goal, _last_seen_position) >= BLOCKED_TARGET_RETRY_DISTANCE:
-			_new_navigation_goal()
 		move_intent = _navigation.call("drive", _last_seen_position, _navigation_generation, stop_distance, delta)
 		var status: StringName = move_intent.get("status", &"idle")
 		if status == &"arrived":
 			_pursuing = false
-		elif status in [&"partial_end", &"no_path", &"stuck"] and not _blocked_goal_valid:
-			_blocked_goal = _last_seen_position
-			_blocked_goal_valid = true
 	_submit_navigation_intent(move_intent, _last_seen_position, delta)
 	if can_fire and _is_muzzle_aligned_and_clear(selected_point):
 		controlled_tank.call("request_fire")
@@ -158,6 +181,17 @@ func _clear_last_seen_position() -> void:
 func _aim_at_position(position: Vector3, delta: float) -> void:
 	controlled_tank.call("aim_turret_at", position, delta)
 	controlled_tank.call("aim_gun_pitch_at_target", position, delta)
+
+
+## travel 僅水平回正；不寫 rotation，也不觸碰砲管 pitch。
+func _aim_travel_turret(delta: float) -> void:
+	var turret := controlled_tank.get_node_or_null("VisualRecoilPivot/TurretPivot") as Node3D
+	if turret == null:
+		return
+	var forward := controlled_tank.global_basis * Vector3.LEFT
+	forward.y = 0.0
+	if not forward.is_zero_approx():
+		controlled_tank.call("aim_turret_at", turret.global_position + forward.normalized() * 100.0, delta)
 
 
 func _select_aim_target(visible_points: PackedVector3Array) -> Dictionary:
@@ -216,6 +250,8 @@ func _stationary_facing_input(position: Vector3) -> float:
 func _submit_body_commands(movement: float, turn: float) -> void:
 	if not is_instance_valid(controlled_tank):
 		return
+	_trace_submit_frame = Engine.get_physics_frames()
+	_trace_submitted = {"movement": clampf(movement, -1.0, 1.0), "turn": clampf(turn, -1.0, 1.0)}
 	if controlled_tank.has_method(&"set_movement_input"):
 		controlled_tank.call("set_movement_input", clampf(movement, -1.0, 1.0))
 	if is_zero_approx(turn) and controlled_tank.has_method(&"stop_hull_aim_turn"):
@@ -230,18 +266,18 @@ func _ensure_navigation() -> void:
 		_navigation.call("setup", controlled_tank)
 
 
-func _new_navigation_goal() -> void:
+func _new_navigation_goal(preserve_episode := true, preserve_action := false) -> void:
 	_navigation_generation += 1
-	_blocked_goal_valid = false
 	if _navigation != null:
-		_navigation.call("clear")
+		_navigation.call("clear", preserve_episode, preserve_action)
 
 
 func _reset_movement() -> void:
-	_new_navigation_goal()
+	_new_navigation_goal(false)
 	_was_visible = false
 	_pursuing = false
 	movement_status = &"idle"
+	_weapon_pose_mode = &"idle"
 
 
 func _release_navigation() -> void:

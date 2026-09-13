@@ -759,6 +759,11 @@ func _validate_combat_and_recovery(playtest: Node3D, main: Node3D, encounter: No
 	## 單獨驗炮口阻擋時固定姿態，先等上一發的視覺後座回正，避免障礙物離開射線。
 	ai.call("set_combat_enabled", false)
 	await _wait_for_frames(60)
+	## 此案例隔離射擊資格，固定車身但保留物理更新與真實射擊冷卻。
+	var original_body_speeds := Vector3(float(enemy.get("movement_speed")), float(enemy.get("reverse_movement_speed")), float(enemy.get("turn_speed")))
+	enemy.set("movement_speed", 0.0)
+	enemy.set("reverse_movement_speed", 0.0)
+	enemy.set("turn_speed", 0.0)
 	var settled_target := vision.call("target_world_position", player) as Vector3
 	enemy.call("aim_turret_at", settled_target, 10.0)
 	enemy.call("aim_gun_pitch_at_target", settled_target, 10.0)
@@ -801,9 +806,17 @@ func _validate_combat_and_recovery(playtest: Node3D, main: Node3D, encounter: No
 		_finish(playtest, "Muzzle-block fixture must preserve turret visibility while denying the firing ray.")
 		return false
 	ai.call("set_combat_enabled", true)
-	if not await _wait_for_frames(90) or shots.size() != shots_before_block:
-		_finish(playtest, "A clear vision result with a blocked muzzle ray must not fire.")
-		return false
+	for _frame in 90:
+		await physics_frame
+		muzzle_query.from = enemy.call("muzzle_global_position") as Vector3
+		muzzle_query.to = muzzle_query.from + (enemy.call("muzzle_global_direction") as Vector3) * muzzle_query.from.distance_to(target_position)
+		if enemy.get_world_3d().direct_space_state.intersect_ray(muzzle_query).get("collider") != muzzle_blocker \
+				or not bool(vision.call("can_see", player)):
+			_finish(playtest, "The isolated muzzle blocker must remain on the firing ray while vision stays clear throughout the observation window.")
+			return false
+		if shots.size() != shots_before_block:
+			_finish(playtest, "A clear vision result with a blocked muzzle ray must not fire.")
+			return false
 	muzzle_blocker.queue_free()
 	enemy.set("turret_turn_speed", original_turn_speed)
 	enemy.set("gun_pitch_speed", original_pitch_speed)
@@ -813,14 +826,15 @@ func _validate_combat_and_recovery(playtest: Node3D, main: Node3D, encounter: No
 	_configure_full_visibility_blocker(sight_blocker, enemy, player, Vector3(0, 0, 1))
 	await physics_frame
 	shots_before_block = shots.size()
-	var lost_yaw := turret.global_rotation.y
+	var last_seen_before_hide := ai.get("_last_seen_position") as Vector3
 	player.global_position.z += 1.0
 	if bool(vision.call("can_see", player)) or not await _wait_for_frames(90) or shots.size() != shots_before_block:
 		_finish(playtest, "Losing sight must stop tracking and firing on the next physics updates.")
 		return false
 	sight_blocker.queue_free()
-	if absf(angle_difference(lost_yaw, turret.global_rotation.y)) > 0.0001:
-		_finish(playtest, "A hidden moving target must not update the enemy turret yaw.")
+	## 失視追擊允許砲塔朝車頭回正，但不得追讀隱藏玩家的新位置。
+	if not bool(ai.get("_has_last_seen_position")) or not (ai.get("_last_seen_position") as Vector3).is_equal_approx(last_seen_before_hide):
+		_finish(playtest, "A hidden moving target must not update the remembered last-seen world position.")
 		return false
 	await physics_frame
 	if not await _wait_for_shots(shots, shots_before_block + 1, 360):
@@ -828,6 +842,9 @@ func _validate_combat_and_recovery(playtest: Node3D, main: Node3D, encounter: No
 		_finish(playtest, "Reacquiring an unobstructed target must resume enemy fire.")
 		return false
 	ai.call("set_combat_enabled", false)
+	enemy.set("movement_speed", original_body_speeds.x)
+	enemy.set("reverse_movement_speed", original_body_speeds.y)
+	enemy.set("turn_speed", original_body_speeds.z)
 	## R1-R5：死亡車留下，新實例於可編輯出生標記重生；鏡頭、無敵和操作都恢復。
 	## 移出視野，避免重生時被下一發擊中而誤判；瞬移後至少讓物理世界同步一次。
 	player.global_position = enemy.global_position + Vector3(150, 0, 0)

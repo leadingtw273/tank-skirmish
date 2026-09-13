@@ -22,7 +22,7 @@ func _run() -> void:
 	await _validate_combat_ai_intent_and_lifecycle()
 	await _validate_rear_wall_collision()
 	if _failures.is_empty():
-		print("ENEMY_RECOVERY PASS: progress gate, two bounded reverse attempts, blocked terminal, reset.")
+		print("ENEMY_RECOVERY PASS: progress gate, three bounded reverse attempts, blocked terminal, reset.")
 		quit(0)
 		return
 	for failure in _failures:
@@ -55,7 +55,10 @@ func _validate_two_bounded_reverse_attempts() -> void:
 	var position := Vector3.ZERO
 	var forward := Vector3.LEFT
 	recovery.reset(position, forward)
-	for expected_attempt in [1, 2]:
+	for expected_attempt in [1, 2, 3]:
+		if expected_attempt > 1:
+			## Safe handoff resets progress from the advance origin; observe the new demand window at its true current position.
+			recovery.observe(position, forward, 0.0, 0.0, 0.0)
 		recovery.observe(position, forward, 1.0, 0.0, 3.01)
 		if recovery.phase != &"braking" or recovery.attempts != expected_attempt:
 			_fail("Attempt %d must first enter braking exactly once; phase=%s attempts=%d." % [expected_attempt, recovery.phase, recovery.attempts])
@@ -74,12 +77,24 @@ func _validate_two_bounded_reverse_attempts() -> void:
 		if float(bounded.movement) != 0.0 or recovery.phase != &"settling":
 			_fail("Reverse must stop at 2m (before any extra reverse); got %s phase=%s." % [bounded, recovery.phase])
 		var settled := recovery.drive(position, forward, 0.1, 2.0, 1.0, 0.1)
-		if settled.get("replan", false) != true or recovery.phase != &"normal":
-			_fail("Stopped recovery must issue exactly one replan then return to normal; got %s phase=%s." % [settled, recovery.phase])
-	## A third no-progress interval is terminal; there is no unbounded retry.
-	recovery.observe(position, forward, 1.0, 0.0, 3.01)
+		if float(settled.movement) != 0.0 or float(settled.turn) != 0.0 or not recovery.needs_escape_selection() or recovery.attempts != expected_attempt:
+			_fail("Settling must retain recovery ownership with zero output until public escape selection; got %s phase=%s attempts=%d." % [settled, recovery.phase, recovery.attempts])
+			return
+		var result := _select_and_model_true_escape(recovery, position, forward)
+		position = result.position
+		if not bool(result.rejoining) or not recovery.handoff_ready():
+			_fail("Selected escape must reach rejoining only after modeled true positive advance; result=%s phase=%s advance=%.3f." % [result, recovery.phase, recovery.positive_advance])
+			return
+		if expected_attempt == 1:
+			recovery.accept_handoff(&"safe_nominal")
+			if recovery.phase != &"normal" or not recovery.escape_heading.is_zero_approx():
+				_fail("Only an explicit safe nominal handoff may return recovery to normal; phase=%s heading=%s." % [recovery.phase, recovery.escape_heading])
+				return
+		else:
+			recovery.reject_handoff(&"unsafe_nominal", position, forward)
+	## A third rejected public handoff is terminal; there is no unbounded retry.
 	if recovery.phase != &"blocked" or recovery.attempts != Recovery.MAX_ATTEMPTS:
-		_fail("After two attempts the same blocked goal must become terminal stuck, not retry; phase=%s attempts=%d." % [recovery.phase, recovery.attempts])
+		_fail("After three attempts an unsafe handoff must become terminal stuck, not retry; phase=%s attempts=%d." % [recovery.phase, recovery.attempts])
 	var stuck := recovery.drive(position, forward, 0.0, 2.0, 1.0, 0.1)
 	if stuck.status != &"stuck" or float(stuck.movement) != 0.0 or float(stuck.turn) != 0.0:
 		_fail("Terminal stuck must hold movement/turn at zero; got %s." % stuck)
@@ -160,22 +175,20 @@ func _validate_combat_ai_intent_and_lifecycle() -> void:
 		if recovery == null:
 			_fail("CombatAI must own a TankNavigation recovery instance.")
 		else:
-			recovery.set("phase", &"reversing")
-			recovery.set("_escape_forward", Vector3.FORWARD)
+			_arm_actual_escape_selection(recovery, tank.stable_world_center(), tank.global_basis * Vector3.LEFT)
 			ai.call("_submit_navigation_intent", {"movement": -0.5, "turn": 0.0, "status": &"recovering"}, player.stable_world_center())
 			if float(tank.get("movement_command")) >= 0.0:
 				_fail("set_combat_enabled lifecycle setup must begin from an actual recovering negative command.")
 			ai.call("set_combat_enabled", false)
-			if recovery.get("phase") != &"normal" or not (recovery.get("_escape_forward") as Vector3).is_zero_approx() or not is_zero_approx(float(tank.get("movement_command"))):
+			if recovery.phase != &"normal" or not recovery.escape_heading.is_zero_approx() or not is_zero_approx(float(tank.get("movement_command"))):
 				_fail("set_combat_enabled(false) must cancel an in-flight reverse, side direction, and stop the tank.")
 			ai.call("set_combat_enabled", true)
-			recovery.set("phase", &"reversing")
-			recovery.set("_escape_forward", Vector3.FORWARD)
+			_arm_actual_escape_selection(recovery, tank.stable_world_center(), tank.global_basis * Vector3.LEFT)
 			ai.call("_submit_navigation_intent", {"movement": -0.5, "turn": 0.0, "status": &"recovering"}, player.stable_world_center())
 			if float(tank.get("movement_command")) >= 0.0:
 				_fail("set_target lifecycle setup must begin from an actual recovering negative command.")
 			ai.call("set_target", null)
-			if recovery.get("phase") != &"normal" or not (recovery.get("_escape_forward") as Vector3).is_zero_approx() or not is_zero_approx(float(tank.get("movement_command"))):
+			if recovery.phase != &"normal" or not recovery.escape_heading.is_zero_approx() or not is_zero_approx(float(tank.get("movement_command"))):
 				_fail("set_target replacement must cancel an in-flight reverse, side direction, and stop the tank.")
 	scene.queue_free()
 	await physics_frame
@@ -282,6 +295,44 @@ func _validate_rear_wall_collision() -> void:
 	tank.queue_free()
 	scene.queue_free()
 	await physics_frame
+
+
+## Unit 模型只推進已由 Recovery 發出的真實 command；不直接寫 phase／advance 成功。
+func _select_and_model_true_escape(recovery: RefCounted, position: Vector3, forward: Vector3) -> Dictionary:
+	if not recovery.needs_escape_selection():
+		return {"position": position, "rejoining": false}
+	var candidates: Array[Dictionary] = recovery.escape_candidates()
+	if candidates.is_empty():
+		return {"position": position, "rejoining": false}
+	recovery.select_escape(candidates[0])
+	var heading: Vector3 = recovery.escape_heading
+	var command: Dictionary = recovery.drive(position, forward, 0.0, 2.0, 1.0, 0.1, 7.0, 0.0)
+	if absf(float(command.get("turn", 0.0))) <= 0.01:
+		return {"position": position, "rejoining": false}
+	## This is modeled vehicle yaw progress, not a direct state injection.
+	forward = heading
+	recovery.drive(position, forward, 0.0, 2.0, 1.0, 0.1, 7.0, 0.0)
+	recovery.drive(position, forward, 0.0, 2.0, 1.0, 0.1, 7.0, 0.0)
+	for unused in 24:
+		command = recovery.drive(position, forward, 0.0, 2.0, 1.0, 0.1, 7.0, 0.0)
+		if float(command.get("movement", 0.0)) > 0.05:
+			position += heading * 0.25
+		if recovery.phase == &"rejoining":
+			return {"position": position, "rejoining": true}
+	return {"position": position, "rejoining": recovery.phase == &"rejoining"}
+
+
+func _arm_actual_escape_selection(recovery: RefCounted, position: Vector3, forward: Vector3) -> void:
+	recovery.reset(position, forward)
+	recovery.observe(position, forward, 1.0, 0.0, Recovery.STUCK_SECONDS + 0.01)
+	recovery.drive(position, forward, 0.0, 2.0, 1.0, 0.1)
+	recovery.drive(position, forward, 0.0, 2.0, 1.0, 0.1)
+	var reverse_end := position - forward * Recovery.REVERSE_METRES
+	recovery.drive(reverse_end, forward, 0.0, 2.0, 1.0, 0.1)
+	recovery.drive(reverse_end, forward, 0.0, 2.0, 1.0, 0.1)
+	var candidates: Array[Dictionary] = recovery.escape_candidates()
+	if not candidates.is_empty():
+		recovery.select_escape(candidates[0])
 
 
 func _await_navigation(scene: Node3D) -> bool:

@@ -1,0 +1,34 @@
+{
+  "source": "driving-2026-09-13T01-02-03-309062-000-000.jsonl",
+  "replay_kind": "limited recorded-pose fixture, not a deterministic trace replay",
+  "start": {
+    "frame": 2768,
+    "enemy": {
+      "origin": [41.5951805114746, 0.0, -63.5294189453125],
+      "hull_yaw": -0.762918174266815,
+      "turret_yaw": -1.3213769197464,
+      "gun_pitch": -0.0284468643367291
+    },
+    "player": {
+      "origin": [73.5539474487305, 0.0, -77.7488098144531],
+      "hull_yaw": 2.08007407188416,
+      "turret_yaw": -2.05303168296814,
+      "gun_pitch": -0.0446634665131569
+    },
+    "ai": {
+      "last_seen": [54.7842216491699, 1.03960514068604, -86.5766754150391],
+      "visible": false,
+      "pursuing": false,
+      "generation": 22,
+      "navigation_goal": [54.7842216491699, 0.0, -86.5766754150391],
+      "route_index": 8,
+      "recovery_phase": "reversing",
+      "attempts": 1
+    }
+  },
+  "travel_pose_acceptance": {
+    "observation_frames": 1800,
+    "initial_window_frames": 180,
+    "maximum_local_yaw_degrees_during_initial_travel": 45.0
+  }
+}

@@ -28,64 +28,71 @@ func _run() -> void:
 
 func _validate_mirrored_contact_turns_and_snapshot_lifetime() -> void:
 	var forward := Vector3.LEFT
-	var left_contact: Array[Dictionary] = [{"position": Vector3(0.0, 0.0, 1.0), "normal": Vector3.RIGHT}]
-	var right_contact: Array[Dictionary] = [{"position": Vector3(0.0, 0.0, -1.0), "normal": Vector3.RIGHT}]
+	var left_contact: Array[Dictionary] = [{"position": Vector3(0.0, 0.0, 1.0), "normal": Vector3.FORWARD}]
+	var right_contact: Array[Dictionary] = [{"position": Vector3(0.0, 0.0, -1.0), "normal": Vector3.BACK}]
 	var left := _start_corner_recovery(forward, left_contact)
 	var right := _start_corner_recovery(forward, right_contact)
-	var left_escape := left.get("_escape_forward") as Vector3
-	var right_escape := right.get("_escape_forward") as Vector3
-	if left_escape.is_zero_approx() or right_escape.is_zero_approx() or left_escape.z * right_escape.z >= 0.0:
-		_fail("Mirrored corner contact positions must select opposite escape sides; left=%s right=%s." % [left_escape, right_escape])
+	var left_candidate := _select_first_candidate(left)
+	var right_candidate := _select_first_candidate(right)
+	var left_escape: Vector3 = left.escape_heading
+	var right_escape: Vector3 = right.escape_heading
+	if left_candidate.is_empty() or right_candidate.is_empty() or left_escape.is_zero_approx() or right_escape.is_zero_approx() or left_escape.z * right_escape.z >= 0.0:
+		_fail("Mirrored lateral contact normals must expose and select opposite public escape candidates; left=%s right=%s." % [left_escape, right_escape])
 		return
-	var left_turn: float = _reach_turning(left, forward)
-	var right_turn: float = _reach_turning(right, forward)
+	var left_turn: float = _drive_selected_turning(left, forward)
+	var right_turn: float = _drive_selected_turning(right, forward)
 	if left_turn == 0.0 or right_turn == 0.0 or left_turn * right_turn >= 0.0:
 		_fail("Mirrored corner contacts must command opposite non-zero turns away from their wall side; left=%.3f right=%.3f." % [left_turn, right_turn])
 	## Contact data is intentionally absent after reversing; the first snapshot must remain authoritative.
-	if left.get("_escape_forward") != left_escape or right.get("_escape_forward") != right_escape:
+	if left.escape_heading != left_escape or right.escape_heading != right_escape:
 		_fail("A contact snapshot selected at stall entry must survive reverse even after contacts disappear.")
-	## Replan belongs only after the side advance and its final settle, never while turning or advancing.
-	if left.get("phase") != &"turning" or left.drive(Vector3.ZERO, forward, 0.0, 2.0, 1.0, DT).get("replan", false):
-		_fail("Turning must not issue replan before side advance completes.")
+	## Turning retains Recovery ownership; only a later safe nominal handoff may return normal.
+	if left.phase != &"turning" or left.drive(Vector3.ZERO, forward, 0.0, 2.0, 1.0, DT).get("status") != &"recovering":
+		_fail("Turning must retain recovery ownership before side advance and rejoining handoff.")
 
 
 func _validate_turn_timeout_and_lifecycle_cancellation() -> void:
-	var recovery := _start_corner_recovery(Vector3.LEFT, [{"position": Vector3(0.0, 0.0, 1.0), "normal": Vector3.RIGHT}])
-	_reach_turning(recovery, Vector3.LEFT)
+	var recovery := _start_corner_recovery(Vector3.LEFT, [{"position": Vector3(0.0, 0.0, 1.0), "normal": Vector3.FORWARD}])
+	_select_first_candidate(recovery)
+	_drive_selected_turning(recovery, Vector3.LEFT)
 	var saw_forward := false
 	var saw_timeout_settling := false
-	for unused in 190: ## > 3 seconds while an external blocker prevents any actual yaw.
+	for unused in ceili(Recovery.TURN_SECONDS / DT) + 20: ## 真實 locked yaw 直到既有 bounded turn deadline。
 		var command: Dictionary = recovery.drive(Vector3.ZERO, Vector3.LEFT, 0.0, 2.0, 1.0, DT, 7.0, 0.0)
 		saw_forward = saw_forward or float(command.get("movement", 0.0)) > 0.05
-		saw_timeout_settling = saw_timeout_settling or recovery.phase == &"escape_settling"
-	if not saw_timeout_settling or saw_forward:
-		_fail("A blocked turn must time out into settling without hard-pushing forward; settled=%s phase=%s forward=%s." % [saw_timeout_settling, recovery.phase, saw_forward])
-	## Both in-flight side phases must be cancelled by goal/lifecycle reset, including the retained escape direction.
-	for cancelled_phase in [&"turning", &"advancing"]:
-		recovery.set("phase", cancelled_phase)
-		recovery.set("_escape_forward", Vector3.FORWARD)
-		recovery.reset(Vector3(3.0, 0.0, 0.0), Vector3.LEFT)
-		if recovery.phase != &"normal" or recovery.attempts != 0 or not (recovery.get("_escape_forward") as Vector3).is_zero_approx():
-			_fail("Reset must cancel %s and clear its side direction." % cancelled_phase)
+		saw_timeout_settling = saw_timeout_settling or recovery.needs_escape_selection()
+	if saw_forward or recovery.attempts != 2:
+		_fail("A blocked turn must consume exactly one bounded attempt without hard-pushing forward; selection=%s attempts=%d forward=%s." % [saw_timeout_settling, recovery.attempts, saw_forward])
+	## Both actual in-flight side phases must be cancelled by lifecycle reset, including public heading/progress.
+	for target_phase in [&"turning", &"advancing"]:
+		var cancelling := _start_corner_recovery(Vector3.LEFT, [{"position": Vector3(0.0, 0.0, 1.0), "normal": Vector3.FORWARD}])
+		_select_first_candidate(cancelling)
+		if target_phase == &"advancing":
+			_reach_advancing(cancelling, Vector3.LEFT)
+		cancelling.reset(Vector3(3.0, 0.0, 0.0), Vector3.LEFT)
+		if cancelling.phase != &"normal" or cancelling.attempts != 0 or not cancelling.escape_heading.is_zero_approx() or not is_zero_approx(cancelling.positive_advance):
+			_fail("Reset must cancel actual %s and clear public side state." % target_phase)
 
 
 func _validate_observation_window_contact_cache() -> void:
-	var contact: Array[Dictionary] = [{"position": Vector3(0.0, 0.0, 1.0), "normal": Vector3.RIGHT}]
+	var contact: Array[Dictionary] = [{"position": Vector3(0.0, 0.0, 1.0), "normal": Vector3.FORWARD}]
 	var cached := Recovery.new()
 	cached.reset(Vector3.ZERO, Vector3.LEFT)
 	## A real collision can be reported only at the beginning of the three-second no-progress window.
 	cached.observe(Vector3.ZERO, Vector3.LEFT, 1.0, 0.0, 0.1, contact)
 	cached.observe(Vector3.ZERO, Vector3.LEFT, 1.0, 0.0, 2.91, [])
-	if cached.phase != &"braking" or (cached.get("_escape_forward") as Vector3).is_zero_approx():
-		_fail("An early corner contact must still select a side turn when the triggering observe has no contacts.")
+	var cached_candidate := _candidate_after_selection(cached, Vector3.LEFT)
+	if cached_candidate.is_empty() or float(cached_candidate.side) >= 0.0:
+		_fail("An early corner contact must retain its preferred public candidate when the triggering observe has no contacts; candidate=%s phase=%s." % [cached_candidate, cached.phase])
 	var progressed := Recovery.new()
 	progressed.reset(Vector3.ZERO, Vector3.LEFT)
 	progressed.observe(Vector3.ZERO, Vector3.LEFT, 1.0, 0.0, 0.1, contact)
 	## Actual >=0.5m progress begins a new window and must discard the prior wall-side decision.
 	progressed.observe(Vector3.RIGHT * Recovery.PROGRESS_METRES, Vector3.LEFT, 1.0, 0.0, 0.1, [])
 	progressed.observe(Vector3.RIGHT * Recovery.PROGRESS_METRES, Vector3.LEFT, 1.0, 0.0, 3.01, [])
-	if progressed.phase != &"braking" or not (progressed.get("_escape_forward") as Vector3).is_zero_approx():
-		_fail("Actual progress must clear an old contact side; a later contact-free stall uses the straight reverse path.")
+	var progressed_candidate := _candidate_after_selection(progressed, Vector3.LEFT)
+	if progressed_candidate.is_empty() or float(progressed_candidate.side) <= 0.0:
+		_fail("Actual progress must clear an old contact-side preference; a later contact-free stall starts from the deterministic default candidate.")
 
 
 func _validate_real_corner_contact_escape() -> void:
@@ -137,29 +144,39 @@ func _validate_real_corner_case(side_sign: float, require_advance: bool) -> void
 	var forward: Vector3 = _forward(tank)
 	recovery.reset(position, forward)
 	recovery.observe(position, forward, 1.0, 0.0, 3.01, actual_contacts)
-	if recovery.phase != &"braking" or (recovery.get("_escape_forward") as Vector3).is_zero_approx():
-		_fail("Mirror %.0f real corner contacts must arm a side escape at the stall boundary; phase=%s escape=%s." % [side_sign, recovery.phase, recovery.get("_escape_forward")])
+	if recovery.phase != &"braking":
+		_fail("Mirror %.0f real corner contacts must arm a first braking attempt at the stall boundary; phase=%s." % [side_sign, recovery.phase])
 		await _free_fixture(fixture)
 		return
 	var saw_turn := false
 	var saw_advance := false
-	var saw_replan := false
-	var replan_before_advance := false
+	var saw_rejoining := false
+	var saw_handoff := false
+	var handoff_before_advance := false
 	var penetrated := false
 	var turn_start := Vector3.ZERO
 	var turn_end := Vector3.ZERO
 	var turn_last := Vector3.ZERO
 	var advance_start := Vector3.ZERO
 	var advance_distance := 0.0
-	var escape := recovery.get("_escape_forward") as Vector3
-	if require_advance and escape.z * side_sign >= 0.0:
-		_fail("Convex mirror %.0f must lock escape away from the contacted track side; escape=%s." % [side_sign, escape])
-		await _free_fixture(fixture)
-		return
+	var escape := Vector3.ZERO
 	var recovery_start: Vector3 = tank.stable_world_center()
 	var reverse_distance := 0.0
-	for unused in 900:
+	## 觀測完整三次有限嘗試；舊 20 秒視窗會在第三次倒車途中截斷。
+	for unused in ceili(Recovery.MAX_ATTEMPTS * Recovery.ATTEMPT_SECONDS / DT) + Recovery.MAX_ATTEMPTS:
 		var command: Dictionary = recovery.drive(tank.stable_world_center(), _forward(tank), absf(float(tank.get("forward_speed"))), float(tank.get("reverse_movement_speed")), 5.0, DT, float(tank.get("movement_speed")), absf(float(tank.get("actual_angular_speed"))))
+		if recovery.needs_escape_selection():
+			var candidates: Array[Dictionary] = recovery.escape_candidates()
+			if candidates.is_empty():
+				_fail("Mirror %.0f real corner recovery must retain finite public candidates." % side_sign)
+				await _free_fixture(fixture)
+				return
+			recovery.select_escape(candidates[0])
+			escape = recovery.escape_heading
+			if require_advance and escape.z * side_sign >= 0.0:
+				_fail("Convex mirror %.0f must select escape away from the contacted track side; escape=%s candidates=%s." % [side_sign, escape, candidates])
+				await _free_fixture(fixture)
+				return
 		if recovery.phase == &"turning" and absf(float(command.get("turn", 0.0))) > 0.01:
 			if not saw_turn:
 				turn_start = _forward(tank)
@@ -169,9 +186,12 @@ func _validate_real_corner_case(side_sign: float, require_advance: bool) -> void
 				turn_end = _forward(tank)
 				advance_start = tank.stable_world_center()
 			saw_advance = true
-		if bool(command.get("replan", false)) and not saw_advance:
-			replan_before_advance = true
-		saw_replan = saw_replan or bool(command.get("replan", false))
+		if recovery.handoff_ready() and not saw_advance:
+			handoff_before_advance = true
+		saw_rejoining = saw_rejoining or recovery.phase == &"rejoining"
+		if recovery.handoff_ready() and require_advance:
+			recovery.accept_handoff(&"safe_nominal")
+			saw_handoff = recovery.phase == &"normal"
 		tank.set_movement_input(float(command.get("movement", 0.0)))
 		tank.set_turn_input(float(command.get("turn", 0.0)))
 		await physics_frame
@@ -183,20 +203,20 @@ func _validate_real_corner_case(side_sign: float, require_advance: bool) -> void
 		if saw_advance:
 			var along_escape: float = (tank.stable_world_center() - advance_start).dot(escape)
 			advance_distance = maxf(advance_distance, along_escape)
-		if saw_replan:
+		if saw_handoff or recovery.phase == &"blocked":
 			break
 	var turn_degrees := rad_to_deg(turn_start.angle_to(turn_end)) if saw_turn and saw_advance else 0.0
 	var faces_escape := turn_end.dot(escape) >= cos(deg_to_rad(10.0)) if saw_advance else false
 	var timeout_turn_degrees := rad_to_deg(turn_start.angle_to(turn_last)) if saw_turn else 0.0
 	var timeout_error_degrees := absf(rad_to_deg(turn_last.signed_angle_to(escape, Vector3.UP))) if saw_turn else 180.0
 	var case_name := "convex" if require_advance else "concave"
-	print("CORNER_METRIC case=%s sign=%.0f turn_deg=%.2f timeout_turn_deg=%.2f timeout_error_deg=%.2f reverse_m=%.3f advance_m=%.3f faces_escape=%s replan=%s replan_before_advance=%s penetrated=%s" % [case_name, side_sign, turn_degrees, timeout_turn_degrees, timeout_error_degrees, reverse_distance, advance_distance, faces_escape, saw_replan, replan_before_advance, penetrated])
+	print("CORNER_METRIC case=%s sign=%.0f turn_deg=%.2f timeout_turn_deg=%.2f timeout_error_deg=%.2f reverse_m=%.3f advance_m=%.3f faces_escape=%s rejoining=%s handoff=%s handoff_before_advance=%s phase=%s attempts=%d penetrated=%s" % [case_name, side_sign, turn_degrees, timeout_turn_degrees, timeout_error_degrees, reverse_distance, advance_distance, faces_escape, saw_rejoining, saw_handoff, handoff_before_advance, recovery.phase, recovery.attempts, penetrated])
 	if require_advance:
-		if not saw_turn or not saw_advance or turn_degrees < 10.0 or not faces_escape or advance_distance < 0.4 or not saw_replan or replan_before_advance:
-			_fail("Convex mirror %.0f Tank1 must turn >=10deg toward escape then advance >=0.4m along it before replan; turn=%s/%.2fdeg faces=%s advance=%s/%.3f replan=%s early=%s." % [side_sign, saw_turn, turn_degrees, faces_escape, saw_advance, advance_distance, saw_replan, replan_before_advance])
+		if not saw_turn or not saw_advance or turn_degrees < 10.0 or not faces_escape or advance_distance < 0.4 or not saw_rejoining or not saw_handoff or handoff_before_advance:
+			_fail("Convex mirror %.0f Tank1 must turn >=10deg toward escape then truly advance >=0.4m before rejoining/safe handoff; turn=%s/%.2fdeg faces=%s advance=%s/%.3f rejoining=%s handoff=%s early=%s." % [side_sign, saw_turn, turn_degrees, faces_escape, saw_advance, advance_distance, saw_rejoining, saw_handoff, handoff_before_advance])
 	else:
-		if not saw_turn or timeout_turn_degrees <= 1.0 or saw_advance or not saw_replan:
-			_fail("Concave mirror %.0f must make a real bounded turn attempt but never force advance before timeout/replan; turn=%s/%.2fdeg advance=%s replan=%s." % [side_sign, saw_turn, timeout_turn_degrees, saw_advance, saw_replan])
+		if not saw_turn or timeout_turn_degrees <= 1.0 or saw_advance or recovery.phase != &"blocked" or recovery.attempts != Recovery.MAX_ATTEMPTS:
+			_fail("Concave mirror %.0f must make real bounded turn attempts, never force advance, then terminal at three attempts; turn=%s/%.2fdeg advance=%s phase=%s attempts=%d." % [side_sign, saw_turn, timeout_turn_degrees, saw_advance, recovery.phase, recovery.attempts])
 	if penetrated:
 		_fail("%s mirror %.0f Tank1 corner recovery must never penetrate either authored StaticBody3D wall on any physics frame." % [case_name, side_sign])
 	await _free_fixture(fixture)
@@ -209,14 +229,47 @@ func _start_corner_recovery(forward: Vector3, contacts: Array[Dictionary]) -> Re
 	return recovery
 
 
+func _candidate_after_selection(recovery: RefCounted, forward: Vector3) -> Dictionary:
+	_recovery_to_selection(recovery, forward)
+	var candidates: Array[Dictionary] = recovery.escape_candidates()
+	return candidates[0] as Dictionary if recovery.needs_escape_selection() and not candidates.is_empty() else {}
+
+
+func _select_first_candidate(recovery: RefCounted) -> Dictionary:
+	if not recovery.needs_escape_selection():
+		_recovery_to_selection(recovery, recovery.blocked_forward)
+	var candidates: Array[Dictionary] = recovery.escape_candidates()
+	if not recovery.needs_escape_selection() or candidates.is_empty():
+		return {}
+	var candidate := candidates[0] as Dictionary
+	recovery.select_escape(candidate)
+	return candidate
+
+
 func _reach_turning(recovery: RefCounted, forward: Vector3) -> float:
-	## Braking -> reversing -> settling -> turning.  No contacts are supplied after the first observe call.
-	recovery.drive(Vector3.ZERO, forward, 0.0, 2.0, 1.0, DT)
-	recovery.drive(Vector3.ZERO, forward, 0.0, 2.0, 1.0, DT)
-	recovery.drive(Vector3.RIGHT * Recovery.REVERSE_METRES, forward, 0.0, 2.0, 1.0, DT)
-	recovery.drive(Vector3.RIGHT * Recovery.REVERSE_METRES, forward, 0.0, 2.0, 1.0, DT)
+	## Braking -> reversing -> settling -> public selection -> turning.
+	_recovery_to_selection(recovery, forward)
+	if _select_first_candidate(recovery).is_empty():
+		return 0.0
+	return _drive_selected_turning(recovery, forward)
+
+
+func _drive_selected_turning(recovery: RefCounted, forward: Vector3) -> float:
 	var turn: Dictionary = recovery.drive(Vector3.RIGHT * Recovery.REVERSE_METRES, forward, 0.0, 2.0, 1.0, DT)
 	return float(turn.get("turn", 0.0))
+
+
+func _recovery_to_selection(recovery: RefCounted, forward: Vector3) -> void:
+	recovery.drive(Vector3.ZERO, forward, 0.0, 2.0, 1.0, DT)
+	recovery.drive(Vector3.ZERO, forward, 0.0, 2.0, 1.0, DT)
+	recovery.drive(Vector3.RIGHT * Recovery.REVERSE_METRES, forward, 0.0, 2.0, 1.0, DT)
+	recovery.drive(Vector3.RIGHT * Recovery.REVERSE_METRES, forward, 0.0, 2.0, 1.0, DT)
+
+
+func _reach_advancing(recovery: RefCounted, forward: Vector3) -> void:
+	## Actual yaw reaches the selected heading; the next stopped frames pass align-settling into advance.
+	recovery.drive(Vector3.ZERO, recovery.escape_heading, 0.0, 2.0, 1.0, DT, 7.0, 0.0)
+	recovery.drive(Vector3.ZERO, recovery.escape_heading, 0.0, 2.0, 1.0, DT, 7.0, 0.0)
 
 
 func _make_corner_fixture(side_sign: float, require_advance: bool) -> Dictionary:

@@ -31,6 +31,6 @@ godot --headless --path . --script res://tests/road_snap_solver_smoke.gd
 
 實測輸出：`road_snap_solver_smoke: PASS`；外掛解析測試也通過。
 
-`tests/road_snap_editor_undo_smoke.gd` 是 EditorScript，可從腳本編輯器執行。隔離 headless Editor 以真實 EditorUndoRedoManager 驗证release排序與Undo/Redo：`road_snap_editor_undo_integration: PASS`。
+`tests/road_snap_editor_undo_smoke.gd` 是 EditorScript，可從腳本編輯器執行。隔離 headless Editor 以真實 EditorUndoRedoManager 驗證release排序與Undo/Redo：`road_snap_editor_undo_integration: PASS`。
 
 仍需在 Windows Godot 手動驗收：右 Alt 拖曳單個道路／多選／含子道路的群組、左 Alt 不吸附、內外接點切換、放開後不再跳動，以及原生移動工具的Undo/Redo。隔離測試不能冒稱已驗證原生GUI輸入。

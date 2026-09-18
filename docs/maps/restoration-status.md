@@ -43,6 +43,15 @@
 
 Git 保存生成器、引用場景、catalog、測試與文件。原始素材、內嵌幾何wrapper、衍生GLB／collision體積大且包含付費內容，採本機忽略與完整離線專案備份；不能只取 Git checkout 就宣稱可用。
 原8ZIP另存：`/home/markchou/project/tank-skirmish-local-assets/AtomicRealmModularRoads`。
-本次未執行 git push；完整備份完成後在此追加檔名与核對結果。
+本次未執行 git push。本機 checkpoint：`c65f3e5`、`3ebfc83`。
+
+完整備份目錄：`/home/markchou/project/tank-skirmish-local-assets/restore-points`。
+
+- `lea177-20260918-190559.tar.gz`：包含原始素材、衍生模型、場景、生成器與測試；排除`.git`連結與可重建的Godot快取。
+- `lea177-20260918-190559.bundle`：截至 `3ebfc83` 的完整Git歷史。
+- `lea177-20260918-190559.tar.gz.sha256`：两者checksum重讀核對均為 `OK`；gzip檢查、必要路徑清單、Git bundle verify均通過（`LOCAL_BACKUP_PASS`）。
+
+可用 `bash scripts/backup_restoration.sh <工程以外的絕對目錄>` 建立新備份，工具不覆蓋舊檔、不上傳任何資料。
+Windows Godot 已啟動復原工程主圖（PID41584）；原工程PID4788未關閉。
 
 清理僅涉及本代理誤寫到 agent-team 的兩個 trace 副本；刪前 SHA 與本工作樹版本一致，正確副本仍保留。該 trace 是前期參考，不是主圖生成來源；主圖以 `scripts/roads/build_main_roads.gd` 與實例幾何為準。

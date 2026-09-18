@@ -9,7 +9,7 @@ const TANK1_SCENE := "res://src/actors/tank/variants/tank1/tank1.tscn"
 const TANK2_SCENE := "res://src/actors/tank/variants/tank2/tank2.tscn"
 const TANK3_SCENE := "res://src/actors/tank/variants/tank3/tank3.tscn"
 const TANK4_SCENE := "res://src/actors/tank/variants/tank4/tank4.tscn"
-const PLAYTEST_SCENE := "res://src/world/training_ground/training_ground_playtest.tscn"
+const PLAYTEST_SCENE := "res://src/maps/training_ground/training_ground_playtest.tscn"
 const HealthComponent := preload("res://src/combat/damage/health_component.gd")
 const TankController := preload("res://src/actors/tank/tank_controller.gd")
 

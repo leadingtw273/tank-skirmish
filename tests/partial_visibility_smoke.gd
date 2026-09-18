@@ -260,7 +260,7 @@ func _sphere(position: Vector3, radius: float, label: String) -> StaticBody3D:
 
 
 func _building() -> StaticBody3D:
-	var scene := (load("res://src/world/training_ground/training_ground_playtest.tscn") as PackedScene).instantiate() as Node3D
+	var scene := (load("res://src/maps/training_ground/training_ground_playtest.tscn") as PackedScene).instantiate() as Node3D
 	var source := scene.get_node_or_null("SightBlockers/BuildingRowA/CentralOneStory") as StaticBody3D
 	var result := source.duplicate() as StaticBody3D if source != null else null
 	scene.free(); return result

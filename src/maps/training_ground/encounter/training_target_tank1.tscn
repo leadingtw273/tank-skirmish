@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3]
 
-[ext_resource type="PackedScene" path="res://src/actors/tank/variants/tank2/tank2.tscn" id="1_tank"]
-[ext_resource type="Script" path="res://src/world/training_ground/training_target_controller.gd" id="2_controller"]
+[ext_resource type="PackedScene" path="res://src/actors/tank/variants/tank1/tank1.tscn" id="1_tank"]
+[ext_resource type="Script" path="res://src/maps/training_ground/encounter/training_target_controller.gd" id="2_controller"]
 
 [sub_resource type="StandardMaterial3D" id="TargetGrayMaterial"]
 albedo_color = Color(0.16, 0.18, 0.2, 1)
@@ -14,10 +14,10 @@ roughness = 0.9
 [node name="Tank" parent="SubjectSlot" instance=ExtResource("1_tank")]
 
 [node name="HealthLabel3D" type="Label3D" parent="."]
-position = Vector3(0, 3.721374187839, 0)
+position = Vector3(0, 5, 0)
 billboard = 1
 no_depth_test = true
-text = "中型坦克\n100 / 100"
+text = "輕型坦克\n100 / 100"
 modulate = Color(1, 0, 0, 1)
 font_size = 275
 outline_size = 7
@@ -28,5 +28,5 @@ subject = NodePath("../SubjectSlot/Tank")
 health_component = NodePath("../SubjectSlot/Tank/HealthComponent")
 damage_receiver = NodePath("../SubjectSlot/Tank/DamageReceiver")
 health_label = NodePath("../HealthLabel3D")
-target_display_name = "中型坦克"
+target_display_name = "輕型坦克"
 target_material = SubResource("TargetGrayMaterial")

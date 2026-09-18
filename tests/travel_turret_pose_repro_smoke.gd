@@ -2,7 +2,7 @@
 ## The authored map, live Tank2, Vision, guards, NavigationAgent and recovery stay active.
 extends SceneTree
 
-const PLAYTEST := preload("res://src/world/training_ground/training_ground_playtest.tscn")
+const PLAYTEST := preload("res://src/maps/training_ground/training_ground_playtest.tscn")
 const FIXTURE_PATH := "res://tests/fixtures/travel_turret_pose_010203.json"
 
 var _failures: Array[String] = []

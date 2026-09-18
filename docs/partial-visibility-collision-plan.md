@@ -48,7 +48,7 @@
 - 正式訓練場實測單輪約 303–768ms；開放全景連續三輪為 316.165／400.854／418.175ms。每影格初始 deadline 為 4ms，量得 p95 約 4.4ms、max 4.646ms（單格離散查詢造成的小幅超出）；每輪約 22,074–35,125 rays。沒有減少部位或延長核可的一秒更新目標。
 - 使用者明確同意外傳本次四張截圖後，Gemini 完成單輪視覺第二意見：未觀察到原 P1 的裁切／透明度／重疊加深缺陷；動態與 physics 真值另由測試判定，不從靜圖冒稱通過。
 - 證據目錄：`/tmp/lea173-task4.OjNsCL/`；`p2-fourth.log`、四支 regression 的 `.log`／`.exit`、`full-ci.log`／`.exit`、`gpu-after-fifth.log`、`gpu-overview-second.log`、`gpu-overview-open.log`、`gemini-visual-review.log`、`fresh-acceptance.md`。HEAD 仍為 `6e217ff1b5be247a7992c000b53d38c7a75eb1c7`；Task 1–3 既有 dirty 修改保留，未 commit／PR／merge／Linear 結案。
-- 人類驗收入口維持 `src/world/training_ground/training_ground_playtest.tscn` F6；請停止舊試玩再啟動，以載入新腳本。Task 4 人類確認前不啟動 Task 5。
+- 人類驗收入口維持 `src/maps/training_ground/training_ground_playtest.tscn` F6；請停止舊試玩再啟動，以載入新腳本。Task 4 人類確認前不啟動 Task 5。
 
 ## Task 3 驗證結果（2026-09-10）
 
@@ -165,7 +165,7 @@ Task 1～5 各自修改/新增的測試用 apply_patch；新生成幾何資源�
 
 ## 回歸與驗收證據
 
-- 固定工具：Godot 4.7.1-stable；本機正式場景 `src/world/training_ground/training_ground_playtest.tscn` F6。
+- 固定工具：Godot 4.7.1-stable；本機正式場景 `src/maps/training_ground/training_ground_playtest.tscn` F6。
 - 既有 `enemy_combat_smoke.gd`、`combat_boundary_smoke.gd`、`training_ground_smoke.gd`、其餘 quality suite 保留；每步跑相關 smoke，集中交件再跑完整 quality。
 - C1/V1 四車依實際部位參數化；Tank1 不含 turret，Tank4 upper hull 不作可旋轉砲塔。不得只測中型、只測車體而稱全四車通過。
 - C2 記錄每個阻擋案例的起訖與中途姿態、實際外緣步長，緊接反向退出；不是只驗最後 transform。

@@ -1,6 +1,6 @@
 extends SceneTree
 
-const RANGE_SCENE := "res://src/world/training_ground/training_range.tscn"
+const RANGE_SCENE := "res://src/maps/training_ground/range/training_range.tscn"
 
 
 func _init() -> void:

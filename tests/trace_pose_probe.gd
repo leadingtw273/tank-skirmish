@@ -3,7 +3,7 @@
 extends SceneTree
 
 const Predictor := preload("res://src/ai/tank_driving_predictor.gd")
-const PLAYTEST := preload("res://src/world/training_ground/training_ground_playtest.tscn")
+const PLAYTEST := preload("res://src/maps/training_ground/training_ground_playtest.tscn")
 const DT := 1.0 / 60.0
 
 const CASES := [

@@ -1,0 +1,534 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/finished/light/1Story.tscn" id="1_1k0bn"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/finished/light/1Story_GableRoof.tscn" id="2_d5c3d"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/finished/light/1Story_RoundRoof.tscn" id="3_02bbg"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/finished/light/1Story_Sign.tscn" id="4_y6koj"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/finished/light/2Story.tscn" id="5_dijlr"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/finished/light/2Story_2.tscn" id="6_gfawd"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/finished/light/2Story_Balcony.tscn" id="7_85rvo"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/finished/light/2Story_Center.tscn" id="8_p611s"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/finished/light/2Story_Columns.tscn" id="9_ugr8y"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/finished/light/2Story_Double.tscn" id="10_eehnt"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/finished/light/2Story_GableRoof.tscn" id="11_udtgh"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/finished/light/2Story_RoundRoof.tscn" id="12_n17tt"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/finished/light/2Story_Sidehouse.tscn" id="13_1nsok"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/finished/light/2Story_Sign.tscn" id="14_s0edq"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/finished/light/2Story_Slim.tscn" id="15_chc4g"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/finished/light/2Story_Stairs.tscn" id="16_e1k22"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/finished/light/2Story_Wide.tscn" id="17_wq4k0"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/finished/light/2Story_Wide_2Doors.tscn" id="18_p15bx"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/finished/light/3Story_Balcony.tscn" id="19_ec5pk"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/finished/light/3Story_Slim.tscn" id="20_ht7h5"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/finished/light/3Story_Small.tscn" id="21_jskwp"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/finished/light/4Story.tscn" id="22_gyloy"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/finished/light/4Story_Center.tscn" id="23_nkwmr"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/finished/light/4Story_Wide_2Doors.tscn" id="24_25nbu"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/finished/light/4Story_Wide_2Doors_Roof.tscn" id="25_gfb82"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/finished/light/6Story_Stack.tscn" id="26_w5x7f"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/base/light/1Story_Base.tscn" id="27_ha4k4"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/base/light/1Story_GableRoof_Base.tscn" id="28_3vucr"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/base/light/1Story_RoundRoof_Base.tscn" id="29_hdhxe"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/base/light/1Story_Sign_Base.tscn" id="30_2a5t0"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/base/light/2Story_Base.tscn" id="31_ijhaq"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/base/light/2Story_Center_Base.tscn" id="32_d7ior"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/base/light/2Story_Columns_Base.tscn" id="33_fbccc"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/base/light/2Story_GableRoof_Base.tscn" id="34_ip4m2"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/base/light/2Story_RoundRoof_Base.tscn" id="35_o16e1"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/base/light/2Story_Sidehouse_Base.tscn" id="36_qksa5"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/base/light/2Story_Sign_Base.tscn" id="37_3h6sh"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/base/light/2Story_Slim_Base.tscn" id="38_jl8k2"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/base/light/2Story_Wide_2Doors_Base.tscn" id="39_yf75l"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/base/light/2Story_Wide_Base.tscn" id="40_guh0v"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/base/light/3Story_Base.tscn" id="41_4vqpp"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/base/light/3Story_Slim_Base.tscn" id="42_uxlnt"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/base/light/4Story_Center_Base.tscn" id="43_duidq"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/base/light/4Story_Wide_2Doors_Base.tscn" id="44_6aws0"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/parts/light/AC_Unit.tscn" id="45_4a5kd"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/parts/light/AC_Unitx4.tscn" id="46_0214o"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/parts/light/Balcony.tscn" id="47_t6g2o"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/parts/light/Bricks_Half.tscn" id="48_bqx1b"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/parts/light/Bricks_Large.tscn" id="49_4nsni"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/parts/light/Bricks_LeftStraight.tscn" id="50_7skyd"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/parts/light/Bricks_RightStraight.tscn" id="51_4nbjw"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/parts/light/Bricks_Single.tscn" id="52_nroq7"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/parts/light/Bricks_Small.tscn" id="53_sc4q6"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/parts/light/CasinoSign.tscn" id="54_ta5vp"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/parts/light/Door1.tscn" id="55_0g4nh"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/parts/light/Door2.tscn" id="56_o50c5"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/parts/light/Door3.tscn" id="57_dlnnk"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/parts/light/Door4.tscn" id="58_qkdaa"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/parts/light/Door5.tscn" id="59_yle3u"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/parts/light/Door_Double.tscn" id="60_qx1yt"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/parts/light/Door_Window.tscn" id="61_pdiid"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/parts/light/Door_Window2.tscn" id="62_6kukq"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/parts/light/Pipe_L.tscn" id="63_y5gtq"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/parts/light/Pipe_Straight.tscn" id="64_sayac"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/parts/light/Pipe_Straight_Short.tscn" id="65_psrni"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/parts/light/Sign_Bakery.tscn" id="66_vugw6"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/parts/light/Sign_Barbershop.tscn" id="67_0kiwc"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/parts/light/Sign_Bookshop.tscn" id="68_jiy2k"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/parts/light/Sign_Hardware.tscn" id="69_skdqw"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/parts/light/Sign_Pharmacy.tscn" id="70_hc012"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/parts/light/Staircase.tscn" id="71_oyvqt"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/parts/light/Stairs_Roof.tscn" id="72_a63yj"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/parts/light/Window.tscn" id="73_xpyiq"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/parts/light/Window_Double.tscn" id="74_mhvon"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/parts/light/Window_Double_Roof.tscn" id="75_028sp"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/parts/light/Window_Roof.tscn" id="76_m00j2"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/materials/default/1Story_GableRoof_Mat.tscn" id="77_yirtr"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/materials/default/1Story_Mat.tscn" id="78_5xop6"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/materials/default/1Story_RoundRoof_Mat.tscn" id="79_n1f58"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/materials/default/1Story_Sign_Mat.tscn" id="80_p55ju"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/materials/default/2Story_2_Mat.tscn" id="81_cq4s1"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/materials/default/2Story_Balcony_Mat.tscn" id="82_tcerp"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/materials/default/2Story_Center_Mat.tscn" id="83_5kls4"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/materials/default/2Story_Columns_Mat.tscn" id="84_avcxu"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/materials/default/2Story_Double_Mat.tscn" id="85_p86dq"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/materials/default/2Story_GableRoof_Mat.tscn" id="86_kjn7j"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/materials/default/2Story_Mat.tscn" id="87_quhkx"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/materials/default/2Story_RoundRoof_Mat.tscn" id="88_lenpp"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/materials/default/2Story_Sidehouse_Mat.tscn" id="89_c1r5t"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/materials/default/2Story_Sign_Mat.tscn" id="90_akj7p"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/materials/default/2Story_Slim_Mat.tscn" id="91_xomux"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/materials/default/2Story_Stairs_Mat.tscn" id="92_kqwx5"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/materials/default/2Story_Wide_2Doors_Mat.tscn" id="93_ithcg"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/materials/default/2Story_Wide_Mat.tscn" id="94_yu527"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/materials/default/3Story_Balcony_Mat.tscn" id="95_h0ql2"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/materials/default/3Story_Slim_Mat.tscn" id="96_wd7jx"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/materials/default/3Story_Small_Mat.tscn" id="97_wg71t"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/materials/default/4Story_Center_Mat.tscn" id="98_mpcwt"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/materials/default/4Story_Mat.tscn" id="99_61c15"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/materials/default/4Story_Wide_2Doors_Mat.tscn" id="100_4ja3p"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/materials/default/4Story_Wide_2Doors_Roof_Mat.tscn" id="101_nauxp"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/materials/default/6Story_Stack_Mat.tscn" id="102_nn5y1"]
+
+[sub_resource type="Environment" id="Environment_tqb00"]
+background_mode = 1
+background_color = Color(0.12, 0.14, 0.17, 1)
+ambient_light_source = 2
+ambient_light_color = Color(1, 1, 1, 1)
+ambient_light_energy = 0.5
+
+[node name="full_pack_demo" type="Node3D" unique_id=1103153680]
+
+[node name="Models" type="Node3D" parent="." unique_id=934096090]
+
+[node name="1Story_light" type="StaticBody3D" parent="Models" unique_id=580446655 instance=ExtResource("1_1k0bn")]
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/finished/light/1Story.glb"
+
+[node name="1Story_GableRoof_light" type="StaticBody3D" parent="Models" unique_id=2101853083 instance=ExtResource("2_d5c3d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 0, 0)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/finished/light/1Story_GableRoof.glb"
+
+[node name="1Story_RoundRoof_light" type="StaticBody3D" parent="Models" unique_id=480993168 instance=ExtResource("3_02bbg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 36, 0, 0)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/finished/light/1Story_RoundRoof.glb"
+
+[node name="1Story_Sign_light" type="StaticBody3D" parent="Models" unique_id=785257274 instance=ExtResource("4_y6koj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 54, 0, 0)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/finished/light/1Story_Sign.glb"
+
+[node name="2Story_light" type="StaticBody3D" parent="Models" unique_id=887905843 instance=ExtResource("5_dijlr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 72, 0, 0)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/finished/light/2Story.glb"
+
+[node name="2Story_2_light" type="StaticBody3D" parent="Models" unique_id=1910801368 instance=ExtResource("6_gfawd")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 90, 0, 0)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/finished/light/2Story_2.glb"
+
+[node name="2Story_Balcony_light" type="StaticBody3D" parent="Models" unique_id=1208154097 instance=ExtResource("7_85rvo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 108, 0, 0)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/finished/light/2Story_Balcony.glb"
+
+[node name="2Story_Center_light" type="StaticBody3D" parent="Models" unique_id=740242969 instance=ExtResource("8_p611s")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 126, 0, 0)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/finished/light/2Story_Center.glb"
+
+[node name="2Story_Columns_light" type="StaticBody3D" parent="Models" unique_id=1339435472 instance=ExtResource("9_ugr8y")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 144, 0, 0)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/finished/light/2Story_Columns.glb"
+
+[node name="2Story_Double_light" type="StaticBody3D" parent="Models" unique_id=785156217 instance=ExtResource("10_eehnt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 162, 0, 0)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/finished/light/2Story_Double.glb"
+
+[node name="2Story_GableRoof_light" type="StaticBody3D" parent="Models" unique_id=457684350 instance=ExtResource("11_udtgh")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 180, 0, 0)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/finished/light/2Story_GableRoof.glb"
+
+[node name="2Story_RoundRoof_light" type="StaticBody3D" parent="Models" unique_id=235158970 instance=ExtResource("12_n17tt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 18)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/finished/light/2Story_RoundRoof.glb"
+
+[node name="2Story_Sidehouse_light" type="StaticBody3D" parent="Models" unique_id=337863496 instance=ExtResource("13_1nsok")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 0, 18)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/finished/light/2Story_Sidehouse.glb"
+
+[node name="2Story_Sign_light" type="StaticBody3D" parent="Models" unique_id=666974876 instance=ExtResource("14_s0edq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 36, 0, 18)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/finished/light/2Story_Sign.glb"
+
+[node name="2Story_Slim_light" type="StaticBody3D" parent="Models" unique_id=666833581 instance=ExtResource("15_chc4g")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 54, 0, 18)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/finished/light/2Story_Slim.glb"
+
+[node name="2Story_Stairs_light" type="StaticBody3D" parent="Models" unique_id=1659419211 instance=ExtResource("16_e1k22")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 72, 0, 18)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/finished/light/2Story_Stairs.glb"
+
+[node name="2Story_Wide_light" type="StaticBody3D" parent="Models" unique_id=1688185093 instance=ExtResource("17_wq4k0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 90, 0, 18)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/finished/light/2Story_Wide.glb"
+
+[node name="2Story_Wide_2Doors_light" type="StaticBody3D" parent="Models" unique_id=2097462175 instance=ExtResource("18_p15bx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 108, 0, 18)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/finished/light/2Story_Wide_2Doors.glb"
+
+[node name="3Story_Balcony_light" type="StaticBody3D" parent="Models" unique_id=1971236977 instance=ExtResource("19_ec5pk")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 126, 0, 18)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/finished/light/3Story_Balcony.glb"
+
+[node name="3Story_Slim_light" type="StaticBody3D" parent="Models" unique_id=1597538595 instance=ExtResource("20_ht7h5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 144, 0, 18)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/finished/light/3Story_Slim.glb"
+
+[node name="3Story_Small_light" type="StaticBody3D" parent="Models" unique_id=203912349 instance=ExtResource("21_jskwp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 162, 0, 18)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/finished/light/3Story_Small.glb"
+
+[node name="4Story_light" type="StaticBody3D" parent="Models" unique_id=1956002186 instance=ExtResource("22_gyloy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 180, 0, 18)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/finished/light/4Story.glb"
+
+[node name="4Story_Center_light" type="StaticBody3D" parent="Models" unique_id=321981656 instance=ExtResource("23_nkwmr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 36)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/finished/light/4Story_Center.glb"
+
+[node name="4Story_Wide_2Doors_light" type="StaticBody3D" parent="Models" unique_id=1965313388 instance=ExtResource("24_25nbu")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 0, 36)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/finished/light/4Story_Wide_2Doors.glb"
+
+[node name="4Story_Wide_2Doors_Roof_light" type="StaticBody3D" parent="Models" unique_id=681012555 instance=ExtResource("25_gfb82")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 36, 0, 36)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/finished/light/4Story_Wide_2Doors_Roof.glb"
+
+[node name="6Story_Stack_light" type="StaticBody3D" parent="Models" unique_id=82548545 instance=ExtResource("26_w5x7f")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 54, 0, 36)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/finished/light/6Story_Stack.glb"
+
+[node name="1Story_Base_light" type="StaticBody3D" parent="Models" unique_id=950325089 instance=ExtResource("27_ha4k4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 72, 0, 36)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/base/light/1Story_Base.glb"
+
+[node name="1Story_GableRoof_Base_light" type="StaticBody3D" parent="Models" unique_id=2135820055 instance=ExtResource("28_3vucr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 90, 0, 36)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/base/light/1Story_GableRoof_Base.glb"
+
+[node name="1Story_RoundRoof_Base_light" type="StaticBody3D" parent="Models" unique_id=685669079 instance=ExtResource("29_hdhxe")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 108, 0, 36)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/base/light/1Story_RoundRoof_Base.glb"
+
+[node name="1Story_Sign_Base_light" type="StaticBody3D" parent="Models" unique_id=87048264 instance=ExtResource("30_2a5t0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 126, 0, 36)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/base/light/1Story_Sign_Base.glb"
+
+[node name="2Story_Base_light" type="StaticBody3D" parent="Models" unique_id=1752039135 instance=ExtResource("31_ijhaq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 144, 0, 36)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/base/light/2Story_Base.glb"
+
+[node name="2Story_Center_Base_light" type="StaticBody3D" parent="Models" unique_id=434750232 instance=ExtResource("32_d7ior")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 162, 0, 36)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/base/light/2Story_Center_Base.glb"
+
+[node name="2Story_Columns_Base_light" type="StaticBody3D" parent="Models" unique_id=1879457305 instance=ExtResource("33_fbccc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 180, 0, 36)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/base/light/2Story_Columns_Base.glb"
+
+[node name="2Story_GableRoof_Base_light" type="StaticBody3D" parent="Models" unique_id=336590285 instance=ExtResource("34_ip4m2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 54)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/base/light/2Story_GableRoof_Base.glb"
+
+[node name="2Story_RoundRoof_Base_light" type="StaticBody3D" parent="Models" unique_id=1095196500 instance=ExtResource("35_o16e1")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 0, 54)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/base/light/2Story_RoundRoof_Base.glb"
+
+[node name="2Story_Sidehouse_Base_light" type="StaticBody3D" parent="Models" unique_id=684409225 instance=ExtResource("36_qksa5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 36, 0, 54)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/base/light/2Story_Sidehouse_Base.glb"
+
+[node name="2Story_Sign_Base_light" type="StaticBody3D" parent="Models" unique_id=1550229504 instance=ExtResource("37_3h6sh")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 54, 0, 54)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/base/light/2Story_Sign_Base.glb"
+
+[node name="2Story_Slim_Base_light" type="StaticBody3D" parent="Models" unique_id=2007216769 instance=ExtResource("38_jl8k2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 72, 0, 54)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/base/light/2Story_Slim_Base.glb"
+
+[node name="2Story_Wide_2Doors_Base_light" type="StaticBody3D" parent="Models" unique_id=785065028 instance=ExtResource("39_yf75l")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 90, 0, 54)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/base/light/2Story_Wide_2Doors_Base.glb"
+
+[node name="2Story_Wide_Base_light" type="StaticBody3D" parent="Models" unique_id=819918733 instance=ExtResource("40_guh0v")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 108, 0, 54)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/base/light/2Story_Wide_Base.glb"
+
+[node name="3Story_Base_light" type="StaticBody3D" parent="Models" unique_id=1293584634 instance=ExtResource("41_4vqpp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 126, 0, 54)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/base/light/3Story_Base.glb"
+
+[node name="3Story_Slim_Base_light" type="StaticBody3D" parent="Models" unique_id=1296072903 instance=ExtResource("42_uxlnt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 144, 0, 54)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/base/light/3Story_Slim_Base.glb"
+
+[node name="4Story_Center_Base_light" type="StaticBody3D" parent="Models" unique_id=1386406367 instance=ExtResource("43_duidq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 162, 0, 54)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/base/light/4Story_Center_Base.glb"
+
+[node name="4Story_Wide_2Doors_Base_light" type="StaticBody3D" parent="Models" unique_id=452105294 instance=ExtResource("44_6aws0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 180, 0, 54)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/base/light/4Story_Wide_2Doors_Base.glb"
+
+[node name="AC_Unit_light" type="StaticBody3D" parent="Models" unique_id=433279686 instance=ExtResource("45_4a5kd")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 72)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/parts/light/AC_Unit.glb"
+
+[node name="AC_Unitx4_light" type="StaticBody3D" parent="Models" unique_id=290903507 instance=ExtResource("46_0214o")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 0, 72)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/parts/light/AC_Unitx4.glb"
+
+[node name="Balcony_light" type="StaticBody3D" parent="Models" unique_id=659026334 instance=ExtResource("47_t6g2o")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 36, 0, 72)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/parts/light/Balcony.glb"
+
+[node name="Bricks_Half_light" type="StaticBody3D" parent="Models" unique_id=624772016 instance=ExtResource("48_bqx1b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 54, 0, 72)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/parts/light/Bricks_Half.glb"
+
+[node name="Bricks_Large_light" type="StaticBody3D" parent="Models" unique_id=264404187 instance=ExtResource("49_4nsni")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 72, 0, 72)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/parts/light/Bricks_Large.glb"
+
+[node name="Bricks_LeftStraight_light" type="StaticBody3D" parent="Models" unique_id=1725649805 instance=ExtResource("50_7skyd")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 90, 0, 72)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/parts/light/Bricks_LeftStraight.glb"
+
+[node name="Bricks_RightStraight_light" type="StaticBody3D" parent="Models" unique_id=1147969380 instance=ExtResource("51_4nbjw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 108, 0, 72)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/parts/light/Bricks_RightStraight.glb"
+
+[node name="Bricks_Single_light" type="StaticBody3D" parent="Models" unique_id=243455068 instance=ExtResource("52_nroq7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 126, 0, 72)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/parts/light/Bricks_Single.glb"
+
+[node name="Bricks_Small_light" type="StaticBody3D" parent="Models" unique_id=4757353 instance=ExtResource("53_sc4q6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 144, 0, 72)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/parts/light/Bricks_Small.glb"
+
+[node name="CasinoSign_light" type="StaticBody3D" parent="Models" unique_id=1301564700 instance=ExtResource("54_ta5vp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 162, 0, 72)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/parts/light/CasinoSign.glb"
+
+[node name="Door1_light" type="StaticBody3D" parent="Models" unique_id=243711819 instance=ExtResource("55_0g4nh")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 180, 0, 72)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/parts/light/Door1.glb"
+
+[node name="Door2_light" type="StaticBody3D" parent="Models" unique_id=1828826075 instance=ExtResource("56_o50c5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 90)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/parts/light/Door2.glb"
+
+[node name="Door3_light" type="StaticBody3D" parent="Models" unique_id=919854734 instance=ExtResource("57_dlnnk")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 0, 90)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/parts/light/Door3.glb"
+
+[node name="Door4_light" type="StaticBody3D" parent="Models" unique_id=204193241 instance=ExtResource("58_qkdaa")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 36, 0, 90)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/parts/light/Door4.glb"
+
+[node name="Door5_light" type="StaticBody3D" parent="Models" unique_id=174106661 instance=ExtResource("59_yle3u")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 54, 0, 90)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/parts/light/Door5.glb"
+
+[node name="Door_Double_light" type="StaticBody3D" parent="Models" unique_id=2080356199 instance=ExtResource("60_qx1yt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 72, 0, 90)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/parts/light/Door_Double.glb"
+
+[node name="Door_Window_light" type="StaticBody3D" parent="Models" unique_id=1768770033 instance=ExtResource("61_pdiid")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 90, 0, 90)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/parts/light/Door_Window.glb"
+
+[node name="Door_Window2_light" type="StaticBody3D" parent="Models" unique_id=997800267 instance=ExtResource("62_6kukq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 108, 0, 90)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/parts/light/Door_Window2.glb"
+
+[node name="Pipe_L_light" type="StaticBody3D" parent="Models" unique_id=224335466 instance=ExtResource("63_y5gtq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 126, 0, 90)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/parts/light/Pipe_L.glb"
+
+[node name="Pipe_Straight_light" type="StaticBody3D" parent="Models" unique_id=1643543907 instance=ExtResource("64_sayac")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 144, 0, 90)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/parts/light/Pipe_Straight.glb"
+
+[node name="Pipe_Straight_Short_light" type="StaticBody3D" parent="Models" unique_id=672580504 instance=ExtResource("65_psrni")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 162, 0, 90)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/parts/light/Pipe_Straight_Short.glb"
+
+[node name="Sign_Bakery_light" type="StaticBody3D" parent="Models" unique_id=1186121432 instance=ExtResource("66_vugw6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 180, 0, 90)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/parts/light/Sign_Bakery.glb"
+
+[node name="Sign_Barbershop_light" type="StaticBody3D" parent="Models" unique_id=2011143982 instance=ExtResource("67_0kiwc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 108)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/parts/light/Sign_Barbershop.glb"
+
+[node name="Sign_Bookshop_light" type="StaticBody3D" parent="Models" unique_id=2108237843 instance=ExtResource("68_jiy2k")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 0, 108)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/parts/light/Sign_Bookshop.glb"
+
+[node name="Sign_Hardware_light" type="StaticBody3D" parent="Models" unique_id=366996615 instance=ExtResource("69_skdqw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 36, 0, 108)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/parts/light/Sign_Hardware.glb"
+
+[node name="Sign_Pharmacy_light" type="StaticBody3D" parent="Models" unique_id=1145159290 instance=ExtResource("70_hc012")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 54, 0, 108)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/parts/light/Sign_Pharmacy.glb"
+
+[node name="Staircase_light" type="StaticBody3D" parent="Models" unique_id=2024747889 instance=ExtResource("71_oyvqt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 72, 0, 108)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/parts/light/Staircase.glb"
+
+[node name="Stairs_Roof_light" type="StaticBody3D" parent="Models" unique_id=720362313 instance=ExtResource("72_a63yj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 90, 0, 108)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/parts/light/Stairs_Roof.glb"
+
+[node name="Window_light" type="StaticBody3D" parent="Models" unique_id=1383834399 instance=ExtResource("73_xpyiq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 108, 0, 108)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/parts/light/Window.glb"
+
+[node name="Window_Double_light" type="StaticBody3D" parent="Models" unique_id=726460332 instance=ExtResource("74_mhvon")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 126, 0, 108)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/parts/light/Window_Double.glb"
+
+[node name="Window_Double_Roof_light" type="StaticBody3D" parent="Models" unique_id=1208822173 instance=ExtResource("75_028sp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 144, 0, 108)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/parts/light/Window_Double_Roof.glb"
+
+[node name="Window_Roof_light" type="StaticBody3D" parent="Models" unique_id=310433647 instance=ExtResource("76_m00j2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 162, 0, 108)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/parts/light/Window_Roof.glb"
+
+[node name="1Story_GableRoof_Mat_default" type="StaticBody3D" parent="Models" unique_id=207099233 instance=ExtResource("77_yirtr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 180, 0, 108)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/1Story_GableRoof_Mat.glb"
+
+[node name="1Story_Mat_default" type="StaticBody3D" parent="Models" unique_id=1979252893 instance=ExtResource("78_5xop6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 126)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/1Story_Mat.glb"
+
+[node name="1Story_RoundRoof_Mat_default" type="StaticBody3D" parent="Models" unique_id=1405766528 instance=ExtResource("79_n1f58")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 0, 126)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/1Story_RoundRoof_Mat.glb"
+
+[node name="1Story_Sign_Mat_default" type="StaticBody3D" parent="Models" unique_id=1701308031 instance=ExtResource("80_p55ju")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 36, 0, 126)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/1Story_Sign_Mat.glb"
+
+[node name="2Story_2_Mat_default" type="StaticBody3D" parent="Models" unique_id=1985183220 instance=ExtResource("81_cq4s1")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 54, 0, 126)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_2_Mat.glb"
+
+[node name="2Story_Balcony_Mat_default" type="StaticBody3D" parent="Models" unique_id=567406523 instance=ExtResource("82_tcerp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 72, 0, 126)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Balcony_Mat.glb"
+
+[node name="2Story_Center_Mat_default" type="StaticBody3D" parent="Models" unique_id=2097416082 instance=ExtResource("83_5kls4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 90, 0, 126)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Center_Mat.glb"
+
+[node name="2Story_Columns_Mat_default" type="StaticBody3D" parent="Models" unique_id=364505486 instance=ExtResource("84_avcxu")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 108, 0, 126)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Columns_Mat.glb"
+
+[node name="2Story_Double_Mat_default" type="StaticBody3D" parent="Models" unique_id=830524869 instance=ExtResource("85_p86dq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 126, 0, 126)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Double_Mat.glb"
+
+[node name="2Story_GableRoof_Mat_default" type="StaticBody3D" parent="Models" unique_id=119242708 instance=ExtResource("86_kjn7j")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 144, 0, 126)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_GableRoof_Mat.glb"
+
+[node name="2Story_Mat_default" type="StaticBody3D" parent="Models" unique_id=834524494 instance=ExtResource("87_quhkx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 162, 0, 126)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Mat.glb"
+
+[node name="2Story_RoundRoof_Mat_default" type="StaticBody3D" parent="Models" unique_id=48792457 instance=ExtResource("88_lenpp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 180, 0, 126)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_RoundRoof_Mat.glb"
+
+[node name="2Story_Sidehouse_Mat_default" type="StaticBody3D" parent="Models" unique_id=1679489196 instance=ExtResource("89_c1r5t")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 144)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Sidehouse_Mat.glb"
+
+[node name="2Story_Sign_Mat_default" type="StaticBody3D" parent="Models" unique_id=690757216 instance=ExtResource("90_akj7p")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 0, 144)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Sign_Mat.glb"
+
+[node name="2Story_Slim_Mat_default" type="StaticBody3D" parent="Models" unique_id=1226589978 instance=ExtResource("91_xomux")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 36, 0, 144)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Slim_Mat.glb"
+
+[node name="2Story_Stairs_Mat_default" type="StaticBody3D" parent="Models" unique_id=912583600 instance=ExtResource("92_kqwx5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 54, 0, 144)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Stairs_Mat.glb"
+
+[node name="2Story_Wide_2Doors_Mat_default" type="StaticBody3D" parent="Models" unique_id=1366670208 instance=ExtResource("93_ithcg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 72, 0, 144)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Wide_2Doors_Mat.glb"
+
+[node name="2Story_Wide_Mat_default" type="StaticBody3D" parent="Models" unique_id=1501410809 instance=ExtResource("94_yu527")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 90, 0, 144)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Wide_Mat.glb"
+
+[node name="3Story_Balcony_Mat_default" type="StaticBody3D" parent="Models" unique_id=1019874736 instance=ExtResource("95_h0ql2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 108, 0, 144)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/3Story_Balcony_Mat.glb"
+
+[node name="3Story_Slim_Mat_default" type="StaticBody3D" parent="Models" unique_id=1350207728 instance=ExtResource("96_wd7jx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 126, 0, 144)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/3Story_Slim_Mat.glb"
+
+[node name="3Story_Small_Mat_default" type="StaticBody3D" parent="Models" unique_id=1011836285 instance=ExtResource("97_wg71t")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 144, 0, 144)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/3Story_Small_Mat.glb"
+
+[node name="4Story_Center_Mat_default" type="StaticBody3D" parent="Models" unique_id=1967948810 instance=ExtResource("98_mpcwt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 162, 0, 144)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/4Story_Center_Mat.glb"
+
+[node name="4Story_Mat_default" type="StaticBody3D" parent="Models" unique_id=1101664251 instance=ExtResource("99_61c15")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 180, 0, 144)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/4Story_Mat.glb"
+
+[node name="4Story_Wide_2Doors_Mat_default" type="StaticBody3D" parent="Models" unique_id=302448275 instance=ExtResource("100_4ja3p")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 162)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/4Story_Wide_2Doors_Mat.glb"
+
+[node name="4Story_Wide_2Doors_Roof_Mat_default" type="StaticBody3D" parent="Models" unique_id=1433535277 instance=ExtResource("101_nauxp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 0, 162)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/4Story_Wide_2Doors_Roof_Mat.glb"
+
+[node name="6Story_Stack_Mat_default" type="StaticBody3D" parent="Models" unique_id=1224953424 instance=ExtResource("102_nn5y1")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 36, 0, 162)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/6Story_Stack_Mat.glb"
+
+[node name="PreviewCamera" type="Camera3D" parent="." unique_id=948485752]
+transform = Transform3D(1, 0, 0, 0, 0.5368755, 0.8436615, 0, -0.8436615, 0.5368755, 99, 198, 216)
+projection = 1
+current = true
+size = 227.7
+
+[node name="Sun" type="DirectionalLight3D" parent="." unique_id=1920348794]
+transform = Transform3D(0.90630776, 0.34618863, -0.24240388, 0, 0.57357645, 0.81915206, 0.42261827, -0.74240386, 0.5198368, 0, 0, 0)
+
+[node name="PreviewEnvironment" type="WorldEnvironment" parent="." unique_id=290283010]
+environment = SubResource("Environment_tqb00")

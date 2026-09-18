@@ -1,0 +1,23 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="PackedScene" path="res://src/actors/tank/variants/tank1/tank1.tscn" id="1_tank"]
+[ext_resource type="PackedScene" path="res://src/actors/tank/variants/tank2/tank2.tscn" id="2_tank"]
+[ext_resource type="PackedScene" path="res://src/actors/tank/variants/tank3/tank3.tscn" id="3_tank"]
+[ext_resource type="PackedScene" path="res://src/actors/tank/variants/tank4/tank4.tscn" id="4_tank"]
+
+[node name="TankVariantsDemo" type="Node3D"]
+
+[node name="Tanks" type="Node3D" parent="."]
+process_mode = 4
+
+[node name="Tank1" parent="Tanks" instance=ExtResource("1_tank")]
+position = Vector3(0, 0, 0)
+
+[node name="Tank2" parent="Tanks" instance=ExtResource("2_tank")]
+position = Vector3(18, 0, 0)
+
+[node name="Tank3" parent="Tanks" instance=ExtResource("3_tank")]
+position = Vector3(0, 0, 18)
+
+[node name="Tank4" parent="Tanks" instance=ExtResource("4_tank")]
+position = Vector3(18, 0, 18)

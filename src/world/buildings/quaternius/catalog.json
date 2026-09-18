@@ -1,0 +1,5632 @@
+{
+	"modules": [
+		{
+			"group": "finished",
+			"id": "1Story",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/finished/blue/1Story.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "1Story_GableRoof",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/finished/blue/1Story_GableRoof.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "1Story_RoundRoof",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/finished/blue/1Story_RoundRoof.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "1Story_Sign",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/finished/blue/1Story_Sign.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/finished/blue/2Story.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_2",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/finished/blue/2Story_2.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Balcony",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/finished/blue/2Story_Balcony.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Center",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/finished/blue/2Story_Center.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Columns",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/finished/blue/2Story_Columns.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Double",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/finished/blue/2Story_Double.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_GableRoof",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/finished/blue/2Story_GableRoof.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_RoundRoof",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/finished/blue/2Story_RoundRoof.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Sidehouse",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/finished/blue/2Story_Sidehouse.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Sign",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/finished/blue/2Story_Sign.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Slim",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/finished/blue/2Story_Slim.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Stairs",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/finished/blue/2Story_Stairs.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Wide",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/finished/blue/2Story_Wide.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Wide_2Doors",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/finished/blue/2Story_Wide_2Doors.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "3Story_Balcony",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/finished/blue/3Story_Balcony.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "3Story_Slim",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/finished/blue/3Story_Slim.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "3Story_Small",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/finished/blue/3Story_Small.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "4Story",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/finished/blue/4Story.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "4Story_Center",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/finished/blue/4Story_Center.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "4Story_Wide_2Doors",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/finished/blue/4Story_Wide_2Doors.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "4Story_Wide_2Doors_Roof",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/finished/blue/4Story_Wide_2Doors_Roof.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "6Story_Stack",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/finished/blue/6Story_Stack.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "1Story",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/finished/casino/1Story.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "1Story_GableRoof",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/finished/casino/1Story_GableRoof.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "1Story_RoundRoof",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/finished/casino/1Story_RoundRoof.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "1Story_Sign",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/finished/casino/1Story_Sign.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/finished/casino/2Story.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_2",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/finished/casino/2Story_2.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Balcony",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/finished/casino/2Story_Balcony.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Center",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/finished/casino/2Story_Center.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Columns",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/finished/casino/2Story_Columns.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Double",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/finished/casino/2Story_Double.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_GableRoof",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/finished/casino/2Story_GableRoof.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_RoundRoof",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/finished/casino/2Story_RoundRoof.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Sidehouse",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/finished/casino/2Story_Sidehouse.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Sign",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/finished/casino/2Story_Sign.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Slim",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/finished/casino/2Story_Slim.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Stairs",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/finished/casino/2Story_Stairs.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Wide",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/finished/casino/2Story_Wide.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Wide_2Doors",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/finished/casino/2Story_Wide_2Doors.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "3Story_Balcony",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/finished/casino/3Story_Balcony.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "3Story_Slim",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/finished/casino/3Story_Slim.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "3Story_Small",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/finished/casino/3Story_Small.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "4Story",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/finished/casino/4Story.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "4Story_Center",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/finished/casino/4Story_Center.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "4Story_Wide_2Doors",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/finished/casino/4Story_Wide_2Doors.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "4Story_Wide_2Doors_Roof",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/finished/casino/4Story_Wide_2Doors_Roof.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "6Story_Stack",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/finished/casino/6Story_Stack.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "1Story",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/finished/dark/1Story.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "1Story_GableRoof",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/finished/dark/1Story_GableRoof.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "1Story_RoundRoof",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/finished/dark/1Story_RoundRoof.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "1Story_Sign",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/finished/dark/1Story_Sign.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/finished/dark/2Story.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_2",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/finished/dark/2Story_2.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Balcony",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/finished/dark/2Story_Balcony.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Center",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/finished/dark/2Story_Center.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Columns",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/finished/dark/2Story_Columns.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Double",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/finished/dark/2Story_Double.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_GableRoof",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/finished/dark/2Story_GableRoof.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_RoundRoof",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/finished/dark/2Story_RoundRoof.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Sidehouse",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/finished/dark/2Story_Sidehouse.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Sign",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/finished/dark/2Story_Sign.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Slim",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/finished/dark/2Story_Slim.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Stairs",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/finished/dark/2Story_Stairs.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Wide",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/finished/dark/2Story_Wide.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Wide_2Doors",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/finished/dark/2Story_Wide_2Doors.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "3Story_Balcony",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/finished/dark/3Story_Balcony.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "3Story_Slim",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/finished/dark/3Story_Slim.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "3Story_Small",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/finished/dark/3Story_Small.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "4Story",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/finished/dark/4Story.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "4Story_Center",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/finished/dark/4Story_Center.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "4Story_Wide_2Doors",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/finished/dark/4Story_Wide_2Doors.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "4Story_Wide_2Doors_Roof",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/finished/dark/4Story_Wide_2Doors_Roof.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "6Story_Stack",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/finished/dark/6Story_Stack.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "1Story",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/finished/darkblue/1Story.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "1Story_GableRoof",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/finished/darkblue/1Story_GableRoof.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "1Story_RoundRoof",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/finished/darkblue/1Story_RoundRoof.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "1Story_Sign",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/finished/darkblue/1Story_Sign.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/finished/darkblue/2Story.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_2",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/finished/darkblue/2Story_2.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Balcony",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/finished/darkblue/2Story_Balcony.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Center",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/finished/darkblue/2Story_Center.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Columns",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/finished/darkblue/2Story_Columns.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Double",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/finished/darkblue/2Story_Double.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_GableRoof",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/finished/darkblue/2Story_GableRoof.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_RoundRoof",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/finished/darkblue/2Story_RoundRoof.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Sidehouse",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/finished/darkblue/2Story_Sidehouse.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Sign",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/finished/darkblue/2Story_Sign.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Slim",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/finished/darkblue/2Story_Slim.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Stairs",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/finished/darkblue/2Story_Stairs.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Wide",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/finished/darkblue/2Story_Wide.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Wide_2Doors",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/finished/darkblue/2Story_Wide_2Doors.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "3Story_Balcony",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/finished/darkblue/3Story_Balcony.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "3Story_Slim",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/finished/darkblue/3Story_Slim.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "3Story_Small",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/finished/darkblue/3Story_Small.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "4Story",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/finished/darkblue/4Story.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "4Story_Center",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/finished/darkblue/4Story_Center.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "4Story_Wide_2Doors",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/finished/darkblue/4Story_Wide_2Doors.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "4Story_Wide_2Doors_Roof",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/finished/darkblue/4Story_Wide_2Doors_Roof.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "6Story_Stack",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/finished/darkblue/6Story_Stack.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "1Story",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/finished/darkpurple/1Story.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "1Story_GableRoof",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/finished/darkpurple/1Story_GableRoof.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "1Story_RoundRoof",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/finished/darkpurple/1Story_RoundRoof.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "1Story_Sign",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/finished/darkpurple/1Story_Sign.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/finished/darkpurple/2Story.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_2",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/finished/darkpurple/2Story_2.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Balcony",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/finished/darkpurple/2Story_Balcony.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Center",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/finished/darkpurple/2Story_Center.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Columns",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/finished/darkpurple/2Story_Columns.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Double",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/finished/darkpurple/2Story_Double.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_GableRoof",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/finished/darkpurple/2Story_GableRoof.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_RoundRoof",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/finished/darkpurple/2Story_RoundRoof.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Sidehouse",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/finished/darkpurple/2Story_Sidehouse.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Sign",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/finished/darkpurple/2Story_Sign.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Slim",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/finished/darkpurple/2Story_Slim.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Stairs",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/finished/darkpurple/2Story_Stairs.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Wide",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/finished/darkpurple/2Story_Wide.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Wide_2Doors",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/finished/darkpurple/2Story_Wide_2Doors.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "3Story_Balcony",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/finished/darkpurple/3Story_Balcony.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "3Story_Slim",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/finished/darkpurple/3Story_Slim.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "3Story_Small",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/finished/darkpurple/3Story_Small.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "4Story",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/finished/darkpurple/4Story.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "4Story_Center",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/finished/darkpurple/4Story_Center.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "4Story_Wide_2Doors",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/finished/darkpurple/4Story_Wide_2Doors.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "4Story_Wide_2Doors_Roof",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/finished/darkpurple/4Story_Wide_2Doors_Roof.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "6Story_Stack",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/finished/darkpurple/6Story_Stack.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "1Story",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/finished/green/1Story.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "1Story_GableRoof",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/finished/green/1Story_GableRoof.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "1Story_RoundRoof",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/finished/green/1Story_RoundRoof.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "1Story_Sign",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/finished/green/1Story_Sign.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/finished/green/2Story.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_2",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/finished/green/2Story_2.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Balcony",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/finished/green/2Story_Balcony.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Center",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/finished/green/2Story_Center.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Columns",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/finished/green/2Story_Columns.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Double",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/finished/green/2Story_Double.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_GableRoof",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/finished/green/2Story_GableRoof.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_RoundRoof",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/finished/green/2Story_RoundRoof.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Sidehouse",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/finished/green/2Story_Sidehouse.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Sign",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/finished/green/2Story_Sign.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Slim",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/finished/green/2Story_Slim.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Stairs",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/finished/green/2Story_Stairs.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Wide",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/finished/green/2Story_Wide.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Wide_2Doors",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/finished/green/2Story_Wide_2Doors.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "3Story_Balcony",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/finished/green/3Story_Balcony.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "3Story_Slim",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/finished/green/3Story_Slim.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "3Story_Small",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/finished/green/3Story_Small.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "4Story",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/finished/green/4Story.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "4Story_Center",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/finished/green/4Story_Center.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "4Story_Wide_2Doors",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/finished/green/4Story_Wide_2Doors.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "4Story_Wide_2Doors_Roof",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/finished/green/4Story_Wide_2Doors_Roof.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "6Story_Stack",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/finished/green/6Story_Stack.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "1Story",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/finished/grey/1Story.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "1Story_GableRoof",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/finished/grey/1Story_GableRoof.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "1Story_RoundRoof",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/finished/grey/1Story_RoundRoof.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "1Story_Sign",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/finished/grey/1Story_Sign.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/finished/grey/2Story.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_2",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/finished/grey/2Story_2.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Balcony",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/finished/grey/2Story_Balcony.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Center",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/finished/grey/2Story_Center.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Columns",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/finished/grey/2Story_Columns.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Double",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/finished/grey/2Story_Double.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_GableRoof",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/finished/grey/2Story_GableRoof.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_RoundRoof",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/finished/grey/2Story_RoundRoof.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Sidehouse",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/finished/grey/2Story_Sidehouse.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Sign",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/finished/grey/2Story_Sign.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Slim",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/finished/grey/2Story_Slim.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Stairs",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/finished/grey/2Story_Stairs.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Wide",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/finished/grey/2Story_Wide.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Wide_2Doors",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/finished/grey/2Story_Wide_2Doors.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "3Story_Balcony",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/finished/grey/3Story_Balcony.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "3Story_Slim",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/finished/grey/3Story_Slim.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "3Story_Small",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/finished/grey/3Story_Small.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "4Story",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/finished/grey/4Story.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "4Story_Center",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/finished/grey/4Story_Center.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "4Story_Wide_2Doors",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/finished/grey/4Story_Wide_2Doors.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "4Story_Wide_2Doors_Roof",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/finished/grey/4Story_Wide_2Doors_Roof.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "6Story_Stack",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/finished/grey/6Story_Stack.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "1Story",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/finished/light/1Story.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "1Story_GableRoof",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/finished/light/1Story_GableRoof.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "1Story_RoundRoof",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/finished/light/1Story_RoundRoof.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "1Story_Sign",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/finished/light/1Story_Sign.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/finished/light/2Story.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_2",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/finished/light/2Story_2.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Balcony",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/finished/light/2Story_Balcony.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Center",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/finished/light/2Story_Center.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Columns",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/finished/light/2Story_Columns.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Double",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/finished/light/2Story_Double.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_GableRoof",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/finished/light/2Story_GableRoof.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_RoundRoof",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/finished/light/2Story_RoundRoof.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Sidehouse",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/finished/light/2Story_Sidehouse.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Sign",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/finished/light/2Story_Sign.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Slim",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/finished/light/2Story_Slim.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Stairs",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/finished/light/2Story_Stairs.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Wide",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/finished/light/2Story_Wide.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Wide_2Doors",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/finished/light/2Story_Wide_2Doors.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "3Story_Balcony",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/finished/light/3Story_Balcony.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "3Story_Slim",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/finished/light/3Story_Slim.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "3Story_Small",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/finished/light/3Story_Small.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "4Story",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/finished/light/4Story.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "4Story_Center",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/finished/light/4Story_Center.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "4Story_Wide_2Doors",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/finished/light/4Story_Wide_2Doors.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "4Story_Wide_2Doors_Roof",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/finished/light/4Story_Wide_2Doors_Roof.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "6Story_Stack",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/finished/light/6Story_Stack.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "1Story",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/finished/light2/1Story.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "1Story_GableRoof",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/finished/light2/1Story_GableRoof.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "1Story_RoundRoof",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/finished/light2/1Story_RoundRoof.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "1Story_Sign",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/finished/light2/1Story_Sign.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/finished/light2/2Story.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_2",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/finished/light2/2Story_2.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Balcony",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/finished/light2/2Story_Balcony.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Center",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/finished/light2/2Story_Center.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Columns",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/finished/light2/2Story_Columns.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Double",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/finished/light2/2Story_Double.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_GableRoof",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/finished/light2/2Story_GableRoof.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_RoundRoof",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/finished/light2/2Story_RoundRoof.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Sidehouse",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/finished/light2/2Story_Sidehouse.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Sign",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/finished/light2/2Story_Sign.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Slim",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/finished/light2/2Story_Slim.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Stairs",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/finished/light2/2Story_Stairs.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Wide",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/finished/light2/2Story_Wide.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Wide_2Doors",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/finished/light2/2Story_Wide_2Doors.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "3Story_Balcony",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/finished/light2/3Story_Balcony.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "3Story_Slim",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/finished/light2/3Story_Slim.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "3Story_Small",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/finished/light2/3Story_Small.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "4Story",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/finished/light2/4Story.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "4Story_Center",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/finished/light2/4Story_Center.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "4Story_Wide_2Doors",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/finished/light2/4Story_Wide_2Doors.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "4Story_Wide_2Doors_Roof",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/finished/light2/4Story_Wide_2Doors_Roof.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "6Story_Stack",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/finished/light2/6Story_Stack.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "1Story",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/finished/red/1Story.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "1Story_GableRoof",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/finished/red/1Story_GableRoof.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "1Story_RoundRoof",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/finished/red/1Story_RoundRoof.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "1Story_Sign",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/finished/red/1Story_Sign.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/finished/red/2Story.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_2",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/finished/red/2Story_2.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Balcony",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/finished/red/2Story_Balcony.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Center",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/finished/red/2Story_Center.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Columns",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/finished/red/2Story_Columns.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Double",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/finished/red/2Story_Double.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_GableRoof",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/finished/red/2Story_GableRoof.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_RoundRoof",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/finished/red/2Story_RoundRoof.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Sidehouse",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/finished/red/2Story_Sidehouse.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Sign",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/finished/red/2Story_Sign.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Slim",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/finished/red/2Story_Slim.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Stairs",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/finished/red/2Story_Stairs.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Wide",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/finished/red/2Story_Wide.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Wide_2Doors",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/finished/red/2Story_Wide_2Doors.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "3Story_Balcony",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/finished/red/3Story_Balcony.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "3Story_Slim",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/finished/red/3Story_Slim.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "3Story_Small",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/finished/red/3Story_Small.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "4Story",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/finished/red/4Story.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "4Story_Center",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/finished/red/4Story_Center.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "4Story_Wide_2Doors",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/finished/red/4Story_Wide_2Doors.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "4Story_Wide_2Doors_Roof",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/finished/red/4Story_Wide_2Doors_Roof.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "6Story_Stack",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/finished/red/6Story_Stack.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "1Story",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/finished/signs/1Story.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "1Story_GableRoof",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/finished/signs/1Story_GableRoof.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "1Story_RoundRoof",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/finished/signs/1Story_RoundRoof.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "1Story_Sign",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/finished/signs/1Story_Sign.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/finished/signs/2Story.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_2",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/finished/signs/2Story_2.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Balcony",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/finished/signs/2Story_Balcony.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Center",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/finished/signs/2Story_Center.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Columns",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/finished/signs/2Story_Columns.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Double",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/finished/signs/2Story_Double.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_GableRoof",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/finished/signs/2Story_GableRoof.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_RoundRoof",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/finished/signs/2Story_RoundRoof.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Sidehouse",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/finished/signs/2Story_Sidehouse.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Sign",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/finished/signs/2Story_Sign.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Slim",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/finished/signs/2Story_Slim.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Stairs",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/finished/signs/2Story_Stairs.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Wide",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/finished/signs/2Story_Wide.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Wide_2Doors",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/finished/signs/2Story_Wide_2Doors.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "3Story_Balcony",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/finished/signs/3Story_Balcony.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "3Story_Slim",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/finished/signs/3Story_Slim.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "3Story_Small",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/finished/signs/3Story_Small.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "4Story",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/finished/signs/4Story.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "4Story_Center",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/finished/signs/4Story_Center.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "4Story_Wide_2Doors",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/finished/signs/4Story_Wide_2Doors.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "4Story_Wide_2Doors_Roof",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/finished/signs/4Story_Wide_2Doors_Roof.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "6Story_Stack",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/finished/signs/6Story_Stack.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "1Story",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/finished/yellow/1Story.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "1Story_GableRoof",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/finished/yellow/1Story_GableRoof.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "1Story_RoundRoof",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/finished/yellow/1Story_RoundRoof.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "1Story_Sign",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/finished/yellow/1Story_Sign.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/finished/yellow/2Story.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_2",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/finished/yellow/2Story_2.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Balcony",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/finished/yellow/2Story_Balcony.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Center",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/finished/yellow/2Story_Center.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Columns",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/finished/yellow/2Story_Columns.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Double",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/finished/yellow/2Story_Double.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_GableRoof",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/finished/yellow/2Story_GableRoof.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_RoundRoof",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/finished/yellow/2Story_RoundRoof.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Sidehouse",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/finished/yellow/2Story_Sidehouse.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Sign",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/finished/yellow/2Story_Sign.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Slim",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/finished/yellow/2Story_Slim.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Stairs",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/finished/yellow/2Story_Stairs.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Wide",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/finished/yellow/2Story_Wide.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "2Story_Wide_2Doors",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/finished/yellow/2Story_Wide_2Doors.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "3Story_Balcony",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/finished/yellow/3Story_Balcony.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "3Story_Slim",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/finished/yellow/3Story_Slim.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "3Story_Small",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/finished/yellow/3Story_Small.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "4Story",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/finished/yellow/4Story.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "4Story_Center",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/finished/yellow/4Story_Center.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "4Story_Wide_2Doors",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/finished/yellow/4Story_Wide_2Doors.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "4Story_Wide_2Doors_Roof",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/finished/yellow/4Story_Wide_2Doors_Roof.tscn"
+		},
+		{
+			"group": "finished",
+			"id": "6Story_Stack",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/finished/yellow/6Story_Stack.tscn"
+		},
+		{
+			"group": "base",
+			"id": "1Story_Base",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/base/blue/1Story_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "1Story_GableRoof_Base",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/base/blue/1Story_GableRoof_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "1Story_RoundRoof_Base",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/base/blue/1Story_RoundRoof_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "1Story_Sign_Base",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/base/blue/1Story_Sign_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Base",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/base/blue/2Story_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Center_Base",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/base/blue/2Story_Center_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Columns_Base",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/base/blue/2Story_Columns_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_GableRoof_Base",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/base/blue/2Story_GableRoof_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_RoundRoof_Base",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/base/blue/2Story_RoundRoof_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Sidehouse_Base",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/base/blue/2Story_Sidehouse_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Sign_Base",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/base/blue/2Story_Sign_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Slim_Base",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/base/blue/2Story_Slim_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Wide_2Doors_Base",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/base/blue/2Story_Wide_2Doors_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Wide_Base",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/base/blue/2Story_Wide_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "3Story_Base",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/base/blue/3Story_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "3Story_Slim_Base",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/base/blue/3Story_Slim_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "4Story_Center_Base",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/base/blue/4Story_Center_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "4Story_Wide_2Doors_Base",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/base/blue/4Story_Wide_2Doors_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "1Story_Base",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/base/casino/1Story_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "1Story_GableRoof_Base",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/base/casino/1Story_GableRoof_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "1Story_RoundRoof_Base",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/base/casino/1Story_RoundRoof_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "1Story_Sign_Base",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/base/casino/1Story_Sign_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Base",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/base/casino/2Story_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Center_Base",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/base/casino/2Story_Center_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Columns_Base",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/base/casino/2Story_Columns_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_GableRoof_Base",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/base/casino/2Story_GableRoof_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_RoundRoof_Base",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/base/casino/2Story_RoundRoof_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Sidehouse_Base",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/base/casino/2Story_Sidehouse_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Sign_Base",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/base/casino/2Story_Sign_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Slim_Base",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/base/casino/2Story_Slim_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Wide_2Doors_Base",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/base/casino/2Story_Wide_2Doors_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Wide_Base",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/base/casino/2Story_Wide_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "3Story_Base",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/base/casino/3Story_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "3Story_Slim_Base",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/base/casino/3Story_Slim_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "4Story_Center_Base",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/base/casino/4Story_Center_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "4Story_Wide_2Doors_Base",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/base/casino/4Story_Wide_2Doors_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "1Story_Base",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/base/dark/1Story_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "1Story_GableRoof_Base",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/base/dark/1Story_GableRoof_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "1Story_RoundRoof_Base",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/base/dark/1Story_RoundRoof_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "1Story_Sign_Base",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/base/dark/1Story_Sign_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Base",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/base/dark/2Story_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Center_Base",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/base/dark/2Story_Center_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Columns_Base",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/base/dark/2Story_Columns_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_GableRoof_Base",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/base/dark/2Story_GableRoof_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_RoundRoof_Base",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/base/dark/2Story_RoundRoof_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Sidehouse_Base",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/base/dark/2Story_Sidehouse_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Sign_Base",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/base/dark/2Story_Sign_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Slim_Base",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/base/dark/2Story_Slim_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Wide_2Doors_Base",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/base/dark/2Story_Wide_2Doors_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Wide_Base",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/base/dark/2Story_Wide_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "3Story_Base",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/base/dark/3Story_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "3Story_Slim_Base",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/base/dark/3Story_Slim_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "4Story_Center_Base",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/base/dark/4Story_Center_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "4Story_Wide_2Doors_Base",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/base/dark/4Story_Wide_2Doors_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "1Story_Base",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/base/darkblue/1Story_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "1Story_GableRoof_Base",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/base/darkblue/1Story_GableRoof_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "1Story_RoundRoof_Base",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/base/darkblue/1Story_RoundRoof_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "1Story_Sign_Base",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/base/darkblue/1Story_Sign_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Base",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/base/darkblue/2Story_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Center_Base",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/base/darkblue/2Story_Center_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Columns_Base",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/base/darkblue/2Story_Columns_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_GableRoof_Base",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/base/darkblue/2Story_GableRoof_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_RoundRoof_Base",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/base/darkblue/2Story_RoundRoof_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Sidehouse_Base",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/base/darkblue/2Story_Sidehouse_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Sign_Base",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/base/darkblue/2Story_Sign_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Slim_Base",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/base/darkblue/2Story_Slim_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Wide_2Doors_Base",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/base/darkblue/2Story_Wide_2Doors_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Wide_Base",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/base/darkblue/2Story_Wide_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "3Story_Base",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/base/darkblue/3Story_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "3Story_Slim_Base",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/base/darkblue/3Story_Slim_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "4Story_Center_Base",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/base/darkblue/4Story_Center_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "4Story_Wide_2Doors_Base",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/base/darkblue/4Story_Wide_2Doors_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "1Story_Base",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/base/darkpurple/1Story_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "1Story_GableRoof_Base",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/base/darkpurple/1Story_GableRoof_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "1Story_RoundRoof_Base",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/base/darkpurple/1Story_RoundRoof_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "1Story_Sign_Base",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/base/darkpurple/1Story_Sign_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Base",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/base/darkpurple/2Story_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Center_Base",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/base/darkpurple/2Story_Center_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Columns_Base",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/base/darkpurple/2Story_Columns_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_GableRoof_Base",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/base/darkpurple/2Story_GableRoof_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_RoundRoof_Base",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/base/darkpurple/2Story_RoundRoof_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Sidehouse_Base",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/base/darkpurple/2Story_Sidehouse_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Sign_Base",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/base/darkpurple/2Story_Sign_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Slim_Base",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/base/darkpurple/2Story_Slim_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Wide_2Doors_Base",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/base/darkpurple/2Story_Wide_2Doors_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Wide_Base",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/base/darkpurple/2Story_Wide_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "3Story_Base",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/base/darkpurple/3Story_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "3Story_Slim_Base",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/base/darkpurple/3Story_Slim_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "4Story_Center_Base",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/base/darkpurple/4Story_Center_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "4Story_Wide_2Doors_Base",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/base/darkpurple/4Story_Wide_2Doors_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "1Story_Base",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/base/green/1Story_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "1Story_GableRoof_Base",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/base/green/1Story_GableRoof_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "1Story_RoundRoof_Base",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/base/green/1Story_RoundRoof_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "1Story_Sign_Base",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/base/green/1Story_Sign_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Base",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/base/green/2Story_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Center_Base",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/base/green/2Story_Center_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Columns_Base",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/base/green/2Story_Columns_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_GableRoof_Base",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/base/green/2Story_GableRoof_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_RoundRoof_Base",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/base/green/2Story_RoundRoof_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Sidehouse_Base",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/base/green/2Story_Sidehouse_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Sign_Base",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/base/green/2Story_Sign_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Slim_Base",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/base/green/2Story_Slim_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Wide_2Doors_Base",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/base/green/2Story_Wide_2Doors_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Wide_Base",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/base/green/2Story_Wide_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "3Story_Base",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/base/green/3Story_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "3Story_Slim_Base",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/base/green/3Story_Slim_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "4Story_Center_Base",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/base/green/4Story_Center_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "4Story_Wide_2Doors_Base",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/base/green/4Story_Wide_2Doors_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "1Story_Base",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/base/grey/1Story_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "1Story_GableRoof_Base",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/base/grey/1Story_GableRoof_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "1Story_RoundRoof_Base",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/base/grey/1Story_RoundRoof_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "1Story_Sign_Base",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/base/grey/1Story_Sign_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Base",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/base/grey/2Story_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Center_Base",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/base/grey/2Story_Center_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Columns_Base",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/base/grey/2Story_Columns_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_GableRoof_Base",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/base/grey/2Story_GableRoof_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_RoundRoof_Base",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/base/grey/2Story_RoundRoof_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Sidehouse_Base",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/base/grey/2Story_Sidehouse_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Sign_Base",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/base/grey/2Story_Sign_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Slim_Base",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/base/grey/2Story_Slim_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Wide_2Doors_Base",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/base/grey/2Story_Wide_2Doors_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Wide_Base",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/base/grey/2Story_Wide_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "3Story_Base",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/base/grey/3Story_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "3Story_Slim_Base",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/base/grey/3Story_Slim_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "4Story_Center_Base",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/base/grey/4Story_Center_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "4Story_Wide_2Doors_Base",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/base/grey/4Story_Wide_2Doors_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "1Story_Base",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/base/light/1Story_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "1Story_GableRoof_Base",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/base/light/1Story_GableRoof_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "1Story_RoundRoof_Base",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/base/light/1Story_RoundRoof_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "1Story_Sign_Base",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/base/light/1Story_Sign_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Base",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/base/light/2Story_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Center_Base",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/base/light/2Story_Center_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Columns_Base",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/base/light/2Story_Columns_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_GableRoof_Base",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/base/light/2Story_GableRoof_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_RoundRoof_Base",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/base/light/2Story_RoundRoof_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Sidehouse_Base",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/base/light/2Story_Sidehouse_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Sign_Base",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/base/light/2Story_Sign_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Slim_Base",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/base/light/2Story_Slim_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Wide_2Doors_Base",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/base/light/2Story_Wide_2Doors_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Wide_Base",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/base/light/2Story_Wide_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "3Story_Base",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/base/light/3Story_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "3Story_Slim_Base",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/base/light/3Story_Slim_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "4Story_Center_Base",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/base/light/4Story_Center_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "4Story_Wide_2Doors_Base",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/base/light/4Story_Wide_2Doors_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "1Story_Base",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/base/light2/1Story_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "1Story_GableRoof_Base",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/base/light2/1Story_GableRoof_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "1Story_RoundRoof_Base",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/base/light2/1Story_RoundRoof_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "1Story_Sign_Base",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/base/light2/1Story_Sign_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Base",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/base/light2/2Story_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Center_Base",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/base/light2/2Story_Center_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Columns_Base",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/base/light2/2Story_Columns_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_GableRoof_Base",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/base/light2/2Story_GableRoof_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_RoundRoof_Base",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/base/light2/2Story_RoundRoof_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Sidehouse_Base",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/base/light2/2Story_Sidehouse_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Sign_Base",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/base/light2/2Story_Sign_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Slim_Base",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/base/light2/2Story_Slim_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Wide_2Doors_Base",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/base/light2/2Story_Wide_2Doors_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Wide_Base",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/base/light2/2Story_Wide_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "3Story_Base",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/base/light2/3Story_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "3Story_Slim_Base",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/base/light2/3Story_Slim_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "4Story_Center_Base",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/base/light2/4Story_Center_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "4Story_Wide_2Doors_Base",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/base/light2/4Story_Wide_2Doors_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "1Story_Base",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/base/red/1Story_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "1Story_GableRoof_Base",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/base/red/1Story_GableRoof_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "1Story_RoundRoof_Base",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/base/red/1Story_RoundRoof_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "1Story_Sign_Base",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/base/red/1Story_Sign_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Base",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/base/red/2Story_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Center_Base",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/base/red/2Story_Center_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Columns_Base",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/base/red/2Story_Columns_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_GableRoof_Base",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/base/red/2Story_GableRoof_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_RoundRoof_Base",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/base/red/2Story_RoundRoof_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Sidehouse_Base",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/base/red/2Story_Sidehouse_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Sign_Base",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/base/red/2Story_Sign_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Slim_Base",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/base/red/2Story_Slim_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Wide_2Doors_Base",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/base/red/2Story_Wide_2Doors_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Wide_Base",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/base/red/2Story_Wide_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "3Story_Base",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/base/red/3Story_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "3Story_Slim_Base",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/base/red/3Story_Slim_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "4Story_Center_Base",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/base/red/4Story_Center_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "4Story_Wide_2Doors_Base",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/base/red/4Story_Wide_2Doors_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "1Story_Base",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/base/signs/1Story_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "1Story_GableRoof_Base",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/base/signs/1Story_GableRoof_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "1Story_RoundRoof_Base",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/base/signs/1Story_RoundRoof_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "1Story_Sign_Base",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/base/signs/1Story_Sign_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Base",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/base/signs/2Story_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Center_Base",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/base/signs/2Story_Center_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Columns_Base",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/base/signs/2Story_Columns_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_GableRoof_Base",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/base/signs/2Story_GableRoof_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_RoundRoof_Base",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/base/signs/2Story_RoundRoof_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Sidehouse_Base",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/base/signs/2Story_Sidehouse_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Sign_Base",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/base/signs/2Story_Sign_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Slim_Base",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/base/signs/2Story_Slim_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Wide_2Doors_Base",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/base/signs/2Story_Wide_2Doors_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Wide_Base",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/base/signs/2Story_Wide_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "3Story_Base",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/base/signs/3Story_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "3Story_Slim_Base",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/base/signs/3Story_Slim_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "4Story_Center_Base",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/base/signs/4Story_Center_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "4Story_Wide_2Doors_Base",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/base/signs/4Story_Wide_2Doors_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "1Story_Base",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/base/yellow/1Story_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "1Story_GableRoof_Base",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/base/yellow/1Story_GableRoof_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "1Story_RoundRoof_Base",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/base/yellow/1Story_RoundRoof_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "1Story_Sign_Base",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/base/yellow/1Story_Sign_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Base",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/base/yellow/2Story_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Center_Base",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/base/yellow/2Story_Center_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Columns_Base",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/base/yellow/2Story_Columns_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_GableRoof_Base",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/base/yellow/2Story_GableRoof_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_RoundRoof_Base",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/base/yellow/2Story_RoundRoof_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Sidehouse_Base",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/base/yellow/2Story_Sidehouse_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Sign_Base",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/base/yellow/2Story_Sign_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Slim_Base",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/base/yellow/2Story_Slim_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Wide_2Doors_Base",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/base/yellow/2Story_Wide_2Doors_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "2Story_Wide_Base",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/base/yellow/2Story_Wide_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "3Story_Base",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/base/yellow/3Story_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "3Story_Slim_Base",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/base/yellow/3Story_Slim_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "4Story_Center_Base",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/base/yellow/4Story_Center_Base.tscn"
+		},
+		{
+			"group": "base",
+			"id": "4Story_Wide_2Doors_Base",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/base/yellow/4Story_Wide_2Doors_Base.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "AC_Unit",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/parts/blue/AC_Unit.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "AC_Unitx4",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/parts/blue/AC_Unitx4.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Balcony",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/parts/blue/Balcony.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_Half",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/parts/blue/Bricks_Half.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_Large",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/parts/blue/Bricks_Large.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_LeftStraight",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/parts/blue/Bricks_LeftStraight.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_RightStraight",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/parts/blue/Bricks_RightStraight.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_Single",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/parts/blue/Bricks_Single.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_Small",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/parts/blue/Bricks_Small.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "CasinoSign",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/parts/blue/CasinoSign.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door1",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/parts/blue/Door1.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door2",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/parts/blue/Door2.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door3",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/parts/blue/Door3.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door4",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/parts/blue/Door4.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door5",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/parts/blue/Door5.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door_Double",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/parts/blue/Door_Double.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door_Window",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/parts/blue/Door_Window.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door_Window2",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/parts/blue/Door_Window2.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Pipe_L",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/parts/blue/Pipe_L.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Pipe_Straight",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/parts/blue/Pipe_Straight.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Pipe_Straight_Short",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/parts/blue/Pipe_Straight_Short.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Sign_Bakery",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/parts/blue/Sign_Bakery.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Sign_Barbershop",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/parts/blue/Sign_Barbershop.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Sign_Bookshop",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/parts/blue/Sign_Bookshop.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Sign_Hardware",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/parts/blue/Sign_Hardware.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Sign_Pharmacy",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/parts/blue/Sign_Pharmacy.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Staircase",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/parts/blue/Staircase.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Stairs_Roof",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/parts/blue/Stairs_Roof.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Window",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/parts/blue/Window.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Window_Double",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/parts/blue/Window_Double.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Window_Double_Roof",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/parts/blue/Window_Double_Roof.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Window_Roof",
+			"palette": "blue",
+			"path": "res://src/world/buildings/quaternius/items/parts/blue/Window_Roof.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "AC_Unit",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/parts/casino/AC_Unit.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "AC_Unitx4",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/parts/casino/AC_Unitx4.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Balcony",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/parts/casino/Balcony.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_Half",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/parts/casino/Bricks_Half.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_Large",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/parts/casino/Bricks_Large.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_LeftStraight",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/parts/casino/Bricks_LeftStraight.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_RightStraight",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/parts/casino/Bricks_RightStraight.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_Single",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/parts/casino/Bricks_Single.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_Small",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/parts/casino/Bricks_Small.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "CasinoSign",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/parts/casino/CasinoSign.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door1",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/parts/casino/Door1.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door2",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/parts/casino/Door2.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door3",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/parts/casino/Door3.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door4",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/parts/casino/Door4.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door5",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/parts/casino/Door5.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door_Double",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/parts/casino/Door_Double.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door_Window",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/parts/casino/Door_Window.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door_Window2",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/parts/casino/Door_Window2.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Pipe_L",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/parts/casino/Pipe_L.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Pipe_Straight",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/parts/casino/Pipe_Straight.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Pipe_Straight_Short",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/parts/casino/Pipe_Straight_Short.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Sign_Bakery",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/parts/casino/Sign_Bakery.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Sign_Barbershop",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/parts/casino/Sign_Barbershop.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Sign_Bookshop",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/parts/casino/Sign_Bookshop.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Sign_Hardware",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/parts/casino/Sign_Hardware.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Sign_Pharmacy",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/parts/casino/Sign_Pharmacy.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Staircase",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/parts/casino/Staircase.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Stairs_Roof",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/parts/casino/Stairs_Roof.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Window",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/parts/casino/Window.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Window_Double",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/parts/casino/Window_Double.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Window_Double_Roof",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/parts/casino/Window_Double_Roof.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Window_Roof",
+			"palette": "casino",
+			"path": "res://src/world/buildings/quaternius/items/parts/casino/Window_Roof.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "AC_Unit",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/parts/dark/AC_Unit.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "AC_Unitx4",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/parts/dark/AC_Unitx4.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Balcony",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/parts/dark/Balcony.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_Half",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/parts/dark/Bricks_Half.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_Large",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/parts/dark/Bricks_Large.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_LeftStraight",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/parts/dark/Bricks_LeftStraight.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_RightStraight",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/parts/dark/Bricks_RightStraight.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_Single",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/parts/dark/Bricks_Single.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_Small",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/parts/dark/Bricks_Small.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "CasinoSign",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/parts/dark/CasinoSign.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door1",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/parts/dark/Door1.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door2",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/parts/dark/Door2.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door3",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/parts/dark/Door3.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door4",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/parts/dark/Door4.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door5",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/parts/dark/Door5.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door_Double",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/parts/dark/Door_Double.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door_Window",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/parts/dark/Door_Window.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door_Window2",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/parts/dark/Door_Window2.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Pipe_L",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/parts/dark/Pipe_L.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Pipe_Straight",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/parts/dark/Pipe_Straight.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Pipe_Straight_Short",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/parts/dark/Pipe_Straight_Short.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Sign_Bakery",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/parts/dark/Sign_Bakery.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Sign_Barbershop",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/parts/dark/Sign_Barbershop.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Sign_Bookshop",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/parts/dark/Sign_Bookshop.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Sign_Hardware",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/parts/dark/Sign_Hardware.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Sign_Pharmacy",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/parts/dark/Sign_Pharmacy.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Staircase",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/parts/dark/Staircase.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Stairs_Roof",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/parts/dark/Stairs_Roof.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Window",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/parts/dark/Window.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Window_Double",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/parts/dark/Window_Double.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Window_Double_Roof",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/parts/dark/Window_Double_Roof.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Window_Roof",
+			"palette": "dark",
+			"path": "res://src/world/buildings/quaternius/items/parts/dark/Window_Roof.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "AC_Unit",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/parts/darkblue/AC_Unit.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "AC_Unitx4",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/parts/darkblue/AC_Unitx4.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Balcony",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/parts/darkblue/Balcony.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_Half",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/parts/darkblue/Bricks_Half.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_Large",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/parts/darkblue/Bricks_Large.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_LeftStraight",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/parts/darkblue/Bricks_LeftStraight.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_RightStraight",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/parts/darkblue/Bricks_RightStraight.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_Single",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/parts/darkblue/Bricks_Single.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_Small",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/parts/darkblue/Bricks_Small.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "CasinoSign",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/parts/darkblue/CasinoSign.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door1",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/parts/darkblue/Door1.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door2",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/parts/darkblue/Door2.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door3",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/parts/darkblue/Door3.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door4",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/parts/darkblue/Door4.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door5",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/parts/darkblue/Door5.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door_Double",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/parts/darkblue/Door_Double.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door_Window",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/parts/darkblue/Door_Window.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door_Window2",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/parts/darkblue/Door_Window2.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Pipe_L",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/parts/darkblue/Pipe_L.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Pipe_Straight",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/parts/darkblue/Pipe_Straight.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Pipe_Straight_Short",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/parts/darkblue/Pipe_Straight_Short.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Sign_Bakery",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/parts/darkblue/Sign_Bakery.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Sign_Barbershop",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/parts/darkblue/Sign_Barbershop.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Sign_Bookshop",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/parts/darkblue/Sign_Bookshop.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Sign_Hardware",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/parts/darkblue/Sign_Hardware.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Sign_Pharmacy",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/parts/darkblue/Sign_Pharmacy.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Staircase",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/parts/darkblue/Staircase.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Stairs_Roof",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/parts/darkblue/Stairs_Roof.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Window",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/parts/darkblue/Window.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Window_Double",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/parts/darkblue/Window_Double.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Window_Double_Roof",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/parts/darkblue/Window_Double_Roof.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Window_Roof",
+			"palette": "darkblue",
+			"path": "res://src/world/buildings/quaternius/items/parts/darkblue/Window_Roof.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "AC_Unit",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/parts/darkpurple/AC_Unit.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "AC_Unitx4",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/parts/darkpurple/AC_Unitx4.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Balcony",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/parts/darkpurple/Balcony.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_Half",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/parts/darkpurple/Bricks_Half.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_Large",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/parts/darkpurple/Bricks_Large.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_LeftStraight",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/parts/darkpurple/Bricks_LeftStraight.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_RightStraight",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/parts/darkpurple/Bricks_RightStraight.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_Single",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/parts/darkpurple/Bricks_Single.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_Small",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/parts/darkpurple/Bricks_Small.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "CasinoSign",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/parts/darkpurple/CasinoSign.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door1",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/parts/darkpurple/Door1.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door2",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/parts/darkpurple/Door2.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door3",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/parts/darkpurple/Door3.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door4",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/parts/darkpurple/Door4.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door5",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/parts/darkpurple/Door5.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door_Double",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/parts/darkpurple/Door_Double.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door_Window",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/parts/darkpurple/Door_Window.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door_Window2",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/parts/darkpurple/Door_Window2.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Pipe_L",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/parts/darkpurple/Pipe_L.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Pipe_Straight",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/parts/darkpurple/Pipe_Straight.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Pipe_Straight_Short",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/parts/darkpurple/Pipe_Straight_Short.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Sign_Bakery",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/parts/darkpurple/Sign_Bakery.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Sign_Barbershop",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/parts/darkpurple/Sign_Barbershop.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Sign_Bookshop",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/parts/darkpurple/Sign_Bookshop.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Sign_Hardware",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/parts/darkpurple/Sign_Hardware.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Sign_Pharmacy",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/parts/darkpurple/Sign_Pharmacy.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Staircase",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/parts/darkpurple/Staircase.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Stairs_Roof",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/parts/darkpurple/Stairs_Roof.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Window",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/parts/darkpurple/Window.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Window_Double",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/parts/darkpurple/Window_Double.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Window_Double_Roof",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/parts/darkpurple/Window_Double_Roof.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Window_Roof",
+			"palette": "darkpurple",
+			"path": "res://src/world/buildings/quaternius/items/parts/darkpurple/Window_Roof.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "AC_Unit",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/parts/green/AC_Unit.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "AC_Unitx4",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/parts/green/AC_Unitx4.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Balcony",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/parts/green/Balcony.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_Half",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/parts/green/Bricks_Half.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_Large",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/parts/green/Bricks_Large.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_LeftStraight",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/parts/green/Bricks_LeftStraight.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_RightStraight",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/parts/green/Bricks_RightStraight.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_Single",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/parts/green/Bricks_Single.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_Small",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/parts/green/Bricks_Small.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "CasinoSign",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/parts/green/CasinoSign.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door1",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/parts/green/Door1.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door2",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/parts/green/Door2.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door3",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/parts/green/Door3.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door4",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/parts/green/Door4.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door5",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/parts/green/Door5.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door_Double",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/parts/green/Door_Double.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door_Window",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/parts/green/Door_Window.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door_Window2",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/parts/green/Door_Window2.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Pipe_L",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/parts/green/Pipe_L.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Pipe_Straight",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/parts/green/Pipe_Straight.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Pipe_Straight_Short",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/parts/green/Pipe_Straight_Short.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Sign_Bakery",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/parts/green/Sign_Bakery.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Sign_Barbershop",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/parts/green/Sign_Barbershop.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Sign_Bookshop",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/parts/green/Sign_Bookshop.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Sign_Hardware",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/parts/green/Sign_Hardware.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Sign_Pharmacy",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/parts/green/Sign_Pharmacy.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Staircase",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/parts/green/Staircase.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Stairs_Roof",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/parts/green/Stairs_Roof.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Window",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/parts/green/Window.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Window_Double",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/parts/green/Window_Double.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Window_Double_Roof",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/parts/green/Window_Double_Roof.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Window_Roof",
+			"palette": "green",
+			"path": "res://src/world/buildings/quaternius/items/parts/green/Window_Roof.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "AC_Unit",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/parts/grey/AC_Unit.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "AC_Unitx4",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/parts/grey/AC_Unitx4.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Balcony",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/parts/grey/Balcony.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_Half",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/parts/grey/Bricks_Half.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_Large",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/parts/grey/Bricks_Large.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_LeftStraight",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/parts/grey/Bricks_LeftStraight.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_RightStraight",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/parts/grey/Bricks_RightStraight.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_Single",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/parts/grey/Bricks_Single.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_Small",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/parts/grey/Bricks_Small.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "CasinoSign",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/parts/grey/CasinoSign.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door1",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/parts/grey/Door1.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door2",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/parts/grey/Door2.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door3",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/parts/grey/Door3.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door4",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/parts/grey/Door4.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door5",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/parts/grey/Door5.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door_Double",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/parts/grey/Door_Double.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door_Window",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/parts/grey/Door_Window.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door_Window2",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/parts/grey/Door_Window2.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Pipe_L",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/parts/grey/Pipe_L.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Pipe_Straight",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/parts/grey/Pipe_Straight.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Pipe_Straight_Short",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/parts/grey/Pipe_Straight_Short.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Sign_Bakery",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/parts/grey/Sign_Bakery.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Sign_Barbershop",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/parts/grey/Sign_Barbershop.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Sign_Bookshop",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/parts/grey/Sign_Bookshop.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Sign_Hardware",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/parts/grey/Sign_Hardware.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Sign_Pharmacy",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/parts/grey/Sign_Pharmacy.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Staircase",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/parts/grey/Staircase.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Stairs_Roof",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/parts/grey/Stairs_Roof.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Window",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/parts/grey/Window.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Window_Double",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/parts/grey/Window_Double.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Window_Double_Roof",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/parts/grey/Window_Double_Roof.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Window_Roof",
+			"palette": "grey",
+			"path": "res://src/world/buildings/quaternius/items/parts/grey/Window_Roof.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "AC_Unit",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/parts/light/AC_Unit.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "AC_Unitx4",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/parts/light/AC_Unitx4.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Balcony",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/parts/light/Balcony.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_Half",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/parts/light/Bricks_Half.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_Large",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/parts/light/Bricks_Large.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_LeftStraight",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/parts/light/Bricks_LeftStraight.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_RightStraight",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/parts/light/Bricks_RightStraight.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_Single",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/parts/light/Bricks_Single.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_Small",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/parts/light/Bricks_Small.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "CasinoSign",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/parts/light/CasinoSign.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door1",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/parts/light/Door1.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door2",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/parts/light/Door2.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door3",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/parts/light/Door3.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door4",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/parts/light/Door4.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door5",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/parts/light/Door5.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door_Double",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/parts/light/Door_Double.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door_Window",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/parts/light/Door_Window.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door_Window2",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/parts/light/Door_Window2.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Pipe_L",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/parts/light/Pipe_L.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Pipe_Straight",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/parts/light/Pipe_Straight.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Pipe_Straight_Short",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/parts/light/Pipe_Straight_Short.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Sign_Bakery",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/parts/light/Sign_Bakery.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Sign_Barbershop",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/parts/light/Sign_Barbershop.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Sign_Bookshop",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/parts/light/Sign_Bookshop.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Sign_Hardware",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/parts/light/Sign_Hardware.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Sign_Pharmacy",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/parts/light/Sign_Pharmacy.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Staircase",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/parts/light/Staircase.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Stairs_Roof",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/parts/light/Stairs_Roof.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Window",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/parts/light/Window.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Window_Double",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/parts/light/Window_Double.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Window_Double_Roof",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/parts/light/Window_Double_Roof.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Window_Roof",
+			"palette": "light",
+			"path": "res://src/world/buildings/quaternius/items/parts/light/Window_Roof.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "AC_Unit",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/parts/light2/AC_Unit.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "AC_Unitx4",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/parts/light2/AC_Unitx4.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Balcony",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/parts/light2/Balcony.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_Half",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/parts/light2/Bricks_Half.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_Large",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/parts/light2/Bricks_Large.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_LeftStraight",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/parts/light2/Bricks_LeftStraight.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_RightStraight",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/parts/light2/Bricks_RightStraight.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_Single",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/parts/light2/Bricks_Single.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_Small",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/parts/light2/Bricks_Small.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "CasinoSign",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/parts/light2/CasinoSign.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door1",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/parts/light2/Door1.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door2",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/parts/light2/Door2.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door3",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/parts/light2/Door3.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door4",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/parts/light2/Door4.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door5",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/parts/light2/Door5.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door_Double",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/parts/light2/Door_Double.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door_Window",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/parts/light2/Door_Window.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door_Window2",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/parts/light2/Door_Window2.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Pipe_L",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/parts/light2/Pipe_L.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Pipe_Straight",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/parts/light2/Pipe_Straight.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Pipe_Straight_Short",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/parts/light2/Pipe_Straight_Short.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Sign_Bakery",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/parts/light2/Sign_Bakery.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Sign_Barbershop",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/parts/light2/Sign_Barbershop.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Sign_Bookshop",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/parts/light2/Sign_Bookshop.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Sign_Hardware",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/parts/light2/Sign_Hardware.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Sign_Pharmacy",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/parts/light2/Sign_Pharmacy.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Staircase",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/parts/light2/Staircase.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Stairs_Roof",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/parts/light2/Stairs_Roof.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Window",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/parts/light2/Window.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Window_Double",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/parts/light2/Window_Double.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Window_Double_Roof",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/parts/light2/Window_Double_Roof.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Window_Roof",
+			"palette": "light2",
+			"path": "res://src/world/buildings/quaternius/items/parts/light2/Window_Roof.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "AC_Unit",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/parts/red/AC_Unit.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "AC_Unitx4",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/parts/red/AC_Unitx4.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Balcony",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/parts/red/Balcony.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_Half",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/parts/red/Bricks_Half.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_Large",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/parts/red/Bricks_Large.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_LeftStraight",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/parts/red/Bricks_LeftStraight.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_RightStraight",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/parts/red/Bricks_RightStraight.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_Single",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/parts/red/Bricks_Single.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_Small",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/parts/red/Bricks_Small.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "CasinoSign",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/parts/red/CasinoSign.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door1",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/parts/red/Door1.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door2",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/parts/red/Door2.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door3",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/parts/red/Door3.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door4",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/parts/red/Door4.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door5",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/parts/red/Door5.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door_Double",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/parts/red/Door_Double.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door_Window",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/parts/red/Door_Window.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door_Window2",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/parts/red/Door_Window2.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Pipe_L",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/parts/red/Pipe_L.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Pipe_Straight",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/parts/red/Pipe_Straight.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Pipe_Straight_Short",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/parts/red/Pipe_Straight_Short.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Sign_Bakery",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/parts/red/Sign_Bakery.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Sign_Barbershop",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/parts/red/Sign_Barbershop.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Sign_Bookshop",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/parts/red/Sign_Bookshop.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Sign_Hardware",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/parts/red/Sign_Hardware.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Sign_Pharmacy",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/parts/red/Sign_Pharmacy.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Staircase",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/parts/red/Staircase.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Stairs_Roof",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/parts/red/Stairs_Roof.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Window",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/parts/red/Window.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Window_Double",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/parts/red/Window_Double.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Window_Double_Roof",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/parts/red/Window_Double_Roof.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Window_Roof",
+			"palette": "red",
+			"path": "res://src/world/buildings/quaternius/items/parts/red/Window_Roof.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "AC_Unit",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/parts/signs/AC_Unit.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "AC_Unitx4",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/parts/signs/AC_Unitx4.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Balcony",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/parts/signs/Balcony.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_Half",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/parts/signs/Bricks_Half.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_Large",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/parts/signs/Bricks_Large.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_LeftStraight",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/parts/signs/Bricks_LeftStraight.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_RightStraight",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/parts/signs/Bricks_RightStraight.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_Single",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/parts/signs/Bricks_Single.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_Small",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/parts/signs/Bricks_Small.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "CasinoSign",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/parts/signs/CasinoSign.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door1",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/parts/signs/Door1.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door2",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/parts/signs/Door2.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door3",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/parts/signs/Door3.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door4",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/parts/signs/Door4.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door5",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/parts/signs/Door5.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door_Double",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/parts/signs/Door_Double.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door_Window",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/parts/signs/Door_Window.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door_Window2",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/parts/signs/Door_Window2.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Pipe_L",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/parts/signs/Pipe_L.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Pipe_Straight",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/parts/signs/Pipe_Straight.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Pipe_Straight_Short",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/parts/signs/Pipe_Straight_Short.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Sign_Bakery",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/parts/signs/Sign_Bakery.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Sign_Barbershop",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/parts/signs/Sign_Barbershop.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Sign_Bookshop",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/parts/signs/Sign_Bookshop.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Sign_Hardware",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/parts/signs/Sign_Hardware.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Sign_Pharmacy",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/parts/signs/Sign_Pharmacy.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Staircase",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/parts/signs/Staircase.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Stairs_Roof",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/parts/signs/Stairs_Roof.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Window",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/parts/signs/Window.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Window_Double",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/parts/signs/Window_Double.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Window_Double_Roof",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/parts/signs/Window_Double_Roof.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Window_Roof",
+			"palette": "signs",
+			"path": "res://src/world/buildings/quaternius/items/parts/signs/Window_Roof.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "AC_Unit",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/parts/yellow/AC_Unit.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "AC_Unitx4",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/parts/yellow/AC_Unitx4.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Balcony",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/parts/yellow/Balcony.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_Half",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/parts/yellow/Bricks_Half.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_Large",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/parts/yellow/Bricks_Large.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_LeftStraight",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/parts/yellow/Bricks_LeftStraight.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_RightStraight",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/parts/yellow/Bricks_RightStraight.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_Single",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/parts/yellow/Bricks_Single.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Bricks_Small",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/parts/yellow/Bricks_Small.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "CasinoSign",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/parts/yellow/CasinoSign.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door1",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/parts/yellow/Door1.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door2",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/parts/yellow/Door2.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door3",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/parts/yellow/Door3.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door4",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/parts/yellow/Door4.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door5",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/parts/yellow/Door5.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door_Double",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/parts/yellow/Door_Double.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door_Window",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/parts/yellow/Door_Window.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Door_Window2",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/parts/yellow/Door_Window2.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Pipe_L",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/parts/yellow/Pipe_L.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Pipe_Straight",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/parts/yellow/Pipe_Straight.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Pipe_Straight_Short",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/parts/yellow/Pipe_Straight_Short.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Sign_Bakery",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/parts/yellow/Sign_Bakery.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Sign_Barbershop",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/parts/yellow/Sign_Barbershop.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Sign_Bookshop",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/parts/yellow/Sign_Bookshop.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Sign_Hardware",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/parts/yellow/Sign_Hardware.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Sign_Pharmacy",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/parts/yellow/Sign_Pharmacy.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Staircase",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/parts/yellow/Staircase.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Stairs_Roof",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/parts/yellow/Stairs_Roof.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Window",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/parts/yellow/Window.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Window_Double",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/parts/yellow/Window_Double.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Window_Double_Roof",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/parts/yellow/Window_Double_Roof.tscn"
+		},
+		{
+			"group": "parts",
+			"id": "Window_Roof",
+			"palette": "yellow",
+			"path": "res://src/world/buildings/quaternius/items/parts/yellow/Window_Roof.tscn"
+		},
+		{
+			"group": "materials",
+			"id": "1Story_GableRoof_Mat",
+			"palette": "default",
+			"path": "res://src/world/buildings/quaternius/items/materials/default/1Story_GableRoof_Mat.tscn"
+		},
+		{
+			"group": "materials",
+			"id": "1Story_Mat",
+			"palette": "default",
+			"path": "res://src/world/buildings/quaternius/items/materials/default/1Story_Mat.tscn"
+		},
+		{
+			"group": "materials",
+			"id": "1Story_RoundRoof_Mat",
+			"palette": "default",
+			"path": "res://src/world/buildings/quaternius/items/materials/default/1Story_RoundRoof_Mat.tscn"
+		},
+		{
+			"group": "materials",
+			"id": "1Story_Sign_Mat",
+			"palette": "default",
+			"path": "res://src/world/buildings/quaternius/items/materials/default/1Story_Sign_Mat.tscn"
+		},
+		{
+			"group": "materials",
+			"id": "2Story_2_Mat",
+			"palette": "default",
+			"path": "res://src/world/buildings/quaternius/items/materials/default/2Story_2_Mat.tscn"
+		},
+		{
+			"group": "materials",
+			"id": "2Story_Balcony_Mat",
+			"palette": "default",
+			"path": "res://src/world/buildings/quaternius/items/materials/default/2Story_Balcony_Mat.tscn"
+		},
+		{
+			"group": "materials",
+			"id": "2Story_Center_Mat",
+			"palette": "default",
+			"path": "res://src/world/buildings/quaternius/items/materials/default/2Story_Center_Mat.tscn"
+		},
+		{
+			"group": "materials",
+			"id": "2Story_Columns_Mat",
+			"palette": "default",
+			"path": "res://src/world/buildings/quaternius/items/materials/default/2Story_Columns_Mat.tscn"
+		},
+		{
+			"group": "materials",
+			"id": "2Story_Double_Mat",
+			"palette": "default",
+			"path": "res://src/world/buildings/quaternius/items/materials/default/2Story_Double_Mat.tscn"
+		},
+		{
+			"group": "materials",
+			"id": "2Story_GableRoof_Mat",
+			"palette": "default",
+			"path": "res://src/world/buildings/quaternius/items/materials/default/2Story_GableRoof_Mat.tscn"
+		},
+		{
+			"group": "materials",
+			"id": "2Story_Mat",
+			"palette": "default",
+			"path": "res://src/world/buildings/quaternius/items/materials/default/2Story_Mat.tscn"
+		},
+		{
+			"group": "materials",
+			"id": "2Story_RoundRoof_Mat",
+			"palette": "default",
+			"path": "res://src/world/buildings/quaternius/items/materials/default/2Story_RoundRoof_Mat.tscn"
+		},
+		{
+			"group": "materials",
+			"id": "2Story_Sidehouse_Mat",
+			"palette": "default",
+			"path": "res://src/world/buildings/quaternius/items/materials/default/2Story_Sidehouse_Mat.tscn"
+		},
+		{
+			"group": "materials",
+			"id": "2Story_Sign_Mat",
+			"palette": "default",
+			"path": "res://src/world/buildings/quaternius/items/materials/default/2Story_Sign_Mat.tscn"
+		},
+		{
+			"group": "materials",
+			"id": "2Story_Slim_Mat",
+			"palette": "default",
+			"path": "res://src/world/buildings/quaternius/items/materials/default/2Story_Slim_Mat.tscn"
+		},
+		{
+			"group": "materials",
+			"id": "2Story_Stairs_Mat",
+			"palette": "default",
+			"path": "res://src/world/buildings/quaternius/items/materials/default/2Story_Stairs_Mat.tscn"
+		},
+		{
+			"group": "materials",
+			"id": "2Story_Wide_2Doors_Mat",
+			"palette": "default",
+			"path": "res://src/world/buildings/quaternius/items/materials/default/2Story_Wide_2Doors_Mat.tscn"
+		},
+		{
+			"group": "materials",
+			"id": "2Story_Wide_Mat",
+			"palette": "default",
+			"path": "res://src/world/buildings/quaternius/items/materials/default/2Story_Wide_Mat.tscn"
+		},
+		{
+			"group": "materials",
+			"id": "3Story_Balcony_Mat",
+			"palette": "default",
+			"path": "res://src/world/buildings/quaternius/items/materials/default/3Story_Balcony_Mat.tscn"
+		},
+		{
+			"group": "materials",
+			"id": "3Story_Slim_Mat",
+			"palette": "default",
+			"path": "res://src/world/buildings/quaternius/items/materials/default/3Story_Slim_Mat.tscn"
+		},
+		{
+			"group": "materials",
+			"id": "3Story_Small_Mat",
+			"palette": "default",
+			"path": "res://src/world/buildings/quaternius/items/materials/default/3Story_Small_Mat.tscn"
+		},
+		{
+			"group": "materials",
+			"id": "4Story_Center_Mat",
+			"palette": "default",
+			"path": "res://src/world/buildings/quaternius/items/materials/default/4Story_Center_Mat.tscn"
+		},
+		{
+			"group": "materials",
+			"id": "4Story_Mat",
+			"palette": "default",
+			"path": "res://src/world/buildings/quaternius/items/materials/default/4Story_Mat.tscn"
+		},
+		{
+			"group": "materials",
+			"id": "4Story_Wide_2Doors_Mat",
+			"palette": "default",
+			"path": "res://src/world/buildings/quaternius/items/materials/default/4Story_Wide_2Doors_Mat.tscn"
+		},
+		{
+			"group": "materials",
+			"id": "4Story_Wide_2Doors_Roof_Mat",
+			"palette": "default",
+			"path": "res://src/world/buildings/quaternius/items/materials/default/4Story_Wide_2Doors_Roof_Mat.tscn"
+		},
+		{
+			"group": "materials",
+			"id": "6Story_Stack_Mat",
+			"palette": "default",
+			"path": "res://src/world/buildings/quaternius/items/materials/default/6Story_Stack_Mat.tscn"
+		}
+	]
+}

@@ -83,9 +83,9 @@
 - 新增 `src/world/regions/region_volume.gd`、`region_volume.tscn`、`wreck_cleanup_rule.gd`、`wreck_cleanup_zone.tscn` 與必要 uid：範圍、editor 視覺與獨立用途。
 - 修改 `src/main.gd`：移除舊清骸與支援無舊車重生。
 - 修改 `src/player/player_runtime.gd`、`src/camera/camera_controller.gd`、`src/player/aim_presentation.gd`：僅上述暫時空綁與重綁，不調操控、瞄準或相機手感。
-- 修改 `src/world/training_ground/training_combat_encounter.gd`：空玩家綁定／舊敵車已移除的正常處理，保留 timer／無敵／目標切換語意。
-- 整合必要相容修正 `src/world/training_ground/vision_range_preview.gd`：敵車提前清除的實跑揭露先轉型 freed observer 的錯誤；僅先檢查 raw Variant 有效性再轉 Node3D，不改輪廓、Vision 或 AI 決策。
-- 修改 `src/world/training_ground/training_ground_playtest.tscn`：只加區域實例與引用，不改其他擺位。
+- 修改 `src/maps/training_ground/encounter/training_combat_encounter.gd`：空玩家綁定／舊敵車已移除的正常處理，保留 timer／無敵／目標切換語意。
+- 整合必要相容修正 `src/maps/training_ground/debug/vision_range_preview.gd`：敵車提前清除的實跑揭露先轉型 freed observer 的錯誤；僅先檢查 raw Variant 有效性再轉 Node3D，不改輪廓、Vision 或 AI 決策。
+- 修改 `src/maps/training_ground/training_ground_playtest.tscn`：只加區域實例與引用，不改其他擺位。
 - 新增 `tests/region_wreck_cleanup_smoke.gd`／uid；修改 `tests/enemy_combat_smoke.gd` 中原重生清除與「死亡車必留三秒」的被取代斷言，其餘 baseline 不弱化。
 - 更新本文件與原 spec／plan 的 Task 5／R1 指向。Task 1–4 既有 dirty 修改保留；不改 Vision／AI 決策、Health／傷害、四車幾何、GLB、project.godot、CI 接線、PR／merge／Linear。
 
@@ -139,5 +139,5 @@ Claude 已完成一次唯讀 review（exit 0、有效 result；證據 `/tmp/lea1
 - 既有回歸：`regression-partial_visibility_smoke.log`、`regression-partial_visibility_combat_smoke.log`、`regression-vision_preview_smoke.log` 通過；`full-ci.log` 最後為 Tank Skirmish quality gate passed，exit 0。
 - 真 Windows Godot 4.7.1：`editor-visual-third.log` 的 editor_hint=true 與綠色盒形 PNG；`runtime-visual.log` Vulkan 實跑三階段截圖及全部 assert 通過，exit 0。原相機／地圖沒有保存測試性調整。
 - 上述證據均位於 /tmp/lea173-zone-impl.5K4Wpx/。獨立 fresh-context 代理已讀回程式／測試、log 及四張實圖；不是由實作者單獨自驗。Gemini 四圖外傳首次被平台權限審查拒絕；使用者後續明確回覆「同意」後才重新執行，沒有繞過限制。四次 read_file 均 success，result=success、CLI exit 0；gemini-visual.jsonl 與 gemini-visual.err 留存證據，stderr 無讀圖失敗。Gemini 確認 editor 綠盒可見、三張 runtime 均隱藏、玩家初始／清除（僅留爆炸特效）／重生差異明確，無視覺 blocker。採納此範圍判定，不從靜圖推論計時或生命值，不新增修改項目。
-- 人類驗收：重新開啟 `src/world/training_ground/training_ground_playtest.tscn` 後 F6。區域位於 `PlayerSpawnPoint/WreckCleanupZone/RegionVolume`；需要編輯實例子節點時，對 WreckCleanupZone 啟用 Editable Children，再調整 RegionVolume 的 Size。綠色只在編輯器顯示。
+- 人類驗收：重新開啟 `src/maps/training_ground/training_ground_playtest.tscn` 後 F6。區域位於 `PlayerSpawnPoint/WreckCleanupZone/RegionVolume`；需要編輯實例子節點時，對 WreckCleanupZone 啟用 Editable Children，再調整 RegionVolume 的 Size。綠色只在編輯器顯示。
 - 本節保存 Task 5 當時的驗證證據；Task 6 與提交／PR／merge／Linear 進度以 `partial-visibility-collision-plan.md` 頂部「目前狀態」為準。

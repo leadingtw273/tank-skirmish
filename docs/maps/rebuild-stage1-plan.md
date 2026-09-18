@@ -55,7 +55,7 @@
 
 1. 採納來源基準補充：8 包使用 2026-09-18 首次盤點的 SHA256 為本機保存基準，不冒稱官方簽章。CRC 已通過；來源庫逐包 cmp 與 Downloads 相同。匯入時把各包 SHA256 與 ZIP entry 清單保存到來源 manifest。
 2. 採納重載測試：生成節點須正確設定 owner；保存 PackedScene 後使用忽略快取方式重新載入，比對可見 MeshInstance3D、StaticBody3D、CollisionShape3D 數量與變換。模擬複製到另一場景、保存、重開；不只驗生成中的記憶體物件。
-3. 採納基線明確化：此階段對照 e1b9c5b，保護 src/main.tscn、src/ai/、src/actors/tank/、src/world/training_ground/、src/player/、src/camera/、project.godot；由 git ls-tree 列出實際存在的完整檔案清單，驗收 git diff 對這些路徑為空。
+3. 採納基線明確化：此階段對照 e1b9c5b，保護 src/main.tscn、src/ai/、src/actors/tank/、src/maps/training_ground/、src/player/、src/camera/、project.godot；由 git ls-tree 列出實際存在的完整檔案清單，驗收 git diff 對這些路徑為空。
 4. 素材保存採最小方案：原包已另存 /home/markchou/project/tank-skirmish-local-assets/AtomicRealmModularRoads。執行階段先將 assets/AtomicRealmModularRoads 與生成的付費網格/碰撞加入忽略規則，生成腳本及純引用場景可納管；新增階段不執行任何 git push。檔案在 repository 內不代表已公開，故 reviewer 的「一 commit 就違規」不採納；不建立 pre-push 框架。
 5. 授權報告落在 docs/maps/road-source-inventory.md，逐包記錄授權檔位置與已查證/未查證狀態；未查證不是虛構通過。本階段本機使用使用者提供的包，不把不公開推送擴成完整法律研究。
 6. 靜態碰撞使用逐可見網格 trimesh，套用相同變換；以三角面與變換對應驗證，碰撞層沿用既有世界障礙設定。不把載具接地測試混入本階段。

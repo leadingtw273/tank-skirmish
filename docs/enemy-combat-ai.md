@@ -1,6 +1,6 @@
 # 訓練場敵方坦克（LEA-172）
 
-開啟 `src/world/training_ground/training_ground_playtest.tscn`，使用 F6 執行目前場景。
+開啟 `src/maps/training_ground/training_ground_playtest.tscn`，使用 F6 執行目前場景。
 敵人與建築位置依使用者最新手調保存，原本四台換車靶與準確度靶保留。
 現成建築依使用者擺放分排，具有與外觀對齊的實體碰撞；可繞行建築測試失去視線及重新被敵人發現。
 

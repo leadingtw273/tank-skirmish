@@ -1,7 +1,7 @@
 ## LEA-173 H1--H5：只經正式 Tank 公開入口驗證接觸滑動與慢速 yaw。
 extends SceneTree
 
-const PLAYTEST_SCENE := preload("res://src/world/training_ground/training_ground_playtest.tscn")
+const PLAYTEST_SCENE := preload("res://src/maps/training_ground/training_ground_playtest.tscn")
 const TANK_SCENES := [preload("res://src/actors/tank/variants/tank1/tank1.tscn"), preload("res://src/actors/tank/variants/tank2/tank2.tscn"), preload("res://src/actors/tank/variants/tank3/tank3.tscn"), preload("res://src/actors/tank/variants/tank4/tank4.tscn")]
 const PLAYER_CONTROLLER := preload("res://src/player/player_controller.gd")
 const DT := 1.0 / 60.0

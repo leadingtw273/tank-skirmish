@@ -1,6 +1,6 @@
 [gd_scene load_steps=11 format=3]
 
-[ext_resource type="Script" path="res://src/world/training_ground/training_range.gd" id="1_script"]
+[ext_resource type="Script" path="res://src/maps/training_ground/range/training_range.gd" id="1_script"]
 
 [sub_resource type="StandardMaterial3D" id="TargetMaterial"]
 albedo_color = Color(0.88, 0.82, 0.65, 1)

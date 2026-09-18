@@ -3,7 +3,7 @@ extends SceneTree
 ## 水平視野預覽的有限黑箱 smoke。所有真值都由獨立的 PhysicsRayQuery
 ## 取得；測試絕不呼叫 Preview 的私有或可見性判斷邏輯。
 
-const VisionPreview := preload("res://src/world/training_ground/vision_range_preview.gd")
+const VisionPreview := preload("res://src/maps/training_ground/debug/vision_range_preview.gd")
 const TankVision := preload("res://src/actors/tank/perception/tank_vision.gd")
 const TANK2_SCENE := preload("res://src/actors/tank/variants/tank2/tank2.tscn")
 const TANK1_SCENE := preload("res://src/actors/tank/variants/tank1/tank1.tscn")

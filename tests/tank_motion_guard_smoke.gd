@@ -1,7 +1,7 @@
 ## LEA-173 Task 2：正式四車與訓練場既有建築的獨立 runtime smoke（僅 /tmp）。
 extends SceneTree
 
-const PLAYTEST_SCENE := preload("res://src/world/training_ground/training_ground_playtest.tscn")
+const PLAYTEST_SCENE := preload("res://src/maps/training_ground/training_ground_playtest.tscn")
 const TANK_SCENES := [preload("res://src/actors/tank/variants/tank1/tank1.tscn"), preload("res://src/actors/tank/variants/tank2/tank2.tscn"), preload("res://src/actors/tank/variants/tank3/tank3.tscn"), preload("res://src/actors/tank/variants/tank4/tank4.tscn")]
 const DT := 1.0 / 60.0
 var failures: Array[String] = []

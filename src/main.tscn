@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://ditdn0r5bmeb3"]
 
 [ext_resource type="PackedScene" path="res://src/gameplay_runtime.tscn" id="1_runtime"]
-[ext_resource type="PackedScene" path="res://src/world/world.tscn" id="2_world"]
+[ext_resource type="PackedScene" path="res://src/maps/main_battlefield/main_battlefield.tscn" id="2_world"]
 
 [node name="TankSkirmish" instance=ExtResource("1_runtime")]
 

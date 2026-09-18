@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3]
 
 [ext_resource type="PackedScene" path="res://assets/models/tank/tank2.glb" id="1_tank"]
-[ext_resource type="Script" path="res://src/world/training_ground/static_target_tank.gd" id="2_controller"]
+[ext_resource type="Script" path="res://src/maps/training_ground/encounter/static_target_tank.gd" id="2_controller"]
 
 [sub_resource type="StandardMaterial3D" id="TargetGrayMaterial"]
 albedo_color = Color(0.16, 0.18, 0.2, 1)

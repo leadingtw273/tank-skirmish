@@ -8,7 +8,7 @@ extends MeshInstance3D
 ## 平坦訓練場顯示輪廓的地面高度；水平射線仍從砲塔視線高度發出。
 @export var ground_height := 0.04
 
-const RANGE_SHADER := preload("res://src/world/training_ground/vision_range_preview.gdshader")
+const RANGE_SHADER := preload("res://src/maps/training_ground/debug/vision_range_preview.gdshader")
 const ANGULAR_STEP_DEGREES := 0.5
 const MAX_RAYS_PER_UPDATE := 2048
 const MAX_EDGE_REFINEMENT_DEPTH := 3

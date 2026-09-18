@@ -1,14 +1,14 @@
 extends SceneTree
 
-const TRAINING_GROUND_SCENE := "res://src/world/training_ground/training_ground.tscn"
-const TRAINING_GROUND_SHADER := "res://src/world/training_ground/training_ground_grid.gdshader"
-const TRAINING_GROUND_PLAYTEST_SCENE := "res://src/world/training_ground/training_ground_playtest.tscn"
-const TRAINING_TARGET_SCENE := "res://src/world/training_ground/training_target.tscn"
+const TRAINING_GROUND_SCENE := "res://src/maps/training_ground/environment/training_ground.tscn"
+const TRAINING_GROUND_SHADER := "res://src/maps/training_ground/environment/training_ground_grid.gdshader"
+const TRAINING_GROUND_PLAYTEST_SCENE := "res://src/maps/training_ground/training_ground_playtest.tscn"
+const TRAINING_TARGET_SCENE := "res://src/maps/training_ground/encounter/training_target.tscn"
 const TANK1_SCENE := "res://src/actors/tank/variants/tank1/tank1.tscn"
 const TANK2_SCENE := "res://src/actors/tank/variants/tank2/tank2.tscn"
 const TRAINING_TARGET_VARIANTS := {
 	"Tank1TrainingTarget": {
-		"scene": "res://src/world/training_ground/training_target_tank1.tscn",
+		"scene": "res://src/maps/training_ground/encounter/training_target_tank1.tscn",
 		"model": "Tank1Model",
 		"display_name": "輕型坦克",
 		"maximum_health": 80.0,
@@ -26,7 +26,7 @@ const TRAINING_TARGET_VARIANTS := {
 		"model_scale": Vector3.ONE,
 	},
 	"Tank3TrainingTarget": {
-		"scene": "res://src/world/training_ground/training_target_tank3.tscn",
+		"scene": "res://src/maps/training_ground/encounter/training_target_tank3.tscn",
 		"model": "Tank3Model",
 		"display_name": "重型坦克",
 		"maximum_health": 120.0,
@@ -35,7 +35,7 @@ const TRAINING_TARGET_VARIANTS := {
 		"model_scale": Vector3.ONE * 1.1,
 	},
 	"Tank4TrainingTarget": {
-		"scene": "res://src/world/training_ground/training_target_tank4.tscn",
+		"scene": "res://src/maps/training_ground/encounter/training_target_tank4.tscn",
 		"model": "Tank4Model",
 		"display_name": "驅逐坦克",
 		"maximum_health": 60.0,

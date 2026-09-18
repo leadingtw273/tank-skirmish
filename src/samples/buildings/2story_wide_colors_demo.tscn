@@ -1,0 +1,89 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/materials/default/2Story_Wide_Mat.tscn" id="1_e5843"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/finished/blue/2Story_Wide.tscn" id="2_ybewc"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/finished/casino/2Story_Wide.tscn" id="3_mq4ri"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/finished/dark/2Story_Wide.tscn" id="4_oucwt"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/finished/darkblue/2Story_Wide.tscn" id="5_6e6gr"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/finished/darkpurple/2Story_Wide.tscn" id="6_vgm2x"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/finished/green/2Story_Wide.tscn" id="7_kvik3"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/finished/grey/2Story_Wide.tscn" id="8_p8otv"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/finished/light/2Story_Wide.tscn" id="9_p4ewh"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/finished/light2/2Story_Wide.tscn" id="10_jp4j3"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/finished/red/2Story_Wide.tscn" id="11_gjmvj"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/finished/signs/2Story_Wide.tscn" id="12_uhdso"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/finished/yellow/2Story_Wide.tscn" id="13_ic6xy"]
+
+[sub_resource type="Environment" id="Environment_6k273"]
+background_mode = 1
+background_color = Color(0.12, 0.14, 0.17, 1)
+ambient_light_source = 2
+ambient_light_color = Color(1, 1, 1, 1)
+ambient_light_energy = 0.5
+
+[node name="2Story_Wide_Colors_Demo" type="Node3D" unique_id=617603669]
+
+[node name="Models" type="Node3D" parent="." unique_id=47762985]
+
+[node name="Material_Default" type="StaticBody3D" parent="Models" unique_id=1501410809 instance=ExtResource("1_e5843")]
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Wide_Mat.glb"
+
+[node name="blue" type="StaticBody3D" parent="Models" unique_id=856305800 instance=ExtResource("2_ybewc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0, 0)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/finished/blue/2Story_Wide.glb"
+
+[node name="casino" type="StaticBody3D" parent="Models" unique_id=639526549 instance=ExtResource("3_mq4ri")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40, 0, 0)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/finished/casino/2Story_Wide.glb"
+
+[node name="dark" type="StaticBody3D" parent="Models" unique_id=616251135 instance=ExtResource("4_oucwt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 60, 0, 0)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/finished/dark/2Story_Wide.glb"
+
+[node name="darkblue" type="StaticBody3D" parent="Models" unique_id=446186995 instance=ExtResource("5_6e6gr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 18)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/finished/darkblue/2Story_Wide.glb"
+
+[node name="darkpurple" type="StaticBody3D" parent="Models" unique_id=546239169 instance=ExtResource("6_vgm2x")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0, 18)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/finished/darkpurple/2Story_Wide.glb"
+
+[node name="green" type="StaticBody3D" parent="Models" unique_id=1501019875 instance=ExtResource("7_kvik3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40, 0, 18)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/finished/green/2Story_Wide.glb"
+
+[node name="grey" type="StaticBody3D" parent="Models" unique_id=703920879 instance=ExtResource("8_p8otv")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 60, 0, 18)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/finished/grey/2Story_Wide.glb"
+
+[node name="light" type="StaticBody3D" parent="Models" unique_id=1688185093 instance=ExtResource("9_p4ewh")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 36)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/finished/light/2Story_Wide.glb"
+
+[node name="light2" type="StaticBody3D" parent="Models" unique_id=756120026 instance=ExtResource("10_jp4j3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0, 36)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/finished/light2/2Story_Wide.glb"
+
+[node name="red" type="StaticBody3D" parent="Models" unique_id=99672604 instance=ExtResource("11_gjmvj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40, 0, 36)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/finished/red/2Story_Wide.glb"
+
+[node name="signs" type="StaticBody3D" parent="Models" unique_id=875986682 instance=ExtResource("12_uhdso")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 60, 0, 36)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/finished/signs/2Story_Wide.glb"
+
+[node name="yellow" type="StaticBody3D" parent="Models" unique_id=1926446888 instance=ExtResource("13_ic6xy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 54)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/finished/yellow/2Story_Wide.glb"
+
+[node name="PreviewCamera" type="Camera3D" parent="." unique_id=698724215]
+transform = Transform3D(1, 0, 0, 0, 0.53303766, 0.8460915, 0, -0.8460915, 0.53303766, 40, 80, 86.4)
+projection = 1
+current = true
+size = 92.0
+
+[node name="Sun" type="DirectionalLight3D" parent="." unique_id=364158269]
+transform = Transform3D(0.90630776, 0.34618863, -0.24240388, 0, 0.57357645, 0.81915206, 0.42261827, -0.74240386, 0.5198368, 0, 0, 0)
+
+[node name="PreviewEnvironment" type="WorldEnvironment" parent="." unique_id=840501342]
+environment = SubResource("Environment_6k273")

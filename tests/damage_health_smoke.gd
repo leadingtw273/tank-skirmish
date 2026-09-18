@@ -3,7 +3,7 @@ extends SceneTree
 const HealthComponent := preload("res://src/combat/damage/health_component.gd")
 const DamageReceiver := preload("res://src/combat/damage/damage_receiver.gd")
 const ShotEvent := preload("res://src/combat/shot_event.gd")
-const TRAINING_TARGET_SCENE := "res://src/world/training_ground/training_target.tscn"
+const TRAINING_TARGET_SCENE := "res://src/maps/training_ground/encounter/training_target.tscn"
 
 
 func _init() -> void:

@@ -1,6 +1,6 @@
 extends SceneTree
 
-const PLAYTEST_SCENE := "res://src/world/training_ground/training_ground_playtest.tscn"
+const PLAYTEST_SCENE := "res://src/maps/training_ground/training_ground_playtest.tscn"
 const HealthComponent := preload("res://src/combat/damage/health_component.gd")
 const TankVision := preload("res://src/actors/tank/perception/tank_vision.gd")
 

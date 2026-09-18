@@ -2,7 +2,7 @@
 ## The Tank2 scene, authored blockers, AI, NavigationAgent and controller physics stay live.
 extends SceneTree
 
-const PLAYTEST := preload("res://src/world/training_ground/training_ground_playtest.tscn")
+const PLAYTEST := preload("res://src/maps/training_ground/training_ground_playtest.tscn")
 const DT := 1.0 / 60.0
 const START := Vector3(41.5591201782227, 0.0, -63.5641975402832)
 const PLAYER_START := Vector3(74.1377792358398, 0.0, -75.8793716430664)

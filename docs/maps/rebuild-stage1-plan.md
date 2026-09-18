@@ -48,4 +48,17 @@
 
 ## 狀態
 
-計畫草稿；尚未完成跨模型唯讀複審與素材匯入。付費授權未確認前不得公開素材。
+計畫已於 2026-09-18 經 Claude Opus 單次唯讀複審；以下為主代理裁決與補充。
+素材匯入尚未開始。付費授權未確認前不得公開素材。
+
+## 複審裁決與可重現驗證
+
+1. 採納來源基準補充：8 包使用 2026-09-18 首次盤點的 SHA256 為本機保存基準，不冒稱官方簽章。CRC 已通過；來源庫逐包 cmp 與 Downloads 相同。匯入時把各包 SHA256 與 ZIP entry 清單保存到來源 manifest。
+2. 採納重載測試：生成節點須正確設定 owner；保存 PackedScene 後使用忽略快取方式重新載入，比對可見 MeshInstance3D、StaticBody3D、CollisionShape3D 數量與變換。模擬複製到另一場景、保存、重開；不只驗生成中的記憶體物件。
+3. 採納基線明確化：此階段對照 e1b9c5b，保護 src/main.tscn、src/ai/、src/actors/tank/、src/world/training_ground/、src/player/、src/camera/、project.godot；由 git ls-tree 列出實際存在的完整檔案清單，驗收 git diff 對這些路徑為空。
+4. 素材保存採最小方案：原包已另存 /home/markchou/project/tank-skirmish-local-assets/AtomicRealmModularRoads。執行階段先將 assets/AtomicRealmModularRoads 與生成的付費網格/碰撞加入忽略規則，生成腳本及純引用場景可納管；新增階段不執行任何 git push。檔案在 repository 內不代表已公開，故 reviewer 的「一 commit 就違規」不採納；不建立 pre-push 框架。
+5. 授權報告落在 docs/maps/road-source-inventory.md，逐包記錄授權檔位置與已查證/未查證狀態；未查證不是虛構通過。本階段本機使用使用者提供的包，不把不公開推送擴成完整法律研究。
+6. 靜態碰撞使用逐可見網格 trimesh，套用相同變換；以三角面與變換對應驗證，碰撞層沿用既有世界障礙設定。不把載具接地測試混入本階段。
+7. Linux Godot headless 作載入與碰撞測試，實際 Godot 渲染檢查展示；Windows Godot 供 leadi 人驗。截圖與驗收記錄保存長期工作目錄，不依賴 /tmp。sample 每包一個場景，共 8 個。
+
+分類：上述 1/2/3/4 為原驗收的執行細節補強，不是已發生的程式缺陷；5 為文件明確化；缺 GLB 轉檔與跨機還原屬後续工作。未發現需要改變本單目標的 blocker。

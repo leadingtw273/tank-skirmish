@@ -1,0 +1,1411 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/bilboard1/Default.tscn" id="1_eqrj8"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/BusStop1/Default.tscn" id="2_x62tt"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/collumn1_corner/Default.tscn" id="3_tqktl"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/collumn1_corner_top/Default.tscn" id="4_34ufc"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/GrassMedian1/Default.tscn" id="5_omkd2"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/GrassMedian2/Default.tscn" id="6_vr151"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/GrassMedian3/Default.tscn" id="7_ksf2m"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/ParkingBooth1/Default.tscn" id="8_p7udd"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/parkinghouse_roof1/Default.tscn" id="9_iy4ie"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/parkinghouse_segment1/Default.tscn" id="10_aqqlp"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/parkinghouse_segment1_top/Default.tscn" id="11_nvwln"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/ParkingMachine1/Default.tscn" id="12_stkwc"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/ParkingRamp1/Default.tscn" id="13_bkccd"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/ramp1/Default.tscn" id="14_ftp65"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/ramp1/Road1_B__Road1_Parking1_B.tscn" id="15_vlcif"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/ramp1/Road1_B__Road1_Parking2_B.tscn" id="16_syay6"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/ramp1/Road1_B__Road1_A.tscn" id="17_hty7f"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/ramp1/Road1_B__Road1_Parking1_A.tscn" id="18_7pay5"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/ramp1/Road1_B__Road1_Parking2_A.tscn" id="19_t8kb7"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Retarder1/Default.tscn" id="20_8ec4j"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road1/Default.tscn" id="21_t3i8b"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road1/Road1_B__Road1_Parking1_B.tscn" id="22_mbnwn"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road1/Road1_B__Road1_Parking2_B.tscn" id="23_fxg8i"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road1/Road1_B__Road1_A.tscn" id="24_x1lyn"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road1/Road1_B__Road1_Parking1_A.tscn" id="25_vdaaw"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road1/Road1_B__Road1_Parking2_A.tscn" id="26_wver6"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road10_90angle_Corner/Default.tscn" id="27_ak0kv"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road10_90angle_Corner/Road1_B__Road1_Parking1_B.tscn" id="28_nmtch"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road10_90angle_Corner/Road1_B__Road1_Parking2_B.tscn" id="29_vh6yd"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road10_90angle_Corner/Road1_B__Road1_A.tscn" id="30_av054"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road10_90angle_Corner/Road1_B__Road1_Parking1_A.tscn" id="31_u025n"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road10_90angle_Corner/Road1_B__Road1_Parking2_A.tscn" id="32_2f4sr"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road1_Curve1/Default.tscn" id="33_66oga"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road1_Curve1/Road1_B__Road1_Parking1_B.tscn" id="34_xp74x"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road1_Curve1/Road1_B__Road1_Parking2_B.tscn" id="35_buxsj"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road1_Curve1/Road1_B__Road1_A.tscn" id="36_hhhxn"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road1_Curve1/Road1_B__Road1_Parking1_A.tscn" id="37_fc7ik"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road1_Curve1/Road1_B__Road1_Parking2_A.tscn" id="38_8q8he"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road1_Curve2/Default.tscn" id="39_aaoxo"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road1_Curve2/Road1_B__Road1_Parking1_B.tscn" id="40_1e8aj"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road1_Curve2/Road1_B__Road1_Parking2_B.tscn" id="41_eat8u"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road1_Curve2/Road1_B__Road1_A.tscn" id="42_a76qj"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road1_Curve2/Road1_B__Road1_Parking1_A.tscn" id="43_pbedi"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road1_Curve2/Road1_B__Road1_Parking2_A.tscn" id="44_32ly8"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road1_Curve3/Default.tscn" id="45_bgdy0"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road1_Curve3/Road1_B__Road1_Parking1_B.tscn" id="46_ntd4p"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road1_Curve3/Road1_B__Road1_Parking2_B.tscn" id="47_aowvm"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road1_Curve3/Road1_B__Road1_A.tscn" id="48_wtkwp"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road1_Curve3/Road1_B__Road1_Parking1_A.tscn" id="49_ox2bd"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road1_Curve3/Road1_B__Road1_Parking2_A.tscn" id="50_57kc6"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road1_Curve4/Default.tscn" id="51_vwv1m"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road1_Curve4/Road1_B__Road1_Parking1_B.tscn" id="52_3yye1"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road1_Curve4/Road1_B__Road1_Parking2_B.tscn" id="53_475qt"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road1_Curve4/Road1_B__Road1_A.tscn" id="54_5u4h4"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road1_Curve4/Road1_B__Road1_Parking1_A.tscn" id="55_l5g23"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road1_Curve4/Road1_B__Road1_Parking2_A.tscn" id="56_l1isc"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road1_Parking1/Default.tscn" id="57_v4bf5"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road1_Parking1/Road1_Parking1_B__Road1_B.tscn" id="58_5kg62"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road1_Parking1/Road1_Parking1_B__Road1_Parking2_B.tscn" id="59_vojco"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road1_Parking1/Road1_Parking1_B__Road1_A.tscn" id="60_uqans"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road1_Parking1/Road1_Parking1_B__Road1_Parking1_A.tscn" id="61_i55ch"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road1_Parking1/Road1_Parking1_B__Road1_Parking2_A.tscn" id="62_0un6i"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road1_Parking1_Open/Default.tscn" id="63_myek1"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road1_Parking1_Open/Road1_Parking1_B__Road1_B.tscn" id="64_afdmk"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road1_Parking1_Open/Road1_Parking1_B__Road1_Parking2_B.tscn" id="65_u5q1n"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road1_Parking1_Open/Road1_Parking1_B__Road1_A.tscn" id="66_1m6sr"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road1_Parking1_Open/Road1_Parking1_B__Road1_Parking1_A.tscn" id="67_i5eqr"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road1_Parking1_Open/Road1_Parking1_B__Road1_Parking2_A.tscn" id="68_asudo"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road1_Parking2/Default.tscn" id="69_bn51p"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road1_Parking2/Road1_Parking2_B__Road1_B.tscn" id="70_tcp0q"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road1_Parking2/Road1_Parking2_B__Road1_Parking1_B.tscn" id="71_m4vxi"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road1_Parking2/Road1_Parking2_B__Road1_A.tscn" id="72_10ux4"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road1_Parking2/Road1_Parking2_B__Road1_Parking1_A.tscn" id="73_3w013"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road1_Parking2/Road1_Parking2_B__Road1_Parking2_A.tscn" id="74_6anon"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road2_T/Default.tscn" id="75_7ib3v"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road2_T/Road2_X_B__Road2_X_A.tscn" id="76_gpcbs"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road2_T_Parking_Entrance/Default.tscn" id="77_nhr12"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road2_T_Parking_Entrance_Open/Default.tscn" id="78_2y1om"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road2_X/Default.tscn" id="79_5amv5"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road2_X/Road2_X_B__Road2_X_A.tscn" id="80_pvelr"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road3_Crossing/Default.tscn" id="81_dos4b"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road4_Shoulder_Extender/Default.tscn" id="82_d2ups"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road4_Shoulder_Narrower/Default.tscn" id="83_aaxx1"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road5_Shoulder1/Default.tscn" id="84_g11di"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road5_Shoulder3/Default.tscn" id="85_k13x7"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road6_CornerL/Default.tscn" id="86_51h7k"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road6_CornerL/Road6_B__Road6_A.tscn" id="87_2g0oo"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road6_CornerR/Default.tscn" id="88_groio"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road6_CornerR/Road6_B__Road6_A.tscn" id="89_nfvf8"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road6_End/Default.tscn" id="90_7nnon"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road6_End/Road6_B__Road6_A.tscn" id="91_hichv"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road7/Default.tscn" id="92_x5w55"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road8/Default.tscn" id="93_ovhfr"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road9/Default.tscn" id="94_fkoya"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Tree3/Default.tscn" id="95_4am7o"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Tree4/Default.tscn" id="96_3smj4"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/WasteBin1/Default.tscn" id="97_7r7i3"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/parking/Road5_Shoulder2/Default.tscn" id="98_dg7bq"]
+
+[sub_resource type="Environment" id="Environment_1hj6m"]
+background_mode = 1
+background_color = Color(0.11, 0.13, 0.16, 1)
+ambient_light_source = 2
+ambient_light_color = Color(1, 1, 1, 1)
+ambient_light_energy = 0.65
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_yyjyd"]
+albedo_color = Color(0.29, 0.31, 0.34, 1)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_g1vbx"]
+size = Vector2(496.00003, 340.4854)
+
+[node name="parking_demo" type="Node3D" unique_id=1684095244]
+
+[node name="Models" type="Node3D" parent="." unique_id=1185311025]
+
+[node name="bilboard1__Default" type="StaticBody3D" parent="Models" unique_id=1164823012 instance=ExtResource("1_eqrj8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -213.00002, 0, -152.75183)
+metadata/road_module = true
+metadata/road_id = "bilboard1"
+metadata/variant = "Default"
+metadata/source_pack = "parking"
+
+[node name="BusStop1__Default" type="StaticBody3D" parent="Models" unique_id=602104833 instance=ExtResource("2_x62tt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -155, 0, -151.2427)
+metadata/road_module = true
+metadata/road_id = "BusStop1"
+metadata/variant = "Default"
+metadata/source_pack = "parking"
+
+[node name="collumn1_corner__Default" type="StaticBody3D" parent="Models" unique_id=846548240 instance=ExtResource("3_tqktl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -96.15356, 0, -152.08914)
+metadata/road_module = true
+metadata/road_id = "collumn1_corner"
+metadata/variant = "Default"
+metadata/source_pack = "parking"
+
+[node name="collumn1_corner_top__Default" type="StaticBody3D" parent="Models" unique_id=944520837 instance=ExtResource("4_34ufc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.153553, 0, -152.08914)
+metadata/road_module = true
+metadata/road_id = "collumn1_corner_top"
+metadata/variant = "Default"
+metadata/source_pack = "parking"
+
+[node name="GrassMedian1__Default" type="StaticBody3D" parent="Models" unique_id=1565528226 instance=ExtResource("5_omkd2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.00002, 0, -151.2427)
+metadata/road_module = true
+metadata/road_id = "GrassMedian1"
+metadata/variant = "Default"
+metadata/source_pack = "parking"
+
+[node name="GrassMedian2__Default" type="StaticBody3D" parent="Models" unique_id=1623707277 instance=ExtResource("6_vr151")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 77.00003, 0, -151.2427)
+metadata/road_module = true
+metadata/road_id = "GrassMedian2"
+metadata/variant = "Default"
+metadata/source_pack = "parking"
+
+[node name="GrassMedian3__Default" type="StaticBody3D" parent="Models" unique_id=422137814 instance=ExtResource("7_ksf2m")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 123.00003, 0, -151.2427)
+metadata/road_module = true
+metadata/road_id = "GrassMedian3"
+metadata/variant = "Default"
+metadata/source_pack = "parking"
+
+[node name="ParkingBooth1__Default" type="StaticBody3D" parent="Models" unique_id=1179902975 instance=ExtResource("8_p7udd")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 157.00005, 0, -151.40654)
+metadata/road_module = true
+metadata/road_id = "ParkingBooth1"
+metadata/variant = "Default"
+metadata/source_pack = "parking"
+
+[node name="parkinghouse_roof1__Default" type="StaticBody3D" parent="Models" unique_id=587558803 instance=ExtResource("9_iy4ie")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 191.00005, 0, -151.2427)
+metadata/road_module = true
+metadata/road_id = "parkinghouse_roof1"
+metadata/variant = "Default"
+metadata/source_pack = "parking"
+
+[node name="parkinghouse_segment1__Default" type="StaticBody3D" parent="Models" unique_id=410040975 instance=ExtResource("10_aqqlp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 225.00006, 0, -152.08916)
+metadata/road_module = true
+metadata/road_id = "parkinghouse_segment1"
+metadata/variant = "Default"
+metadata/source_pack = "parking"
+
+[node name="parkinghouse_segment1_top__Default" type="StaticBody3D" parent="Models" unique_id=627656361 instance=ExtResource("11_nvwln")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -213.00002, 0, -126.08914)
+metadata/road_module = true
+metadata/road_id = "parkinghouse_segment1_top"
+metadata/variant = "Default"
+metadata/source_pack = "parking"
+
+[node name="ParkingMachine1__Default" type="StaticBody3D" parent="Models" unique_id=977708363 instance=ExtResource("12_stkwc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -155, 0, -125.2427)
+metadata/road_module = true
+metadata/road_id = "ParkingMachine1"
+metadata/variant = "Default"
+metadata/source_pack = "parking"
+
+[node name="ParkingRamp1__Default" type="StaticBody3D" parent="Models" unique_id=317410236 instance=ExtResource("13_bkccd")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -96.9427, 0, -125.22986)
+metadata/road_module = true
+metadata/road_id = "ParkingRamp1"
+metadata/variant = "Default"
+metadata/source_pack = "parking"
+
+[node name="ramp1__Default" type="StaticBody3D" parent="Models" unique_id=819174694 instance=ExtResource("14_ftp65")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.99998, 0, -119.24269)
+metadata/road_module = true
+metadata/road_id = "ramp1"
+metadata/variant = "Default"
+metadata/source_pack = "parking"
+
+[node name="ramp1__Road1_B__Road1_Parking1_B" type="StaticBody3D" parent="Models" unique_id=1178447501 instance=ExtResource("15_vlcif")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.000027, 0, -119.24269)
+metadata/road_module = true
+metadata/road_id = "ramp1"
+metadata/variant = "Road1_B__Road1_Parking1_B"
+metadata/source_pack = "parking"
+
+[node name="ramp1__Road1_B__Road1_Parking2_B" type="StaticBody3D" parent="Models" unique_id=1179420277 instance=ExtResource("16_syay6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 77.00003, 0, -119.24269)
+metadata/road_module = true
+metadata/road_id = "ramp1"
+metadata/variant = "Road1_B__Road1_Parking2_B"
+metadata/source_pack = "parking"
+
+[node name="ramp1__Road1_B__Road1_A" type="StaticBody3D" parent="Models" unique_id=93926181 instance=ExtResource("17_hty7f")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 123.00004, 0, -119.24269)
+metadata/road_module = true
+metadata/road_id = "ramp1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "parking"
+
+[node name="ramp1__Road1_B__Road1_Parking1_A" type="StaticBody3D" parent="Models" unique_id=416182305 instance=ExtResource("18_7pay5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 157.00005, 0, -119.24269)
+metadata/road_module = true
+metadata/road_id = "ramp1"
+metadata/variant = "Road1_B__Road1_Parking1_A"
+metadata/source_pack = "parking"
+
+[node name="ramp1__Road1_B__Road1_Parking2_A" type="StaticBody3D" parent="Models" unique_id=631990861 instance=ExtResource("19_t8kb7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 191.00006, 0, -119.24269)
+metadata/road_module = true
+metadata/road_id = "ramp1"
+metadata/variant = "Road1_B__Road1_Parking2_A"
+metadata/source_pack = "parking"
+
+[node name="Retarder1__Default" type="StaticBody3D" parent="Models" unique_id=2004639101 instance=ExtResource("20_8ec4j")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 225.00006, 0, -125.2427)
+metadata/road_module = true
+metadata/road_id = "Retarder1"
+metadata/variant = "Default"
+metadata/source_pack = "parking"
+
+[node name="Road1__Default" type="StaticBody3D" parent="Models" unique_id=1878975638 instance=ExtResource("21_t3i8b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -213.00002, 0, -99.24263)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Default"
+metadata/source_pack = "parking"
+
+[node name="Road1__Road1_B__Road1_Parking1_B" type="StaticBody3D" parent="Models" unique_id=1665587912 instance=ExtResource("22_mbnwn")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -155, 0, -99.24263)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_Parking1_B"
+metadata/source_pack = "parking"
+
+[node name="Road1__Road1_B__Road1_Parking2_B" type="StaticBody3D" parent="Models" unique_id=1130619374 instance=ExtResource("23_fxg8i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -96.99999, 0, -99.24263)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_Parking2_B"
+metadata/source_pack = "parking"
+
+[node name="Road1__Road1_B__Road1_A" type="StaticBody3D" parent="Models" unique_id=81326828 instance=ExtResource("24_x1lyn")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.99999, 0, -99.24263)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "parking"
+
+[node name="Road1__Road1_B__Road1_Parking1_A" type="StaticBody3D" parent="Models" unique_id=1864969014 instance=ExtResource("25_vdaaw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.000021, 0, -99.24263)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_Parking1_A"
+metadata/source_pack = "parking"
+
+[node name="Road1__Road1_B__Road1_Parking2_A" type="StaticBody3D" parent="Models" unique_id=1544358521 instance=ExtResource("26_wver6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 77.00003, 0, -99.24263)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_Parking2_A"
+metadata/source_pack = "parking"
+
+[node name="Road10_90angle_Corner__Default" type="StaticBody3D" parent="Models" unique_id=651718487 instance=ExtResource("27_ak0kv")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 122.99991, 0, -99.24268)
+metadata/road_module = true
+metadata/road_id = "Road10_90angle_Corner"
+metadata/variant = "Default"
+metadata/source_pack = "parking"
+
+[node name="Road10_90angle_Corner__Road1_B__Road1_Parking1_B" type="StaticBody3D" parent="Models" unique_id=268456958 instance=ExtResource("28_nmtch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 156.99992, 0, -99.24268)
+metadata/road_module = true
+metadata/road_id = "Road10_90angle_Corner"
+metadata/variant = "Road1_B__Road1_Parking1_B"
+metadata/source_pack = "parking"
+
+[node name="Road10_90angle_Corner__Road1_B__Road1_Parking2_B" type="StaticBody3D" parent="Models" unique_id=704328020 instance=ExtResource("29_vh6yd")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 190.99992, 0, -99.24268)
+metadata/road_module = true
+metadata/road_id = "Road10_90angle_Corner"
+metadata/variant = "Road1_B__Road1_Parking2_B"
+metadata/source_pack = "parking"
+
+[node name="Road10_90angle_Corner__Road1_B__Road1_A" type="StaticBody3D" parent="Models" unique_id=331338324 instance=ExtResource("30_av054")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 224.99994, 0, -99.24268)
+metadata/road_module = true
+metadata/road_id = "Road10_90angle_Corner"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "parking"
+
+[node name="Road10_90angle_Corner__Road1_B__Road1_Parking1_A" type="StaticBody3D" parent="Models" unique_id=2027925994 instance=ExtResource("31_u025n")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -213.00014, 0, -65.12131)
+metadata/road_module = true
+metadata/road_id = "Road10_90angle_Corner"
+metadata/variant = "Road1_B__Road1_Parking1_A"
+metadata/source_pack = "parking"
+
+[node name="Road10_90angle_Corner__Road1_B__Road1_Parking2_A" type="StaticBody3D" parent="Models" unique_id=158149469 instance=ExtResource("32_2f4sr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -155.00012, 0, -65.12131)
+metadata/road_module = true
+metadata/road_id = "Road10_90angle_Corner"
+metadata/variant = "Road1_B__Road1_Parking2_A"
+metadata/source_pack = "parking"
+
+[node name="Road1_Curve1__Default" type="StaticBody3D" parent="Models" unique_id=948117015 instance=ExtResource("33_66oga")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -99, 0, -67.36389)
+metadata/road_module = true
+metadata/road_id = "Road1_Curve1"
+metadata/variant = "Default"
+metadata/source_pack = "parking"
+
+[node name="Road1_Curve1__Road1_B__Road1_Parking1_B" type="StaticBody3D" parent="Models" unique_id=2022735278 instance=ExtResource("34_xp74x")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -40.99999, 0, -67.36389)
+metadata/road_module = true
+metadata/road_id = "Road1_Curve1"
+metadata/variant = "Road1_B__Road1_Parking1_B"
+metadata/source_pack = "parking"
+
+[node name="Road1_Curve1__Road1_B__Road1_Parking2_B" type="StaticBody3D" parent="Models" unique_id=1425497103 instance=ExtResource("35_buxsj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.00002, 0, -67.36389)
+metadata/road_module = true
+metadata/road_id = "Road1_Curve1"
+metadata/variant = "Road1_B__Road1_Parking2_B"
+metadata/source_pack = "parking"
+
+[node name="Road1_Curve1__Road1_B__Road1_A" type="StaticBody3D" parent="Models" unique_id=1837704315 instance=ExtResource("36_hhhxn")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 75.00002, 0, -67.36389)
+metadata/road_module = true
+metadata/road_id = "Road1_Curve1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "parking"
+
+[node name="Road1_Curve1__Road1_B__Road1_Parking1_A" type="StaticBody3D" parent="Models" unique_id=1095405595 instance=ExtResource("37_fc7ik")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 121.00003, 0, -67.36389)
+metadata/road_module = true
+metadata/road_id = "Road1_Curve1"
+metadata/variant = "Road1_B__Road1_Parking1_A"
+metadata/source_pack = "parking"
+
+[node name="Road1_Curve1__Road1_B__Road1_Parking2_A" type="StaticBody3D" parent="Models" unique_id=1882338549 instance=ExtResource("38_8q8he")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 155.00005, 0, -67.36389)
+metadata/road_module = true
+metadata/road_id = "Road1_Curve1"
+metadata/variant = "Road1_B__Road1_Parking2_A"
+metadata/source_pack = "parking"
+
+[node name="Road1_Curve2__Default" type="StaticBody3D" parent="Models" unique_id=1614596935 instance=ExtResource("39_aaoxo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 187.12137, 0, -73.24257)
+metadata/road_module = true
+metadata/road_id = "Road1_Curve2"
+metadata/variant = "Default"
+metadata/source_pack = "parking"
+
+[node name="Road1_Curve2__Road1_B__Road1_Parking1_B" type="StaticBody3D" parent="Models" unique_id=950623262 instance=ExtResource("40_1e8aj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 221.12138, 0, -73.24257)
+metadata/road_module = true
+metadata/road_id = "Road1_Curve2"
+metadata/variant = "Road1_B__Road1_Parking1_B"
+metadata/source_pack = "parking"
+
+[node name="Road1_Curve2__Road1_B__Road1_Parking2_B" type="StaticBody3D" parent="Models" unique_id=1858396525 instance=ExtResource("41_eat8u")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -216.8787, 0, -30.999928)
+metadata/road_module = true
+metadata/road_id = "Road1_Curve2"
+metadata/variant = "Road1_B__Road1_Parking2_B"
+metadata/source_pack = "parking"
+
+[node name="Road1_Curve2__Road1_B__Road1_A" type="StaticBody3D" parent="Models" unique_id=834921413 instance=ExtResource("42_a76qj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -158.87868, 0, -30.999928)
+metadata/road_module = true
+metadata/road_id = "Road1_Curve2"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "parking"
+
+[node name="Road1_Curve2__Road1_B__Road1_Parking1_A" type="StaticBody3D" parent="Models" unique_id=1861083967 instance=ExtResource("43_pbedi")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -100.87868, 0, -30.999928)
+metadata/road_module = true
+metadata/road_id = "Road1_Curve2"
+metadata/variant = "Road1_B__Road1_Parking1_A"
+metadata/source_pack = "parking"
+
+[node name="Road1_Curve2__Road1_B__Road1_Parking2_A" type="StaticBody3D" parent="Models" unique_id=1444165086 instance=ExtResource("44_32ly8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -42.87867, 0, -30.999928)
+metadata/road_module = true
+metadata/road_id = "Road1_Curve2"
+metadata/variant = "Road1_B__Road1_Parking2_A"
+metadata/source_pack = "parking"
+
+[node name="Road1_Curve3__Default" type="StaticBody3D" parent="Models" unique_id=406856502 instance=ExtResource("45_bgdy0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.000015, 0, -28.878609)
+metadata/road_module = true
+metadata/road_id = "Road1_Curve3"
+metadata/variant = "Default"
+metadata/source_pack = "parking"
+
+[node name="Road1_Curve3__Road1_B__Road1_Parking1_B" type="StaticBody3D" parent="Models" unique_id=1940676589 instance=ExtResource("46_ntd4p")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 71.00002, 0, -28.878609)
+metadata/road_module = true
+metadata/road_id = "Road1_Curve3"
+metadata/variant = "Road1_B__Road1_Parking1_B"
+metadata/source_pack = "parking"
+
+[node name="Road1_Curve3__Road1_B__Road1_Parking2_B" type="StaticBody3D" parent="Models" unique_id=1110977172 instance=ExtResource("47_aowvm")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 117.00003, 0, -28.878609)
+metadata/road_module = true
+metadata/road_id = "Road1_Curve3"
+metadata/variant = "Road1_B__Road1_Parking2_B"
+metadata/source_pack = "parking"
+
+[node name="Road1_Curve3__Road1_B__Road1_A" type="StaticBody3D" parent="Models" unique_id=211620130 instance=ExtResource("48_wtkwp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 151.00003, 0, -28.878609)
+metadata/road_module = true
+metadata/road_id = "Road1_Curve3"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "parking"
+
+[node name="Road1_Curve3__Road1_B__Road1_Parking1_A" type="StaticBody3D" parent="Models" unique_id=1751469052 instance=ExtResource("49_ox2bd")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 185.00005, 0, -28.878609)
+metadata/road_module = true
+metadata/road_id = "Road1_Curve3"
+metadata/variant = "Road1_B__Road1_Parking1_A"
+metadata/source_pack = "parking"
+
+[node name="Road1_Curve3__Road1_B__Road1_Parking2_A" type="StaticBody3D" parent="Models" unique_id=319322117 instance=ExtResource("50_57kc6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 219.00006, 0, -28.878609)
+metadata/road_module = true
+metadata/road_id = "Road1_Curve3"
+metadata/variant = "Road1_B__Road1_Parking2_A"
+metadata/source_pack = "parking"
+
+[node name="Road1_Curve4__Default" type="StaticBody3D" parent="Models" unique_id=1368707602 instance=ExtResource("51_vwv1m")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -231.00002, 0, 11.242706)
+metadata/road_module = true
+metadata/road_id = "Road1_Curve4"
+metadata/variant = "Default"
+metadata/source_pack = "parking"
+
+[node name="Road1_Curve4__Road1_B__Road1_Parking1_B" type="StaticBody3D" parent="Models" unique_id=490102923 instance=ExtResource("52_3yye1")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -173, 0, 11.242706)
+metadata/road_module = true
+metadata/road_id = "Road1_Curve4"
+metadata/variant = "Road1_B__Road1_Parking1_B"
+metadata/source_pack = "parking"
+
+[node name="Road1_Curve4__Road1_B__Road1_Parking2_B" type="StaticBody3D" parent="Models" unique_id=1620047669 instance=ExtResource("53_475qt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -115, 0, 11.242706)
+metadata/road_module = true
+metadata/road_id = "Road1_Curve4"
+metadata/variant = "Road1_B__Road1_Parking2_B"
+metadata/source_pack = "parking"
+
+[node name="Road1_Curve4__Road1_B__Road1_A" type="StaticBody3D" parent="Models" unique_id=252441926 instance=ExtResource("54_5u4h4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -56.999992, 0, 11.242706)
+metadata/road_module = true
+metadata/road_id = "Road1_Curve4"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "parking"
+
+[node name="Road1_Curve4__Road1_B__Road1_Parking1_A" type="StaticBody3D" parent="Models" unique_id=211098822 instance=ExtResource("55_l5g23")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.0000153, 0, 11.242706)
+metadata/road_module = true
+metadata/road_id = "Road1_Curve4"
+metadata/variant = "Road1_B__Road1_Parking1_A"
+metadata/source_pack = "parking"
+
+[node name="Road1_Curve4__Road1_B__Road1_Parking2_A" type="StaticBody3D" parent="Models" unique_id=2056266990 instance=ExtResource("56_l1isc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 59.000023, 0, 11.242706)
+metadata/road_module = true
+metadata/road_id = "Road1_Curve4"
+metadata/variant = "Road1_B__Road1_Parking2_A"
+metadata/source_pack = "parking"
+
+[node name="Road1_Parking1__Default" type="StaticBody3D" parent="Models" unique_id=306247469 instance=ExtResource("57_v4bf5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 123.00004, 0, 29.242704)
+metadata/road_module = true
+metadata/road_id = "Road1_Parking1"
+metadata/variant = "Default"
+metadata/source_pack = "parking"
+
+[node name="Road1_Parking1__Road1_Parking1_B__Road1_B" type="StaticBody3D" parent="Models" unique_id=1886159771 instance=ExtResource("58_5kg62")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 157.00005, 0, 29.242704)
+metadata/road_module = true
+metadata/road_id = "Road1_Parking1"
+metadata/variant = "Road1_Parking1_B__Road1_B"
+metadata/source_pack = "parking"
+
+[node name="Road1_Parking1__Road1_Parking1_B__Road1_Parking2_B" type="StaticBody3D" parent="Models" unique_id=358810955 instance=ExtResource("59_vojco")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 191.00005, 0, 29.242704)
+metadata/road_module = true
+metadata/road_id = "Road1_Parking1"
+metadata/variant = "Road1_Parking1_B__Road1_Parking2_B"
+metadata/source_pack = "parking"
+
+[node name="Road1_Parking1__Road1_Parking1_B__Road1_A" type="StaticBody3D" parent="Models" unique_id=2038270782 instance=ExtResource("60_uqans")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 225.00006, 0, 29.242704)
+metadata/road_module = true
+metadata/road_id = "Road1_Parking1"
+metadata/variant = "Road1_Parking1_B__Road1_A"
+metadata/source_pack = "parking"
+
+[node name="Road1_Parking1__Road1_Parking1_B__Road1_Parking1_A" type="StaticBody3D" parent="Models" unique_id=1719336697 instance=ExtResource("61_i55ch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -213.00002, 0, 73.24271)
+metadata/road_module = true
+metadata/road_id = "Road1_Parking1"
+metadata/variant = "Road1_Parking1_B__Road1_Parking1_A"
+metadata/source_pack = "parking"
+
+[node name="Road1_Parking1__Road1_Parking1_B__Road1_Parking2_A" type="StaticBody3D" parent="Models" unique_id=334618577 instance=ExtResource("62_0un6i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -155, 0, 73.24271)
+metadata/road_module = true
+metadata/road_id = "Road1_Parking1"
+metadata/variant = "Road1_Parking1_B__Road1_Parking2_A"
+metadata/source_pack = "parking"
+
+[node name="Road1_Parking1_Open__Default" type="StaticBody3D" parent="Models" unique_id=2109312969 instance=ExtResource("63_myek1")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -96.99999, 0, 73.24271)
+metadata/road_module = true
+metadata/road_id = "Road1_Parking1_Open"
+metadata/variant = "Default"
+metadata/source_pack = "parking"
+
+[node name="Road1_Parking1_Open__Road1_Parking1_B__Road1_B" type="StaticBody3D" parent="Models" unique_id=311044099 instance=ExtResource("64_afdmk")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.99999, 0, 73.24271)
+metadata/road_module = true
+metadata/road_id = "Road1_Parking1_Open"
+metadata/variant = "Road1_Parking1_B__Road1_B"
+metadata/source_pack = "parking"
+
+[node name="Road1_Parking1_Open__Road1_Parking1_B__Road1_Parking2_B" type="StaticBody3D" parent="Models" unique_id=486932938 instance=ExtResource("65_u5q1n")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.000021, 0, 73.24271)
+metadata/road_module = true
+metadata/road_id = "Road1_Parking1_Open"
+metadata/variant = "Road1_Parking1_B__Road1_Parking2_B"
+metadata/source_pack = "parking"
+
+[node name="Road1_Parking1_Open__Road1_Parking1_B__Road1_A" type="StaticBody3D" parent="Models" unique_id=635041124 instance=ExtResource("66_1m6sr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 77.00003, 0, 73.24271)
+metadata/road_module = true
+metadata/road_id = "Road1_Parking1_Open"
+metadata/variant = "Road1_Parking1_B__Road1_A"
+metadata/source_pack = "parking"
+
+[node name="Road1_Parking1_Open__Road1_Parking1_B__Road1_Parking1_A" type="StaticBody3D" parent="Models" unique_id=84826959 instance=ExtResource("67_i5eqr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 123.00004, 0, 73.24271)
+metadata/road_module = true
+metadata/road_id = "Road1_Parking1_Open"
+metadata/variant = "Road1_Parking1_B__Road1_Parking1_A"
+metadata/source_pack = "parking"
+
+[node name="Road1_Parking1_Open__Road1_Parking1_B__Road1_Parking2_A" type="StaticBody3D" parent="Models" unique_id=1210494425 instance=ExtResource("68_asudo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 157.00005, 0, 73.24271)
+metadata/road_module = true
+metadata/road_id = "Road1_Parking1_Open"
+metadata/variant = "Road1_Parking1_B__Road1_Parking2_A"
+metadata/source_pack = "parking"
+
+[node name="Road1_Parking2__Default" type="StaticBody3D" parent="Models" unique_id=1180740426 instance=ExtResource("69_bn51p")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 191.00005, 0, 73.24271)
+metadata/road_module = true
+metadata/road_id = "Road1_Parking2"
+metadata/variant = "Default"
+metadata/source_pack = "parking"
+
+[node name="Road1_Parking2__Road1_Parking2_B__Road1_B" type="StaticBody3D" parent="Models" unique_id=661594065 instance=ExtResource("70_tcp0q")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 225.00006, 0, 73.24271)
+metadata/road_module = true
+metadata/road_id = "Road1_Parking2"
+metadata/variant = "Road1_Parking2_B__Road1_B"
+metadata/source_pack = "parking"
+
+[node name="Road1_Parking2__Road1_Parking2_B__Road1_Parking1_B" type="StaticBody3D" parent="Models" unique_id=311605392 instance=ExtResource("71_m4vxi")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -213.00002, 0, 99.242714)
+metadata/road_module = true
+metadata/road_id = "Road1_Parking2"
+metadata/variant = "Road1_Parking2_B__Road1_Parking1_B"
+metadata/source_pack = "parking"
+
+[node name="Road1_Parking2__Road1_Parking2_B__Road1_A" type="StaticBody3D" parent="Models" unique_id=2092051382 instance=ExtResource("72_10ux4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -155, 0, 99.242714)
+metadata/road_module = true
+metadata/road_id = "Road1_Parking2"
+metadata/variant = "Road1_Parking2_B__Road1_A"
+metadata/source_pack = "parking"
+
+[node name="Road1_Parking2__Road1_Parking2_B__Road1_Parking1_A" type="StaticBody3D" parent="Models" unique_id=399913582 instance=ExtResource("73_3w013")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -96.99999, 0, 99.242714)
+metadata/road_module = true
+metadata/road_id = "Road1_Parking2"
+metadata/variant = "Road1_Parking2_B__Road1_Parking1_A"
+metadata/source_pack = "parking"
+
+[node name="Road1_Parking2__Road1_Parking2_B__Road1_Parking2_A" type="StaticBody3D" parent="Models" unique_id=1973190489 instance=ExtResource("74_6anon")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.99999, 0, 99.242714)
+metadata/road_module = true
+metadata/road_id = "Road1_Parking2"
+metadata/variant = "Road1_Parking2_B__Road1_Parking2_A"
+metadata/source_pack = "parking"
+
+[node name="Road2_T__Default" type="StaticBody3D" parent="Models" unique_id=1739634554 instance=ExtResource("75_7ib3v")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.000021, 0, 99.242714)
+metadata/road_module = true
+metadata/road_id = "Road2_T"
+metadata/variant = "Default"
+metadata/source_pack = "parking"
+
+[node name="Road2_T__Road2_X_B__Road2_X_A" type="StaticBody3D" parent="Models" unique_id=105701045 instance=ExtResource("76_gpcbs")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 77.00003, 0, 99.242714)
+metadata/road_module = true
+metadata/road_id = "Road2_T"
+metadata/variant = "Road2_X_B__Road2_X_A"
+metadata/source_pack = "parking"
+
+[node name="Road2_T_Parking_Entrance__Default" type="StaticBody3D" parent="Models" unique_id=1969014038 instance=ExtResource("77_nhr12")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 123.00004, 0, 99.242714)
+metadata/road_module = true
+metadata/road_id = "Road2_T_Parking_Entrance"
+metadata/variant = "Default"
+metadata/source_pack = "parking"
+
+[node name="Road2_T_Parking_Entrance_Open__Default" type="StaticBody3D" parent="Models" unique_id=712265668 instance=ExtResource("78_2y1om")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 157.00005, 0, 99.24272)
+metadata/road_module = true
+metadata/road_id = "Road2_T_Parking_Entrance_Open"
+metadata/variant = "Default"
+metadata/source_pack = "parking"
+
+[node name="Road2_X__Default" type="StaticBody3D" parent="Models" unique_id=1712000668 instance=ExtResource("79_5amv5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 191.00005, 0, 99.242714)
+metadata/road_module = true
+metadata/road_id = "Road2_X"
+metadata/variant = "Default"
+metadata/source_pack = "parking"
+
+[node name="Road2_X__Road2_X_B__Road2_X_A" type="StaticBody3D" parent="Models" unique_id=752715549 instance=ExtResource("80_pvelr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 225.00006, 0, 99.242714)
+metadata/road_module = true
+metadata/road_id = "Road2_X"
+metadata/variant = "Road2_X_B__Road2_X_A"
+metadata/source_pack = "parking"
+
+[node name="Road3_Crossing__Default" type="StaticBody3D" parent="Models" unique_id=914542844 instance=ExtResource("81_dos4b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -213.00002, 0, 125.24273)
+metadata/road_module = true
+metadata/road_id = "Road3_Crossing"
+metadata/variant = "Default"
+metadata/source_pack = "parking"
+
+[node name="Road4_Shoulder_Extender__Default" type="StaticBody3D" parent="Models" unique_id=1302790466 instance=ExtResource("82_d2ups")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -156.73273, 0, 125.24273)
+metadata/road_module = true
+metadata/road_id = "Road4_Shoulder_Extender"
+metadata/variant = "Default"
+metadata/source_pack = "parking"
+
+[node name="Road4_Shoulder_Narrower__Default" type="StaticBody3D" parent="Models" unique_id=1278119955 instance=ExtResource("83_aaxx1")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -98.73272, 0, 125.24273)
+metadata/road_module = true
+metadata/road_id = "Road4_Shoulder_Narrower"
+metadata/variant = "Default"
+metadata/source_pack = "parking"
+
+[node name="Road5_Shoulder1__Default" type="StaticBody3D" parent="Models" unique_id=1862246224 instance=ExtResource("84_g11di")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -40.73271, 0, 125.24273)
+metadata/road_module = true
+metadata/road_id = "Road5_Shoulder1"
+metadata/variant = "Default"
+metadata/source_pack = "parking"
+
+[node name="Road5_Shoulder3__Default" type="StaticBody3D" parent="Models" unique_id=1080429263 instance=ExtResource("85_k13x7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.267296, 0, 125.24273)
+metadata/road_module = true
+metadata/road_id = "Road5_Shoulder3"
+metadata/variant = "Default"
+metadata/source_pack = "parking"
+
+[node name="Road6_CornerL__Default" type="StaticBody3D" parent="Models" unique_id=812172871 instance=ExtResource("86_51h7k")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 77.00002, 0, 125.24273)
+metadata/road_module = true
+metadata/road_id = "Road6_CornerL"
+metadata/variant = "Default"
+metadata/source_pack = "parking"
+
+[node name="Road6_CornerL__Road6_B__Road6_A" type="StaticBody3D" parent="Models" unique_id=1487623220 instance=ExtResource("87_2g0oo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 123.00003, 0, 125.24273)
+metadata/road_module = true
+metadata/road_id = "Road6_CornerL"
+metadata/variant = "Road6_B__Road6_A"
+metadata/source_pack = "parking"
+
+[node name="Road6_CornerR__Default" type="StaticBody3D" parent="Models" unique_id=261417521 instance=ExtResource("88_groio")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 157.00005, 0, 125.24273)
+metadata/road_module = true
+metadata/road_id = "Road6_CornerR"
+metadata/variant = "Default"
+metadata/source_pack = "parking"
+
+[node name="Road6_CornerR__Road6_B__Road6_A" type="StaticBody3D" parent="Models" unique_id=190544000 instance=ExtResource("89_nfvf8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 191.00005, 0, 125.24273)
+metadata/road_module = true
+metadata/road_id = "Road6_CornerR"
+metadata/variant = "Road6_B__Road6_A"
+metadata/source_pack = "parking"
+
+[node name="Road6_End__Default" type="StaticBody3D" parent="Models" unique_id=1769864517 instance=ExtResource("90_7nnon")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 225.00006, 0, 125.24273)
+metadata/road_module = true
+metadata/road_id = "Road6_End"
+metadata/variant = "Default"
+metadata/source_pack = "parking"
+
+[node name="Road6_End__Road6_B__Road6_A" type="StaticBody3D" parent="Models" unique_id=437479308 instance=ExtResource("91_hichv")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -213.00002, 0, 151.24274)
+metadata/road_module = true
+metadata/road_id = "Road6_End"
+metadata/variant = "Road6_B__Road6_A"
+metadata/source_pack = "parking"
+
+[node name="Road7__Default" type="StaticBody3D" parent="Models" unique_id=1365353397 instance=ExtResource("92_x5w55")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -155, 0, 151.24274)
+metadata/road_module = true
+metadata/road_id = "Road7"
+metadata/variant = "Default"
+metadata/source_pack = "parking"
+
+[node name="Road8__Default" type="StaticBody3D" parent="Models" unique_id=2016551885 instance=ExtResource("93_ovhfr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -96.99999, 0, 151.24274)
+metadata/road_module = true
+metadata/road_id = "Road8"
+metadata/variant = "Default"
+metadata/source_pack = "parking"
+
+[node name="Road9__Default" type="StaticBody3D" parent="Models" unique_id=1389519136 instance=ExtResource("94_fkoya")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.99999, 0, 151.24274)
+metadata/road_module = true
+metadata/road_id = "Road9"
+metadata/variant = "Default"
+metadata/source_pack = "parking"
+
+[node name="Tree3__Default" type="StaticBody3D" parent="Models" unique_id=539588320 instance=ExtResource("95_4am7o")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.003242, 0, 151.27061)
+metadata/road_module = true
+metadata/road_id = "Tree3"
+metadata/variant = "Default"
+metadata/source_pack = "parking"
+
+[node name="Tree4__Default" type="StaticBody3D" parent="Models" unique_id=1960252751 instance=ExtResource("96_3smj4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 76.952065, 0, 151.24371)
+metadata/road_module = true
+metadata/road_id = "Tree4"
+metadata/variant = "Default"
+metadata/source_pack = "parking"
+
+[node name="WasteBin1__Default" type="StaticBody3D" parent="Models" unique_id=112234313 instance=ExtResource("97_7r7i3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 123.000015, 0, 151.23294)
+metadata/road_module = true
+metadata/road_id = "WasteBin1"
+metadata/variant = "Default"
+metadata/source_pack = "parking"
+
+[node name="Road5_Shoulder2__Default" type="StaticBody3D" parent="Models" unique_id=1023219084 instance=ExtResource("98_dg7bq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 155.26732, 0, 151.24274)
+metadata/road_module = true
+metadata/road_id = "Road5_Shoulder2"
+metadata/variant = "Default"
+metadata/source_pack = "parking"
+
+[node name="Labels" type="Node3D" parent="." unique_id=1664306471]
+
+[node name="Label_0" type="Label3D" parent="Labels" unique_id=1826908972]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -213.00002, 0.2, -141.2427)
+pixel_size = 0.04
+text = "bilboard1
+Default"
+
+[node name="Label_1" type="Label3D" parent="Labels" unique_id=1776930541]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -155, 0.2, -141.2427)
+pixel_size = 0.04
+text = "BusStop1
+Default"
+
+[node name="Label_2" type="Label3D" parent="Labels" unique_id=966430901]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -97, 0.2, -141.2427)
+pixel_size = 0.04
+text = "collumn1_corner
+Default"
+
+[node name="Label_3" type="Label3D" parent="Labels" unique_id=697108703]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -38.99999, 0.2, -141.2427)
+pixel_size = 0.04
+text = "collumn1_corner_top
+Default"
+
+[node name="Label_4" type="Label3D" parent="Labels" unique_id=1095121396]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 19.00002, 0.2, -141.2427)
+pixel_size = 0.04
+text = "GrassMedian1
+Default"
+
+[node name="Label_5" type="Label3D" parent="Labels" unique_id=586329860]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 77.00003, 0.2, -141.2427)
+pixel_size = 0.04
+text = "GrassMedian2
+Default"
+
+[node name="Label_6" type="Label3D" parent="Labels" unique_id=438921753]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 123.00003, 0.2, -141.2427)
+pixel_size = 0.04
+text = "GrassMedian3
+Default"
+
+[node name="Label_7" type="Label3D" parent="Labels" unique_id=98785412]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 157.00005, 0.2, -141.2427)
+pixel_size = 0.04
+text = "ParkingBooth1
+Default"
+
+[node name="Label_8" type="Label3D" parent="Labels" unique_id=303288189]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 191.00005, 0.2, -141.2427)
+pixel_size = 0.04
+text = "parkinghouse_roof1
+Default"
+
+[node name="Label_9" type="Label3D" parent="Labels" unique_id=1319861870]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 225.00006, 0.2, -141.2427)
+pixel_size = 0.04
+text = "parkinghouse_segment1
+Default"
+
+[node name="Label_10" type="Label3D" parent="Labels" unique_id=1716415895]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -213.00002, 0.2, -115.24269)
+pixel_size = 0.04
+text = "parkinghouse_segment1_top
+Default"
+
+[node name="Label_11" type="Label3D" parent="Labels" unique_id=467259243]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -155, 0.2, -115.24269)
+pixel_size = 0.04
+text = "ParkingMachine1
+Default"
+
+[node name="Label_12" type="Label3D" parent="Labels" unique_id=1069226812]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -97, 0.2, -115.24269)
+pixel_size = 0.04
+text = "ParkingRamp1
+Default"
+
+[node name="Label_13" type="Label3D" parent="Labels" unique_id=1559920678]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -38.99999, 0.2, -115.24269)
+pixel_size = 0.04
+text = "ramp1
+Default"
+
+[node name="Label_14" type="Label3D" parent="Labels" unique_id=2062529701]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 19.00002, 0.2, -115.24269)
+pixel_size = 0.04
+text = "ramp1
+Road1_B__Road1_Parking1_B"
+
+[node name="Label_15" type="Label3D" parent="Labels" unique_id=880007784]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 77.00003, 0.2, -115.24269)
+pixel_size = 0.04
+text = "ramp1
+Road1_B__Road1_Parking2_B"
+
+[node name="Label_16" type="Label3D" parent="Labels" unique_id=1008394360]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 123.00003, 0.2, -115.24269)
+pixel_size = 0.04
+text = "ramp1
+Road1_B__Road1_A"
+
+[node name="Label_17" type="Label3D" parent="Labels" unique_id=1193454187]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 157.00005, 0.2, -115.24269)
+pixel_size = 0.04
+text = "ramp1
+Road1_B__Road1_Parking1_A"
+
+[node name="Label_18" type="Label3D" parent="Labels" unique_id=170569668]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 191.00005, 0.2, -115.24269)
+pixel_size = 0.04
+text = "ramp1
+Road1_B__Road1_Parking2_A"
+
+[node name="Label_19" type="Label3D" parent="Labels" unique_id=1514817940]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 225.00006, 0.2, -115.24269)
+pixel_size = 0.04
+text = "Retarder1
+Default"
+
+[node name="Label_20" type="Label3D" parent="Labels" unique_id=42956804]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -213.00002, 0.2, -89.24257)
+pixel_size = 0.04
+text = "Road1
+Default"
+
+[node name="Label_21" type="Label3D" parent="Labels" unique_id=1645938381]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -155, 0.2, -89.24257)
+pixel_size = 0.04
+text = "Road1
+Road1_B__Road1_Parking1_B"
+
+[node name="Label_22" type="Label3D" parent="Labels" unique_id=974971335]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -97, 0.2, -89.24257)
+pixel_size = 0.04
+text = "Road1
+Road1_B__Road1_Parking2_B"
+
+[node name="Label_23" type="Label3D" parent="Labels" unique_id=324985183]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -38.99999, 0.2, -89.24257)
+pixel_size = 0.04
+text = "Road1
+Road1_B__Road1_A"
+
+[node name="Label_24" type="Label3D" parent="Labels" unique_id=842788453]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 19.00002, 0.2, -89.24257)
+pixel_size = 0.04
+text = "Road1
+Road1_B__Road1_Parking1_A"
+
+[node name="Label_25" type="Label3D" parent="Labels" unique_id=75720467]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 77.00003, 0.2, -89.24257)
+pixel_size = 0.04
+text = "Road1
+Road1_B__Road1_Parking2_A"
+
+[node name="Label_26" type="Label3D" parent="Labels" unique_id=1485924104]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 123.00003, 0.2, -89.24257)
+pixel_size = 0.04
+text = "Road10_90angle_Corner
+Default"
+
+[node name="Label_27" type="Label3D" parent="Labels" unique_id=597920170]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 157.00005, 0.2, -89.24257)
+pixel_size = 0.04
+text = "Road10_90angle_Corner
+Road1_B__Road1_Parking1_B"
+
+[node name="Label_28" type="Label3D" parent="Labels" unique_id=833440168]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 191.00005, 0.2, -89.24257)
+pixel_size = 0.04
+text = "Road10_90angle_Corner
+Road1_B__Road1_Parking2_B"
+
+[node name="Label_29" type="Label3D" parent="Labels" unique_id=301689130]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 225.00006, 0.2, -89.24257)
+pixel_size = 0.04
+text = "Road10_90angle_Corner
+Road1_B__Road1_A"
+
+[node name="Label_30" type="Label3D" parent="Labels" unique_id=1524768861]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -213.00002, 0.2, -46.99993)
+pixel_size = 0.04
+text = "Road10_90angle_Corner
+Road1_B__Road1_Parking1_A"
+
+[node name="Label_31" type="Label3D" parent="Labels" unique_id=1235459219]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -155, 0.2, -46.99993)
+pixel_size = 0.04
+text = "Road10_90angle_Corner
+Road1_B__Road1_Parking2_A"
+
+[node name="Label_32" type="Label3D" parent="Labels" unique_id=1131713837]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -97, 0.2, -46.99993)
+pixel_size = 0.04
+text = "Road1_Curve1
+Default"
+
+[node name="Label_33" type="Label3D" parent="Labels" unique_id=254964606]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -38.99999, 0.2, -46.99993)
+pixel_size = 0.04
+text = "Road1_Curve1
+Road1_B__Road1_Parking1_B"
+
+[node name="Label_34" type="Label3D" parent="Labels" unique_id=1795673714]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 19.00002, 0.2, -46.99993)
+pixel_size = 0.04
+text = "Road1_Curve1
+Road1_B__Road1_Parking2_B"
+
+[node name="Label_35" type="Label3D" parent="Labels" unique_id=169654155]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 77.00003, 0.2, -46.99993)
+pixel_size = 0.04
+text = "Road1_Curve1
+Road1_B__Road1_A"
+
+[node name="Label_36" type="Label3D" parent="Labels" unique_id=1043528817]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 123.00003, 0.2, -46.99993)
+pixel_size = 0.04
+text = "Road1_Curve1
+Road1_B__Road1_Parking1_A"
+
+[node name="Label_37" type="Label3D" parent="Labels" unique_id=2127994401]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 157.00005, 0.2, -46.99993)
+pixel_size = 0.04
+text = "Road1_Curve1
+Road1_B__Road1_Parking2_A"
+
+[node name="Label_38" type="Label3D" parent="Labels" unique_id=1478563827]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 191.00005, 0.2, -46.99993)
+pixel_size = 0.04
+text = "Road1_Curve2
+Default"
+
+[node name="Label_39" type="Label3D" parent="Labels" unique_id=705250777]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 225.00006, 0.2, -46.99993)
+pixel_size = 0.04
+text = "Road1_Curve2
+Road1_B__Road1_Parking1_B"
+
+[node name="Label_40" type="Label3D" parent="Labels" unique_id=1602280070]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -213.00002, 0.2, -4.757292)
+pixel_size = 0.04
+text = "Road1_Curve2
+Road1_B__Road1_Parking2_B"
+
+[node name="Label_41" type="Label3D" parent="Labels" unique_id=1656838247]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -155, 0.2, -4.757292)
+pixel_size = 0.04
+text = "Road1_Curve2
+Road1_B__Road1_A"
+
+[node name="Label_42" type="Label3D" parent="Labels" unique_id=1457697224]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -97, 0.2, -4.757292)
+pixel_size = 0.04
+text = "Road1_Curve2
+Road1_B__Road1_Parking1_A"
+
+[node name="Label_43" type="Label3D" parent="Labels" unique_id=146203556]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -38.99999, 0.2, -4.757292)
+pixel_size = 0.04
+text = "Road1_Curve2
+Road1_B__Road1_Parking2_A"
+
+[node name="Label_44" type="Label3D" parent="Labels" unique_id=567665625]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 19.00002, 0.2, -4.757292)
+pixel_size = 0.04
+text = "Road1_Curve3
+Default"
+
+[node name="Label_45" type="Label3D" parent="Labels" unique_id=1914289567]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 77.00003, 0.2, -4.757292)
+pixel_size = 0.04
+text = "Road1_Curve3
+Road1_B__Road1_Parking1_B"
+
+[node name="Label_46" type="Label3D" parent="Labels" unique_id=1976484911]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 123.00003, 0.2, -4.757292)
+pixel_size = 0.04
+text = "Road1_Curve3
+Road1_B__Road1_Parking2_B"
+
+[node name="Label_47" type="Label3D" parent="Labels" unique_id=1996175895]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 157.00005, 0.2, -4.757292)
+pixel_size = 0.04
+text = "Road1_Curve3
+Road1_B__Road1_A"
+
+[node name="Label_48" type="Label3D" parent="Labels" unique_id=1807002172]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 191.00005, 0.2, -4.757292)
+pixel_size = 0.04
+text = "Road1_Curve3
+Road1_B__Road1_Parking1_A"
+
+[node name="Label_49" type="Label3D" parent="Labels" unique_id=2010847670]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 225.00006, 0.2, -4.757292)
+pixel_size = 0.04
+text = "Road1_Curve3
+Road1_B__Road1_Parking2_A"
+
+[node name="Label_50" type="Label3D" parent="Labels" unique_id=2026946332]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -213.00002, 0.2, 57.2427)
+pixel_size = 0.04
+text = "Road1_Curve4
+Default"
+
+[node name="Label_51" type="Label3D" parent="Labels" unique_id=482236832]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -155, 0.2, 57.2427)
+pixel_size = 0.04
+text = "Road1_Curve4
+Road1_B__Road1_Parking1_B"
+
+[node name="Label_52" type="Label3D" parent="Labels" unique_id=567139497]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -97, 0.2, 57.2427)
+pixel_size = 0.04
+text = "Road1_Curve4
+Road1_B__Road1_Parking2_B"
+
+[node name="Label_53" type="Label3D" parent="Labels" unique_id=381363026]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -38.99999, 0.2, 57.2427)
+pixel_size = 0.04
+text = "Road1_Curve4
+Road1_B__Road1_A"
+
+[node name="Label_54" type="Label3D" parent="Labels" unique_id=749065495]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 19.00002, 0.2, 57.2427)
+pixel_size = 0.04
+text = "Road1_Curve4
+Road1_B__Road1_Parking1_A"
+
+[node name="Label_55" type="Label3D" parent="Labels" unique_id=852218391]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 77.00003, 0.2, 57.2427)
+pixel_size = 0.04
+text = "Road1_Curve4
+Road1_B__Road1_Parking2_A"
+
+[node name="Label_56" type="Label3D" parent="Labels" unique_id=1243798921]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 123.00003, 0.2, 57.2427)
+pixel_size = 0.04
+text = "Road1_Parking1
+Default"
+
+[node name="Label_57" type="Label3D" parent="Labels" unique_id=1362118864]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 157.00005, 0.2, 57.2427)
+pixel_size = 0.04
+text = "Road1_Parking1
+Road1_Parking1_B__Road1_B"
+
+[node name="Label_58" type="Label3D" parent="Labels" unique_id=200397158]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 191.00005, 0.2, 57.2427)
+pixel_size = 0.04
+text = "Road1_Parking1
+Road1_Parking1_B__Road1_Parking2_B"
+
+[node name="Label_59" type="Label3D" parent="Labels" unique_id=424707099]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 225.00006, 0.2, 57.2427)
+pixel_size = 0.04
+text = "Road1_Parking1
+Road1_Parking1_B__Road1_A"
+
+[node name="Label_60" type="Label3D" parent="Labels" unique_id=1713198422]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -213.00002, 0.2, 83.24271)
+pixel_size = 0.04
+text = "Road1_Parking1
+Road1_Parking1_B__Road1_Parking1_A"
+
+[node name="Label_61" type="Label3D" parent="Labels" unique_id=618028208]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -155, 0.2, 83.24271)
+pixel_size = 0.04
+text = "Road1_Parking1
+Road1_Parking1_B__Road1_Parking2_A"
+
+[node name="Label_62" type="Label3D" parent="Labels" unique_id=1926854890]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -97, 0.2, 83.24271)
+pixel_size = 0.04
+text = "Road1_Parking1_Open
+Default"
+
+[node name="Label_63" type="Label3D" parent="Labels" unique_id=1286844014]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -38.99999, 0.2, 83.24271)
+pixel_size = 0.04
+text = "Road1_Parking1_Open
+Road1_Parking1_B__Road1_B"
+
+[node name="Label_64" type="Label3D" parent="Labels" unique_id=1758115714]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 19.00002, 0.2, 83.24271)
+pixel_size = 0.04
+text = "Road1_Parking1_Open
+Road1_Parking1_B__Road1_Parking2_B"
+
+[node name="Label_65" type="Label3D" parent="Labels" unique_id=1654544318]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 77.00003, 0.2, 83.24271)
+pixel_size = 0.04
+text = "Road1_Parking1_Open
+Road1_Parking1_B__Road1_A"
+
+[node name="Label_66" type="Label3D" parent="Labels" unique_id=1663021976]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 123.00003, 0.2, 83.24271)
+pixel_size = 0.04
+text = "Road1_Parking1_Open
+Road1_Parking1_B__Road1_Parking1_A"
+
+[node name="Label_67" type="Label3D" parent="Labels" unique_id=73672057]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 157.00005, 0.2, 83.24271)
+pixel_size = 0.04
+text = "Road1_Parking1_Open
+Road1_Parking1_B__Road1_Parking2_A"
+
+[node name="Label_68" type="Label3D" parent="Labels" unique_id=1625555150]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 191.00005, 0.2, 83.24271)
+pixel_size = 0.04
+text = "Road1_Parking2
+Default"
+
+[node name="Label_69" type="Label3D" parent="Labels" unique_id=1124823669]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 225.00006, 0.2, 83.24271)
+pixel_size = 0.04
+text = "Road1_Parking2
+Road1_Parking2_B__Road1_B"
+
+[node name="Label_70" type="Label3D" parent="Labels" unique_id=1296460701]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -213.00002, 0.2, 109.24272)
+pixel_size = 0.04
+text = "Road1_Parking2
+Road1_Parking2_B__Road1_Parking1_B"
+
+[node name="Label_71" type="Label3D" parent="Labels" unique_id=1196249949]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -155, 0.2, 109.24272)
+pixel_size = 0.04
+text = "Road1_Parking2
+Road1_Parking2_B__Road1_A"
+
+[node name="Label_72" type="Label3D" parent="Labels" unique_id=1707267016]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -97, 0.2, 109.24272)
+pixel_size = 0.04
+text = "Road1_Parking2
+Road1_Parking2_B__Road1_Parking1_A"
+
+[node name="Label_73" type="Label3D" parent="Labels" unique_id=1390792917]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -38.99999, 0.2, 109.24272)
+pixel_size = 0.04
+text = "Road1_Parking2
+Road1_Parking2_B__Road1_Parking2_A"
+
+[node name="Label_74" type="Label3D" parent="Labels" unique_id=1633705518]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 19.00002, 0.2, 109.24272)
+pixel_size = 0.04
+text = "Road2_T
+Default"
+
+[node name="Label_75" type="Label3D" parent="Labels" unique_id=163118448]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 77.00003, 0.2, 109.24272)
+pixel_size = 0.04
+text = "Road2_T
+Road2_X_B__Road2_X_A"
+
+[node name="Label_76" type="Label3D" parent="Labels" unique_id=532291629]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 123.00003, 0.2, 109.24272)
+pixel_size = 0.04
+text = "Road2_T_Parking_Entrance
+Default"
+
+[node name="Label_77" type="Label3D" parent="Labels" unique_id=174062386]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 157.00005, 0.2, 109.24272)
+pixel_size = 0.04
+text = "Road2_T_Parking_Entrance_Open
+Default"
+
+[node name="Label_78" type="Label3D" parent="Labels" unique_id=1774393961]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 191.00005, 0.2, 109.24272)
+pixel_size = 0.04
+text = "Road2_X
+Default"
+
+[node name="Label_79" type="Label3D" parent="Labels" unique_id=1936592316]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 225.00006, 0.2, 109.24272)
+pixel_size = 0.04
+text = "Road2_X
+Road2_X_B__Road2_X_A"
+
+[node name="Label_80" type="Label3D" parent="Labels" unique_id=1586409737]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -213.00002, 0.2, 135.24274)
+pixel_size = 0.04
+text = "Road3_Crossing
+Default"
+
+[node name="Label_81" type="Label3D" parent="Labels" unique_id=834606444]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -155, 0.2, 135.24274)
+pixel_size = 0.04
+text = "Road4_Shoulder_Extender
+Default"
+
+[node name="Label_82" type="Label3D" parent="Labels" unique_id=1153629731]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -97, 0.2, 135.24274)
+pixel_size = 0.04
+text = "Road4_Shoulder_Narrower
+Default"
+
+[node name="Label_83" type="Label3D" parent="Labels" unique_id=1900771707]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -38.99999, 0.2, 135.24274)
+pixel_size = 0.04
+text = "Road5_Shoulder1
+Default"
+
+[node name="Label_84" type="Label3D" parent="Labels" unique_id=2127603341]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 19.00002, 0.2, 135.24274)
+pixel_size = 0.04
+text = "Road5_Shoulder3
+Default"
+
+[node name="Label_85" type="Label3D" parent="Labels" unique_id=1039195347]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 77.00003, 0.2, 135.24274)
+pixel_size = 0.04
+text = "Road6_CornerL
+Default"
+
+[node name="Label_86" type="Label3D" parent="Labels" unique_id=850491958]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 123.00003, 0.2, 135.24274)
+pixel_size = 0.04
+text = "Road6_CornerL
+Road6_B__Road6_A"
+
+[node name="Label_87" type="Label3D" parent="Labels" unique_id=1539474139]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 157.00005, 0.2, 135.24274)
+pixel_size = 0.04
+text = "Road6_CornerR
+Default"
+
+[node name="Label_88" type="Label3D" parent="Labels" unique_id=1570394511]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 191.00005, 0.2, 135.24274)
+pixel_size = 0.04
+text = "Road6_CornerR
+Road6_B__Road6_A"
+
+[node name="Label_89" type="Label3D" parent="Labels" unique_id=1444759316]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 225.00006, 0.2, 135.24274)
+pixel_size = 0.04
+text = "Road6_End
+Default"
+
+[node name="Label_90" type="Label3D" parent="Labels" unique_id=1107394165]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -213.00002, 0.2, 161.24274)
+pixel_size = 0.04
+text = "Road6_End
+Road6_B__Road6_A"
+
+[node name="Label_91" type="Label3D" parent="Labels" unique_id=138405197]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -155, 0.2, 161.24274)
+pixel_size = 0.04
+text = "Road7
+Default"
+
+[node name="Label_92" type="Label3D" parent="Labels" unique_id=485174193]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -97, 0.2, 161.24274)
+pixel_size = 0.04
+text = "Road8
+Default"
+
+[node name="Label_93" type="Label3D" parent="Labels" unique_id=596832730]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -38.99999, 0.2, 161.24274)
+pixel_size = 0.04
+text = "Road9
+Default"
+
+[node name="Label_94" type="Label3D" parent="Labels" unique_id=1471856776]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 19.00002, 0.2, 161.24274)
+pixel_size = 0.04
+text = "Tree3
+Default"
+
+[node name="Label_95" type="Label3D" parent="Labels" unique_id=422196495]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 77.00003, 0.2, 161.24274)
+pixel_size = 0.04
+text = "Tree4
+Default"
+
+[node name="Label_96" type="Label3D" parent="Labels" unique_id=1597867076]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 123.00003, 0.2, 161.24274)
+pixel_size = 0.04
+text = "WasteBin1
+Default"
+
+[node name="Label_97" type="Label3D" parent="Labels" unique_id=1682583891]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 157.00005, 0.2, 161.24274)
+pixel_size = 0.04
+text = "Road5_Shoulder2
+Default"
+
+[node name="PreviewCamera" type="Camera3D" parent="." unique_id=588383887]
+transform = Transform3D(1, 0, 0, 0, 0.41036466, 0.91192144, 0, -0.91192144, 0.41036466, 0, 484.00003, 217.80002)
+projection = 1
+current = true
+size = 532.4
+
+[node name="Sun" type="DirectionalLight3D" parent="." unique_id=1353371001]
+transform = Transform3D(0.90630776, 0.34618863, -0.24240388, 0, 0.57357645, 0.81915206, 0.42261827, -0.74240386, 0.5198368, 0, 0, 0)
+light_energy = 1.1
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=53220561]
+environment = SubResource("Environment_1hj6m")
+
+[node name="PreviewFloor" type="MeshInstance3D" parent="." unique_id=1009016359]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.08, 0)
+material_override = SubResource("StandardMaterial3D_yyjyd")
+mesh = SubResource("PlaneMesh_g1vbx")

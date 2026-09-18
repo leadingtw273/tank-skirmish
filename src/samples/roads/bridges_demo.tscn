@@ -1,0 +1,361 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://src/world/roads/items/bridges/Bridge1/Default.tscn" id="1_sbrvg"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/bridges/Bridge1Arch1/Default.tscn" id="2_0f71n"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/bridges/Bridge1ArchExtender1/Default.tscn" id="3_un17i"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/bridges/Bridge1Ramp1/Default.tscn" id="4_7a73i"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/bridges/Bridge1Ramp2/Default.tscn" id="5_r4vb8"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/bridges/Bridge2Beam0/Default.tscn" id="6_0xd6n"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/bridges/Bridge2Beam1/Default.tscn" id="7_stm82"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/bridges/Bridge2Beam3/Default.tscn" id="8_buch7"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/bridges/Bridge3/Default.tscn" id="9_tlssd"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/bridges/Bridge3Beam0/Default.tscn" id="10_sesq6"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/bridges/Bridge3Beam0End/Default.tscn" id="11_apkag"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/bridges/Bridge3Beam0Middle/Default.tscn" id="12_k7lgc"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/bridges/Bridge3Beam1/Default.tscn" id="13_gft12"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/bridges/Bridge3Beam2/Default.tscn" id="14_vel7d"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/bridges/Bridge3Start/Default.tscn" id="15_j8rgb"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/bridges/Bridge4/Default.tscn" id="16_r86tb"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/bridges/Bridge4Arch1/Default.tscn" id="17_bmyyx"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/bridges/Bridge5Arch1/Default.tscn" id="18_sdqqt"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/bridges/Bridge5ArchExtender1/Default.tscn" id="19_dwq66"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/bridges/Bridge6/Default.tscn" id="20_ydvrn"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/bridges/BridgeSuspension1/Default.tscn" id="21_ghwdt"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/bridges/Road1Ramp1/Default.tscn" id="22_c80m3"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/bridges/Road1Ramp2/Default.tscn" id="23_wg5ed"]
+
+[sub_resource type="Environment" id="Environment_0f4x2"]
+background_mode = 1
+background_color = Color(0.11, 0.13, 0.16, 1)
+ambient_light_source = 2
+ambient_light_color = Color(1, 1, 1, 1)
+ambient_light_energy = 0.65
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_a60p0"]
+albedo_color = Color(0.29, 0.31, 0.34, 1)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_d06td"]
+size = Vector2(159.31128, 256.51367)
+
+[node name="bridges_demo" type="Node3D" unique_id=683483070]
+
+[node name="Models" type="Node3D" parent="." unique_id=339822640]
+
+[node name="Bridge1__Default" type="StaticBody3D" parent="Models" unique_id=311966779 instance=ExtResource("1_sbrvg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -56.873344, 0, -109.25683)
+metadata/road_module = true
+metadata/road_id = "Bridge1"
+metadata/variant = "Default"
+metadata/source_pack = "bridges"
+
+[node name="Bridge1Arch1__Default" type="StaticBody3D" parent="Models" unique_id=682180149 instance=ExtResource("2_0f71n")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25.175137, 0, -109.256836)
+metadata/road_module = true
+metadata/road_id = "Bridge1Arch1"
+metadata/variant = "Default"
+metadata/source_pack = "bridges"
+
+[node name="Bridge1ArchExtender1__Default" type="StaticBody3D" parent="Models" unique_id=272824784 instance=ExtResource("3_un17i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.816424, 0, -109.256836)
+metadata/road_module = true
+metadata/road_id = "Bridge1ArchExtender1"
+metadata/variant = "Default"
+metadata/source_pack = "bridges"
+
+[node name="Bridge1Ramp1__Default" type="StaticBody3D" parent="Models" unique_id=655628431 instance=ExtResource("4_7a73i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30.857935, 0, -109.256836)
+metadata/road_module = true
+metadata/road_id = "Bridge1Ramp1"
+metadata/variant = "Default"
+metadata/source_pack = "bridges"
+
+[node name="Bridge1Ramp2__Default" type="StaticBody3D" parent="Models" unique_id=2106276894 instance=ExtResource("5_r4vb8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 58.73972, 0, -109.256836)
+metadata/road_module = true
+metadata/road_id = "Bridge1Ramp2"
+metadata/variant = "Default"
+metadata/source_pack = "bridges"
+
+[node name="Bridge2Beam0__Default" type="StaticBody3D" parent="Models" unique_id=1829389578 instance=ExtResource("6_0xd6n")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -56.873344, 0, -83.20405)
+metadata/road_module = true
+metadata/road_id = "Bridge2Beam0"
+metadata/variant = "Default"
+metadata/source_pack = "bridges"
+
+[node name="Bridge2Beam1__Default" type="StaticBody3D" parent="Models" unique_id=1086397794 instance=ExtResource("7_stm82")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25.175137, 0, -83.20407)
+metadata/road_module = true
+metadata/road_id = "Bridge2Beam1"
+metadata/variant = "Default"
+metadata/source_pack = "bridges"
+
+[node name="Bridge2Beam3__Default" type="StaticBody3D" parent="Models" unique_id=392324171 instance=ExtResource("8_buch7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.8164244, 0, -83.23189)
+metadata/road_module = true
+metadata/road_id = "Bridge2Beam3"
+metadata/variant = "Default"
+metadata/source_pack = "bridges"
+
+[node name="Bridge3__Default" type="StaticBody3D" parent="Models" unique_id=934477346 instance=ExtResource("9_tlssd")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30.857935, 0, -83.20407)
+metadata/road_module = true
+metadata/road_id = "Bridge3"
+metadata/variant = "Default"
+metadata/source_pack = "bridges"
+
+[node name="Bridge3Beam0__Default" type="StaticBody3D" parent="Models" unique_id=1995861377 instance=ExtResource("10_sesq6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 58.739723, 0, -83.20406)
+metadata/road_module = true
+metadata/road_id = "Bridge3Beam0"
+metadata/variant = "Default"
+metadata/source_pack = "bridges"
+
+[node name="Bridge3Beam0End__Default" type="StaticBody3D" parent="Models" unique_id=1253223401 instance=ExtResource("11_apkag")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -56.873344, 0, -57.12616)
+metadata/road_module = true
+metadata/road_id = "Bridge3Beam0End"
+metadata/variant = "Default"
+metadata/source_pack = "bridges"
+
+[node name="Bridge3Beam0Middle__Default" type="StaticBody3D" parent="Models" unique_id=1682856855 instance=ExtResource("12_k7lgc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25.175137, 0, -57.151318)
+metadata/road_module = true
+metadata/road_id = "Bridge3Beam0Middle"
+metadata/variant = "Default"
+metadata/source_pack = "bridges"
+
+[node name="Bridge3Beam1__Default" type="StaticBody3D" parent="Models" unique_id=1950332069 instance=ExtResource("13_gft12")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.8164234, 0, -57.151306)
+metadata/road_module = true
+metadata/road_id = "Bridge3Beam1"
+metadata/variant = "Default"
+metadata/source_pack = "bridges"
+
+[node name="Bridge3Beam2__Default" type="StaticBody3D" parent="Models" unique_id=696886574 instance=ExtResource("14_vel7d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30.857935, 0, -57.151318)
+metadata/road_module = true
+metadata/road_id = "Bridge3Beam2"
+metadata/variant = "Default"
+metadata/source_pack = "bridges"
+
+[node name="Bridge3Start__Default" type="StaticBody3D" parent="Models" unique_id=1166006845 instance=ExtResource("15_j8rgb")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 58.73972, 0, -57.151318)
+metadata/road_module = true
+metadata/road_id = "Bridge3Start"
+metadata/variant = "Default"
+metadata/source_pack = "bridges"
+
+[node name="Bridge4__Default" type="StaticBody3D" parent="Models" unique_id=11120750 instance=ExtResource("16_r86tb")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -56.873344, 0, -1.1512895)
+metadata/road_module = true
+metadata/road_id = "Bridge4"
+metadata/variant = "Default"
+metadata/source_pack = "bridges"
+
+[node name="Bridge4Arch1__Default" type="StaticBody3D" parent="Models" unique_id=420638477 instance=ExtResource("17_bmyyx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25.175121, 0, 26.882591)
+metadata/road_module = true
+metadata/road_id = "Bridge4Arch1"
+metadata/variant = "Default"
+metadata/source_pack = "bridges"
+
+[node name="Bridge5Arch1__Default" type="StaticBody3D" parent="Models" unique_id=289972719 instance=ExtResource("18_sdqqt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.8164124, 0, 28.848728)
+metadata/road_module = true
+metadata/road_id = "Bridge5Arch1"
+metadata/variant = "Default"
+metadata/source_pack = "bridges"
+
+[node name="Bridge5ArchExtender1__Default" type="StaticBody3D" parent="Models" unique_id=1597606539 instance=ExtResource("19_dwq66")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30.857933, 0, -1.151289)
+metadata/road_module = true
+metadata/road_id = "Bridge5ArchExtender1"
+metadata/variant = "Default"
+metadata/source_pack = "bridges"
+
+[node name="Bridge6__Default" type="StaticBody3D" parent="Models" unique_id=555194369 instance=ExtResource("20_ydvrn")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 58.739723, 0, -1.1512909)
+metadata/road_module = true
+metadata/road_id = "Bridge6"
+metadata/variant = "Default"
+metadata/source_pack = "bridges"
+
+[node name="BridgeSuspension1__Default" type="StaticBody3D" parent="Models" unique_id=1352117188 instance=ExtResource("21_ghwdt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -56.87335, 0, 48.848732)
+metadata/road_module = true
+metadata/road_id = "BridgeSuspension1"
+metadata/variant = "Default"
+metadata/source_pack = "bridges"
+
+[node name="Road1Ramp1__Default" type="StaticBody3D" parent="Models" unique_id=1054468630 instance=ExtResource("22_c80m3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25.175135, 0, 82.052795)
+metadata/road_module = true
+metadata/road_id = "Road1Ramp1"
+metadata/variant = "Default"
+metadata/source_pack = "bridges"
+
+[node name="Road1Ramp2__Default" type="StaticBody3D" parent="Models" unique_id=419238634 instance=ExtResource("23_wg5ed")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.816423, 0, 82.05279)
+metadata/road_module = true
+metadata/road_id = "Road1Ramp2"
+metadata/variant = "Default"
+metadata/source_pack = "bridges"
+
+[node name="Labels" type="Node3D" parent="." unique_id=421043964]
+
+[node name="Label_0" type="Label3D" parent="Labels" unique_id=1483378609]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -56.873344, 0.2, -99.25683)
+pixel_size = 0.04
+text = "Bridge1
+Default"
+
+[node name="Label_1" type="Label3D" parent="Labels" unique_id=1153988991]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -25.175137, 0.2, -99.25683)
+pixel_size = 0.04
+text = "Bridge1Arch1
+Default"
+
+[node name="Label_2" type="Label3D" parent="Labels" unique_id=1340570487]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 3.8164234, 0.2, -99.25683)
+pixel_size = 0.04
+text = "Bridge1ArchExtender1
+Default"
+
+[node name="Label_3" type="Label3D" parent="Labels" unique_id=1609461557]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 30.857935, 0.2, -99.25683)
+pixel_size = 0.04
+text = "Bridge1Ramp1
+Default"
+
+[node name="Label_4" type="Label3D" parent="Labels" unique_id=211781203]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 58.73972, 0.2, -99.25683)
+pixel_size = 0.04
+text = "Bridge1Ramp2
+Default"
+
+[node name="Label_5" type="Label3D" parent="Labels" unique_id=1996156553]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -56.873344, 0.2, -73.15132)
+pixel_size = 0.04
+text = "Bridge2Beam0
+Default"
+
+[node name="Label_6" type="Label3D" parent="Labels" unique_id=836102884]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -25.175137, 0.2, -73.15132)
+pixel_size = 0.04
+text = "Bridge2Beam1
+Default"
+
+[node name="Label_7" type="Label3D" parent="Labels" unique_id=1289105184]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 3.8164234, 0.2, -73.15132)
+pixel_size = 0.04
+text = "Bridge2Beam3
+Default"
+
+[node name="Label_8" type="Label3D" parent="Labels" unique_id=2112996304]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 30.857935, 0.2, -73.15132)
+pixel_size = 0.04
+text = "Bridge3
+Default"
+
+[node name="Label_9" type="Label3D" parent="Labels" unique_id=984619850]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 58.73972, 0.2, -73.15132)
+pixel_size = 0.04
+text = "Bridge3Beam0
+Default"
+
+[node name="Label_10" type="Label3D" parent="Labels" unique_id=1691039658]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -56.873344, 0.2, -47.151314)
+pixel_size = 0.04
+text = "Bridge3Beam0End
+Default"
+
+[node name="Label_11" type="Label3D" parent="Labels" unique_id=412438004]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -25.175137, 0.2, -47.151314)
+pixel_size = 0.04
+text = "Bridge3Beam0Middle
+Default"
+
+[node name="Label_12" type="Label3D" parent="Labels" unique_id=1278209160]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 3.8164234, 0.2, -47.151314)
+pixel_size = 0.04
+text = "Bridge3Beam1
+Default"
+
+[node name="Label_13" type="Label3D" parent="Labels" unique_id=1701711825]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 30.857935, 0.2, -47.151314)
+pixel_size = 0.04
+text = "Bridge3Beam2
+Default"
+
+[node name="Label_14" type="Label3D" parent="Labels" unique_id=93655515]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 58.73972, 0.2, -47.151314)
+pixel_size = 0.04
+text = "Bridge3Start
+Default"
+
+[node name="Label_15" type="Label3D" parent="Labels" unique_id=436040427]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -56.873344, 0.2, 38.848732)
+pixel_size = 0.04
+text = "Bridge4
+Default"
+
+[node name="Label_16" type="Label3D" parent="Labels" unique_id=819850954]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -25.175137, 0.2, 38.848732)
+pixel_size = 0.04
+text = "Bridge4Arch1
+Default"
+
+[node name="Label_17" type="Label3D" parent="Labels" unique_id=1687247125]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 3.8164234, 0.2, 38.848732)
+pixel_size = 0.04
+text = "Bridge5Arch1
+Default"
+
+[node name="Label_18" type="Label3D" parent="Labels" unique_id=1337635708]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 30.857935, 0.2, 38.848732)
+pixel_size = 0.04
+text = "Bridge5ArchExtender1
+Default"
+
+[node name="Label_19" type="Label3D" parent="Labels" unique_id=1927280203]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 58.73972, 0.2, 38.848732)
+pixel_size = 0.04
+text = "Bridge6
+Default"
+
+[node name="Label_20" type="Label3D" parent="Labels" unique_id=228840033]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -56.873344, 0.2, 119.25685)
+pixel_size = 0.04
+text = "BridgeSuspension1
+Default"
+
+[node name="Label_21" type="Label3D" parent="Labels" unique_id=2053378256]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -25.175137, 0.2, 119.25685)
+pixel_size = 0.04
+text = "Road1Ramp1
+Default"
+
+[node name="Label_22" type="Label3D" parent="Labels" unique_id=1549506047]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 3.8164234, 0.2, 119.25685)
+pixel_size = 0.04
+text = "Road1Ramp2
+Default"
+
+[node name="PreviewCamera" type="Camera3D" parent="." unique_id=1771154226]
+transform = Transform3D(1, 0, 0, 0, 0.4103647, 0.91192156, 0, -0.91192156, 0.4103647, 0, 244.51367, 110.03115)
+projection = 1
+current = true
+size = 268.96503
+
+[node name="Sun" type="DirectionalLight3D" parent="." unique_id=2019731571]
+transform = Transform3D(0.90630776, 0.34618863, -0.24240388, 0, 0.57357645, 0.81915206, 0.42261827, -0.74240386, 0.5198368, 0, 0, 0)
+light_energy = 1.1
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=797430242]
+environment = SubResource("Environment_0f4x2")
+
+[node name="PreviewFloor" type="MeshInstance3D" parent="." unique_id=1541971125]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.08, 0)
+material_override = SubResource("StandardMaterial3D_a60p0")
+mesh = SubResource("PlaneMesh_d06td")

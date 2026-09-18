@@ -1,0 +1,87 @@
+{
+  "schema": "road-layout-trace/v1",
+  "source": "docs/maps/references/ghost-town-road-layout-reference.png",
+  "canvas_px": { "width": 724, "height": 717 },
+  "symmetry": {
+    "type": "rotate180",
+    "center_px": [364, 356],
+    "formula": "mirror(x,y) = (728-x, 712-y)",
+    "node_id_prefix": "m_",
+    "note": "Generate the lower half by rotating every listed node and edge. This is deliberately not a left/right reflection."
+  },
+  "conventions": {
+    "geometry": "Every edge is horizontal, vertical, or 45 degrees after endpoint normalisation.",
+    "heading_deg": "Directions of incident edges, clockwise from right/east: 0,45,90,135,180,225,270,315.",
+    "open": "An open node is an exterior entrance/exit, not an omitted connection.",
+    "centerline": "One edge is one road centreline; parallel edges are separate roads, never a widened edge."
+  },
+  "top_half_nodes": [
+    { "id": "l_outer_open", "x": 51, "y": 112, "kind": "open", "heading_deg": [270] },
+    { "id": "l_outer_nw", "x": 51, "y": 43, "kind": "corner45", "heading_deg": [90,315] },
+    { "id": "l_outer_top_l", "x": 81, "y": 13, "kind": "corner45", "heading_deg": [0,135] },
+    { "id": "l_outer_top_r", "x": 144, "y": 13, "kind": "corner45", "heading_deg": [45,180] },
+    { "id": "l_outer_ne", "x": 174, "y": 43, "kind": "T", "heading_deg": [0,180,225] },
+    { "id": "l_inner_open", "x": 220, "y": 113, "kind": "open", "heading_deg": [270] },
+
+    { "id": "grid_160_48", "x": 160, "y": 43, "kind": "corner90", "heading_deg": [0,90] },
+    { "id": "grid_220_48", "x": 220, "y": 43, "kind": "T", "heading_deg": [0,90,180] },
+    { "id": "grid_316_48", "x": 316, "y": 43, "kind": "T", "heading_deg": [0,90,180] },
+    { "id": "grid_346_48", "x": 346, "y": 43, "kind": "T", "heading_deg": [0,90,180] },
+    { "id": "grid_378_48", "x": 378, "y": 43, "kind": "T", "heading_deg": [0,90,180] },
+    { "id": "grid_442_48", "x": 442, "y": 43, "kind": "T", "heading_deg": [0,90,180] },
+    { "id": "grid_475_48", "x": 475, "y": 43, "kind": "T", "heading_deg": [0,90,180] },
+    { "id": "r_top_w", "x": 521, "y": 43, "kind": "corner45", "heading_deg": [45,180] },
+    { "id": "r_top_ne", "x": 577, "y": 99, "kind": "corner45", "heading_deg": [90,225] },
+    { "id": "r_top_open", "x": 577, "y": 113, "kind": "open", "heading_deg": [270] },
+
+    { "id": "grid_160_153", "x": 160, "y": 153, "kind": "T", "heading_deg": [0,90,270] },
+    { "id": "grid_220_153", "x": 220, "y": 153, "kind": "X", "heading_deg": [0,90,180,270] },
+    { "id": "grid_316_153", "x": 316, "y": 153, "kind": "T", "heading_deg": [0,180,270] },
+    { "id": "grid_346_153", "x": 346, "y": 153, "kind": "T", "heading_deg": [0,180,270] },
+    { "id": "grid_378_153", "x": 378, "y": 153, "kind": "T", "heading_deg": [0,180,270] },
+    { "id": "grid_364_153", "x": 364, "y": 153, "kind": "T", "heading_deg": [0,90,180] },
+    { "id": "grid_442_153", "x": 442, "y": 153, "kind": "T", "heading_deg": [0,180,270] },
+    { "id": "grid_475_153", "x": 475, "y": 153, "kind": "T", "heading_deg": [0,180,270] },
+    { "id": "grid_548_153", "x": 548, "y": 153, "kind": "open", "heading_deg": [180] },
+
+    { "id": "grid_160_185", "x": 160, "y": 185, "kind": "corner90", "heading_deg": [0,270] },
+    { "id": "grid_220_185", "x": 220, "y": 185, "kind": "T", "heading_deg": [0,180,270] },
+    { "id": "grid_316_185", "x": 316, "y": 185, "kind": "corner90", "heading_deg": [0,180] },
+    { "id": "grid_364_185", "x": 364, "y": 185, "kind": "X", "heading_deg": [0,90,180,270] },
+    { "id": "grid_475_185", "x": 475, "y": 185, "kind": "through", "heading_deg": [0,180] },
+    { "id": "grid_548_185", "x": 548, "y": 185, "kind": "open", "heading_deg": [180] },
+
+    { "id": "diamond_n", "x": 364, "y": 226, "kind": "Y", "heading_deg": [45,135,270] },
+    { "id": "diamond_w", "x": 234, "y": 356, "kind": "corner45", "heading_deg": [180,315] },
+    { "id": "diamond_e", "x": 494, "y": 356, "kind": "corner45", "heading_deg": [0,225] },
+
+    { "id": "left_feed", "x": 207, "y": 356, "kind": "through", "heading_deg": [0,180] },
+    { "id": "left_pair_inner", "x": 144, "y": 322, "kind": "corner90", "heading_deg": [90,180] },
+    { "id": "left_pair_outer", "x": 118, "y": 322, "kind": "corner90", "heading_deg": [0,90] },
+    { "id": "left_pair_inner_mid", "x": 144, "y": 356, "kind": "through", "heading_deg": [0,270] },
+    { "id": "left_pair_outer_mid", "x": 118, "y": 356, "kind": "open", "heading_deg": [270] },
+
+    { "id": "right_feed", "x": 521, "y": 356, "kind": "through", "heading_deg": [0,180] },
+    { "id": "right_pair_inner", "x": 548, "y": 322, "kind": "corner90", "heading_deg": [0,90] },
+    { "id": "right_pair_outer", "x": 575, "y": 322, "kind": "corner90", "heading_deg": [90,180] },
+    { "id": "right_pair_inner_mid", "x": 548, "y": 356, "kind": "corner90", "heading_deg": [180,270] },
+    { "id": "right_pair_outer_mid", "x": 575, "y": 356, "kind": "open", "heading_deg": [270] }
+  ],
+  "top_half_edges": [
+    ["l_outer_open", "l_outer_nw"], ["l_outer_nw", "l_outer_top_l"], ["l_outer_top_l", "l_outer_top_r"], ["l_outer_top_r", "l_outer_ne"], ["l_outer_ne", "grid_220_48"], ["grid_220_48", "l_inner_open"],
+    ["l_outer_ne", "grid_160_48"], ["grid_160_48", "grid_160_153"], ["grid_160_153", "grid_160_185"], ["grid_220_48", "grid_220_153"], ["grid_220_153", "grid_220_185"],
+    ["grid_220_48", "grid_316_48"], ["grid_316_48", "grid_346_48"], ["grid_346_48", "grid_378_48"], ["grid_378_48", "grid_442_48"], ["grid_442_48", "grid_475_48"], ["grid_475_48", "r_top_w"], ["r_top_w", "r_top_ne"], ["r_top_ne", "r_top_open"],
+    ["grid_316_48", "grid_316_153"], ["grid_346_48", "grid_346_153"], ["grid_378_48", "grid_378_153"], ["grid_442_48", "grid_442_153"], ["grid_475_48", "grid_475_153"],
+    ["grid_160_153", "grid_220_153"], ["grid_220_153", "grid_316_153"], ["grid_316_153", "grid_346_153"], ["grid_346_153", "grid_364_153"], ["grid_364_153", "grid_378_153"], ["grid_378_153", "grid_442_153"], ["grid_442_153", "grid_475_153"], ["grid_475_153", "grid_548_153"],
+    ["grid_160_185", "grid_220_185"], ["grid_220_185", "grid_316_185"], ["grid_316_185", "grid_364_185"], ["grid_364_185", "grid_475_185"], ["grid_475_185", "grid_548_185"],
+    ["grid_364_153", "grid_364_185"], ["grid_364_185", "diamond_n"],
+    ["diamond_n", "diamond_w"], ["diamond_n", "diamond_e"], ["diamond_w", "left_feed"], ["left_feed", "left_pair_inner_mid"], ["left_pair_inner_mid", "left_pair_inner"], ["left_pair_inner", "left_pair_outer"], ["left_pair_outer", "left_pair_outer_mid"],
+    ["diamond_e", "right_feed"], ["right_feed", "right_pair_inner_mid"], ["right_pair_inner_mid", "right_pair_inner"], ["right_pair_inner", "right_pair_outer"], ["right_pair_outer", "right_pair_outer_mid"]
+  ],
+  "known_uncertainties": [
+    "The screenshot is an annotated pre-extension layout, so cyan/yellow gap endpoints were normalised into continuous straight segments rather than preserved as source geometry.",
+    "The two red-circled passages are represented by two distinct, parallel centreline chains (x=118/144 and x=548/575); their separation, not their road width, is doubled.",
+    "At the upper street grid, screenshot occlusion/labels make a few short block-side stubs ambiguous. This trace keeps only the visually supported connected grid spine and deliberately does not invent a crossing without a shared node.",
+    "Coordinates are a reconstruction in source-image pixels, not measurements from an original map asset; use a small snap tolerance when generating meshes."
+  ]
+}

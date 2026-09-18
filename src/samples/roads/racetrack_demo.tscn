@@ -1,0 +1,1243 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Barrier1/Default.tscn" id="1_yp5u4"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Checkpoint1/Default.tscn" id="2_5pel0"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Checkpoint2/Default.tscn" id="3_o4ev2"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/ControlStand1/Default.tscn" id="4_5fihl"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/DigitalFlag1/Default.tscn" id="5_mqiur"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Fence1/Default.tscn" id="6_5gry8"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Grass1/Default.tscn" id="7_wup6y"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Grass2/Default.tscn" id="8_1mrpo"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Grass3/Default.tscn" id="9_si1ku"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Grass4/Default.tscn" id="10_1nqdt"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/GravelPit1/Default.tscn" id="11_nr3xs"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/GravelPit2/Default.tscn" id="12_qahru"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/GravelPit3/Default.tscn" id="13_kbuip"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/GravelPit4/Default.tscn" id="14_irw0y"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/GravelPit5/Default.tscn" id="15_mx7vd"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/HazzardCone1/Default.tscn" id="16_116ht"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Marker100/Default.tscn" id="17_3qjvv"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/ObservationTower1/Default.tscn" id="18_nn8an"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Padock1/Default.tscn" id="19_o0d8x"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Racetrack1_Blue_Default/Default.tscn" id="20_dt4uk"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Racetrack1_Blue_Default_FinishLine1/Default.tscn" id="21_eyx5t"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Racetrack1_Blue_Default_FinishLine2/Default.tscn" id="22_ibguj"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Racetrack1_Blue_Default_Fork_Curb_Left/Default.tscn" id="23_cwnd4"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Racetrack1_Blue_Default_Fork_Curb_Right/Default.tscn" id="24_nc6sr"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Racetrack1_Blue_Default_Fork_Left/Default.tscn" id="25_yym1f"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Racetrack1_Blue_Default_Fork_Right/Default.tscn" id="26_fkbyu"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Racetrack1_Blue_Poistions/Default.tscn" id="27_p2mvm"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Racetrack1_Default/Default.tscn" id="28_aubkg"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Racetrack1_Default_FinishLine1/Default.tscn" id="29_2l7ed"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Racetrack1_Default_FinishLine2/Default.tscn" id="30_6b8ee"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Racetrack1_Default_Fork_Curb_Left/Default.tscn" id="31_gm72w"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Racetrack1_Default_Fork_Curb_Right/Default.tscn" id="32_tfnuc"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Racetrack1_Default_Fork_Left/Default.tscn" id="33_6kdt5"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Racetrack1_Default_Fork_Right/Default.tscn" id="34_m3hq3"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Racetrack1_Gray_Default/Default.tscn" id="35_650q0"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Racetrack1_Jump/Default.tscn" id="36_yb006"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Racetrack1_Poistions/Default.tscn" id="37_45hf0"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Racetrack1_RedGray_Default/Default.tscn" id="38_cb8o8"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Racetrack1_RedGray_PitLane_Boxes/Default.tscn" id="39_jhwi0"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Racetrack1_RedWhiteBlue_CurbLeft/Default.tscn" id="40_x33us"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Racetrack1_RedWhiteBlue_CurbRight/Default.tscn" id="41_34bj4"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Racetrack1_RedWhiteBlue_Curbs/Default.tscn" id="42_dl1mi"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Racetrack1_RedWhiteBlue_Curbs_Curve_45_Long_Left/Default.tscn" id="43_vlq3s"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Racetrack1_RedWhiteBlue_Curbs_Curve_45_Long_Right/Default.tscn" id="44_tnfkp"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Racetrack1_RedWhiteBlue_Curbs_Curve_90_Big_Left/Default.tscn" id="45_73k4s"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Racetrack1_RedWhiteBlue_Curbs_Curve_90_Big_Right/Default.tscn" id="46_o3e56"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Racetrack1_RedWhiteBlue_Curbs_Curve_90_Small_Left/Default.tscn" id="47_fq508"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Racetrack1_RedWhiteBlue_Curbs_Curve_90_Small_Right/Default.tscn" id="48_un57w"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Racetrack1_RedWhiteBlue_RoadAdapter/Default.tscn" id="49_qtm4o"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Racetrack1_RedWhite_CurbLeft/Default.tscn" id="50_bslgx"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Racetrack1_RedWhite_CurbRight/Default.tscn" id="51_uhgag"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Racetrack1_RedWhite_Curbs/Default.tscn" id="52_qvndg"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Racetrack1_RedWhite_Curbs_Curve_45_Long_Left/Default.tscn" id="53_bsr1f"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Racetrack1_RedWhite_Curbs_Curve_45_Long_Right/Default.tscn" id="54_ptiat"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Racetrack1_RedWhite_Curbs_Curve_90_Big_Left/Default.tscn" id="55_kyfrx"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Racetrack1_RedWhite_Curbs_Curve_90_Big_Right/Default.tscn" id="56_cgjtj"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Racetrack1_RedWhite_Curbs_Curve_90_Small_Left/Default.tscn" id="57_itpfe"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Racetrack1_RedWhite_Curbs_Curve_90_Small_Right/Default.tscn" id="58_y3soi"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Racetrack1_RedWhite_Curbs_Overpass/Default.tscn" id="59_j2lu6"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Racetrack1_RedWhite_RoadAdapter/Default.tscn" id="60_ler5q"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Racetrack1_YellowBlue_CurbLeft/Default.tscn" id="61_o1ioy"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Racetrack1_YellowBlue_CurbRight/Default.tscn" id="62_6wkm6"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Racetrack1_YellowBlue_Curbs_Curve_45_Long_Left/Default.tscn" id="63_o65qf"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Racetrack1_YellowBlue_Curbs_Curve_90_Big_Left/Default.tscn" id="64_0a0hx"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Racetrack1_YellowBlue_Curbs_Curve_90_Big_Right/Default.tscn" id="65_4caph"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Racetrack1_YellowBlue_Curbs_Curve_90_Small_Left/Default.tscn" id="66_aeu4t"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Racetrack1_YellowBlue_Curbs_Curve_90_Small_Right/Default.tscn" id="67_36gto"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Racetrack1_YellowBlue_Default_Fork_Curb_Left/Default.tscn" id="68_e6167"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Racetrack1_Yellowblue_Default_Fork_Curb_Right/Default.tscn" id="69_ug833"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Racetrack1_YellowBlue_RoadAdapter/Default.tscn" id="70_wpyg1"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Racetrack1_YelowBlue_Curbs/Default.tscn" id="71_yypbe"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/SandPit1/Default.tscn" id="72_5b3g2"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/SandPit2/Default.tscn" id="73_h3dpe"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/SandPit3/Default.tscn" id="74_vhgdg"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/SandPit4/Default.tscn" id="75_8hgy3"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/SandPit5/Default.tscn" id="76_rl3fu"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/StartLight1/Default.tscn" id="77_7kei3"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/TireBarrier1/Default.tscn" id="78_r6u15"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/TireCluster1/Default.tscn" id="79_534cp"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Tree1/Default.tscn" id="80_57prs"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Tree1_Orange/Default.tscn" id="81_8xqwg"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Tree2/Default.tscn" id="82_lsnv0"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Tree3/Default.tscn" id="83_5d2k5"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Tree4/Default.tscn" id="84_salf7"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Tree4_Orange/Default.tscn" id="85_m0gtw"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/racetrack/Racetrack1_YellowBlue_Curbs_Curve_45_Long_Right/Default.tscn" id="86_luc7y"]
+
+[sub_resource type="Environment" id="Environment_xed7v"]
+background_mode = 1
+background_color = Color(0.11, 0.13, 0.16, 1)
+ambient_light_source = 2
+ambient_light_color = Color(1, 1, 1, 1)
+ambient_light_energy = 0.65
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_yevjk"]
+albedo_color = Color(0.29, 0.31, 0.34, 1)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_8x5y2"]
+size = Vector2(576.18774, 624.3012)
+
+[node name="racetrack_demo" type="Node3D" unique_id=1805239986]
+
+[node name="Models" type="Node3D" parent="." unique_id=1237837596]
+
+[node name="Barrier1__Default" type="StaticBody3D" parent="Models" unique_id=1468726265 instance=ExtResource("1_yp5u4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -257.06284, 0, -293.1506)
+metadata/road_module = true
+metadata/road_id = "Barrier1"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Checkpoint1__Default" type="StaticBody3D" parent="Models" unique_id=1361516004 instance=ExtResource("2_5pel0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -207.09387, 0, -293.1506)
+metadata/road_module = true
+metadata/road_id = "Checkpoint1"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Checkpoint2__Default" type="StaticBody3D" parent="Models" unique_id=14672904 instance=ExtResource("3_o4ev2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -157.09387, 0, -293.34103)
+metadata/road_module = true
+metadata/road_id = "Checkpoint2"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="ControlStand1__Default" type="StaticBody3D" parent="Models" unique_id=1810930221 instance=ExtResource("4_5fihl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -91.306595, 0, -293.88382)
+metadata/road_module = true
+metadata/road_id = "ControlStand1"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="DigitalFlag1__Default" type="StaticBody3D" parent="Models" unique_id=1964354758 instance=ExtResource("5_mqiur")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.731135, 0, -292.47708)
+metadata/road_module = true
+metadata/road_id = "DigitalFlag1"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Fence1__Default" type="StaticBody3D" parent="Models" unique_id=2050652753 instance=ExtResource("6_5gry8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 72.221794, 0, -293.15057)
+metadata/road_module = true
+metadata/road_id = "Fence1"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Grass1__Default" type="StaticBody3D" parent="Models" unique_id=802140626 instance=ExtResource("7_wup6y")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 132.446, 0, -293.18173)
+metadata/road_module = true
+metadata/road_id = "Grass1"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Grass2__Default" type="StaticBody3D" parent="Models" unique_id=838116988 instance=ExtResource("8_1mrpo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 177.32683, 0, -293.40546)
+metadata/road_module = true
+metadata/road_id = "Grass2"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Grass3__Default" type="StaticBody3D" parent="Models" unique_id=1413345260 instance=ExtResource("9_si1ku")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 227.07114, 0, -292.95236)
+metadata/road_module = true
+metadata/road_id = "Grass3"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Grass4__Default" type="StaticBody3D" parent="Models" unique_id=1951792426 instance=ExtResource("10_1nqdt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 266.90054, 0, -293.07394)
+metadata/road_module = true
+metadata/road_id = "Grass4"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="GravelPit1__Default" type="StaticBody3D" parent="Models" unique_id=237656393 instance=ExtResource("11_nr3xs")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -257.09387, 0, -257.1506)
+metadata/road_module = true
+metadata/road_id = "GravelPit1"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="GravelPit2__Default" type="StaticBody3D" parent="Models" unique_id=1560797384 instance=ExtResource("12_qahru")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -207.09387, 0, -257.1506)
+metadata/road_module = true
+metadata/road_id = "GravelPit2"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="GravelPit3__Default" type="StaticBody3D" parent="Models" unique_id=418586123 instance=ExtResource("13_kbuip")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -157.09386, 0, -257.1506)
+metadata/road_module = true
+metadata/road_id = "GravelPit3"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="GravelPit4__Default" type="StaticBody3D" parent="Models" unique_id=136403367 instance=ExtResource("14_irw0y")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -91.306595, 0, -257.1506)
+metadata/road_module = true
+metadata/road_id = "GravelPit4"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="GravelPit5__Default" type="StaticBody3D" parent="Models" unique_id=1203006276 instance=ExtResource("15_mx7vd")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17.732063, 0, -265.1506)
+metadata/road_module = true
+metadata/road_id = "GravelPit5"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="HazzardCone1__Default" type="StaticBody3D" parent="Models" unique_id=864136428 instance=ExtResource("16_116ht")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 71.84434, 0, -257.14487)
+metadata/road_module = true
+metadata/road_id = "HazzardCone1"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Marker100__Default" type="StaticBody3D" parent="Models" unique_id=1850514889 instance=ExtResource("17_3qjvv")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 132.36179, 0, -257.1356)
+metadata/road_module = true
+metadata/road_id = "Marker100"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="ObservationTower1__Default" type="StaticBody3D" parent="Models" unique_id=878608139 instance=ExtResource("18_nn8an")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 176.26607, 0, -255.78145)
+metadata/road_module = true
+metadata/road_id = "ObservationTower1"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Padock1__Default" type="StaticBody3D" parent="Models" unique_id=1577348097 instance=ExtResource("19_o0d8x")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 227.11281, 0, -260.118)
+metadata/road_module = true
+metadata/road_id = "Padock1"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Racetrack1_Blue_Default__Default" type="StaticBody3D" parent="Models" unique_id=1989987350 instance=ExtResource("20_dt4uk")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 267.09384, 0, -257.1506)
+metadata/road_module = true
+metadata/road_id = "Racetrack1_Blue_Default"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Racetrack1_Blue_Default_FinishLine1__Default" type="StaticBody3D" parent="Models" unique_id=1881283874 instance=ExtResource("21_eyx5t")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -257.09387, 0, -194.10106)
+metadata/road_module = true
+metadata/road_id = "Racetrack1_Blue_Default_FinishLine1"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Racetrack1_Blue_Default_FinishLine2__Default" type="StaticBody3D" parent="Models" unique_id=1838539760 instance=ExtResource("22_ibguj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -207.09387, 0, -194.10106)
+metadata/road_module = true
+metadata/road_id = "Racetrack1_Blue_Default_FinishLine2"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Racetrack1_Blue_Default_Fork_Curb_Left__Default" type="StaticBody3D" parent="Models" unique_id=637490220 instance=ExtResource("23_cwnd4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -167.09386, 0, -221.15059)
+metadata/road_module = true
+metadata/road_id = "Racetrack1_Blue_Default_Fork_Curb_Left"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Racetrack1_Blue_Default_Fork_Curb_Right__Default" type="StaticBody3D" parent="Models" unique_id=2105189884 instance=ExtResource("24_nc6sr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -81.306595, 0, -221.15059)
+metadata/road_module = true
+metadata/road_id = "Racetrack1_Blue_Default_Fork_Curb_Right"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Racetrack1_Blue_Default_Fork_Left__Default" type="StaticBody3D" parent="Models" unique_id=573403980 instance=ExtResource("25_yym1f")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19.732063, 0, -221.15059)
+metadata/road_module = true
+metadata/road_id = "Racetrack1_Blue_Default_Fork_Left"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Racetrack1_Blue_Default_Fork_Right__Default" type="StaticBody3D" parent="Models" unique_id=407665898 instance=ExtResource("26_fkbyu")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 81.84247, 0, -221.15059)
+metadata/road_module = true
+metadata/road_id = "Racetrack1_Blue_Default_Fork_Right"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Racetrack1_Blue_Poistions__Default" type="StaticBody3D" parent="Models" unique_id=65742969 instance=ExtResource("27_p2mvm")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 132.36179, 0, -194.10106)
+metadata/road_module = true
+metadata/road_id = "Racetrack1_Blue_Poistions"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Racetrack1_Default__Default" type="StaticBody3D" parent="Models" unique_id=455607846 instance=ExtResource("28_aubkg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 177.09384, 0, -194.10106)
+metadata/road_module = true
+metadata/road_id = "Racetrack1_Default"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Racetrack1_Default_FinishLine1__Default" type="StaticBody3D" parent="Models" unique_id=161274695 instance=ExtResource("29_2l7ed")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 227.09384, 0, -194.10106)
+metadata/road_module = true
+metadata/road_id = "Racetrack1_Default_FinishLine1"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Racetrack1_Default_FinishLine2__Default" type="StaticBody3D" parent="Models" unique_id=1244007391 instance=ExtResource("30_6b8ee")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 267.09384, 0, -194.10106)
+metadata/road_module = true
+metadata/road_id = "Racetrack1_Default_FinishLine2"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Racetrack1_Default_Fork_Curb_Left__Default" type="StaticBody3D" parent="Models" unique_id=135448534 instance=ExtResource("31_gm72w")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -267.09387, 0, -141.05153)
+metadata/road_module = true
+metadata/road_id = "Racetrack1_Default_Fork_Curb_Left"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Racetrack1_Default_Fork_Curb_Right__Default" type="StaticBody3D" parent="Models" unique_id=197184110 instance=ExtResource("32_tfnuc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -197.09387, 0, -141.05153)
+metadata/road_module = true
+metadata/road_id = "Racetrack1_Default_Fork_Curb_Right"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Racetrack1_Default_Fork_Left__Default" type="StaticBody3D" parent="Models" unique_id=850899046 instance=ExtResource("33_6kdt5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -167.09386, 0, -141.05153)
+metadata/road_module = true
+metadata/road_id = "Racetrack1_Default_Fork_Left"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Racetrack1_Default_Fork_Right__Default" type="StaticBody3D" parent="Models" unique_id=1772736359 instance=ExtResource("34_m3hq3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -81.306595, 0, -141.05153)
+metadata/road_module = true
+metadata/road_id = "Racetrack1_Default_Fork_Right"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Racetrack1_Gray_Default__Default" type="StaticBody3D" parent="Models" unique_id=709375615 instance=ExtResource("35_650q0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.732063, 0, -114.002)
+metadata/road_module = true
+metadata/road_id = "Racetrack1_Gray_Default"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Racetrack1_Jump__Default" type="StaticBody3D" parent="Models" unique_id=362871964 instance=ExtResource("36_yb006")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 71.84247, 0, -102.175804)
+metadata/road_module = true
+metadata/road_id = "Racetrack1_Jump"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Racetrack1_Poistions__Default" type="StaticBody3D" parent="Models" unique_id=968807084 instance=ExtResource("37_45hf0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 132.36179, 0, -114.002)
+metadata/road_module = true
+metadata/road_id = "Racetrack1_Poistions"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Racetrack1_RedGray_Default__Default" type="StaticBody3D" parent="Models" unique_id=1383204667 instance=ExtResource("38_cb8o8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 177.09384, 0, -114.002)
+metadata/road_module = true
+metadata/road_id = "Racetrack1_RedGray_Default"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Racetrack1_RedGray_PitLane_Boxes__Default" type="StaticBody3D" parent="Models" unique_id=1656854645 instance=ExtResource("39_jhwi0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 227.09384, 0, -114.002)
+metadata/road_module = true
+metadata/road_id = "Racetrack1_RedGray_PitLane_Boxes"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Racetrack1_RedWhiteBlue_CurbLeft__Default" type="StaticBody3D" parent="Models" unique_id=156091354 instance=ExtResource("40_x33us")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 267.09384, 0, -114.002)
+metadata/road_module = true
+metadata/road_id = "Racetrack1_RedWhiteBlue_CurbLeft"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Racetrack1_RedWhiteBlue_CurbRight__Default" type="StaticBody3D" parent="Models" unique_id=140915053 instance=ExtResource("41_34bj4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -257.09387, 0, -31.165207)
+metadata/road_module = true
+metadata/road_id = "Racetrack1_RedWhiteBlue_CurbRight"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Racetrack1_RedWhiteBlue_Curbs__Default" type="StaticBody3D" parent="Models" unique_id=1397900041 instance=ExtResource("42_dl1mi")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -207.09387, 0, -31.165207)
+metadata/road_module = true
+metadata/road_id = "Racetrack1_RedWhiteBlue_Curbs"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Racetrack1_RedWhiteBlue_Curbs_Curve_45_Long_Left__Default" type="StaticBody3D" parent="Models" unique_id=1130242381 instance=ExtResource("43_vlq3s")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -163.06099, 0, -50.642197)
+metadata/road_module = true
+metadata/road_id = "Racetrack1_RedWhiteBlue_Curbs_Curve_45_Long_Left"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Racetrack1_RedWhiteBlue_Curbs_Curve_45_Long_Right__Default" type="StaticBody3D" parent="Models" unique_id=650641805 instance=ExtResource("44_tnfkp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -85.33946, 0, -50.642197)
+metadata/road_module = true
+metadata/road_id = "Racetrack1_RedWhiteBlue_Curbs_Curve_45_Long_Right"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Racetrack1_RedWhiteBlue_Curbs_Curve_90_Big_Left__Default" type="StaticBody3D" parent="Models" unique_id=1229251831 instance=ExtResource("45_73k4s")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -35.51933, 0, -60.95247)
+metadata/road_module = true
+metadata/road_id = "Racetrack1_RedWhiteBlue_Curbs_Curve_90_Big_Left"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Racetrack1_RedWhiteBlue_Curbs_Curve_90_Big_Right__Default" type="StaticBody3D" parent="Models" unique_id=1054235451 instance=ExtResource("46_o3e56")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 97.62973, 0, -60.95247)
+metadata/road_module = true
+metadata/road_id = "Racetrack1_RedWhiteBlue_Curbs_Curve_90_Big_Right"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Racetrack1_RedWhiteBlue_Curbs_Curve_90_Small_Left__Default" type="StaticBody3D" parent="Models" unique_id=137456708 instance=ExtResource("47_fq508")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 127.62973, 0, -39.89725)
+metadata/road_module = true
+metadata/road_id = "Racetrack1_RedWhiteBlue_Curbs_Curve_90_Small_Left"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Racetrack1_RedWhiteBlue_Curbs_Curve_90_Small_Right__Default" type="StaticBody3D" parent="Models" unique_id=2106214469 instance=ExtResource("48_un57w")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 181.8259, 0, -39.897255)
+metadata/road_module = true
+metadata/road_id = "Racetrack1_RedWhiteBlue_Curbs_Curve_90_Small_Right"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Racetrack1_RedWhiteBlue_RoadAdapter__Default" type="StaticBody3D" parent="Models" unique_id=1190062857 instance=ExtResource("49_qtm4o")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 227.09384, 0, -31.165197)
+metadata/road_module = true
+metadata/road_id = "Racetrack1_RedWhiteBlue_RoadAdapter"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Racetrack1_RedWhite_CurbLeft__Default" type="StaticBody3D" parent="Models" unique_id=1271213245 instance=ExtResource("50_bslgx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 267.09384, 0, -31.165207)
+metadata/road_module = true
+metadata/road_id = "Racetrack1_RedWhite_CurbLeft"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Racetrack1_RedWhite_CurbRight__Default" type="StaticBody3D" parent="Models" unique_id=27152070 instance=ExtResource("51_uhgag")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -257.09387, 0, 60.62207)
+metadata/road_module = true
+metadata/road_id = "Racetrack1_RedWhite_CurbRight"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Racetrack1_RedWhite_Curbs__Default" type="StaticBody3D" parent="Models" unique_id=1708025582 instance=ExtResource("52_qvndg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -207.09387, 0, 60.62207)
+metadata/road_module = true
+metadata/road_id = "Racetrack1_RedWhite_Curbs"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Racetrack1_RedWhite_Curbs_Curve_45_Long_Left__Default" type="StaticBody3D" parent="Models" unique_id=406353401 instance=ExtResource("53_bsr1f")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -163.06099, 0, 41.14508)
+metadata/road_module = true
+metadata/road_id = "Racetrack1_RedWhite_Curbs_Curve_45_Long_Left"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Racetrack1_RedWhite_Curbs_Curve_45_Long_Right__Default" type="StaticBody3D" parent="Models" unique_id=1750006125 instance=ExtResource("54_ptiat")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -85.33946, 0, 41.14508)
+metadata/road_module = true
+metadata/road_id = "Racetrack1_RedWhite_Curbs_Curve_45_Long_Right"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Racetrack1_RedWhite_Curbs_Curve_90_Big_Left__Default" type="StaticBody3D" parent="Models" unique_id=1189718950 instance=ExtResource("55_kyfrx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -35.51933, 0, 30.834808)
+metadata/road_module = true
+metadata/road_id = "Racetrack1_RedWhite_Curbs_Curve_90_Big_Left"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Racetrack1_RedWhite_Curbs_Curve_90_Big_Right__Default" type="StaticBody3D" parent="Models" unique_id=487106242 instance=ExtResource("56_cgjtj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 97.62973, 0, 30.834808)
+metadata/road_module = true
+metadata/road_id = "Racetrack1_RedWhite_Curbs_Curve_90_Big_Right"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Racetrack1_RedWhite_Curbs_Curve_90_Small_Left__Default" type="StaticBody3D" parent="Models" unique_id=560915887 instance=ExtResource("57_itpfe")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 127.62973, 0, 51.890026)
+metadata/road_module = true
+metadata/road_id = "Racetrack1_RedWhite_Curbs_Curve_90_Small_Left"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Racetrack1_RedWhite_Curbs_Curve_90_Small_Right__Default" type="StaticBody3D" parent="Models" unique_id=1611361245 instance=ExtResource("58_y3soi")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 181.8259, 0, 51.890022)
+metadata/road_module = true
+metadata/road_id = "Racetrack1_RedWhite_Curbs_Curve_90_Small_Right"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Racetrack1_RedWhite_Curbs_Overpass__Default" type="StaticBody3D" parent="Models" unique_id=1406202769 instance=ExtResource("59_j2lu6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 227.09384, 0, 60.634193)
+metadata/road_module = true
+metadata/road_id = "Racetrack1_RedWhite_Curbs_Overpass"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Racetrack1_RedWhite_RoadAdapter__Default" type="StaticBody3D" parent="Models" unique_id=251092959 instance=ExtResource("60_ler5q")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 267.09384, 0, 60.622078)
+metadata/road_module = true
+metadata/road_id = "Racetrack1_RedWhite_RoadAdapter"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Racetrack1_YellowBlue_CurbLeft__Default" type="StaticBody3D" parent="Models" unique_id=114415469 instance=ExtResource("61_o1ioy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -257.09387, 0, 152.40935)
+metadata/road_module = true
+metadata/road_id = "Racetrack1_YellowBlue_CurbLeft"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Racetrack1_YellowBlue_CurbRight__Default" type="StaticBody3D" parent="Models" unique_id=221295508 instance=ExtResource("62_6wkm6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -207.09387, 0, 152.40935)
+metadata/road_module = true
+metadata/road_id = "Racetrack1_YellowBlue_CurbRight"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Racetrack1_YellowBlue_Curbs_Curve_45_Long_Left__Default" type="StaticBody3D" parent="Models" unique_id=278548121 instance=ExtResource("63_o65qf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -151.12674, 0, 132.93236)
+metadata/road_module = true
+metadata/road_id = "Racetrack1_YellowBlue_Curbs_Curve_45_Long_Left"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Racetrack1_YellowBlue_Curbs_Curve_90_Big_Left__Default" type="StaticBody3D" parent="Models" unique_id=431817863 instance=ExtResource("64_0a0hx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -117.09386, 0, 122.622086)
+metadata/road_module = true
+metadata/road_id = "Racetrack1_YellowBlue_Curbs_Curve_90_Big_Left"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Racetrack1_YellowBlue_Curbs_Curve_90_Big_Right__Default" type="StaticBody3D" parent="Models" unique_id=1695125627 instance=ExtResource("65_4caph")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.055202, 0, 122.622086)
+metadata/road_module = true
+metadata/road_id = "Racetrack1_YellowBlue_Curbs_Curve_90_Big_Right"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Racetrack1_YellowBlue_Curbs_Curve_90_Small_Left__Default" type="StaticBody3D" parent="Models" unique_id=1644684334 instance=ExtResource("66_aeu4t")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 67.110405, 0, 143.6773)
+metadata/road_module = true
+metadata/road_id = "Racetrack1_YellowBlue_Curbs_Curve_90_Small_Left"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Racetrack1_YellowBlue_Curbs_Curve_90_Small_Right__Default" type="StaticBody3D" parent="Models" unique_id=1965861107 instance=ExtResource("67_36gto")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 137.09384, 0, 143.6773)
+metadata/road_module = true
+metadata/road_id = "Racetrack1_YellowBlue_Curbs_Curve_90_Small_Right"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Racetrack1_YellowBlue_Default_Fork_Curb_Left__Default" type="StaticBody3D" parent="Models" unique_id=1244211198 instance=ExtResource("68_e6167")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 167.09384, 0, 125.35982)
+metadata/road_module = true
+metadata/road_id = "Racetrack1_YellowBlue_Default_Fork_Curb_Left"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Racetrack1_Yellowblue_Default_Fork_Curb_Right__Default" type="StaticBody3D" parent="Models" unique_id=1012159821 instance=ExtResource("69_ug833")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 237.09384, 0, 125.35982)
+metadata/road_module = true
+metadata/road_id = "Racetrack1_Yellowblue_Default_Fork_Curb_Right"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Racetrack1_YellowBlue_RoadAdapter__Default" type="StaticBody3D" parent="Models" unique_id=1488894411 instance=ExtResource("70_wpyg1")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 267.09384, 0, 152.40936)
+metadata/road_module = true
+metadata/road_id = "Racetrack1_YellowBlue_RoadAdapter"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Racetrack1_YelowBlue_Curbs__Default" type="StaticBody3D" parent="Models" unique_id=1947413330 instance=ExtResource("71_yypbe")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -257.09387, 0, 218.19662)
+metadata/road_module = true
+metadata/road_id = "Racetrack1_YelowBlue_Curbs"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="SandPit1__Default" type="StaticBody3D" parent="Models" unique_id=1071792536 instance=ExtResource("72_5b3g2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -207.09387, 0, 218.19662)
+metadata/road_module = true
+metadata/road_id = "SandPit1"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="SandPit2__Default" type="StaticBody3D" parent="Models" unique_id=728808907 instance=ExtResource("73_h3dpe")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -157.09386, 0, 218.19661)
+metadata/road_module = true
+metadata/road_id = "SandPit2"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="SandPit3__Default" type="StaticBody3D" parent="Models" unique_id=184074848 instance=ExtResource("74_vhgdg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -91.306595, 0, 218.19661)
+metadata/road_module = true
+metadata/road_id = "SandPit3"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="SandPit4__Default" type="StaticBody3D" parent="Models" unique_id=519840860 instance=ExtResource("75_8hgy3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.732063, 0, 218.19662)
+metadata/road_module = true
+metadata/road_id = "SandPit4"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="SandPit5__Default" type="StaticBody3D" parent="Models" unique_id=873179821 instance=ExtResource("76_rl3fu")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 63.842464, 0, 210.19661)
+metadata/road_module = true
+metadata/road_id = "SandPit5"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="StartLight1__Default" type="StaticBody3D" parent="Models" unique_id=443716134 instance=ExtResource("77_7kei3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 132.36179, 0, 218.19186)
+metadata/road_module = true
+metadata/road_id = "StartLight1"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="TireBarrier1__Default" type="StaticBody3D" parent="Models" unique_id=978901408 instance=ExtResource("78_r6u15")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 177.08568, 0, 218.20494)
+metadata/road_module = true
+metadata/road_id = "TireBarrier1"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="TireCluster1__Default" type="StaticBody3D" parent="Models" unique_id=943056512 instance=ExtResource("79_534cp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 227.08568, 0, 218.23074)
+metadata/road_module = true
+metadata/road_id = "TireCluster1"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Tree1__Default" type="StaticBody3D" parent="Models" unique_id=581927843 instance=ExtResource("80_57prs")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 267.11404, 0, 218.17987)
+metadata/road_module = true
+metadata/road_id = "Tree1"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Tree1_Orange__Default" type="StaticBody3D" parent="Models" unique_id=102008834 instance=ExtResource("81_8xqwg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -257.07367, 0, 273.65686)
+metadata/road_module = true
+metadata/road_id = "Tree1_Orange"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Tree2__Default" type="StaticBody3D" parent="Models" unique_id=584669949 instance=ExtResource("82_lsnv0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -207.12886, 0, 273.70245)
+metadata/road_module = true
+metadata/road_id = "Tree2"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Tree3__Default" type="StaticBody3D" parent="Models" unique_id=577471537 instance=ExtResource("83_5d2k5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -157.09766, 0, 273.6213)
+metadata/road_module = true
+metadata/road_id = "Tree3"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Tree4__Default" type="StaticBody3D" parent="Models" unique_id=1269482941 instance=ExtResource("84_salf7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -91.25058, 0, 273.67746)
+metadata/road_module = true
+metadata/road_id = "Tree4"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Tree4_Orange__Default" type="StaticBody3D" parent="Models" unique_id=853608556 instance=ExtResource("85_m0gtw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.676049, 0, 273.67746)
+metadata/road_module = true
+metadata/road_id = "Tree4_Orange"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Racetrack1_YellowBlue_Curbs_Curve_45_Long_Right__Default" type="StaticBody3D" parent="Models" unique_id=894135970 instance=ExtResource("86_luc7y")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 77.80959, 0, 254.19662)
+metadata/road_module = true
+metadata/road_id = "Racetrack1_YellowBlue_Curbs_Curve_45_Long_Right"
+metadata/variant = "Default"
+metadata/source_pack = "racetrack"
+
+[node name="Labels" type="Node3D" parent="." unique_id=517818793]
+
+[node name="Label_0" type="Label3D" parent="Labels" unique_id=502755681]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -257.09387, 0.2, -283.1506)
+pixel_size = 0.04
+text = "Barrier1
+Default"
+
+[node name="Label_1" type="Label3D" parent="Labels" unique_id=1737152174]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -207.09387, 0.2, -283.1506)
+pixel_size = 0.04
+text = "Checkpoint1
+Default"
+
+[node name="Label_2" type="Label3D" parent="Labels" unique_id=574449979]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -157.09386, 0.2, -283.1506)
+pixel_size = 0.04
+text = "Checkpoint2
+Default"
+
+[node name="Label_3" type="Label3D" parent="Labels" unique_id=2108584824]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -91.306595, 0.2, -283.1506)
+pixel_size = 0.04
+text = "ControlStand1
+Default"
+
+[node name="Label_4" type="Label3D" parent="Labels" unique_id=1462748451]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -9.732063, 0.2, -283.1506)
+pixel_size = 0.04
+text = "DigitalFlag1
+Default"
+
+[node name="Label_5" type="Label3D" parent="Labels" unique_id=1983850254]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 71.84247, 0.2, -283.1506)
+pixel_size = 0.04
+text = "Fence1
+Default"
+
+[node name="Label_6" type="Label3D" parent="Labels" unique_id=843270509]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 132.36179, 0.2, -283.1506)
+pixel_size = 0.04
+text = "Grass1
+Default"
+
+[node name="Label_7" type="Label3D" parent="Labels" unique_id=1648212487]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 177.09384, 0.2, -283.1506)
+pixel_size = 0.04
+text = "Grass2
+Default"
+
+[node name="Label_8" type="Label3D" parent="Labels" unique_id=2002114039]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 227.09384, 0.2, -283.1506)
+pixel_size = 0.04
+text = "Grass3
+Default"
+
+[node name="Label_9" type="Label3D" parent="Labels" unique_id=931321402]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 267.09384, 0.2, -283.1506)
+pixel_size = 0.04
+text = "Grass4
+Default"
+
+[node name="Label_10" type="Label3D" parent="Labels" unique_id=690051996]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -257.09387, 0.2, -237.15059)
+pixel_size = 0.04
+text = "GravelPit1
+Default"
+
+[node name="Label_11" type="Label3D" parent="Labels" unique_id=155171550]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -207.09387, 0.2, -237.15059)
+pixel_size = 0.04
+text = "GravelPit2
+Default"
+
+[node name="Label_12" type="Label3D" parent="Labels" unique_id=632649604]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -157.09386, 0.2, -237.15059)
+pixel_size = 0.04
+text = "GravelPit3
+Default"
+
+[node name="Label_13" type="Label3D" parent="Labels" unique_id=2017386657]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -91.306595, 0.2, -237.15059)
+pixel_size = 0.04
+text = "GravelPit4
+Default"
+
+[node name="Label_14" type="Label3D" parent="Labels" unique_id=1702375241]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -9.732063, 0.2, -237.15059)
+pixel_size = 0.04
+text = "GravelPit5
+Default"
+
+[node name="Label_15" type="Label3D" parent="Labels" unique_id=1796797458]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 71.84247, 0.2, -237.15059)
+pixel_size = 0.04
+text = "HazzardCone1
+Default"
+
+[node name="Label_16" type="Label3D" parent="Labels" unique_id=930759207]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 132.36179, 0.2, -237.15059)
+pixel_size = 0.04
+text = "Marker100
+Default"
+
+[node name="Label_17" type="Label3D" parent="Labels" unique_id=174508399]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 177.09384, 0.2, -237.15059)
+pixel_size = 0.04
+text = "ObservationTower1
+Default"
+
+[node name="Label_18" type="Label3D" parent="Labels" unique_id=1918823137]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 227.09384, 0.2, -237.15059)
+pixel_size = 0.04
+text = "Padock1
+Default"
+
+[node name="Label_19" type="Label3D" parent="Labels" unique_id=1120061808]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 267.09384, 0.2, -237.15059)
+pixel_size = 0.04
+text = "Racetrack1_Blue_Default
+Default"
+
+[node name="Label_20" type="Label3D" parent="Labels" unique_id=241688659]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -257.09387, 0.2, -157.05153)
+pixel_size = 0.04
+text = "Racetrack1_Blue_Default_FinishLine1
+Default"
+
+[node name="Label_21" type="Label3D" parent="Labels" unique_id=710856495]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -207.09387, 0.2, -157.05153)
+pixel_size = 0.04
+text = "Racetrack1_Blue_Default_FinishLine2
+Default"
+
+[node name="Label_22" type="Label3D" parent="Labels" unique_id=927397013]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -157.09386, 0.2, -157.05153)
+pixel_size = 0.04
+text = "Racetrack1_Blue_Default_Fork_Curb_Left
+Default"
+
+[node name="Label_23" type="Label3D" parent="Labels" unique_id=576160922]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -91.306595, 0.2, -157.05153)
+pixel_size = 0.04
+text = "Racetrack1_Blue_Default_Fork_Curb_Right
+Default"
+
+[node name="Label_24" type="Label3D" parent="Labels" unique_id=431554726]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -9.732063, 0.2, -157.05153)
+pixel_size = 0.04
+text = "Racetrack1_Blue_Default_Fork_Left
+Default"
+
+[node name="Label_25" type="Label3D" parent="Labels" unique_id=972811403]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 71.84247, 0.2, -157.05153)
+pixel_size = 0.04
+text = "Racetrack1_Blue_Default_Fork_Right
+Default"
+
+[node name="Label_26" type="Label3D" parent="Labels" unique_id=1151870183]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 132.36179, 0.2, -157.05153)
+pixel_size = 0.04
+text = "Racetrack1_Blue_Poistions
+Default"
+
+[node name="Label_27" type="Label3D" parent="Labels" unique_id=1495755782]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 177.09384, 0.2, -157.05153)
+pixel_size = 0.04
+text = "Racetrack1_Default
+Default"
+
+[node name="Label_28" type="Label3D" parent="Labels" unique_id=1056538171]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 227.09384, 0.2, -157.05153)
+pixel_size = 0.04
+text = "Racetrack1_Default_FinishLine1
+Default"
+
+[node name="Label_29" type="Label3D" parent="Labels" unique_id=662035465]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 267.09384, 0.2, -157.05153)
+pixel_size = 0.04
+text = "Racetrack1_Default_FinishLine2
+Default"
+
+[node name="Label_30" type="Label3D" parent="Labels" unique_id=798228180]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -257.09387, 0.2, -76.95247)
+pixel_size = 0.04
+text = "Racetrack1_Default_Fork_Curb_Left
+Default"
+
+[node name="Label_31" type="Label3D" parent="Labels" unique_id=872821268]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -207.09387, 0.2, -76.95247)
+pixel_size = 0.04
+text = "Racetrack1_Default_Fork_Curb_Right
+Default"
+
+[node name="Label_32" type="Label3D" parent="Labels" unique_id=2038093865]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -157.09386, 0.2, -76.95247)
+pixel_size = 0.04
+text = "Racetrack1_Default_Fork_Left
+Default"
+
+[node name="Label_33" type="Label3D" parent="Labels" unique_id=2032551654]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -91.306595, 0.2, -76.95247)
+pixel_size = 0.04
+text = "Racetrack1_Default_Fork_Right
+Default"
+
+[node name="Label_34" type="Label3D" parent="Labels" unique_id=143370693]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -9.732063, 0.2, -76.95247)
+pixel_size = 0.04
+text = "Racetrack1_Gray_Default
+Default"
+
+[node name="Label_35" type="Label3D" parent="Labels" unique_id=1690496352]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 71.84247, 0.2, -76.95247)
+pixel_size = 0.04
+text = "Racetrack1_Jump
+Default"
+
+[node name="Label_36" type="Label3D" parent="Labels" unique_id=767036402]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 132.36179, 0.2, -76.95247)
+pixel_size = 0.04
+text = "Racetrack1_Poistions
+Default"
+
+[node name="Label_37" type="Label3D" parent="Labels" unique_id=1063616772]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 177.09384, 0.2, -76.95247)
+pixel_size = 0.04
+text = "Racetrack1_RedGray_Default
+Default"
+
+[node name="Label_38" type="Label3D" parent="Labels" unique_id=1810481064]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 227.09384, 0.2, -76.95247)
+pixel_size = 0.04
+text = "Racetrack1_RedGray_PitLane_Boxes
+Default"
+
+[node name="Label_39" type="Label3D" parent="Labels" unique_id=1990821914]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 267.09384, 0.2, -76.95247)
+pixel_size = 0.04
+text = "Racetrack1_RedWhiteBlue_CurbLeft
+Default"
+
+[node name="Label_40" type="Label3D" parent="Labels" unique_id=211477798]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -257.09387, 0.2, 8.622055)
+pixel_size = 0.04
+text = "Racetrack1_RedWhiteBlue_CurbRight
+Default"
+
+[node name="Label_41" type="Label3D" parent="Labels" unique_id=1415809170]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -207.09387, 0.2, 8.622055)
+pixel_size = 0.04
+text = "Racetrack1_RedWhiteBlue_Curbs
+Default"
+
+[node name="Label_42" type="Label3D" parent="Labels" unique_id=2056633564]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -157.09386, 0.2, 8.622055)
+pixel_size = 0.04
+text = "Racetrack1_RedWhiteBlue_Curbs_Curve_45_Long_Left
+Default"
+
+[node name="Label_43" type="Label3D" parent="Labels" unique_id=922201119]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -91.306595, 0.2, 8.622055)
+pixel_size = 0.04
+text = "Racetrack1_RedWhiteBlue_Curbs_Curve_45_Long_Right
+Default"
+
+[node name="Label_44" type="Label3D" parent="Labels" unique_id=2021897161]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -9.732063, 0.2, 8.622055)
+pixel_size = 0.04
+text = "Racetrack1_RedWhiteBlue_Curbs_Curve_90_Big_Left
+Default"
+
+[node name="Label_45" type="Label3D" parent="Labels" unique_id=1832908431]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 71.84247, 0.2, 8.622055)
+pixel_size = 0.04
+text = "Racetrack1_RedWhiteBlue_Curbs_Curve_90_Big_Right
+Default"
+
+[node name="Label_46" type="Label3D" parent="Labels" unique_id=1171251785]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 132.36179, 0.2, 8.622055)
+pixel_size = 0.04
+text = "Racetrack1_RedWhiteBlue_Curbs_Curve_90_Small_Left
+Default"
+
+[node name="Label_47" type="Label3D" parent="Labels" unique_id=1805454030]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 177.09384, 0.2, 8.622055)
+pixel_size = 0.04
+text = "Racetrack1_RedWhiteBlue_Curbs_Curve_90_Small_Right
+Default"
+
+[node name="Label_48" type="Label3D" parent="Labels" unique_id=2087700037]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 227.09384, 0.2, 8.622055)
+pixel_size = 0.04
+text = "Racetrack1_RedWhiteBlue_RoadAdapter
+Default"
+
+[node name="Label_49" type="Label3D" parent="Labels" unique_id=951682015]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 267.09384, 0.2, 8.622055)
+pixel_size = 0.04
+text = "Racetrack1_RedWhite_CurbLeft
+Default"
+
+[node name="Label_50" type="Label3D" parent="Labels" unique_id=280739839]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -257.09387, 0.2, 106.622086)
+pixel_size = 0.04
+text = "Racetrack1_RedWhite_CurbRight
+Default"
+
+[node name="Label_51" type="Label3D" parent="Labels" unique_id=1313976286]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -207.09387, 0.2, 106.622086)
+pixel_size = 0.04
+text = "Racetrack1_RedWhite_Curbs
+Default"
+
+[node name="Label_52" type="Label3D" parent="Labels" unique_id=1385648113]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -157.09386, 0.2, 106.622086)
+pixel_size = 0.04
+text = "Racetrack1_RedWhite_Curbs_Curve_45_Long_Left
+Default"
+
+[node name="Label_53" type="Label3D" parent="Labels" unique_id=1337354078]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -91.306595, 0.2, 106.622086)
+pixel_size = 0.04
+text = "Racetrack1_RedWhite_Curbs_Curve_45_Long_Right
+Default"
+
+[node name="Label_54" type="Label3D" parent="Labels" unique_id=778289790]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -9.732063, 0.2, 106.622086)
+pixel_size = 0.04
+text = "Racetrack1_RedWhite_Curbs_Curve_90_Big_Left
+Default"
+
+[node name="Label_55" type="Label3D" parent="Labels" unique_id=1618468449]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 71.84247, 0.2, 106.622086)
+pixel_size = 0.04
+text = "Racetrack1_RedWhite_Curbs_Curve_90_Big_Right
+Default"
+
+[node name="Label_56" type="Label3D" parent="Labels" unique_id=2053760491]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 132.36179, 0.2, 106.622086)
+pixel_size = 0.04
+text = "Racetrack1_RedWhite_Curbs_Curve_90_Small_Left
+Default"
+
+[node name="Label_57" type="Label3D" parent="Labels" unique_id=600290659]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 177.09384, 0.2, 106.622086)
+pixel_size = 0.04
+text = "Racetrack1_RedWhite_Curbs_Curve_90_Small_Right
+Default"
+
+[node name="Label_58" type="Label3D" parent="Labels" unique_id=331486775]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 227.09384, 0.2, 106.622086)
+pixel_size = 0.04
+text = "Racetrack1_RedWhite_Curbs_Overpass
+Default"
+
+[node name="Label_59" type="Label3D" parent="Labels" unique_id=1281312349]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 267.09384, 0.2, 106.622086)
+pixel_size = 0.04
+text = "Racetrack1_RedWhite_RoadAdapter
+Default"
+
+[node name="Label_60" type="Label3D" parent="Labels" unique_id=2116551957]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -257.09387, 0.2, 192.19661)
+pixel_size = 0.04
+text = "Racetrack1_YellowBlue_CurbLeft
+Default"
+
+[node name="Label_61" type="Label3D" parent="Labels" unique_id=1821786018]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -207.09387, 0.2, 192.19661)
+pixel_size = 0.04
+text = "Racetrack1_YellowBlue_CurbRight
+Default"
+
+[node name="Label_62" type="Label3D" parent="Labels" unique_id=601185210]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -157.09386, 0.2, 192.19661)
+pixel_size = 0.04
+text = "Racetrack1_YellowBlue_Curbs_Curve_45_Long_Left
+Default"
+
+[node name="Label_63" type="Label3D" parent="Labels" unique_id=775978193]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -91.306595, 0.2, 192.19661)
+pixel_size = 0.04
+text = "Racetrack1_YellowBlue_Curbs_Curve_90_Big_Left
+Default"
+
+[node name="Label_64" type="Label3D" parent="Labels" unique_id=1839592251]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -9.732063, 0.2, 192.19661)
+pixel_size = 0.04
+text = "Racetrack1_YellowBlue_Curbs_Curve_90_Big_Right
+Default"
+
+[node name="Label_65" type="Label3D" parent="Labels" unique_id=639998520]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 71.84247, 0.2, 192.19661)
+pixel_size = 0.04
+text = "Racetrack1_YellowBlue_Curbs_Curve_90_Small_Left
+Default"
+
+[node name="Label_66" type="Label3D" parent="Labels" unique_id=925882682]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 132.36179, 0.2, 192.19661)
+pixel_size = 0.04
+text = "Racetrack1_YellowBlue_Curbs_Curve_90_Small_Right
+Default"
+
+[node name="Label_67" type="Label3D" parent="Labels" unique_id=1590902248]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 177.09384, 0.2, 192.19661)
+pixel_size = 0.04
+text = "Racetrack1_YellowBlue_Default_Fork_Curb_Left
+Default"
+
+[node name="Label_68" type="Label3D" parent="Labels" unique_id=690539709]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 227.09384, 0.2, 192.19661)
+pixel_size = 0.04
+text = "Racetrack1_Yellowblue_Default_Fork_Curb_Right
+Default"
+
+[node name="Label_69" type="Label3D" parent="Labels" unique_id=1226870925]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 267.09384, 0.2, 192.19661)
+pixel_size = 0.04
+text = "Racetrack1_YellowBlue_RoadAdapter
+Default"
+
+[node name="Label_70" type="Label3D" parent="Labels" unique_id=67689417]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -257.09387, 0.2, 238.19662)
+pixel_size = 0.04
+text = "Racetrack1_YelowBlue_Curbs
+Default"
+
+[node name="Label_71" type="Label3D" parent="Labels" unique_id=1733293679]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -207.09387, 0.2, 238.19662)
+pixel_size = 0.04
+text = "SandPit1
+Default"
+
+[node name="Label_72" type="Label3D" parent="Labels" unique_id=582170466]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -157.09386, 0.2, 238.19662)
+pixel_size = 0.04
+text = "SandPit2
+Default"
+
+[node name="Label_73" type="Label3D" parent="Labels" unique_id=1616344142]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -91.306595, 0.2, 238.19662)
+pixel_size = 0.04
+text = "SandPit3
+Default"
+
+[node name="Label_74" type="Label3D" parent="Labels" unique_id=1401819447]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -9.732063, 0.2, 238.19662)
+pixel_size = 0.04
+text = "SandPit4
+Default"
+
+[node name="Label_75" type="Label3D" parent="Labels" unique_id=1132173358]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 71.84247, 0.2, 238.19662)
+pixel_size = 0.04
+text = "SandPit5
+Default"
+
+[node name="Label_76" type="Label3D" parent="Labels" unique_id=646535424]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 132.36179, 0.2, 238.19662)
+pixel_size = 0.04
+text = "StartLight1
+Default"
+
+[node name="Label_77" type="Label3D" parent="Labels" unique_id=101318794]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 177.09384, 0.2, 238.19662)
+pixel_size = 0.04
+text = "TireBarrier1
+Default"
+
+[node name="Label_78" type="Label3D" parent="Labels" unique_id=1923937645]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 227.09384, 0.2, 238.19662)
+pixel_size = 0.04
+text = "TireCluster1
+Default"
+
+[node name="Label_79" type="Label3D" parent="Labels" unique_id=949700850]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 267.09384, 0.2, 238.19662)
+pixel_size = 0.04
+text = "Tree1
+Default"
+
+[node name="Label_80" type="Label3D" parent="Labels" unique_id=1330566936]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -257.09387, 0.2, 303.1506)
+pixel_size = 0.04
+text = "Tree1_Orange
+Default"
+
+[node name="Label_81" type="Label3D" parent="Labels" unique_id=2128564150]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -207.09387, 0.2, 303.1506)
+pixel_size = 0.04
+text = "Tree2
+Default"
+
+[node name="Label_82" type="Label3D" parent="Labels" unique_id=88332895]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -157.09386, 0.2, 303.1506)
+pixel_size = 0.04
+text = "Tree3
+Default"
+
+[node name="Label_83" type="Label3D" parent="Labels" unique_id=1286983460]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -91.306595, 0.2, 303.1506)
+pixel_size = 0.04
+text = "Tree4
+Default"
+
+[node name="Label_84" type="Label3D" parent="Labels" unique_id=504463420]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -9.732063, 0.2, 303.1506)
+pixel_size = 0.04
+text = "Tree4_Orange
+Default"
+
+[node name="Label_85" type="Label3D" parent="Labels" unique_id=755822948]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 71.84247, 0.2, 303.1506)
+pixel_size = 0.04
+text = "Racetrack1_YellowBlue_Curbs_Curve_45_Long_Right
+Default"
+
+[node name="PreviewCamera" type="Camera3D" parent="." unique_id=1514650569]
+transform = Transform3D(1, 0, 0, 0, 0.41036466, 0.91192144, 0, -0.91192144, 0.41036466, 0, 612.3012, 275.53555)
+projection = 1
+current = true
+size = 673.5313
+
+[node name="Sun" type="DirectionalLight3D" parent="." unique_id=814209431]
+transform = Transform3D(0.90630776, 0.34618863, -0.24240388, 0, 0.57357645, 0.81915206, 0.42261827, -0.74240386, 0.5198368, 0, 0, 0)
+light_energy = 1.1
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1592474603]
+environment = SubResource("Environment_xed7v")
+
+[node name="PreviewFloor" type="MeshInstance3D" parent="." unique_id=490309364]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.08, 0)
+material_override = SubResource("StandardMaterial3D_yevjk")
+mesh = SubResource("PlaneMesh_8x5y2")

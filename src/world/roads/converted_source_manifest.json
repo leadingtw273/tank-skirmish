@@ -1,0 +1,22 @@
+{
+  "sources": [
+    {
+      "id": "Road5_Shoulder2",
+      "pack": "parking",
+      "source": "PLUS/dae/Road5_Shoulder2.dae",
+      "sha256": "f1ac90812fdc44ef1b063f55f38b6830fe5b0af450f0a3093d408a58baeb4969"
+    },
+    {
+      "id": "SignCircle",
+      "pack": "signs",
+      "source": "PLUS/Blank_Sign_Meshes/dae/SignCircle.dae",
+      "sha256": "4779df9b784a0e40014694008c8b51e96bad1acdf1bc944996f517c5b64f5390"
+    },
+    {
+      "id": "Racetrack1_YellowBlue_Curbs_Curve_45_Long_Right",
+      "pack": "racetrack",
+      "source": "PLUS/fbx/Racetrack1_YellowBlue_Curbs_Curve_45_Long_Right.fbx",
+      "sha256": "f0eeae54dffbbb93cdb1c527cc73666f2d423ca3585a6bf03bbfaffa49c040fc"
+    }
+  ]
+}

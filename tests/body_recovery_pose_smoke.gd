@@ -191,7 +191,7 @@ func _fixture(data: Dictionary, live_tank: bool) -> Dictionary:
 	root.add_child(scene)
 	await physics_frame
 	var tank := scene.get_node_or_null("Encounter/Enemy") as CharacterBody3D
-	var player := scene.get_node_or_null("Main/Tank") as CharacterBody3D
+	var player := scene.get_node_or_null("Main/PlayerSpawnGroup/Tank") as CharacterBody3D
 	if tank == null or player == null:
 		_fail("%s fixture requires Encounter/Enemy and Main/Tank." % data.label)
 		scene.queue_free()

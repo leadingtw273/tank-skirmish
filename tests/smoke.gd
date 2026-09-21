@@ -183,7 +183,7 @@ func _validate_instance(instance: Node) -> void:
 
 
 func _validate_tread_animations(instance: Node) -> bool:
-	var tank := instance.get_node_or_null("Tank") as CharacterBody3D
+	var tank := instance.get_node_or_null("PlayerSpawnGroup/Tank") as CharacterBody3D
 	if tank == null:
 		push_error("Tank must exist before tread animations can be validated")
 		return false
@@ -233,7 +233,7 @@ func _validate_tread_animations(instance: Node) -> bool:
 
 
 func _validate_tread_dust(instance: Node) -> bool:
-	var tank := instance.get_node_or_null("Tank") as CharacterBody3D
+	var tank := instance.get_node_or_null("PlayerSpawnGroup/Tank") as CharacterBody3D
 	if tank == null:
 		push_error("Tank must exist before track contact effects can be validated")
 		return false
@@ -318,7 +318,7 @@ func _validate_tread_dust(instance: Node) -> bool:
 
 
 func _validate_tank_inertia(instance: Node) -> bool:
-	var tank := instance.get_node_or_null("Tank")
+	var tank := instance.get_node_or_null("PlayerSpawnGroup/Tank")
 	if tank == null:
 		push_error("Tank must exist before inertia can be validated")
 		return false
@@ -436,7 +436,7 @@ func _find_skeleton(node: Node) -> Skeleton3D:
 
 
 func _validate_turret_aiming(instance: Node) -> bool:
-	var tank = instance.get_node_or_null("Tank")
+	var tank = instance.get_node_or_null("PlayerSpawnGroup/Tank")
 	if tank == null:
 		push_error("Tank must exist before turret aiming can be validated")
 		return false
@@ -620,7 +620,7 @@ func _validate_spread_presentation(tank: Node3D, presentation: Node) -> bool:
 
 
 func _validate_camera_zoom(instance: Node) -> bool:
-	var camera_controller = instance.get_node_or_null("CameraRig")
+	var camera_controller = instance.get_node_or_null("PlayerSpawnGroup/CameraRig")
 	var projectiles := instance.get_node_or_null("CombatRuntime/Projectiles") as Node3D
 	if camera_controller == null or camera_controller.camera == null or projectiles == null:
 		push_error("Camera zoom validation requires CameraRig, Camera3D, and Projectiles nodes")
@@ -678,8 +678,8 @@ func _validate_camera_zoom(instance: Node) -> bool:
 
 func _validate_player_runtime_and_look_ahead(instance: Node) -> bool:
 	var runtime = instance.get_node_or_null("PlayerRuntime")
-	var tank = instance.get_node_or_null("Tank")
-	var camera_controller = instance.get_node_or_null("CameraRig")
+	var tank = instance.get_node_or_null("PlayerSpawnGroup/Tank")
+	var camera_controller = instance.get_node_or_null("PlayerSpawnGroup/CameraRig")
 	var player_controller = instance.get_node_or_null("PlayerRuntime/PlayerController")
 	var aim_controller = instance.get_node_or_null("PlayerRuntime/PlayerAimController")
 	var presentation = instance.get_node_or_null("PlayerRuntime/AimPresentation")
@@ -744,10 +744,10 @@ func _validate_player_runtime_and_look_ahead(instance: Node) -> bool:
 
 
 func _validate_camera_shake(instance: Node) -> bool:
-	var tank := instance.get_node_or_null("Tank") as CharacterBody3D
-	var camera_controller := instance.get_node_or_null("CameraRig") as Node3D
-	var shake_pivot := instance.get_node_or_null("CameraRig/CameraShakePivot") as Node3D
-	var camera := instance.get_node_or_null("CameraRig/CameraShakePivot/Camera3D") as Camera3D
+	var tank := instance.get_node_or_null("PlayerSpawnGroup/Tank") as CharacterBody3D
+	var camera_controller := instance.get_node_or_null("PlayerSpawnGroup/CameraRig") as Node3D
+	var shake_pivot := instance.get_node_or_null("PlayerSpawnGroup/CameraRig/CameraShakePivot") as Node3D
+	var camera := instance.get_node_or_null("PlayerSpawnGroup/CameraRig/CameraShakePivot/Camera3D") as Camera3D
 	var projectiles := instance.get_node_or_null("CombatRuntime/Projectiles") as Node3D
 	var effects := instance.get_node_or_null("CombatRuntime/Effects") as Node3D
 	if tank == null or camera_controller == null or shake_pivot == null or camera == null or projectiles == null or effects == null:
@@ -815,7 +815,7 @@ func _validate_camera_shake(instance: Node) -> bool:
 
 
 func _validate_visual_recoil(instance: Node) -> bool:
-	var tank := instance.get_node_or_null("Tank") as CharacterBody3D
+	var tank := instance.get_node_or_null("PlayerSpawnGroup/Tank") as CharacterBody3D
 	var projectiles := instance.get_node_or_null("CombatRuntime/Projectiles") as Node3D
 	var effects := instance.get_node_or_null("CombatRuntime/Effects") as Node3D
 	if tank == null or projectiles == null or effects == null:
@@ -898,7 +898,7 @@ func _validate_visual_recoil(instance: Node) -> bool:
 
 
 func _validate_projectile_firing(instance: Node) -> bool:
-	var tank = instance.get_node_or_null("Tank")
+	var tank = instance.get_node_or_null("PlayerSpawnGroup/Tank")
 	var player_controller = instance.get_node_or_null("PlayerRuntime/PlayerController")
 	var projectiles := instance.get_node_or_null("CombatRuntime/Projectiles") as Node3D
 	var effects := instance.get_node_or_null("CombatRuntime/Effects") as Node3D
@@ -1089,7 +1089,7 @@ func _validate_collision_layout(instance: Node) -> bool:
 	if manifest.is_empty():
 		return false
 
-	var tank := instance.get_node_or_null("Tank") as CharacterBody3D
+	var tank := instance.get_node_or_null("PlayerSpawnGroup/Tank") as CharacterBody3D
 	if tank == null:
 		push_error("Tank must be a CharacterBody3D")
 		return false
@@ -1130,7 +1130,7 @@ func _validate_map_960(instance: Node) -> bool:
 		push_error("Ground visual and collision must both be exactly 960m by 960m")
 		return false
 
-	var camera := instance.get_node_or_null("CameraRig/CameraShakePivot/Camera3D") as Camera3D
+	var camera := instance.get_node_or_null("PlayerSpawnGroup/CameraRig/CameraShakePivot/Camera3D") as Camera3D
 	if camera == null or not _has_approved_camera_transform(camera) \
 			or camera.projection != Camera3D.PROJECTION_ORTHOGONAL or camera.keep_aspect != Camera3D.KEEP_HEIGHT \
 			or not camera.current or not is_equal_approx(camera.size, 100.0):
@@ -1297,13 +1297,22 @@ func _validate_grid_layout(instance: Node) -> bool:
 
 
 func _validate_world_structure(instance: Node) -> bool:
-	var expected_root_children := [&"CameraRig", &"Tank", &"PlayerRuntime", &"CombatRuntime", &"SurfaceEffects", &"World"]
+	var expected_root_children := [&"PlayerSpawnGroup", &"PlayerRuntime", &"CombatRuntime", &"SurfaceEffects", &"World"]
 	if instance.get_child_count() != expected_root_children.size():
-		push_error("Main scene must contain CameraRig, Tank, PlayerRuntime, CombatRuntime, SurfaceEffects, and World")
+		push_error("Main scene must contain PlayerSpawnGroup, PlayerRuntime, CombatRuntime, SurfaceEffects, and World")
 		return false
 	for index: int in expected_root_children.size():
 		if instance.get_child(index).name != expected_root_children[index]:
 			push_error("Main scene root child order must retain runtime ownership and SurfaceEffects before World")
+			return false
+	var player_spawn_group := instance.get_node_or_null("PlayerSpawnGroup") as Node3D
+	var expected_spawn_children := [&"CameraRig", &"Tank"]
+	if player_spawn_group == null or player_spawn_group.get_child_count() != expected_spawn_children.size():
+		push_error("PlayerSpawnGroup must contain exactly CameraRig and Tank")
+		return false
+	for index: int in expected_spawn_children.size():
+		if player_spawn_group.get_child(index).name != expected_spawn_children[index]:
+			push_error("PlayerSpawnGroup child order must retain CameraRig before Tank")
 			return false
 	var combat_runtime := instance.get_node_or_null("CombatRuntime") as Node3D
 	var projectiles := instance.get_node_or_null("CombatRuntime/Projectiles") as Node3D

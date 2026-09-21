@@ -161,7 +161,7 @@ func _validate_playtest_composition() -> bool:
 	var preview := playtest.get_node_or_null("Encounter/VisionPreview") as MeshInstance3D
 	var enemy_vision := playtest.get_node_or_null("Encounter/Vision")
 	var vision_observer := playtest.get_node_or_null("Encounter/Enemy") as Node3D
-	var player := gameplay_runtime.get_node_or_null("Tank") as CharacterBody3D if gameplay_runtime != null else null
+	var player := gameplay_runtime.get_node_or_null("PlayerSpawnGroup/Tank") as CharacterBody3D if gameplay_runtime != null else null
 	var combat_ai := encounter.get_node_or_null("CombatAI") as Node if encounter != null else null
 	## 預覽 read-back 期間固定 observer 姿態，避免 AI 瞄準／開火使 snapshot 前提漂移。
 	if combat_ai != null:
@@ -173,15 +173,19 @@ func _validate_playtest_composition() -> bool:
 	if combat_ai != null:
 		combat_ai.call("set_combat_enabled", false)
 	var world := gameplay_runtime.get_node_or_null("World") as Node3D if gameplay_runtime != null else null
-	var expected_runtime_nodes := [&"CameraRig", &"Tank", &"PlayerRuntime", &"CombatRuntime", &"SurfaceEffects", &"World"]
+	var expected_runtime_nodes := [&"PlayerSpawnGroup", &"PlayerRuntime", &"CombatRuntime", &"SurfaceEffects", &"World"]
 	var has_existing_runtime := gameplay_runtime != null and gameplay_runtime.get_child_count() == expected_runtime_nodes.size()
 	if has_existing_runtime:
 		for node_name in expected_runtime_nodes:
 			if gameplay_runtime.get_node_or_null(NodePath(node_name)) == null:
 				has_existing_runtime = false
 				break
+	var player_spawn_group := gameplay_runtime.get_node_or_null("PlayerSpawnGroup") as Node3D if gameplay_runtime != null else null
+	if has_existing_runtime and (player_spawn_group == null or player_spawn_group.get_child_count() != 2 \
+			or player_spawn_group.get_child(0).name != &"CameraRig" or player_spawn_group.get_child(1).name != &"Tank"):
+		has_existing_runtime = false
 	var targets := world.get_node_or_null("Targets") as Node3D if world != null else null
-	var original_player_tank := gameplay_runtime.get_node_or_null("Tank") as Node3D if gameplay_runtime != null else null
+	var original_player_tank := gameplay_runtime.get_node_or_null("PlayerSpawnGroup/Tank") as Node3D if gameplay_runtime != null else null
 	var original_player_transform := original_player_tank.global_transform if original_player_tank != null else Transform3D.IDENTITY
 	var valid: bool = has_existing_runtime and encounter != null and encounter.get("gameplay_runtime") == gameplay_runtime \
 		and combat_ai != null and world != null \
@@ -227,9 +231,9 @@ func _validate_playtest_composition() -> bool:
 			valid = false
 		else:
 			await process_frame
-			var replacement_tank := gameplay_runtime.get_node_or_null("Tank") as Node3D
+			var replacement_tank := gameplay_runtime.get_node_or_null("PlayerSpawnGroup/Tank") as Node3D
 			var player_runtime := gameplay_runtime.get_node_or_null("PlayerRuntime") as Node
-			var camera_controller := gameplay_runtime.get_node_or_null("CameraRig") as Node3D
+			var camera_controller := gameplay_runtime.get_node_or_null("PlayerSpawnGroup/CameraRig") as Node3D
 			var player_controller := gameplay_runtime.get_node_or_null("PlayerRuntime/PlayerController") as Node
 			var aim_controller := gameplay_runtime.get_node_or_null("PlayerRuntime/PlayerAimController") as Node
 			var aim_presentation := gameplay_runtime.get_node_or_null("PlayerRuntime/AimPresentation") as Node
@@ -408,7 +412,7 @@ func _validate_accuracy_range(gameplay_runtime: Node3D) -> bool:
 	## 用真實投射物射線與 CombatRuntime 事件驗完整接線，不只直接呼叫靶子的回呼。
 	var accuracy_range := gameplay_runtime.get_node_or_null("World/Range") as Node3D
 	var combat := gameplay_runtime.get_node_or_null("CombatRuntime") as CombatRuntime
-	var tank := gameplay_runtime.get_node_or_null("Tank") as CharacterBody3D
+	var tank := gameplay_runtime.get_node_or_null("PlayerSpawnGroup/Tank") as CharacterBody3D
 	if accuracy_range == null or combat == null or tank == null \
 			or not combat.impact_resolved.is_connected(accuracy_range.consume_impact):
 		return _fail("Training range must consume the existing runtime impact signal.")

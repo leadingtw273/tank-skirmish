@@ -156,7 +156,7 @@ func _validate_combat_ai_intent_and_lifecycle() -> void:
 	await physics_frame
 	var ai := scene.get_node_or_null("Encounter/CombatAI") as Node
 	var tank := scene.get_node_or_null("Encounter/Enemy") as CharacterBody3D
-	var player := scene.get_node_or_null("Main/Tank") as CharacterBody3D
+	var player := scene.get_node_or_null("Main/PlayerSpawnGroup/Tank") as CharacterBody3D
 	if ai == null or tank == null or player == null:
 		_fail("CombatAI recovery integration fixture requires Encounter/CombatAI, Enemy, and Main/Tank.")
 	else:

@@ -4,18 +4,19 @@ extends Node3D
 @onready var player_runtime: Node = $PlayerRuntime
 @onready var combat_runtime: CombatRuntime = $CombatRuntime
 @onready var surface_effects: Node = $SurfaceEffects
+@onready var player_spawn_group: Node3D = $PlayerSpawnGroup
 
 var track_contact_effects: Node
 
 
 func _ready() -> void:
 	get_tree().root.content_scale_aspect = Window.CONTENT_SCALE_ASPECT_EXPAND
-	_bind_track_contact_effects($Tank)
+	_bind_track_contact_effects($PlayerSpawnGroup/Tank)
 
 
 ## 以指定車型替換玩家坦克，保留世界位置與朝向，並重新接上所有既有玩法 runtime。
 func replace_player_tank(tank_scene: PackedScene) -> Node3D:
-	var previous_tank := get_node_or_null("Tank") as Node3D
+	var previous_tank := player_spawn_group.get_node_or_null("Tank") as Node3D
 	if previous_tank == null:
 		push_error("TankSkirmish requires its current player tank for replacement.")
 		return null
@@ -31,7 +32,7 @@ func respawn_player_tank(tank_scene: PackedScene, spawn_transform: Transform3D) 
 
 
 func _replace_player_tank_at(tank_scene: PackedScene, spawn_transform: Transform3D) -> Node3D:
-	var previous_tank := get_node_or_null("Tank") as Node3D
+	var previous_tank := player_spawn_group.get_node_or_null("Tank") as Node3D
 	var replacement_tank := tank_scene.instantiate() as Node3D if tank_scene != null else null
 	var replacement_contacts := replacement_tank.get_node_or_null("TrackContactEffects") as Node \
 			if replacement_tank != null else null
@@ -51,10 +52,10 @@ func _replace_player_tank_at(tank_scene: PackedScene, spawn_transform: Transform
 		previous_tank.name = "PlayerWreck" if retain_wreck else "RetiredTank"
 	replacement_tank.name = "Tank"
 	## ready 也必須看見正式出生姿態，不先在原點初始化後再瞬移。
-	replacement_tank.transform = global_transform.affine_inverse() * spawn_transform
-	add_child(replacement_tank)
+	replacement_tank.transform = player_spawn_group.global_transform.affine_inverse() * spawn_transform
+	player_spawn_group.add_child(replacement_tank)
 	if previous_index >= 0:
-		move_child(replacement_tank, previous_index)
+		player_spawn_group.move_child(replacement_tank, previous_index)
 
 	if not bool(player_runtime.call("set_controlled_tank", replacement_tank)):
 		push_error("TankSkirmish could not bind PlayerRuntime to the replacement tank.")

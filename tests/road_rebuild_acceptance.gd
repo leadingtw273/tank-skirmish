@@ -78,8 +78,8 @@ func check_main_world() -> void:
 		return
 	var junctions := roads.get_node_or_null("Junctions") as Node3D
 	var connections := roads.get_node_or_null("Connections") as Node3D
-	expect(junctions != null and junctions.get_child_count() == 54, "expected 54 junctions")
-	expect(connections != null and connections.get_child_count() == 138, "expected 138 connection segments")
+	expect(junctions != null and junctions.get_child_count() == 52, "expected 52 junctions")
+	expect(connections != null and connections.get_child_count() == 148, "expected 148 connection segments")
 	if junctions != null and connections != null:
 		var jports := marker_positions(junctions)
 		var groups := connection_groups(connections)
@@ -88,7 +88,33 @@ func check_main_world() -> void:
 		check_connected(groups)
 		check_half_turn_symmetry(junctions, connections)
 		check_clearance(junctions)
+		check_side_cross_links(junctions, groups)
+		for pair: Array in [["D1__T", Vector3(84, 0.03, -66)], ["Mirror_D1__T", Vector3(-84, 0.03, 66)]]:
+			var bend_join := junctions.get_node_or_null(pair[0]) as Node3D
+			expect(bend_join != null, "missing enlarged inner-bend T: " + str(pair[0]))
+			if bend_join != null:
+				expect(bend_join.position.distance_to(pair[1]) < EPS, "inner bend was not moved inward by 6m: " + str(pair[0]))
+		for id: String in ["UL1", "UL4", "Mirror_UL1", "Mirror_UL4"]:
+			expect(junctions.has_node(id + "__Corner90"), "U turn requires fixed native 90-degree corners: " + id)
+		for id: String in ["UL1_to_UL4", "Mirror_UL1_to_Mirror_UL4"]:
+			expect(groups.has(id), "U turn requires one straight crown: " + id)
+		for id: String in ["UL2", "UL3", "Mirror_UL2", "Mirror_UL3"]:
+			for junction in junctions.get_children():
+				expect(not str(junction.name).begins_with(id + "__"), "obsolete diagonal U bend remains: " + id)
 	world.queue_free()
+
+func check_side_cross_links(junctions: Node3D, groups: Dictionary) -> void:
+	for name_: String in ["L1__Y", "Mirror_L1__Y", "LJoin__T", "Mirror_LJoin__T"]:
+		var junction := junctions.get_node_or_null(name_)
+		expect(junction != null, "missing green-line three-way junction: " + name_)
+		if junction != null:
+			expect(marker_positions(junction).size() == 3, "junction must have three actual ports: " + name_)
+	for id: String in ["RI", "RM", "Mirror_RI", "LM"]:
+		expect(junctions.has_node(id + "__T"), "red-link removal must restore original inner T: " + id)
+	for id: String in ["L1_to_LJoin", "Mirror_L1_to_Mirror_LJoin"]:
+		expect(groups.has(id), "missing green-line connection at outer bend: " + id)
+	for id: String in ["RI_to_RUpper", "RM_to_R2", "Mirror_RI_to_Mirror_RUpper", "LM_to_L2"]:
+		expect(not groups.has(id), "red-marked connection must be removed: " + id)
 
 func check_connection_geometry(groups: Dictionary, junction_ports: Array[Vector3]) -> void:
 	for id: String in groups:
@@ -125,7 +151,7 @@ func check_connected(groups: Dictionary) -> void:
 		if seen.has(current): continue
 		seen[current] = true
 		for next: String in graph.get(current, []): todo.append(next)
-	expect(seen.size() == 54, "road graph is not fully connected")
+	expect(seen.size() == 52, "road graph is not fully connected")
 
 func check_half_turn_symmetry(junctions: Node3D, connections: Node3D) -> void:
 	var all: Array = []

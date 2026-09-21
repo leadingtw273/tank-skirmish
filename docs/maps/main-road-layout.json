@@ -3,71 +3,43 @@
 		{
 			"end_error_m": 0.0,
 			"from": "UL0",
-			"length_m": 27.8578643798828,
-			"segments": 3,
+			"length_m": 48.0,
+			"segments": 4,
 			"to": "UL1"
 		},
 		{
 			"end_error_m": 0.0,
 			"from": "Mirror_UL0",
-			"length_m": 27.8578643798828,
-			"segments": 3,
+			"length_m": 48.0,
+			"segments": 4,
 			"to": "Mirror_UL1"
 		},
 		{
 			"end_error_m": 0.0,
 			"from": "UL1",
-			"length_m": 10.8284244537354,
-			"segments": 1,
-			"to": "UL2"
-		},
-		{
-			"end_error_m": 0.0,
-			"from": "Mirror_UL1",
-			"length_m": 10.8284244537354,
-			"segments": 1,
-			"to": "Mirror_UL2"
-		},
-		{
-			"end_error_m": 0.0,
-			"from": "UL2",
-			"length_m": 3.37258148193359,
-			"segments": 1,
-			"to": "UL3"
-		},
-		{
-			"end_error_m": 0.0,
-			"from": "Mirror_UL2",
-			"length_m": 3.37258148193359,
-			"segments": 1,
-			"to": "Mirror_UL3"
-		},
-		{
-			"end_error_m": 0.0,
-			"from": "UL3",
-			"length_m": 2.34314370155334,
-			"segments": 1,
+			"length_m": 36.0,
+			"segments": 3,
 			"to": "UL4"
 		},
 		{
 			"end_error_m": 0.0,
-			"from": "Mirror_UL3",
-			"length_m": 2.34314370155334,
-			"segments": 1,
+			"from": "Mirror_UL1",
+			"length_m": 36.0,
+			"segments": 3,
 			"to": "Mirror_UL4"
 		},
 		{
 			"end_error_m": 0.0,
 			"from": "UL4",
-			"length_m": 11.5147171020508,
-			"segments": 1,
+			"length_m": 24.0,
+			"segments": 2,
 			"to": "G0"
 		},
 		{
 			"end_error_m": 0.0,
 			"from": "Mirror_UL4",
-			"length_m": 11.5147171020508,
-			"segments": 1,
+			"length_m": 24.0,
+			"segments": 2,
 			"to": "Mirror_G0"
 		},
 		{
@@ -101,56 +73,56 @@
 		{
 			"end_error_m": 0.0,
 			"from": "G2",
-			"length_m": 24.0332641601562,
-			"segments": 3,
+			"length_m": 18.0332641601562,
+			"segments": 2,
 			"to": "G3"
 		},
 		{
 			"end_error_m": 0.0,
 			"from": "Mirror_G2",
-			"length_m": 24.0332641601562,
-			"segments": 3,
+			"length_m": 18.0332641601562,
+			"segments": 2,
 			"to": "Mirror_G3"
 		},
 		{
 			"end_error_m": 0.0,
 			"from": "G3",
-			"length_m": 27.4814529418945,
+			"length_m": 33.4814529418945,
 			"segments": 3,
 			"to": "G4"
 		},
 		{
 			"end_error_m": 0.0,
 			"from": "Mirror_G3",
-			"length_m": 27.4814529418945,
+			"length_m": 33.4814529418945,
 			"segments": 3,
 			"to": "Mirror_G4"
 		},
 		{
 			"end_error_m": 0.0,
 			"from": "G4",
-			"length_m": 12.0,
-			"segments": 1,
+			"length_m": 18.0,
+			"segments": 2,
 			"to": "D1"
 		},
 		{
 			"end_error_m": 0.0,
 			"from": "Mirror_G4",
-			"length_m": 12.0,
-			"segments": 1,
+			"length_m": 18.0,
+			"segments": 2,
 			"to": "Mirror_D1"
 		},
 		{
 			"end_error_m": 0.0,
 			"from": "G3",
-			"length_m": 12.9470462799072,
+			"length_m": 21.4323272705078,
 			"segments": 2,
 			"to": "D0"
 		},
 		{
 			"end_error_m": 0.0,
 			"from": "Mirror_G3",
-			"length_m": 12.9470462799072,
+			"length_m": 21.4323272705078,
 			"segments": 2,
 			"to": "Mirror_D0"
 		},
@@ -171,14 +143,14 @@
 		{
 			"end_error_m": 0.0,
 			"from": "D1",
-			"length_m": 12.0,
+			"length_m": 6.0,
 			"segments": 1,
 			"to": "R0"
 		},
 		{
 			"end_error_m": 0.0,
 			"from": "Mirror_D1",
-			"length_m": 12.0,
+			"length_m": 6.0,
 			"segments": 1,
 			"to": "Mirror_R0"
 		},
@@ -339,58 +311,86 @@
 		{
 			"end_error_m": 0.0,
 			"from": "UL0",
-			"length_m": 5.51472091674805,
+			"length_m": 1.43471527099609,
 			"segments": 1,
 			"to": "L0"
 		},
 		{
 			"end_error_m": 0.0,
 			"from": "Mirror_UL0",
-			"length_m": 5.51472091674805,
+			"length_m": 1.43471527099609,
 			"segments": 1,
 			"to": "Mirror_L0"
 		},
 		{
 			"end_error_m": 0.0,
 			"from": "L0",
-			"length_m": 12.1131362915039,
+			"length_m": 14.255274772644,
 			"segments": 2,
 			"to": "L1"
 		},
 		{
 			"end_error_m": 0.0,
 			"from": "Mirror_L0",
-			"length_m": 12.1131362915039,
+			"length_m": 14.255274772644,
 			"segments": 2,
 			"to": "Mirror_L1"
 		},
 		{
 			"end_error_m": 0.0,
 			"from": "L1",
-			"length_m": 21.4347190856934,
-			"segments": 2,
+			"length_m": 25.5065250396729,
+			"segments": 3,
 			"to": "L2"
 		},
 		{
 			"end_error_m": 0.0,
 			"from": "Mirror_L1",
-			"length_m": 21.4347190856934,
-			"segments": 2,
+			"length_m": 25.5065250396729,
+			"segments": 3,
 			"to": "R2"
 		},
 		{
 			"end_error_m": 0.0,
 			"from": "H0",
-			"length_m": 36.0,
-			"segments": 3,
-			"to": "LI"
+			"length_m": 22.0,
+			"segments": 2,
+			"to": "LJoin"
 		},
 		{
 			"end_error_m": 0.0,
 			"from": "Mirror_H0",
-			"length_m": 36.0,
-			"segments": 3,
+			"length_m": 22.0,
+			"segments": 2,
+			"to": "Mirror_LJoin"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "LJoin",
+			"length_m": 2.0,
+			"segments": 1,
+			"to": "LI"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "Mirror_LJoin",
+			"length_m": 2.0,
+			"segments": 1,
 			"to": "Mirror_LI"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "L1",
+			"length_m": 15.4265213012695,
+			"segments": 2,
+			"to": "LJoin"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "Mirror_L1",
+			"length_m": 15.4265213012695,
+			"segments": 2,
+			"to": "Mirror_LJoin"
 		},
 		{
 			"end_error_m": 0.0,
@@ -516,26 +516,10 @@
 		],
 		[
 			"UL1",
-			"UL2"
-		],
-		[
-			"Mirror_UL1",
-			"Mirror_UL2"
-		],
-		[
-			"UL2",
-			"UL3"
-		],
-		[
-			"Mirror_UL2",
-			"Mirror_UL3"
-		],
-		[
-			"UL3",
 			"UL4"
 		],
 		[
-			"Mirror_UL3",
+			"Mirror_UL1",
 			"Mirror_UL4"
 		],
 		[
@@ -724,11 +708,27 @@
 		],
 		[
 			"H0",
-			"LI"
+			"LJoin"
 		],
 		[
 			"Mirror_H0",
+			"Mirror_LJoin"
+		],
+		[
+			"LJoin",
+			"LI"
+		],
+		[
+			"Mirror_LJoin",
 			"Mirror_LI"
+		],
+		[
+			"L1",
+			"LJoin"
+		],
+		[
+			"Mirror_L1",
+			"Mirror_LJoin"
 		],
 		[
 			"LI",
@@ -798,11 +798,11 @@
 	"nodes": {
 		"D0": [
 			60.0,
-			-72.0
+			-66.0
 		],
 		"D1": [
 			84.0,
-			-72.0
+			-66.0
 		],
 		"E": [
 			48.0,
@@ -821,7 +821,7 @@
 			-96.0
 		],
 		"G3": [
-			36.0,
+			30.0,
 			-96.0
 		],
 		"G4": [
@@ -842,11 +842,11 @@
 		],
 		"L0": [
 			-132.0,
-			-54.0
+			-58.0800018310547
 		],
 		"L1": [
 			-111.919998168945,
-			-33.9199981689453
+			-38.0
 		],
 		"L2": [
 			-111.919998168945,
@@ -856,17 +856,21 @@
 			-84.0,
 			-24.0
 		],
+		"LJoin": [
+			-84.0,
+			-38.0
+		],
 		"LM": [
 			-84.0,
 			0.0
 		],
 		"Mirror_D0": [
 			-60.0,
-			72.0
+			66.0
 		],
 		"Mirror_D1": [
 			-84.0,
-			72.0
+			66.0
 		],
 		"Mirror_G0": [
 			84.0,
@@ -881,7 +885,7 @@
 			96.0
 		],
 		"Mirror_G3": [
-			-36.0,
+			-30.0,
 			96.0
 		],
 		"Mirror_G4": [
@@ -902,15 +906,19 @@
 		],
 		"Mirror_L0": [
 			132.0,
-			54.0
+			58.0800018310547
 		],
 		"Mirror_L1": [
 			111.919998168945,
-			33.9199981689453
+			38.0
 		],
 		"Mirror_LI": [
 			84.0,
 			24.0
+		],
+		"Mirror_LJoin": [
+			84.0,
+			38.0
 		],
 		"Mirror_N": [
 			0.0,
@@ -942,19 +950,11 @@
 		],
 		"Mirror_UL1": [
 			132.0,
-			114.0
-		],
-		"Mirror_UL2": [
-			114.0,
-			132.0
-		],
-		"Mirror_UL3": [
-			96.0,
 			132.0
 		],
 		"Mirror_UL4": [
 			84.0,
-			120.0
+			132.0
 		],
 		"N": [
 			0.0,
@@ -994,19 +994,11 @@
 		],
 		"UL1": [
 			-132.0,
-			-114.0
-		],
-		"UL2": [
-			-114.0,
-			-132.0
-		],
-		"UL3": [
-			-96.0,
 			-132.0
 		],
 		"UL4": [
 			-84.0,
-			-120.0
+			-132.0
 		],
 		"W": [
 			-48.0,

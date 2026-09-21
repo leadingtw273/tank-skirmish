@@ -31,7 +31,7 @@ func _reproduce_recorded_travel_pose() -> void:
 	root.add_child(scene)
 	await physics_frame
 	var enemy := scene.get_node_or_null("Encounter/Enemy") as CharacterBody3D
-	var player := scene.get_node_or_null("Main/Tank") as CharacterBody3D
+	var player := scene.get_node_or_null("Main/PlayerSpawnGroup/Tank") as CharacterBody3D
 	var ai := scene.get_node_or_null("Encounter/CombatAI") as Node
 	if enemy == null or player == null or ai == null or not enemy.scene_file_path.ends_with("tank2.tscn"):
 		_fail("authored scene must expose its live Tank2 Enemy, player and CombatAI.")

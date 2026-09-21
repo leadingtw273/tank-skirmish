@@ -30,7 +30,7 @@ func _init() -> void:
 
 func _validate(instance: Node) -> void:
 	var runtime := instance.get_node_or_null("CombatRuntime") as CombatRuntime
-	var tank := instance.get_node_or_null("Tank") as CharacterBody3D
+	var tank := instance.get_node_or_null("PlayerSpawnGroup/Tank") as CharacterBody3D
 	var player_runtime := instance.get_node_or_null("PlayerRuntime")
 	var projectiles := instance.get_node_or_null("CombatRuntime/Projectiles") as Node3D
 	var effects := instance.get_node_or_null("CombatRuntime/Effects") as Node3D

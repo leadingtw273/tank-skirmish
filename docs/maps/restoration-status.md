@@ -1,5 +1,24 @@
 # LEA-177 重建交付紀錄
 
+## 2026-09-21 最終驗收與結案
+
+leadi 已回覆「很好，這邊驗收通過，結算這張單吧」，授權結案。
+
+- 最終主地圖保留 1920×1920 地面；道路 52 路口／72 邏輯連接／148 直路段，含後續綠線連接、U 彎與內側彎道加大修正。
+- 使用者手擺建築經 180° 複製與角度對齊後，共 170 棟；保留建築物理碰撞。
+- 玩家位於左上庭院；`PlayerSpawnGroup` 同層收納 Tank／CameraRig，平移時一起調整。換車與重生保留群組與世界姿態，訓練場原出生點不變。操作方式見 `player-spawn-group.md`。
+- 最後一輪實跑：`PLAYER_SPAWN_GROUP PASS failures=0`、Training ground／Enemy combat／Combat boundary smoke validation passed；fresh-context 玩家群組驗收 PASS。Windows Godot 已重新開啟，並取得上述人工驗收。
+- 既有全量 `tests/smoke.gd` 仍含舊主地圖結構假設，本次不宣稱全量測試全綠，也未刪除斷言規避。
+- 完整離線備份 `lea177-20260921-151129.tar.gz` 已通過 `LOCAL_BACKUP_PASS`；包含未提交場景與素材。該次 bundle 是備份時的 HEAD `210594e`，不代表包含其後未提交修改；結案另建立 Git checkpoint。
+- 坦克路面接地／沿坡升降／橋面行駛仍屬 LEA-176，未在本單實作。既有資源自動重存差異與額外 `world.tscn` 保留，不擅自刪除或併入本次程式提交。
+- 未推送遠端、未合併其他 checkout、未上傳付費素材。以下內容為歷次交付快照，其中「待驗收」與程序 PID 不再代表目前狀態。
+
+## 歷史交付快照
+
+> U 彎後續修正：目前為 52 路口／72 邏輯連接／148 直路段。左上與右下先固定兩個原生 90° 彎，再接水平直路，移除原斜邊；其他路口座標與綠線連接不變。fresh-context 布局驗收 PASS（exit 0），詳見 `road-acceptance.md`。
+
+> 2026-09-18 綠線版更新：下方為初次交付歷史紀錄。主圖現為 56 路口／76 邏輯連接／144 直路段；依使用者紅叉移除四條中段橫路，兩側外彎各補一條綠線連接，保留 180° 對稱及加寬間距。獨立驗收 PASS，詳見 `road-acceptance.md`；位置仍待使用者確認。
+
 ## 保存位置與性質
 
 工作樹：`/home/markchou/project/tank-skirmish-worktrees/lea-177-main-world`。

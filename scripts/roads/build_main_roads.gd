@@ -71,27 +71,32 @@ func make_graph() -> void:
 	# Metres. Original screenshot supplies topology, dimensions are reconstructed.
 	# Parallel centre spacing 27.92 = 12m road + 2 * original 7.96m clear space.
 	var upper := {
-		"UL0": Vector3(-132, 0, -72), "UL1": Vector3(-132, 0, -114),
-		"UL2": Vector3(-114, 0, -132), "UL3": Vector3(-96, 0, -132),
-		"UL4": Vector3(-84, 0, -120), "G0": Vector3(-84, 0, -96),
+		# Fix the two native 90-degree corners first; only straight infill joins them.
+		"UL0": Vector3(-132, 0, -72), "UL1": Vector3(-132, 0, -132),
+		"UL4": Vector3(-84, 0, -132), "G0": Vector3(-84, 0, -96),
 		"G1": Vector3(-48, 0, -96), "G2": Vector3(0, 0, -96),
-		"G3": Vector3(36, 0, -96), "G4": Vector3(84, 0, -96),
+		"G3": Vector3(30, 0, -96), "G4": Vector3(84, 0, -96),
 		"R0": Vector3(84, 0, -48), "R1": Vector3(111.92, 0, -48),
 		"R2": Vector3(111.92, 0, 0), "RI": Vector3(84, 0, -24), "RM": Vector3(84, 0, 0),
-		"D0": Vector3(60, 0, -72), "D1": Vector3(84, 0, -72),
+		# Enlarge the marked inner bend by 6m; keep its diagonal exactly 45 degrees.
+		"D0": Vector3(60, 0, -66), "D1": Vector3(84, 0, -66),
 		"H0": Vector3(-84, 0, -72), "H1": Vector3(-48, 0, -72), "H2": Vector3(0, 0, -72),
-		"L0": Vector3(-132, 0, -54), "L1": Vector3(-111.92, 0, -33.92),
+		# Keep the green-marked branch at the bend, with room for the inner T.
+		"L0": Vector3(-132, 0, -58.08), "L1": Vector3(-111.92, 0, -38),
+		"LJoin": Vector3(-84, 0, -38),
 		"L2": Vector3(-111.92, 0, 0), "LI": Vector3(-84, 0, -24), "LM": Vector3(-84, 0, 0),
 		"N": Vector3(0, 0, -48), "NW": Vector3(-24, 0, -24), "NE": Vector3(24, 0, -24),
 		"W": Vector3(-48, 0, 0), "E": Vector3(48, 0, 0)
 	}
 	var upper_edges: Array[Array] = [
-		["UL0", "UL1"], ["UL1", "UL2"], ["UL2", "UL3"], ["UL3", "UL4"], ["UL4", "G0"],
+		["UL0", "UL1"], ["UL1", "UL4"], ["UL4", "G0"],
 		["G0", "G1"], ["G1", "G2"], ["G2", "G3"], ["G3", "G4"], ["G4", "D1"],
-		["G3", "D0"], ["D0", "D1"], ["D1", "R0"], ["R0", "R1"], ["R1", "R2"],
+		["G3", "D0"], ["D0", "D1"], ["D1", "R0"], ["R0", "R1"],
+		["R1", "R2"],
 		["R0", "RI"], ["RI", "RM"], ["UL0", "H0"], ["H0", "H1"], ["H1", "H2"],
 		["G0", "H0"], ["G1", "H1"], ["G2", "H2"], ["H2", "N"],
-		["UL0", "L0"], ["L0", "L1"], ["L1", "L2"], ["H0", "LI"], ["LI", "LM"],
+		["UL0", "L0"], ["L0", "L1"], ["L1", "L2"],
+		["H0", "LJoin"], ["LJoin", "LI"], ["L1", "LJoin"], ["LI", "LM"],
 		["LI", "NW"], ["RI", "NE"], ["N", "NW"], ["N", "NE"], ["NW", "W"], ["NE", "E"],
 		["W", "LM"], ["E", "RM"]
 	]

@@ -28,7 +28,7 @@ func _validate(playtest: Node3D) -> void:
 	var ai := encounter.get_node_or_null("CombatAI") as Node if encounter != null else null
 	var player_runtime := main.get_node_or_null("PlayerRuntime") as Node if main != null else null
 	var combat := main.get_node_or_null("CombatRuntime") as CombatRuntime if main != null else null
-	var player := main.get_node_or_null("Tank") as Node3D if main != null else null
+	var player := main.get_node_or_null("PlayerSpawnGroup/Tank") as Node3D if main != null else null
 	if main == null or encounter == null or enemy == null or vision == null or ai == null \
 			or player_runtime == null or combat == null or player == null:
 		_finish(playtest, "Enemy combat smoke requires Main, Encounter, Enemy, Vision, CombatAI, and player runtime.")
@@ -888,7 +888,7 @@ func _validate_combat_and_recovery(playtest: Node3D, main: Node3D, encounter: No
 	if bool(player_runtime.get("controls_enabled")) or bool(ai.get("combat_enabled")):
 		_finish(playtest, "Player depletion must disable controls and enemy combat immediately.")
 		return false
-	if not await _wait_for_frames(120) or main.get_node_or_null("Tank") != player \
+	if not await _wait_for_frames(120) or main.get_node_or_null("PlayerSpawnGroup/Tank") != player \
 			or bool(player_runtime.get("controls_enabled")) or bool(ai.get("combat_enabled")):
 		_finish(playtest, "Before three seconds the depleted original tank must remain the disabled controlled instance.")
 		return false
@@ -959,7 +959,7 @@ func _validate_combat_and_recovery(playtest: Node3D, main: Node3D, encounter: No
 		return false
 	await process_frame
 	await physics_frame
-	var replacement := main.get_node_or_null("Tank") as Node3D
+	var replacement := main.get_node_or_null("PlayerSpawnGroup/Tank") as Node3D
 	if replacement == null or replacement == player or replacement.scene_file_path != TANK1_SCENE \
 			or ai.get("target") != replacement or not _has_exact_registered_sources(combat, [replacement, enemy]) \
 			or enemy.is_connected("shot_event_fired", Callable(player_runtime, "_on_controlled_tank_shot_event_fired")):
@@ -977,7 +977,7 @@ func _validate_combat_and_recovery(playtest: Node3D, main: Node3D, encounter: No
 		return false
 	var shots_before_death := shots.size()
 	## 倒數中的正常換車不取消倒數；210 幀後必須又由重生入口產生新實例，不能保留舊指標。
-	var countdown_tank := main.get_node("Tank") as Node3D
+	var countdown_tank := main.get_node("PlayerSpawnGroup/Tank") as Node3D
 	var encounter_child_count := encounter.get_child_count()
 	if enemy_health == null or not enemy_health.apply_damage(enemy_health.current_health):
 		_finish(playtest, "Enemy death fixture requires the complete Tank2 health component.")
@@ -986,11 +986,11 @@ func _validate_combat_and_recovery(playtest: Node3D, main: Node3D, encounter: No
 	if not await _wait_for_frames(210) or shots.size() != shots_before_death \
 			or not is_instance_valid(enemy) or encounter.get_node_or_null("Enemy") != enemy \
 			or enemy_health.current_health != 0.0 or encounter.get_child_count() != encounter_child_count \
-			or main.get_node("Tank") == countdown_tank or not bool(player_runtime.get("controls_enabled")) \
+			or main.get_node("PlayerSpawnGroup/Tank") == countdown_tank or not bool(player_runtime.get("controls_enabled")) \
 			or not bool(ai.get("combat_enabled")):
 		_finish(playtest, "A depleted enemy must permanently stop firing; player recovery must still replace the countdown tank normally.")
 		return false
-	var active_player := main.get_node_or_null("Tank") as Node3D
+	var active_player := main.get_node_or_null("PlayerSpawnGroup/Tank") as Node3D
 	if not await _validate_enemy_type_switch(playtest, main, encounter, enemy, active_player, vision, ai, player_runtime, combat, initial_enemy_transform):
 		return false
 	if not await _validate_respawn_wreck_clearance(playtest, main, encounter, player_runtime, combat):
@@ -1112,7 +1112,7 @@ func _validate_respawn_wreck_clearance(playtest: Node3D, main: Node3D, encounter
 	var spawn_point := playtest.get_node_or_null("PlayerSpawnPoint") as Node3D
 	var zone := playtest.get_node_or_null("PlayerSpawnPoint/WreckCleanupZone") as Node3D
 	var area := zone.get_node_or_null("RegionVolume") as Area3D if zone != null else null
-	var player := main.get_node_or_null("Tank") as Node3D
+	var player := main.get_node_or_null("PlayerSpawnGroup/Tank") as Node3D
 	var player_health := player.get_node_or_null("HealthComponent") as HealthComponent if player != null else null
 	var player_controller := player_runtime.get_node_or_null("PlayerController") as Node
 	var ai := encounter.get_node_or_null("CombatAI") as Node
@@ -1141,7 +1141,7 @@ func _validate_respawn_wreck_clearance(playtest: Node3D, main: Node3D, encounter
 		if not is_instance_valid(player):
 			freed_early = true
 			break
-	if not freed_early or main.get_node_or_null("Tank") != null or player_runtime.get("controlled_tank") != null \
+	if not freed_early or main.get_node_or_null("PlayerSpawnGroup/Tank") != null or player_runtime.get("controlled_tank") != null \
 			or bool(player_runtime.get("controls_enabled")) or bool(ai.get("combat_enabled")):
 		_finish(playtest, "R8 zone cleanup must early-free the dead player while leaving recovery safely unbound and disabled.")
 		return false
@@ -1223,7 +1223,7 @@ func _wait_for_enemy_scene(encounter: Node3D, expected_scene: String) -> bool:
 func _wait_for_player_replacement(main: Node3D, previous: Node3D, maximum_frames: int) -> Node3D:
 	for _frame in maximum_frames:
 		await physics_frame
-		var current := main.get_node_or_null("Tank") as Node3D
+		var current := main.get_node_or_null("PlayerSpawnGroup/Tank") as Node3D
 		if current != null and current != previous:
 			return current
 	return null

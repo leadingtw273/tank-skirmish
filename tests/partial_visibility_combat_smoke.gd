@@ -27,7 +27,7 @@ func _run(scene: Node3D) -> void:
 	var enemy := encounter.get_node_or_null("Enemy") as Node3D if encounter != null else null
 	var original_vision := encounter.get_node_or_null("Vision") as Node if encounter != null else null
 	var ai := encounter.get_node_or_null("CombatAI") as Node if encounter != null else null
-	var player := main.get_node_or_null("Tank") as Node3D if main != null else null
+	var player := main.get_node_or_null("PlayerSpawnGroup/Tank") as Node3D if main != null else null
 	var player_runtime := main.get_node_or_null("PlayerRuntime") as Node if main != null else null
 	var combat := main.get_node_or_null("CombatRuntime") as CombatRuntime if main != null else null
 	if enemy == null or original_vision == null or ai == null or player == null or combat == null:

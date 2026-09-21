@@ -80,7 +80,7 @@ func _validate_default_player_tank() -> bool:
 	root.add_child(main)
 	await process_frame
 	await process_frame
-	var player_tank := main.get_node_or_null("Tank") as CharacterBody3D
+	var player_tank := main.get_node_or_null("PlayerSpawnGroup/Tank") as CharacterBody3D
 	var valid := player_tank != null and player_tank.scene_file_path == DEFAULT_PLAYER_TANK_SCENE
 	main.queue_free()
 	await process_frame

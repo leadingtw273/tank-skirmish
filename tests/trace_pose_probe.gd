@@ -50,7 +50,7 @@ func _probe_case(data: Dictionary) -> void:
 	root.add_child(scene)
 	await physics_frame
 	var enemy := scene.get_node_or_null("Encounter/Enemy") as CharacterBody3D
-	var player := scene.get_node_or_null("Main/Tank") as CharacterBody3D
+	var player := scene.get_node_or_null("Main/PlayerSpawnGroup/Tank") as CharacterBody3D
 	if enemy == null or player == null:
 		_fail("%s: expected Encounter/Enemy and Main/Tank." % data.label)
 		scene.queue_free()

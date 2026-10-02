@@ -1,0 +1,2153 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/SignBadge1/Default.tscn" id="1_sdxwc"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/SignBigNarrowRectangle/Default.tscn" id="2_yv0v8"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/SignHexagon/Default.tscn" id="3_tbhke"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/SignRectangle/Default.tscn" id="4_nsnnx"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/SignRhombus/Default.tscn" id="5_80sdp"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/SignSmallNarrowRectangle/Default.tscn" id="6_6yryg"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/SignSquere/Default.tscn" id="7_uuuy3"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/SignTriangle/Default.tscn" id="8_auboj"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/SignTrianglePyramid/Default.tscn" id="9_r6sfj"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Post1/Default.tscn" id="10_y62xq"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign1/Default.tscn" id="11_rm7v5"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign10/Default.tscn" id="12_idf7p"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign10Austrian/Default.tscn" id="13_4um87"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign11/Default.tscn" id="14_a113i"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign11Austrian/Default.tscn" id="15_b4kbi"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign12/Default.tscn" id="16_1ca7c"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign12Austrian/Default.tscn" id="17_k4bph"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign13/Default.tscn" id="18_y4lcs"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign13Austrian/Default.tscn" id="19_6enpj"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign14/Default.tscn" id="20_mmdi7"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign14Austrian/Default.tscn" id="21_uq7y7"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign15/Default.tscn" id="22_m47sd"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign15Austrian/Default.tscn" id="23_ooj6e"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign16/Default.tscn" id="24_q2tw3"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign16Austrian/Default.tscn" id="25_7x8th"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign17/Default.tscn" id="26_mh4xu"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign17Austrian/Default.tscn" id="27_gdtkt"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign18/Default.tscn" id="28_miqbs"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign18Austrian/Default.tscn" id="29_rlnit"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign19/Default.tscn" id="30_b6dg2"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign19Austrian/Default.tscn" id="31_eovyo"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign1Austrian/Default.tscn" id="32_rv0bl"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign2/Default.tscn" id="33_kgx8x"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign20/Default.tscn" id="34_vbtxp"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign20Austrian/Default.tscn" id="35_s5v77"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign21/Default.tscn" id="36_53bpm"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign21Austrian/Default.tscn" id="37_a0sic"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign22/Default.tscn" id="38_urptb"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign22Austrian/Default.tscn" id="39_3m0ne"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign23/Default.tscn" id="40_66dup"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign23Austrian/Default.tscn" id="41_n3chr"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign24/Default.tscn" id="42_u1ggc"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign24Austrian/Default.tscn" id="43_mxrcl"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign25/Default.tscn" id="44_idn7c"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign25Austrian/Default.tscn" id="45_7pwd1"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign26/Default.tscn" id="46_gesbo"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign26Austrian/Default.tscn" id="47_v50ud"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign27/Default.tscn" id="48_jiohv"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign27Austrian/Default.tscn" id="49_ej2lq"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign28/Default.tscn" id="50_oai6l"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign28Austrian/Default.tscn" id="51_thgpr"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign29/Default.tscn" id="52_8bcnn"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign29Austrian/Default.tscn" id="53_k1l3b"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign2Austrian/Default.tscn" id="54_bmomc"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign3/Default.tscn" id="55_4f2xo"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign30/Default.tscn" id="56_ckimu"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign30Austrian/Default.tscn" id="57_swxk4"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign31/Default.tscn" id="58_10rtd"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign31Austrian/Default.tscn" id="59_amc1e"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign32/Default.tscn" id="60_qbalq"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign32Austrian/Default.tscn" id="61_u82fg"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign33/Default.tscn" id="62_qxs4c"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign33Austrian/Default.tscn" id="63_d0cpq"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign34/Default.tscn" id="64_bouow"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign34Austrian/Default.tscn" id="65_1xw4o"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign35/Default.tscn" id="66_ciaxf"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign35Austrian/Default.tscn" id="67_7pnb2"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign36/Default.tscn" id="68_m5qtg"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign36Austrian/Default.tscn" id="69_4i65v"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign37/Default.tscn" id="70_nt5fp"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign37Austrian/Default.tscn" id="71_8il6t"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign38/Default.tscn" id="72_r33wp"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign38Austrian/Default.tscn" id="73_6avjr"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign39/Default.tscn" id="74_quhoq"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign39Austrian/Default.tscn" id="75_ftlgv"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign3Austrian/Default.tscn" id="76_gga7o"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign4/Default.tscn" id="77_ob08c"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign40/Default.tscn" id="78_dqi1b"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign40Austrian/Default.tscn" id="79_oyjvn"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign41/Default.tscn" id="80_no7ad"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign41Austrian/Default.tscn" id="81_hpbcc"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign42/Default.tscn" id="82_2550h"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign42Austrian/Default.tscn" id="83_wvshx"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign43/Default.tscn" id="84_ewpwy"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign43Austrian/Default.tscn" id="85_36h6k"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign44/Default.tscn" id="86_0ad72"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign44Austrian/Default.tscn" id="87_elhah"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign45/Default.tscn" id="88_r04qg"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign45Austrian/Default.tscn" id="89_d23xx"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign46/Default.tscn" id="90_t2nny"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign46Austrian/Default.tscn" id="91_yssjg"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign47/Default.tscn" id="92_6kxup"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign47Austrian/Default.tscn" id="93_a2f24"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign48/Default.tscn" id="94_e0405"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign48Austrian/Default.tscn" id="95_ijdta"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign49/Default.tscn" id="96_xrk4l"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign49Austrian/Default.tscn" id="97_vipui"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign4Austrian/Default.tscn" id="98_8cw4c"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign5/Default.tscn" id="99_ufi1c"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign50/Default.tscn" id="100_bavtx"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign50Austrian/Default.tscn" id="101_0jdff"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign51/Default.tscn" id="102_2n3sb"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign51Austrian/Default.tscn" id="103_w70tw"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign52/Default.tscn" id="104_pihg7"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign52Austrian/Default.tscn" id="105_urrq2"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign53/Default.tscn" id="106_mm46s"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign53Austrian/Default.tscn" id="107_bxyjb"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign54/Default.tscn" id="108_ehr0f"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign54Austrian/Default.tscn" id="109_teefu"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign55/Default.tscn" id="110_0uiaq"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign55Austrian/Default.tscn" id="111_hc3am"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign56/Default.tscn" id="112_hc4ul"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign56Austrian/Default.tscn" id="113_cplcf"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign57/Default.tscn" id="114_6aw5u"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign57Austrian/Default.tscn" id="115_bqu22"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign58/Default.tscn" id="116_en3eu"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign58Austrian/Default.tscn" id="117_2s2xq"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign59/Default.tscn" id="118_i36y2"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign59Austrian/Default.tscn" id="119_nv7ny"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign5Austrian/Default.tscn" id="120_gtlnd"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign6/Default.tscn" id="121_3fa1r"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign60/Default.tscn" id="122_rkk8x"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign60Austrian/Default.tscn" id="123_k2aof"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign61/Default.tscn" id="124_3b70c"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign62/Default.tscn" id="125_rlfou"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign63/Default.tscn" id="126_gltm8"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign64/Default.tscn" id="127_78qd8"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign65/Default.tscn" id="128_5p1cp"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign66/Default.tscn" id="129_7t8dd"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign67/Default.tscn" id="130_1w057"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign68/Default.tscn" id="131_2sioq"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign69/Default.tscn" id="132_xbdn6"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign6Austrian/Default.tscn" id="133_moffp"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign7/Default.tscn" id="134_j34ah"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign70/Default.tscn" id="135_2130o"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign71/Default.tscn" id="136_7uyjs"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign72/Default.tscn" id="137_ab0v3"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign73/Default.tscn" id="138_bocy1"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign74/Default.tscn" id="139_xvouw"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign75/Default.tscn" id="140_r2nwp"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign76/Default.tscn" id="141_y4lfa"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign77/Default.tscn" id="142_mybi6"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign78/Default.tscn" id="143_427cv"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign79/Default.tscn" id="144_6i4dd"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign7Austrian/Default.tscn" id="145_m0y1j"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign8/Default.tscn" id="146_2ogah"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign80/Default.tscn" id="147_2ayn0"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign8Austrian/Default.tscn" id="148_wwuvh"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign9/Default.tscn" id="149_vng68"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/Sign9Austrian/Default.tscn" id="150_b0lgo"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/signs/SignCircle/Default.tscn" id="151_agxw6"]
+
+[sub_resource type="Environment" id="Environment_06iig"]
+background_mode = 1
+background_color = Color(0.11, 0.13, 0.16, 1)
+ambient_light_source = 2
+ambient_light_color = Color(1, 1, 1, 1)
+ambient_light_energy = 0.65
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xgk52"]
+albedo_color = Color(0.29, 0.31, 0.34, 1)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_ptg0u"]
+size = Vector2(298, 300)
+
+[node name="signs_demo" type="Node3D" unique_id=1777471810]
+
+[node name="Models" type="Node3D" parent="." unique_id=717737259]
+
+[node name="SignBadge1__Default" type="StaticBody3D" parent="Models" unique_id=810047097 instance=ExtResource("1_sdxwc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -132, 0, -132.01888)
+metadata/road_module = true
+metadata/road_id = "SignBadge1"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="SignBigNarrowRectangle__Default" type="StaticBody3D" parent="Models" unique_id=1191868501 instance=ExtResource("2_yv0v8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -110, 0, -132.01888)
+metadata/road_module = true
+metadata/road_id = "SignBigNarrowRectangle"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="SignHexagon__Default" type="StaticBody3D" parent="Models" unique_id=348546143 instance=ExtResource("3_tbhke")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -88, 0, -132.01888)
+metadata/road_module = true
+metadata/road_id = "SignHexagon"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="SignRectangle__Default" type="StaticBody3D" parent="Models" unique_id=1407109341 instance=ExtResource("4_nsnnx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -66, 0, -132.01888)
+metadata/road_module = true
+metadata/road_id = "SignRectangle"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="SignRhombus__Default" type="StaticBody3D" parent="Models" unique_id=363743216 instance=ExtResource("5_80sdp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -44, 0, -132.01888)
+metadata/road_module = true
+metadata/road_id = "SignRhombus"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="SignSmallNarrowRectangle__Default" type="StaticBody3D" parent="Models" unique_id=1537394693 instance=ExtResource("6_6yryg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22, 0, -132.01888)
+metadata/road_module = true
+metadata/road_id = "SignSmallNarrowRectangle"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="SignSquere__Default" type="StaticBody3D" parent="Models" unique_id=243897708 instance=ExtResource("7_uuuy3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.172325e-07, 0, -132.01888)
+metadata/road_module = true
+metadata/road_id = "SignSquere"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="SignTriangle__Default" type="StaticBody3D" parent="Models" unique_id=440888368 instance=ExtResource("8_auboj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 0, -132.01888)
+metadata/road_module = true
+metadata/road_id = "SignTriangle"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="SignTrianglePyramid__Default" type="StaticBody3D" parent="Models" unique_id=1711874095 instance=ExtResource("9_r6sfj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 44, 0, -132.01888)
+metadata/road_module = true
+metadata/road_id = "SignTrianglePyramid"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Post1__Default" type="StaticBody3D" parent="Models" unique_id=613857067 instance=ExtResource("10_y62xq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 66, 0, -132)
+metadata/road_module = true
+metadata/road_id = "Post1"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign1__Default" type="StaticBody3D" parent="Models" unique_id=540056662 instance=ExtResource("11_rm7v5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 88, 0, -132.01888)
+metadata/road_module = true
+metadata/road_id = "Sign1"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign10__Default" type="StaticBody3D" parent="Models" unique_id=483719032 instance=ExtResource("12_idf7p")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 110, 0, -132.01888)
+metadata/road_module = true
+metadata/road_id = "Sign10"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign10Austrian__Default" type="StaticBody3D" parent="Models" unique_id=2110540020 instance=ExtResource("13_4um87")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 132, 0, -132.01888)
+metadata/road_module = true
+metadata/road_id = "Sign10Austrian"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign11__Default" type="StaticBody3D" parent="Models" unique_id=92788527 instance=ExtResource("14_a113i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -132, 0, -108.018875)
+metadata/road_module = true
+metadata/road_id = "Sign11"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign11Austrian__Default" type="StaticBody3D" parent="Models" unique_id=110938787 instance=ExtResource("15_b4kbi")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -110, 0, -108.018875)
+metadata/road_module = true
+metadata/road_id = "Sign11Austrian"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign12__Default" type="StaticBody3D" parent="Models" unique_id=443059802 instance=ExtResource("16_1ca7c")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -88, 0, -108.018875)
+metadata/road_module = true
+metadata/road_id = "Sign12"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign12Austrian__Default" type="StaticBody3D" parent="Models" unique_id=1330838656 instance=ExtResource("17_k4bph")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -66, 0, -108.018875)
+metadata/road_module = true
+metadata/road_id = "Sign12Austrian"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign13__Default" type="StaticBody3D" parent="Models" unique_id=1081052317 instance=ExtResource("18_y4lcs")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -44, 0, -108.018875)
+metadata/road_module = true
+metadata/road_id = "Sign13"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign13Austrian__Default" type="StaticBody3D" parent="Models" unique_id=561844247 instance=ExtResource("19_6enpj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22, 0, -108.018875)
+metadata/road_module = true
+metadata/road_id = "Sign13Austrian"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign14__Default" type="StaticBody3D" parent="Models" unique_id=774730590 instance=ExtResource("20_mmdi7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.172325e-07, 0, -108.018875)
+metadata/road_module = true
+metadata/road_id = "Sign14"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign14Austrian__Default" type="StaticBody3D" parent="Models" unique_id=79725465 instance=ExtResource("21_uq7y7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 0, -108.018875)
+metadata/road_module = true
+metadata/road_id = "Sign14Austrian"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign15__Default" type="StaticBody3D" parent="Models" unique_id=1590063145 instance=ExtResource("22_m47sd")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 44, 0, -108.018875)
+metadata/road_module = true
+metadata/road_id = "Sign15"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign15Austrian__Default" type="StaticBody3D" parent="Models" unique_id=2085332477 instance=ExtResource("23_ooj6e")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 66, 0, -108.018875)
+metadata/road_module = true
+metadata/road_id = "Sign15Austrian"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign16__Default" type="StaticBody3D" parent="Models" unique_id=609937315 instance=ExtResource("24_q2tw3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 88, 0, -108.018875)
+metadata/road_module = true
+metadata/road_id = "Sign16"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign16Austrian__Default" type="StaticBody3D" parent="Models" unique_id=1867656807 instance=ExtResource("25_7x8th")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 110, 0, -108.018875)
+metadata/road_module = true
+metadata/road_id = "Sign16Austrian"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign17__Default" type="StaticBody3D" parent="Models" unique_id=2124560140 instance=ExtResource("26_mh4xu")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 132, 0, -108.018875)
+metadata/road_module = true
+metadata/road_id = "Sign17"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign17Austrian__Default" type="StaticBody3D" parent="Models" unique_id=239162552 instance=ExtResource("27_gdtkt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -132, 0, -84.018875)
+metadata/road_module = true
+metadata/road_id = "Sign17Austrian"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign18__Default" type="StaticBody3D" parent="Models" unique_id=1879202439 instance=ExtResource("28_miqbs")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -110, 0, -84.018875)
+metadata/road_module = true
+metadata/road_id = "Sign18"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign18Austrian__Default" type="StaticBody3D" parent="Models" unique_id=1774632678 instance=ExtResource("29_rlnit")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -88, 0, -84.018875)
+metadata/road_module = true
+metadata/road_id = "Sign18Austrian"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign19__Default" type="StaticBody3D" parent="Models" unique_id=1905446121 instance=ExtResource("30_b6dg2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -66, 0, -84.018875)
+metadata/road_module = true
+metadata/road_id = "Sign19"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign19Austrian__Default" type="StaticBody3D" parent="Models" unique_id=963778240 instance=ExtResource("31_eovyo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -44, 0, -84.018875)
+metadata/road_module = true
+metadata/road_id = "Sign19Austrian"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign1Austrian__Default" type="StaticBody3D" parent="Models" unique_id=1830851137 instance=ExtResource("32_rv0bl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22, 0, -84.018875)
+metadata/road_module = true
+metadata/road_id = "Sign1Austrian"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign2__Default" type="StaticBody3D" parent="Models" unique_id=1952309437 instance=ExtResource("33_kgx8x")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.1920929e-07, 0, -84.018875)
+metadata/road_module = true
+metadata/road_id = "Sign2"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign20__Default" type="StaticBody3D" parent="Models" unique_id=1493521450 instance=ExtResource("34_vbtxp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 0, -84.018875)
+metadata/road_module = true
+metadata/road_id = "Sign20"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign20Austrian__Default" type="StaticBody3D" parent="Models" unique_id=1442576951 instance=ExtResource("35_s5v77")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 44, 0, -84.018875)
+metadata/road_module = true
+metadata/road_id = "Sign20Austrian"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign21__Default" type="StaticBody3D" parent="Models" unique_id=188790263 instance=ExtResource("36_53bpm")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 66, 0, -84.018875)
+metadata/road_module = true
+metadata/road_id = "Sign21"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign21Austrian__Default" type="StaticBody3D" parent="Models" unique_id=537897339 instance=ExtResource("37_a0sic")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 88, 0, -84.018875)
+metadata/road_module = true
+metadata/road_id = "Sign21Austrian"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign22__Default" type="StaticBody3D" parent="Models" unique_id=1918138896 instance=ExtResource("38_urptb")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 110, 0, -84.018875)
+metadata/road_module = true
+metadata/road_id = "Sign22"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign22Austrian__Default" type="StaticBody3D" parent="Models" unique_id=923099669 instance=ExtResource("39_3m0ne")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 132, 0, -84.018875)
+metadata/road_module = true
+metadata/road_id = "Sign22Austrian"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign23__Default" type="StaticBody3D" parent="Models" unique_id=254932534 instance=ExtResource("40_66dup")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -132, 0, -60.018875)
+metadata/road_module = true
+metadata/road_id = "Sign23"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign23Austrian__Default" type="StaticBody3D" parent="Models" unique_id=1923589499 instance=ExtResource("41_n3chr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -110, 0, -60.018875)
+metadata/road_module = true
+metadata/road_id = "Sign23Austrian"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign24__Default" type="StaticBody3D" parent="Models" unique_id=1667454191 instance=ExtResource("42_u1ggc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -88, 0, -60.018875)
+metadata/road_module = true
+metadata/road_id = "Sign24"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign24Austrian__Default" type="StaticBody3D" parent="Models" unique_id=465789638 instance=ExtResource("43_mxrcl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -66, 0, -60.018875)
+metadata/road_module = true
+metadata/road_id = "Sign24Austrian"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign25__Default" type="StaticBody3D" parent="Models" unique_id=1864199944 instance=ExtResource("44_idn7c")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -44, 0, -60.018875)
+metadata/road_module = true
+metadata/road_id = "Sign25"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign25Austrian__Default" type="StaticBody3D" parent="Models" unique_id=1505308968 instance=ExtResource("45_7pwd1")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22, 0, -60.018875)
+metadata/road_module = true
+metadata/road_id = "Sign25Austrian"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign26__Default" type="StaticBody3D" parent="Models" unique_id=999592892 instance=ExtResource("46_gesbo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.1920929e-07, 0, -60.018875)
+metadata/road_module = true
+metadata/road_id = "Sign26"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign26Austrian__Default" type="StaticBody3D" parent="Models" unique_id=1893162230 instance=ExtResource("47_v50ud")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 0, -60.018875)
+metadata/road_module = true
+metadata/road_id = "Sign26Austrian"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign27__Default" type="StaticBody3D" parent="Models" unique_id=1414927547 instance=ExtResource("48_jiohv")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 44, 0, -60.018875)
+metadata/road_module = true
+metadata/road_id = "Sign27"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign27Austrian__Default" type="StaticBody3D" parent="Models" unique_id=687614936 instance=ExtResource("49_ej2lq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 66, 0, -60.018875)
+metadata/road_module = true
+metadata/road_id = "Sign27Austrian"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign28__Default" type="StaticBody3D" parent="Models" unique_id=160305083 instance=ExtResource("50_oai6l")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 88, 0, -60.018875)
+metadata/road_module = true
+metadata/road_id = "Sign28"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign28Austrian__Default" type="StaticBody3D" parent="Models" unique_id=2035499052 instance=ExtResource("51_thgpr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 110, 0, -60.018875)
+metadata/road_module = true
+metadata/road_id = "Sign28Austrian"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign29__Default" type="StaticBody3D" parent="Models" unique_id=1098649690 instance=ExtResource("52_8bcnn")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 132, 0, -60.018875)
+metadata/road_module = true
+metadata/road_id = "Sign29"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign29Austrian__Default" type="StaticBody3D" parent="Models" unique_id=1815969169 instance=ExtResource("53_k1l3b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -132, 0, -36.018875)
+metadata/road_module = true
+metadata/road_id = "Sign29Austrian"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign2Austrian__Default" type="StaticBody3D" parent="Models" unique_id=1566245563 instance=ExtResource("54_bmomc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -110, 0, -36.018875)
+metadata/road_module = true
+metadata/road_id = "Sign2Austrian"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign3__Default" type="StaticBody3D" parent="Models" unique_id=1262004978 instance=ExtResource("55_4f2xo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -88, 0, -36.018875)
+metadata/road_module = true
+metadata/road_id = "Sign3"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign30__Default" type="StaticBody3D" parent="Models" unique_id=614980344 instance=ExtResource("56_ckimu")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -66, 0, -36.018875)
+metadata/road_module = true
+metadata/road_id = "Sign30"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign30Austrian__Default" type="StaticBody3D" parent="Models" unique_id=1918626634 instance=ExtResource("57_swxk4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -44, 0, -36.018875)
+metadata/road_module = true
+metadata/road_id = "Sign30Austrian"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign31__Default" type="StaticBody3D" parent="Models" unique_id=1836127289 instance=ExtResource("58_10rtd")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22, 0, -36.018875)
+metadata/road_module = true
+metadata/road_id = "Sign31"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign31Austrian__Default" type="StaticBody3D" parent="Models" unique_id=1317265037 instance=ExtResource("59_amc1e")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -36.018875)
+metadata/road_module = true
+metadata/road_id = "Sign31Austrian"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign32__Default" type="StaticBody3D" parent="Models" unique_id=592754348 instance=ExtResource("60_qbalq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 0, -36.018875)
+metadata/road_module = true
+metadata/road_id = "Sign32"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign32Austrian__Default" type="StaticBody3D" parent="Models" unique_id=763821073 instance=ExtResource("61_u82fg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 44, 0, -36.018875)
+metadata/road_module = true
+metadata/road_id = "Sign32Austrian"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign33__Default" type="StaticBody3D" parent="Models" unique_id=1947142010 instance=ExtResource("62_qxs4c")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 66, 0, -36.018875)
+metadata/road_module = true
+metadata/road_id = "Sign33"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign33Austrian__Default" type="StaticBody3D" parent="Models" unique_id=1601349732 instance=ExtResource("63_d0cpq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 88, 0, -36.018875)
+metadata/road_module = true
+metadata/road_id = "Sign33Austrian"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign34__Default" type="StaticBody3D" parent="Models" unique_id=1206120502 instance=ExtResource("64_bouow")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 110, 0, -36.018875)
+metadata/road_module = true
+metadata/road_id = "Sign34"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign34Austrian__Default" type="StaticBody3D" parent="Models" unique_id=26235067 instance=ExtResource("65_1xw4o")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 132, 0, -36.018875)
+metadata/road_module = true
+metadata/road_id = "Sign34Austrian"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign35__Default" type="StaticBody3D" parent="Models" unique_id=1728255175 instance=ExtResource("66_ciaxf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -132, 0, -12.018876)
+metadata/road_module = true
+metadata/road_id = "Sign35"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign35Austrian__Default" type="StaticBody3D" parent="Models" unique_id=514909331 instance=ExtResource("67_7pnb2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -110, 0, -12.018876)
+metadata/road_module = true
+metadata/road_id = "Sign35Austrian"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign36__Default" type="StaticBody3D" parent="Models" unique_id=962739948 instance=ExtResource("68_m5qtg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -88, 0, -12.018876)
+metadata/road_module = true
+metadata/road_id = "Sign36"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign36Austrian__Default" type="StaticBody3D" parent="Models" unique_id=1741175671 instance=ExtResource("69_4i65v")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -66, 0, -12.018876)
+metadata/road_module = true
+metadata/road_id = "Sign36Austrian"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign37__Default" type="StaticBody3D" parent="Models" unique_id=696483517 instance=ExtResource("70_nt5fp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -44, 0, -12.018876)
+metadata/road_module = true
+metadata/road_id = "Sign37"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign37Austrian__Default" type="StaticBody3D" parent="Models" unique_id=386041880 instance=ExtResource("71_8il6t")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22, 0, -12.018876)
+metadata/road_module = true
+metadata/road_id = "Sign37Austrian"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign38__Default" type="StaticBody3D" parent="Models" unique_id=1590658299 instance=ExtResource("72_r33wp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.1920929e-07, 0, -12.018876)
+metadata/road_module = true
+metadata/road_id = "Sign38"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign38Austrian__Default" type="StaticBody3D" parent="Models" unique_id=1798940923 instance=ExtResource("73_6avjr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 0, -12.018876)
+metadata/road_module = true
+metadata/road_id = "Sign38Austrian"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign39__Default" type="StaticBody3D" parent="Models" unique_id=1314423236 instance=ExtResource("74_quhoq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 44, 0, -12.018876)
+metadata/road_module = true
+metadata/road_id = "Sign39"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign39Austrian__Default" type="StaticBody3D" parent="Models" unique_id=355270681 instance=ExtResource("75_ftlgv")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 66, 0, -12.018876)
+metadata/road_module = true
+metadata/road_id = "Sign39Austrian"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign3Austrian__Default" type="StaticBody3D" parent="Models" unique_id=424732348 instance=ExtResource("76_gga7o")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 88, 0, -12.018876)
+metadata/road_module = true
+metadata/road_id = "Sign3Austrian"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign4__Default" type="StaticBody3D" parent="Models" unique_id=2002306588 instance=ExtResource("77_ob08c")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 110, 0, -12.018876)
+metadata/road_module = true
+metadata/road_id = "Sign4"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign40__Default" type="StaticBody3D" parent="Models" unique_id=1512748189 instance=ExtResource("78_dqi1b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 132, 0, -12.018876)
+metadata/road_module = true
+metadata/road_id = "Sign40"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign40Austrian__Default" type="StaticBody3D" parent="Models" unique_id=386383204 instance=ExtResource("79_oyjvn")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -132, 0, 11.981124)
+metadata/road_module = true
+metadata/road_id = "Sign40Austrian"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign41__Default" type="StaticBody3D" parent="Models" unique_id=1042015693 instance=ExtResource("80_no7ad")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -110, 0, 11.981124)
+metadata/road_module = true
+metadata/road_id = "Sign41"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign41Austrian__Default" type="StaticBody3D" parent="Models" unique_id=1554250822 instance=ExtResource("81_hpbcc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -88, 0, 11.981124)
+metadata/road_module = true
+metadata/road_id = "Sign41Austrian"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign42__Default" type="StaticBody3D" parent="Models" unique_id=1701690042 instance=ExtResource("82_2550h")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -66, 0, 11.981124)
+metadata/road_module = true
+metadata/road_id = "Sign42"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign42Austrian__Default" type="StaticBody3D" parent="Models" unique_id=291614596 instance=ExtResource("83_wvshx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -44, 0, 11.981124)
+metadata/road_module = true
+metadata/road_id = "Sign42Austrian"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign43__Default" type="StaticBody3D" parent="Models" unique_id=1621403344 instance=ExtResource("84_ewpwy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22, 0, 11.981124)
+metadata/road_module = true
+metadata/road_id = "Sign43"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign43Austrian__Default" type="StaticBody3D" parent="Models" unique_id=342421542 instance=ExtResource("85_36h6k")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 11.981124)
+metadata/road_module = true
+metadata/road_id = "Sign43Austrian"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign44__Default" type="StaticBody3D" parent="Models" unique_id=1619154288 instance=ExtResource("86_0ad72")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 0, 11.981124)
+metadata/road_module = true
+metadata/road_id = "Sign44"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign44Austrian__Default" type="StaticBody3D" parent="Models" unique_id=463907666 instance=ExtResource("87_elhah")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 44, 0, 11.981124)
+metadata/road_module = true
+metadata/road_id = "Sign44Austrian"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign45__Default" type="StaticBody3D" parent="Models" unique_id=1648197735 instance=ExtResource("88_r04qg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 66, 0, 11.981124)
+metadata/road_module = true
+metadata/road_id = "Sign45"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign45Austrian__Default" type="StaticBody3D" parent="Models" unique_id=1897815249 instance=ExtResource("89_d23xx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 88, 0, 11.981124)
+metadata/road_module = true
+metadata/road_id = "Sign45Austrian"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign46__Default" type="StaticBody3D" parent="Models" unique_id=1268263877 instance=ExtResource("90_t2nny")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 110, 0, 11.981124)
+metadata/road_module = true
+metadata/road_id = "Sign46"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign46Austrian__Default" type="StaticBody3D" parent="Models" unique_id=1218030212 instance=ExtResource("91_yssjg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 132, 0, 11.981124)
+metadata/road_module = true
+metadata/road_id = "Sign46Austrian"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign47__Default" type="StaticBody3D" parent="Models" unique_id=1087657940 instance=ExtResource("92_6kxup")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -132, 0, 35.981125)
+metadata/road_module = true
+metadata/road_id = "Sign47"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign47Austrian__Default" type="StaticBody3D" parent="Models" unique_id=120740512 instance=ExtResource("93_a2f24")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -110, 0, 35.981125)
+metadata/road_module = true
+metadata/road_id = "Sign47Austrian"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign48__Default" type="StaticBody3D" parent="Models" unique_id=1652321788 instance=ExtResource("94_e0405")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -88, 0, 35.981125)
+metadata/road_module = true
+metadata/road_id = "Sign48"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign48Austrian__Default" type="StaticBody3D" parent="Models" unique_id=1188747870 instance=ExtResource("95_ijdta")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -66, 0, 35.981125)
+metadata/road_module = true
+metadata/road_id = "Sign48Austrian"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign49__Default" type="StaticBody3D" parent="Models" unique_id=1045657788 instance=ExtResource("96_xrk4l")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -44, 0, 35.981125)
+metadata/road_module = true
+metadata/road_id = "Sign49"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign49Austrian__Default" type="StaticBody3D" parent="Models" unique_id=1758544364 instance=ExtResource("97_vipui")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22, 0, 35.981125)
+metadata/road_module = true
+metadata/road_id = "Sign49Austrian"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign4Austrian__Default" type="StaticBody3D" parent="Models" unique_id=2117549158 instance=ExtResource("98_8cw4c")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.9604645e-08, 0, 35.981125)
+metadata/road_module = true
+metadata/road_id = "Sign4Austrian"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign5__Default" type="StaticBody3D" parent="Models" unique_id=907735526 instance=ExtResource("99_ufi1c")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 0, 35.981125)
+metadata/road_module = true
+metadata/road_id = "Sign5"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign50__Default" type="StaticBody3D" parent="Models" unique_id=336177456 instance=ExtResource("100_bavtx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 44, 0, 35.981125)
+metadata/road_module = true
+metadata/road_id = "Sign50"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign50Austrian__Default" type="StaticBody3D" parent="Models" unique_id=372289840 instance=ExtResource("101_0jdff")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 66, 0, 35.981125)
+metadata/road_module = true
+metadata/road_id = "Sign50Austrian"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign51__Default" type="StaticBody3D" parent="Models" unique_id=288858575 instance=ExtResource("102_2n3sb")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 88, 0, 35.981125)
+metadata/road_module = true
+metadata/road_id = "Sign51"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign51Austrian__Default" type="StaticBody3D" parent="Models" unique_id=684260756 instance=ExtResource("103_w70tw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 110, 0, 35.981125)
+metadata/road_module = true
+metadata/road_id = "Sign51Austrian"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign52__Default" type="StaticBody3D" parent="Models" unique_id=1417405421 instance=ExtResource("104_pihg7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 132, 0, 35.981125)
+metadata/road_module = true
+metadata/road_id = "Sign52"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign52Austrian__Default" type="StaticBody3D" parent="Models" unique_id=218395943 instance=ExtResource("105_urrq2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -132, 0, 59.981125)
+metadata/road_module = true
+metadata/road_id = "Sign52Austrian"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign53__Default" type="StaticBody3D" parent="Models" unique_id=2010040399 instance=ExtResource("106_mm46s")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -110, 0, 59.981125)
+metadata/road_module = true
+metadata/road_id = "Sign53"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign53Austrian__Default" type="StaticBody3D" parent="Models" unique_id=112818367 instance=ExtResource("107_bxyjb")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -88, 0, 59.981125)
+metadata/road_module = true
+metadata/road_id = "Sign53Austrian"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign54__Default" type="StaticBody3D" parent="Models" unique_id=1235982215 instance=ExtResource("108_ehr0f")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -66, 0, 59.981125)
+metadata/road_module = true
+metadata/road_id = "Sign54"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign54Austrian__Default" type="StaticBody3D" parent="Models" unique_id=690287876 instance=ExtResource("109_teefu")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -44, 0, 59.981125)
+metadata/road_module = true
+metadata/road_id = "Sign54Austrian"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign55__Default" type="StaticBody3D" parent="Models" unique_id=243721980 instance=ExtResource("110_0uiaq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22, 0, 59.981125)
+metadata/road_module = true
+metadata/road_id = "Sign55"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign55Austrian__Default" type="StaticBody3D" parent="Models" unique_id=1148768966 instance=ExtResource("111_hc3am")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 59.981125)
+metadata/road_module = true
+metadata/road_id = "Sign55Austrian"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign56__Default" type="StaticBody3D" parent="Models" unique_id=1078719996 instance=ExtResource("112_hc4ul")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 0, 59.981125)
+metadata/road_module = true
+metadata/road_id = "Sign56"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign56Austrian__Default" type="StaticBody3D" parent="Models" unique_id=2012177827 instance=ExtResource("113_cplcf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 44, 0, 59.981125)
+metadata/road_module = true
+metadata/road_id = "Sign56Austrian"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign57__Default" type="StaticBody3D" parent="Models" unique_id=1009721200 instance=ExtResource("114_6aw5u")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 66, 0, 59.981125)
+metadata/road_module = true
+metadata/road_id = "Sign57"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign57Austrian__Default" type="StaticBody3D" parent="Models" unique_id=411527992 instance=ExtResource("115_bqu22")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 88, 0, 59.981125)
+metadata/road_module = true
+metadata/road_id = "Sign57Austrian"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign58__Default" type="StaticBody3D" parent="Models" unique_id=588695637 instance=ExtResource("116_en3eu")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 110, 0, 59.981125)
+metadata/road_module = true
+metadata/road_id = "Sign58"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign58Austrian__Default" type="StaticBody3D" parent="Models" unique_id=77578831 instance=ExtResource("117_2s2xq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 132, 0, 59.981125)
+metadata/road_module = true
+metadata/road_id = "Sign58Austrian"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign59__Default" type="StaticBody3D" parent="Models" unique_id=304742364 instance=ExtResource("118_i36y2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -132, 0, 83.981125)
+metadata/road_module = true
+metadata/road_id = "Sign59"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign59Austrian__Default" type="StaticBody3D" parent="Models" unique_id=868241878 instance=ExtResource("119_nv7ny")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -110, 0, 83.981125)
+metadata/road_module = true
+metadata/road_id = "Sign59Austrian"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign5Austrian__Default" type="StaticBody3D" parent="Models" unique_id=1907074695 instance=ExtResource("120_gtlnd")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -88, 0, 83.981125)
+metadata/road_module = true
+metadata/road_id = "Sign5Austrian"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign6__Default" type="StaticBody3D" parent="Models" unique_id=1169171424 instance=ExtResource("121_3fa1r")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -66, 0, 83.981125)
+metadata/road_module = true
+metadata/road_id = "Sign6"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign60__Default" type="StaticBody3D" parent="Models" unique_id=600781863 instance=ExtResource("122_rkk8x")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -44, 0, 83.981125)
+metadata/road_module = true
+metadata/road_id = "Sign60"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign60Austrian__Default" type="StaticBody3D" parent="Models" unique_id=1636027326 instance=ExtResource("123_k2aof")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22, 0, 83.981125)
+metadata/road_module = true
+metadata/road_id = "Sign60Austrian"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign61__Default" type="StaticBody3D" parent="Models" unique_id=1307653797 instance=ExtResource("124_3b70c")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.172325e-07, 0, 83.981125)
+metadata/road_module = true
+metadata/road_id = "Sign61"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign62__Default" type="StaticBody3D" parent="Models" unique_id=972505258 instance=ExtResource("125_rlfou")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 0, 83.981125)
+metadata/road_module = true
+metadata/road_id = "Sign62"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign63__Default" type="StaticBody3D" parent="Models" unique_id=1665357814 instance=ExtResource("126_gltm8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 44, 0, 83.981125)
+metadata/road_module = true
+metadata/road_id = "Sign63"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign64__Default" type="StaticBody3D" parent="Models" unique_id=72806835 instance=ExtResource("127_78qd8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 66, 0, 83.981125)
+metadata/road_module = true
+metadata/road_id = "Sign64"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign65__Default" type="StaticBody3D" parent="Models" unique_id=2048343453 instance=ExtResource("128_5p1cp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 88, 0, 83.981125)
+metadata/road_module = true
+metadata/road_id = "Sign65"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign66__Default" type="StaticBody3D" parent="Models" unique_id=1438394718 instance=ExtResource("129_7t8dd")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 110, 0, 83.981125)
+metadata/road_module = true
+metadata/road_id = "Sign66"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign67__Default" type="StaticBody3D" parent="Models" unique_id=1090559563 instance=ExtResource("130_1w057")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 132, 0, 83.981125)
+metadata/road_module = true
+metadata/road_id = "Sign67"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign68__Default" type="StaticBody3D" parent="Models" unique_id=848756587 instance=ExtResource("131_2sioq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -132, 0, 107.981125)
+metadata/road_module = true
+metadata/road_id = "Sign68"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign69__Default" type="StaticBody3D" parent="Models" unique_id=1942812461 instance=ExtResource("132_xbdn6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -110, 0, 107.981125)
+metadata/road_module = true
+metadata/road_id = "Sign69"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign6Austrian__Default" type="StaticBody3D" parent="Models" unique_id=124593244 instance=ExtResource("133_moffp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -88, 0, 107.981125)
+metadata/road_module = true
+metadata/road_id = "Sign6Austrian"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign7__Default" type="StaticBody3D" parent="Models" unique_id=1845836405 instance=ExtResource("134_j34ah")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -66, 0, 107.981125)
+metadata/road_module = true
+metadata/road_id = "Sign7"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign70__Default" type="StaticBody3D" parent="Models" unique_id=16907392 instance=ExtResource("135_2130o")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -44, 0, 107.981125)
+metadata/road_module = true
+metadata/road_id = "Sign70"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign71__Default" type="StaticBody3D" parent="Models" unique_id=538504643 instance=ExtResource("136_7uyjs")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22, 0, 107.981125)
+metadata/road_module = true
+metadata/road_id = "Sign71"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign72__Default" type="StaticBody3D" parent="Models" unique_id=1590635410 instance=ExtResource("137_ab0v3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.172325e-07, 0, 107.981125)
+metadata/road_module = true
+metadata/road_id = "Sign72"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign73__Default" type="StaticBody3D" parent="Models" unique_id=1364679648 instance=ExtResource("138_bocy1")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 0, 107.981125)
+metadata/road_module = true
+metadata/road_id = "Sign73"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign74__Default" type="StaticBody3D" parent="Models" unique_id=1225656012 instance=ExtResource("139_xvouw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 44, 0, 107.981125)
+metadata/road_module = true
+metadata/road_id = "Sign74"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign75__Default" type="StaticBody3D" parent="Models" unique_id=1712025422 instance=ExtResource("140_r2nwp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 66, 0, 107.981125)
+metadata/road_module = true
+metadata/road_id = "Sign75"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign76__Default" type="StaticBody3D" parent="Models" unique_id=522472935 instance=ExtResource("141_y4lfa")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 88, 0, 107.981125)
+metadata/road_module = true
+metadata/road_id = "Sign76"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign77__Default" type="StaticBody3D" parent="Models" unique_id=609850538 instance=ExtResource("142_mybi6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 110, 0, 107.981125)
+metadata/road_module = true
+metadata/road_id = "Sign77"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign78__Default" type="StaticBody3D" parent="Models" unique_id=1361095595 instance=ExtResource("143_427cv")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 132, 0, 107.981125)
+metadata/road_module = true
+metadata/road_id = "Sign78"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign79__Default" type="StaticBody3D" parent="Models" unique_id=1972975665 instance=ExtResource("144_6i4dd")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -132, 0, 131.98112)
+metadata/road_module = true
+metadata/road_id = "Sign79"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign7Austrian__Default" type="StaticBody3D" parent="Models" unique_id=1182894347 instance=ExtResource("145_m0y1j")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -110, 0, 131.98112)
+metadata/road_module = true
+metadata/road_id = "Sign7Austrian"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign8__Default" type="StaticBody3D" parent="Models" unique_id=2135515018 instance=ExtResource("146_2ogah")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -88, 0, 131.98112)
+metadata/road_module = true
+metadata/road_id = "Sign8"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign80__Default" type="StaticBody3D" parent="Models" unique_id=949371365 instance=ExtResource("147_2ayn0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -66, 0, 131.98112)
+metadata/road_module = true
+metadata/road_id = "Sign80"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign8Austrian__Default" type="StaticBody3D" parent="Models" unique_id=979097982 instance=ExtResource("148_wwuvh")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -44, 0, 131.98112)
+metadata/road_module = true
+metadata/road_id = "Sign8Austrian"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign9__Default" type="StaticBody3D" parent="Models" unique_id=1319293827 instance=ExtResource("149_vng68")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22, 0, 131.98112)
+metadata/road_module = true
+metadata/road_id = "Sign9"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Sign9Austrian__Default" type="StaticBody3D" parent="Models" unique_id=1637753073 instance=ExtResource("150_b0lgo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.9604645e-08, 0, 131.98112)
+metadata/road_module = true
+metadata/road_id = "Sign9Austrian"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="SignCircle__Default" type="StaticBody3D" parent="Models" unique_id=1683498892 instance=ExtResource("151_agxw6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 0, 131.98112)
+metadata/road_module = true
+metadata/road_id = "SignCircle"
+metadata/variant = "Default"
+metadata/source_pack = "signs"
+
+[node name="Labels" type="Node3D" parent="." unique_id=888024328]
+
+[node name="Label_0" type="Label3D" parent="Labels" unique_id=634611607]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -132, 0.2, -123)
+pixel_size = 0.04
+text = "SignBadge1
+Default"
+
+[node name="Label_1" type="Label3D" parent="Labels" unique_id=411117203]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -110, 0.2, -123)
+pixel_size = 0.04
+text = "SignBigNarrowRectangle
+Default"
+
+[node name="Label_2" type="Label3D" parent="Labels" unique_id=759673532]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -88, 0.2, -123)
+pixel_size = 0.04
+text = "SignHexagon
+Default"
+
+[node name="Label_3" type="Label3D" parent="Labels" unique_id=989064953]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -66, 0.2, -123)
+pixel_size = 0.04
+text = "SignRectangle
+Default"
+
+[node name="Label_4" type="Label3D" parent="Labels" unique_id=1588883683]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -44, 0.2, -123)
+pixel_size = 0.04
+text = "SignRhombus
+Default"
+
+[node name="Label_5" type="Label3D" parent="Labels" unique_id=1171654566]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -22, 0.2, -123)
+pixel_size = 0.04
+text = "SignSmallNarrowRectangle
+Default"
+
+[node name="Label_6" type="Label3D" parent="Labels" unique_id=651035761]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0.2, -123)
+pixel_size = 0.04
+text = "SignSquere
+Default"
+
+[node name="Label_7" type="Label3D" parent="Labels" unique_id=1469277846]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 22, 0.2, -123)
+pixel_size = 0.04
+text = "SignTriangle
+Default"
+
+[node name="Label_8" type="Label3D" parent="Labels" unique_id=1855823674]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 44, 0.2, -123)
+pixel_size = 0.04
+text = "SignTrianglePyramid
+Default"
+
+[node name="Label_9" type="Label3D" parent="Labels" unique_id=1737104414]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 66, 0.2, -123)
+pixel_size = 0.04
+text = "Post1
+Default"
+
+[node name="Label_10" type="Label3D" parent="Labels" unique_id=1980362293]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 88, 0.2, -123)
+pixel_size = 0.04
+text = "Sign1
+Default"
+
+[node name="Label_11" type="Label3D" parent="Labels" unique_id=1080736517]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 110, 0.2, -123)
+pixel_size = 0.04
+text = "Sign10
+Default"
+
+[node name="Label_12" type="Label3D" parent="Labels" unique_id=315061388]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 132, 0.2, -123)
+pixel_size = 0.04
+text = "Sign10Austrian
+Default"
+
+[node name="Label_13" type="Label3D" parent="Labels" unique_id=686258384]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -132, 0.2, -99)
+pixel_size = 0.04
+text = "Sign11
+Default"
+
+[node name="Label_14" type="Label3D" parent="Labels" unique_id=272971270]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -110, 0.2, -99)
+pixel_size = 0.04
+text = "Sign11Austrian
+Default"
+
+[node name="Label_15" type="Label3D" parent="Labels" unique_id=1633528165]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -88, 0.2, -99)
+pixel_size = 0.04
+text = "Sign12
+Default"
+
+[node name="Label_16" type="Label3D" parent="Labels" unique_id=30560649]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -66, 0.2, -99)
+pixel_size = 0.04
+text = "Sign12Austrian
+Default"
+
+[node name="Label_17" type="Label3D" parent="Labels" unique_id=1404229415]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -44, 0.2, -99)
+pixel_size = 0.04
+text = "Sign13
+Default"
+
+[node name="Label_18" type="Label3D" parent="Labels" unique_id=1118293705]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -22, 0.2, -99)
+pixel_size = 0.04
+text = "Sign13Austrian
+Default"
+
+[node name="Label_19" type="Label3D" parent="Labels" unique_id=995449902]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0.2, -99)
+pixel_size = 0.04
+text = "Sign14
+Default"
+
+[node name="Label_20" type="Label3D" parent="Labels" unique_id=260406878]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 22, 0.2, -99)
+pixel_size = 0.04
+text = "Sign14Austrian
+Default"
+
+[node name="Label_21" type="Label3D" parent="Labels" unique_id=1057848144]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 44, 0.2, -99)
+pixel_size = 0.04
+text = "Sign15
+Default"
+
+[node name="Label_22" type="Label3D" parent="Labels" unique_id=990405469]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 66, 0.2, -99)
+pixel_size = 0.04
+text = "Sign15Austrian
+Default"
+
+[node name="Label_23" type="Label3D" parent="Labels" unique_id=1053015213]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 88, 0.2, -99)
+pixel_size = 0.04
+text = "Sign16
+Default"
+
+[node name="Label_24" type="Label3D" parent="Labels" unique_id=1646828475]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 110, 0.2, -99)
+pixel_size = 0.04
+text = "Sign16Austrian
+Default"
+
+[node name="Label_25" type="Label3D" parent="Labels" unique_id=1355987471]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 132, 0.2, -99)
+pixel_size = 0.04
+text = "Sign17
+Default"
+
+[node name="Label_26" type="Label3D" parent="Labels" unique_id=1089185564]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -132, 0.2, -75)
+pixel_size = 0.04
+text = "Sign17Austrian
+Default"
+
+[node name="Label_27" type="Label3D" parent="Labels" unique_id=1912122987]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -110, 0.2, -75)
+pixel_size = 0.04
+text = "Sign18
+Default"
+
+[node name="Label_28" type="Label3D" parent="Labels" unique_id=1822783772]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -88, 0.2, -75)
+pixel_size = 0.04
+text = "Sign18Austrian
+Default"
+
+[node name="Label_29" type="Label3D" parent="Labels" unique_id=2039248927]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -66, 0.2, -75)
+pixel_size = 0.04
+text = "Sign19
+Default"
+
+[node name="Label_30" type="Label3D" parent="Labels" unique_id=497650729]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -44, 0.2, -75)
+pixel_size = 0.04
+text = "Sign19Austrian
+Default"
+
+[node name="Label_31" type="Label3D" parent="Labels" unique_id=64202588]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -22, 0.2, -75)
+pixel_size = 0.04
+text = "Sign1Austrian
+Default"
+
+[node name="Label_32" type="Label3D" parent="Labels" unique_id=489536167]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0.2, -75)
+pixel_size = 0.04
+text = "Sign2
+Default"
+
+[node name="Label_33" type="Label3D" parent="Labels" unique_id=876894869]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 22, 0.2, -75)
+pixel_size = 0.04
+text = "Sign20
+Default"
+
+[node name="Label_34" type="Label3D" parent="Labels" unique_id=345137885]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 44, 0.2, -75)
+pixel_size = 0.04
+text = "Sign20Austrian
+Default"
+
+[node name="Label_35" type="Label3D" parent="Labels" unique_id=1038997991]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 66, 0.2, -75)
+pixel_size = 0.04
+text = "Sign21
+Default"
+
+[node name="Label_36" type="Label3D" parent="Labels" unique_id=1067624475]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 88, 0.2, -75)
+pixel_size = 0.04
+text = "Sign21Austrian
+Default"
+
+[node name="Label_37" type="Label3D" parent="Labels" unique_id=1296037770]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 110, 0.2, -75)
+pixel_size = 0.04
+text = "Sign22
+Default"
+
+[node name="Label_38" type="Label3D" parent="Labels" unique_id=1495756810]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 132, 0.2, -75)
+pixel_size = 0.04
+text = "Sign22Austrian
+Default"
+
+[node name="Label_39" type="Label3D" parent="Labels" unique_id=1740156091]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -132, 0.2, -51)
+pixel_size = 0.04
+text = "Sign23
+Default"
+
+[node name="Label_40" type="Label3D" parent="Labels" unique_id=279929703]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -110, 0.2, -51)
+pixel_size = 0.04
+text = "Sign23Austrian
+Default"
+
+[node name="Label_41" type="Label3D" parent="Labels" unique_id=762150951]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -88, 0.2, -51)
+pixel_size = 0.04
+text = "Sign24
+Default"
+
+[node name="Label_42" type="Label3D" parent="Labels" unique_id=788571987]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -66, 0.2, -51)
+pixel_size = 0.04
+text = "Sign24Austrian
+Default"
+
+[node name="Label_43" type="Label3D" parent="Labels" unique_id=1159649229]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -44, 0.2, -51)
+pixel_size = 0.04
+text = "Sign25
+Default"
+
+[node name="Label_44" type="Label3D" parent="Labels" unique_id=1962718938]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -22, 0.2, -51)
+pixel_size = 0.04
+text = "Sign25Austrian
+Default"
+
+[node name="Label_45" type="Label3D" parent="Labels" unique_id=434653753]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0.2, -51)
+pixel_size = 0.04
+text = "Sign26
+Default"
+
+[node name="Label_46" type="Label3D" parent="Labels" unique_id=1947410056]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 22, 0.2, -51)
+pixel_size = 0.04
+text = "Sign26Austrian
+Default"
+
+[node name="Label_47" type="Label3D" parent="Labels" unique_id=768896194]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 44, 0.2, -51)
+pixel_size = 0.04
+text = "Sign27
+Default"
+
+[node name="Label_48" type="Label3D" parent="Labels" unique_id=1219310220]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 66, 0.2, -51)
+pixel_size = 0.04
+text = "Sign27Austrian
+Default"
+
+[node name="Label_49" type="Label3D" parent="Labels" unique_id=1669496668]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 88, 0.2, -51)
+pixel_size = 0.04
+text = "Sign28
+Default"
+
+[node name="Label_50" type="Label3D" parent="Labels" unique_id=672802873]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 110, 0.2, -51)
+pixel_size = 0.04
+text = "Sign28Austrian
+Default"
+
+[node name="Label_51" type="Label3D" parent="Labels" unique_id=936412805]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 132, 0.2, -51)
+pixel_size = 0.04
+text = "Sign29
+Default"
+
+[node name="Label_52" type="Label3D" parent="Labels" unique_id=739173407]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -132, 0.2, -27)
+pixel_size = 0.04
+text = "Sign29Austrian
+Default"
+
+[node name="Label_53" type="Label3D" parent="Labels" unique_id=486844091]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -110, 0.2, -27)
+pixel_size = 0.04
+text = "Sign2Austrian
+Default"
+
+[node name="Label_54" type="Label3D" parent="Labels" unique_id=1787554587]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -88, 0.2, -27)
+pixel_size = 0.04
+text = "Sign3
+Default"
+
+[node name="Label_55" type="Label3D" parent="Labels" unique_id=308556895]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -66, 0.2, -27)
+pixel_size = 0.04
+text = "Sign30
+Default"
+
+[node name="Label_56" type="Label3D" parent="Labels" unique_id=561899234]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -44, 0.2, -27)
+pixel_size = 0.04
+text = "Sign30Austrian
+Default"
+
+[node name="Label_57" type="Label3D" parent="Labels" unique_id=1808624801]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -22, 0.2, -27)
+pixel_size = 0.04
+text = "Sign31
+Default"
+
+[node name="Label_58" type="Label3D" parent="Labels" unique_id=170545357]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0.2, -27)
+pixel_size = 0.04
+text = "Sign31Austrian
+Default"
+
+[node name="Label_59" type="Label3D" parent="Labels" unique_id=1364678988]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 22, 0.2, -27)
+pixel_size = 0.04
+text = "Sign32
+Default"
+
+[node name="Label_60" type="Label3D" parent="Labels" unique_id=2107359851]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 44, 0.2, -27)
+pixel_size = 0.04
+text = "Sign32Austrian
+Default"
+
+[node name="Label_61" type="Label3D" parent="Labels" unique_id=1040378631]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 66, 0.2, -27)
+pixel_size = 0.04
+text = "Sign33
+Default"
+
+[node name="Label_62" type="Label3D" parent="Labels" unique_id=1571304541]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 88, 0.2, -27)
+pixel_size = 0.04
+text = "Sign33Austrian
+Default"
+
+[node name="Label_63" type="Label3D" parent="Labels" unique_id=45228036]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 110, 0.2, -27)
+pixel_size = 0.04
+text = "Sign34
+Default"
+
+[node name="Label_64" type="Label3D" parent="Labels" unique_id=982697739]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 132, 0.2, -27)
+pixel_size = 0.04
+text = "Sign34Austrian
+Default"
+
+[node name="Label_65" type="Label3D" parent="Labels" unique_id=737201763]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -132, 0.2, -3)
+pixel_size = 0.04
+text = "Sign35
+Default"
+
+[node name="Label_66" type="Label3D" parent="Labels" unique_id=461800599]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -110, 0.2, -3)
+pixel_size = 0.04
+text = "Sign35Austrian
+Default"
+
+[node name="Label_67" type="Label3D" parent="Labels" unique_id=2083927475]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -88, 0.2, -3)
+pixel_size = 0.04
+text = "Sign36
+Default"
+
+[node name="Label_68" type="Label3D" parent="Labels" unique_id=798809129]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -66, 0.2, -3)
+pixel_size = 0.04
+text = "Sign36Austrian
+Default"
+
+[node name="Label_69" type="Label3D" parent="Labels" unique_id=1553725864]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -44, 0.2, -3)
+pixel_size = 0.04
+text = "Sign37
+Default"
+
+[node name="Label_70" type="Label3D" parent="Labels" unique_id=1909189073]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -22, 0.2, -3)
+pixel_size = 0.04
+text = "Sign37Austrian
+Default"
+
+[node name="Label_71" type="Label3D" parent="Labels" unique_id=1358187659]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0.2, -3)
+pixel_size = 0.04
+text = "Sign38
+Default"
+
+[node name="Label_72" type="Label3D" parent="Labels" unique_id=702260390]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 22, 0.2, -3)
+pixel_size = 0.04
+text = "Sign38Austrian
+Default"
+
+[node name="Label_73" type="Label3D" parent="Labels" unique_id=765504017]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 44, 0.2, -3)
+pixel_size = 0.04
+text = "Sign39
+Default"
+
+[node name="Label_74" type="Label3D" parent="Labels" unique_id=1839533104]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 66, 0.2, -3)
+pixel_size = 0.04
+text = "Sign39Austrian
+Default"
+
+[node name="Label_75" type="Label3D" parent="Labels" unique_id=406472363]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 88, 0.2, -3)
+pixel_size = 0.04
+text = "Sign3Austrian
+Default"
+
+[node name="Label_76" type="Label3D" parent="Labels" unique_id=1857399440]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 110, 0.2, -3)
+pixel_size = 0.04
+text = "Sign4
+Default"
+
+[node name="Label_77" type="Label3D" parent="Labels" unique_id=634919316]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 132, 0.2, -3)
+pixel_size = 0.04
+text = "Sign40
+Default"
+
+[node name="Label_78" type="Label3D" parent="Labels" unique_id=143857682]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -132, 0.2, 21)
+pixel_size = 0.04
+text = "Sign40Austrian
+Default"
+
+[node name="Label_79" type="Label3D" parent="Labels" unique_id=1780926279]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -110, 0.2, 21)
+pixel_size = 0.04
+text = "Sign41
+Default"
+
+[node name="Label_80" type="Label3D" parent="Labels" unique_id=1617608053]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -88, 0.2, 21)
+pixel_size = 0.04
+text = "Sign41Austrian
+Default"
+
+[node name="Label_81" type="Label3D" parent="Labels" unique_id=507197070]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -66, 0.2, 21)
+pixel_size = 0.04
+text = "Sign42
+Default"
+
+[node name="Label_82" type="Label3D" parent="Labels" unique_id=1199224822]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -44, 0.2, 21)
+pixel_size = 0.04
+text = "Sign42Austrian
+Default"
+
+[node name="Label_83" type="Label3D" parent="Labels" unique_id=1710975212]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -22, 0.2, 21)
+pixel_size = 0.04
+text = "Sign43
+Default"
+
+[node name="Label_84" type="Label3D" parent="Labels" unique_id=1823197844]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0.2, 21)
+pixel_size = 0.04
+text = "Sign43Austrian
+Default"
+
+[node name="Label_85" type="Label3D" parent="Labels" unique_id=62330224]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 22, 0.2, 21)
+pixel_size = 0.04
+text = "Sign44
+Default"
+
+[node name="Label_86" type="Label3D" parent="Labels" unique_id=1078874973]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 44, 0.2, 21)
+pixel_size = 0.04
+text = "Sign44Austrian
+Default"
+
+[node name="Label_87" type="Label3D" parent="Labels" unique_id=266680164]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 66, 0.2, 21)
+pixel_size = 0.04
+text = "Sign45
+Default"
+
+[node name="Label_88" type="Label3D" parent="Labels" unique_id=2012544465]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 88, 0.2, 21)
+pixel_size = 0.04
+text = "Sign45Austrian
+Default"
+
+[node name="Label_89" type="Label3D" parent="Labels" unique_id=501806203]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 110, 0.2, 21)
+pixel_size = 0.04
+text = "Sign46
+Default"
+
+[node name="Label_90" type="Label3D" parent="Labels" unique_id=436091457]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 132, 0.2, 21)
+pixel_size = 0.04
+text = "Sign46Austrian
+Default"
+
+[node name="Label_91" type="Label3D" parent="Labels" unique_id=140093084]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -132, 0.2, 45)
+pixel_size = 0.04
+text = "Sign47
+Default"
+
+[node name="Label_92" type="Label3D" parent="Labels" unique_id=1167728015]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -110, 0.2, 45)
+pixel_size = 0.04
+text = "Sign47Austrian
+Default"
+
+[node name="Label_93" type="Label3D" parent="Labels" unique_id=748000813]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -88, 0.2, 45)
+pixel_size = 0.04
+text = "Sign48
+Default"
+
+[node name="Label_94" type="Label3D" parent="Labels" unique_id=1766875272]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -66, 0.2, 45)
+pixel_size = 0.04
+text = "Sign48Austrian
+Default"
+
+[node name="Label_95" type="Label3D" parent="Labels" unique_id=1312776413]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -44, 0.2, 45)
+pixel_size = 0.04
+text = "Sign49
+Default"
+
+[node name="Label_96" type="Label3D" parent="Labels" unique_id=259987587]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -22, 0.2, 45)
+pixel_size = 0.04
+text = "Sign49Austrian
+Default"
+
+[node name="Label_97" type="Label3D" parent="Labels" unique_id=1982689060]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0.2, 45)
+pixel_size = 0.04
+text = "Sign4Austrian
+Default"
+
+[node name="Label_98" type="Label3D" parent="Labels" unique_id=390473247]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 22, 0.2, 45)
+pixel_size = 0.04
+text = "Sign5
+Default"
+
+[node name="Label_99" type="Label3D" parent="Labels" unique_id=945969937]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 44, 0.2, 45)
+pixel_size = 0.04
+text = "Sign50
+Default"
+
+[node name="Label_100" type="Label3D" parent="Labels" unique_id=233798332]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 66, 0.2, 45)
+pixel_size = 0.04
+text = "Sign50Austrian
+Default"
+
+[node name="Label_101" type="Label3D" parent="Labels" unique_id=669056030]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 88, 0.2, 45)
+pixel_size = 0.04
+text = "Sign51
+Default"
+
+[node name="Label_102" type="Label3D" parent="Labels" unique_id=593345205]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 110, 0.2, 45)
+pixel_size = 0.04
+text = "Sign51Austrian
+Default"
+
+[node name="Label_103" type="Label3D" parent="Labels" unique_id=1864287250]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 132, 0.2, 45)
+pixel_size = 0.04
+text = "Sign52
+Default"
+
+[node name="Label_104" type="Label3D" parent="Labels" unique_id=536888249]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -132, 0.2, 69)
+pixel_size = 0.04
+text = "Sign52Austrian
+Default"
+
+[node name="Label_105" type="Label3D" parent="Labels" unique_id=1123765659]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -110, 0.2, 69)
+pixel_size = 0.04
+text = "Sign53
+Default"
+
+[node name="Label_106" type="Label3D" parent="Labels" unique_id=596163903]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -88, 0.2, 69)
+pixel_size = 0.04
+text = "Sign53Austrian
+Default"
+
+[node name="Label_107" type="Label3D" parent="Labels" unique_id=1075350013]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -66, 0.2, 69)
+pixel_size = 0.04
+text = "Sign54
+Default"
+
+[node name="Label_108" type="Label3D" parent="Labels" unique_id=1769797122]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -44, 0.2, 69)
+pixel_size = 0.04
+text = "Sign54Austrian
+Default"
+
+[node name="Label_109" type="Label3D" parent="Labels" unique_id=276885164]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -22, 0.2, 69)
+pixel_size = 0.04
+text = "Sign55
+Default"
+
+[node name="Label_110" type="Label3D" parent="Labels" unique_id=1029716450]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0.2, 69)
+pixel_size = 0.04
+text = "Sign55Austrian
+Default"
+
+[node name="Label_111" type="Label3D" parent="Labels" unique_id=584480850]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 22, 0.2, 69)
+pixel_size = 0.04
+text = "Sign56
+Default"
+
+[node name="Label_112" type="Label3D" parent="Labels" unique_id=886697290]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 44, 0.2, 69)
+pixel_size = 0.04
+text = "Sign56Austrian
+Default"
+
+[node name="Label_113" type="Label3D" parent="Labels" unique_id=1977711963]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 66, 0.2, 69)
+pixel_size = 0.04
+text = "Sign57
+Default"
+
+[node name="Label_114" type="Label3D" parent="Labels" unique_id=157514175]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 88, 0.2, 69)
+pixel_size = 0.04
+text = "Sign57Austrian
+Default"
+
+[node name="Label_115" type="Label3D" parent="Labels" unique_id=169549385]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 110, 0.2, 69)
+pixel_size = 0.04
+text = "Sign58
+Default"
+
+[node name="Label_116" type="Label3D" parent="Labels" unique_id=1908419252]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 132, 0.2, 69)
+pixel_size = 0.04
+text = "Sign58Austrian
+Default"
+
+[node name="Label_117" type="Label3D" parent="Labels" unique_id=714166386]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -132, 0.2, 93)
+pixel_size = 0.04
+text = "Sign59
+Default"
+
+[node name="Label_118" type="Label3D" parent="Labels" unique_id=1375796242]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -110, 0.2, 93)
+pixel_size = 0.04
+text = "Sign59Austrian
+Default"
+
+[node name="Label_119" type="Label3D" parent="Labels" unique_id=473391675]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -88, 0.2, 93)
+pixel_size = 0.04
+text = "Sign5Austrian
+Default"
+
+[node name="Label_120" type="Label3D" parent="Labels" unique_id=328835307]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -66, 0.2, 93)
+pixel_size = 0.04
+text = "Sign6
+Default"
+
+[node name="Label_121" type="Label3D" parent="Labels" unique_id=1728287805]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -44, 0.2, 93)
+pixel_size = 0.04
+text = "Sign60
+Default"
+
+[node name="Label_122" type="Label3D" parent="Labels" unique_id=852070239]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -22, 0.2, 93)
+pixel_size = 0.04
+text = "Sign60Austrian
+Default"
+
+[node name="Label_123" type="Label3D" parent="Labels" unique_id=1044865398]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0.2, 93)
+pixel_size = 0.04
+text = "Sign61
+Default"
+
+[node name="Label_124" type="Label3D" parent="Labels" unique_id=101928462]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 22, 0.2, 93)
+pixel_size = 0.04
+text = "Sign62
+Default"
+
+[node name="Label_125" type="Label3D" parent="Labels" unique_id=1316984301]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 44, 0.2, 93)
+pixel_size = 0.04
+text = "Sign63
+Default"
+
+[node name="Label_126" type="Label3D" parent="Labels" unique_id=1961127414]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 66, 0.2, 93)
+pixel_size = 0.04
+text = "Sign64
+Default"
+
+[node name="Label_127" type="Label3D" parent="Labels" unique_id=1494243600]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 88, 0.2, 93)
+pixel_size = 0.04
+text = "Sign65
+Default"
+
+[node name="Label_128" type="Label3D" parent="Labels" unique_id=747968101]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 110, 0.2, 93)
+pixel_size = 0.04
+text = "Sign66
+Default"
+
+[node name="Label_129" type="Label3D" parent="Labels" unique_id=1794132809]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 132, 0.2, 93)
+pixel_size = 0.04
+text = "Sign67
+Default"
+
+[node name="Label_130" type="Label3D" parent="Labels" unique_id=331571670]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -132, 0.2, 117)
+pixel_size = 0.04
+text = "Sign68
+Default"
+
+[node name="Label_131" type="Label3D" parent="Labels" unique_id=910396512]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -110, 0.2, 117)
+pixel_size = 0.04
+text = "Sign69
+Default"
+
+[node name="Label_132" type="Label3D" parent="Labels" unique_id=311513574]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -88, 0.2, 117)
+pixel_size = 0.04
+text = "Sign6Austrian
+Default"
+
+[node name="Label_133" type="Label3D" parent="Labels" unique_id=1325947081]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -66, 0.2, 117)
+pixel_size = 0.04
+text = "Sign7
+Default"
+
+[node name="Label_134" type="Label3D" parent="Labels" unique_id=304667828]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -44, 0.2, 117)
+pixel_size = 0.04
+text = "Sign70
+Default"
+
+[node name="Label_135" type="Label3D" parent="Labels" unique_id=1974700027]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -22, 0.2, 117)
+pixel_size = 0.04
+text = "Sign71
+Default"
+
+[node name="Label_136" type="Label3D" parent="Labels" unique_id=1930134058]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0.2, 117)
+pixel_size = 0.04
+text = "Sign72
+Default"
+
+[node name="Label_137" type="Label3D" parent="Labels" unique_id=1807373742]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 22, 0.2, 117)
+pixel_size = 0.04
+text = "Sign73
+Default"
+
+[node name="Label_138" type="Label3D" parent="Labels" unique_id=989124813]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 44, 0.2, 117)
+pixel_size = 0.04
+text = "Sign74
+Default"
+
+[node name="Label_139" type="Label3D" parent="Labels" unique_id=583277509]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 66, 0.2, 117)
+pixel_size = 0.04
+text = "Sign75
+Default"
+
+[node name="Label_140" type="Label3D" parent="Labels" unique_id=1251532316]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 88, 0.2, 117)
+pixel_size = 0.04
+text = "Sign76
+Default"
+
+[node name="Label_141" type="Label3D" parent="Labels" unique_id=1482984704]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 110, 0.2, 117)
+pixel_size = 0.04
+text = "Sign77
+Default"
+
+[node name="Label_142" type="Label3D" parent="Labels" unique_id=619390471]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 132, 0.2, 117)
+pixel_size = 0.04
+text = "Sign78
+Default"
+
+[node name="Label_143" type="Label3D" parent="Labels" unique_id=1583798504]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -132, 0.2, 141)
+pixel_size = 0.04
+text = "Sign79
+Default"
+
+[node name="Label_144" type="Label3D" parent="Labels" unique_id=1121272956]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -110, 0.2, 141)
+pixel_size = 0.04
+text = "Sign7Austrian
+Default"
+
+[node name="Label_145" type="Label3D" parent="Labels" unique_id=2036275891]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -88, 0.2, 141)
+pixel_size = 0.04
+text = "Sign8
+Default"
+
+[node name="Label_146" type="Label3D" parent="Labels" unique_id=1222102099]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -66, 0.2, 141)
+pixel_size = 0.04
+text = "Sign80
+Default"
+
+[node name="Label_147" type="Label3D" parent="Labels" unique_id=1448983434]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -44, 0.2, 141)
+pixel_size = 0.04
+text = "Sign8Austrian
+Default"
+
+[node name="Label_148" type="Label3D" parent="Labels" unique_id=1193688827]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -22, 0.2, 141)
+pixel_size = 0.04
+text = "Sign9
+Default"
+
+[node name="Label_149" type="Label3D" parent="Labels" unique_id=403467662]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0.2, 141)
+pixel_size = 0.04
+text = "Sign9Austrian
+Default"
+
+[node name="Label_150" type="Label3D" parent="Labels" unique_id=2027968730]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 22, 0.2, 141)
+pixel_size = 0.04
+text = "SignCircle
+Default"
+
+[node name="PreviewCamera" type="Camera3D" parent="." unique_id=1589819021]
+transform = Transform3D(1, 0, 0, 0, 0.41036472, 0.9119215, 0, -0.9119215, 0.41036472, 0, 288, 129.6)
+projection = 1
+current = true
+size = 316.8
+
+[node name="Sun" type="DirectionalLight3D" parent="." unique_id=1550670036]
+transform = Transform3D(0.90630776, 0.34618863, -0.24240388, 0, 0.57357645, 0.81915206, 0.42261827, -0.74240386, 0.5198368, 0, 0, 0)
+light_energy = 1.1
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1381307485]
+environment = SubResource("Environment_06iig")
+
+[node name="PreviewFloor" type="MeshInstance3D" parent="." unique_id=1625433821]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.08, 0)
+material_override = SubResource("StandardMaterial3D_xgk52")
+mesh = SubResource("PlaneMesh_ptg0u")

@@ -2,7 +2,7 @@
 ## The test only bakes a duplicate of the authored NavigationMesh: no resource is saved.
 extends SceneTree
 
-const PLAYTEST := preload("res://src/world/training_ground/training_ground_playtest.tscn")
+const PLAYTEST := preload("res://src/maps/training_ground/training_ground_playtest.tscn")
 const TANK_SCENES := [
 	preload("res://src/actors/tank/variants/tank1/tank1.tscn"),
 	preload("res://src/actors/tank/variants/tank2/tank2.tscn"),

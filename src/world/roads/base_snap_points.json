@@ -1,0 +1,66 @@
+{
+  "models": {
+    "Road1": [
+      {"name": "south", "position": [0, 0, -6], "outward": [0, 0, -1]},
+      {"name": "north", "position": [0, 0, 6], "outward": [0, 0, 1]}
+    ],
+    "Road1_Curve1": [
+      {"name": "south", "position": [0, 0, -6], "outward": [0, 0, -1]},
+      {"name": "northeast", "position": [5.75736, 0, 6.24264], "outward": [0.707107, 0, 0.707107]}
+    ],
+    "Road1_Curve2": [
+      {"name": "south", "position": [0, 0, -6], "outward": [0, 0, -1]},
+      {"name": "northeast", "position": [9.51472, 0, 18], "outward": [0.707107, 0, 0.707107]}
+    ],
+    "Road1_Curve3": [
+      {"name": "south", "position": [0, 0, -6], "outward": [0, 0, -1]},
+      {"name": "east", "position": [18, 0, 12], "outward": [1, 0, 0]}
+    ],
+    "Road1_Curve4": [
+      {"name": "south", "position": [0, 0, -6], "outward": [0, 0, -1]},
+      {"name": "east", "position": [42, 0, 36], "outward": [1, 0, 0]}
+    ],
+    "Road2_T": [
+      {"name": "south", "position": [0, 0, -6], "outward": [0, 0, -1]},
+      {"name": "west", "position": [-6, 0, 0], "outward": [-1, 0, 0]},
+      {"name": "east", "position": [6, 0, 0], "outward": [1, 0, 0]}
+    ],
+    "Road2_X": [
+      {"name": "south", "position": [0, 0, -6], "outward": [0, 0, -1]},
+      {"name": "west", "position": [-6, 0, 0], "outward": [-1, 0, 0]},
+      {"name": "east", "position": [6, 0, 0], "outward": [1, 0, 0]},
+      {"name": "north", "position": [0, 0, 6], "outward": [0, 0, 1]}
+    ],
+    "Road6_End": [
+      {"name": "south", "position": [0, 0, -6], "outward": [0, 0, -1]}
+    ],
+    "Road10_90angle_Corner": [
+      {"name": "south", "position": [0, 0, -6], "outward": [0, 0, -1]},
+      {"name": "east", "position": [6, 0, 0], "outward": [1, 0, 0]}
+    ],
+    "Road11_Y_Splitter": [
+      {"name": "south", "position": [0, 0, -6], "outward": [0, 0, -1]},
+      {"name": "northwest", "position": [-7.75736, 0, 13.75736], "outward": [-0.707107, 0, 0.707107]},
+      {"name": "northeast", "position": [7.75736, 0, 13.75736], "outward": [0.707107, 0, 0.707107]}
+    ],
+    "Road11_Y_Splitter_45": [
+      {"name": "south", "position": [0, 0, -6], "outward": [0, 0, -1]},
+      {"name": "northwest", "position": [-4.59158, 0, 13.59158], "outward": [-0.707107, 0, 0.707107]},
+      {"name": "northeast", "position": [4.59158, 0, 13.59158], "outward": [0.707107, 0, 0.707107]}
+    ],
+    "Road12_Diagonal_Splitter_L": [
+      {"name": "south", "position": [0, 0, -6], "outward": [0, 0, -1]},
+      {"name": "north", "position": [0, 0, 18], "outward": [0, 0, 1]},
+      {"name": "northeast", "position": [13.75745, 0, 13.75745], "outward": [0.707107, 0, 0.707107]}
+    ],
+    "Road12_Diagonal_Splitter_R": [
+      {"name": "south", "position": [0, 0, -6], "outward": [0, 0, -1]},
+      {"name": "north", "position": [0, 0, 18], "outward": [0, 0, 1]},
+      {"name": "northwest", "position": [-13.75745, 0, 13.75745], "outward": [-0.707107, 0, 0.707107]}
+    ],
+    "Road3_Crossing": [
+      {"name": "south", "position": [0, 0, -6], "outward": [0, 0, -1]},
+      {"name": "north", "position": [0, 0, 6], "outward": [0, 0, 1]}
+    ]
+  }
+}

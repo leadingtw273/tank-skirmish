@@ -1,4 +1,4 @@
-[gd_resource type="ShaderMaterial" load_steps=4 format=3 uid="uid://byc5jvcatmoah"]
+[gd_resource type="ShaderMaterial" format=3 uid="uid://byc5jvcatmoah"]
 
 [ext_resource type="Shader" uid="uid://ctc5s68igpvj6" path="res://assets/BinbunVFX/shared/shader/transparent.gdshader" id="1_ucx52"]
 

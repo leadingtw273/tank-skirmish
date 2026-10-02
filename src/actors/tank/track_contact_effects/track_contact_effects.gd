@@ -4,7 +4,7 @@ extends Node3D
 ## 接地互動的來源身分；SurfaceEffects 以它和接地點身分穩定管理持續發射器。
 @export var source_id: StringName = &"player_tank"
 ## 向下查詢可互動地表的物理碰撞遮罩。
-@export_flags_3d_physics var ground_collision_mask := 128
+@export_flags_3d_physics var ground_collision_mask := 129
 ## 每個手調接地點上方的查詢起始偏移，單位為公尺。
 @export_range(0.0, 3.0, 0.01) var ray_start_height := 0.5
 ## 每個接地點向下查詢的總長度，單位為公尺。
@@ -26,7 +26,7 @@ signal track_contact(
 		source_motion_speed: float,
 )
 
-@onready var tank: CharacterBody3D = get_parent() as CharacterBody3D
+@onready var tank: PhysicsBody3D = get_parent() as PhysicsBody3D
 @onready var contact_points: Array[Marker3D] = [$LeftFront, $LeftRear, $RightFront, $RightRear]
 
 
@@ -41,7 +41,7 @@ func _physics_process(_delta: float) -> void:
 		linear_speed / maxf(linear_speed_for_full_intensity, 0.01),
 		angular_speed / maxf(angular_speed_for_full_intensity, 0.01),
 	), 0.0, 1.0)
-	var source_velocity := tank.get_real_velocity()
+	var source_velocity: Vector3 = tank.linear_velocity if tank is RigidBody3D else (tank as CharacterBody3D).get_real_velocity()
 	for point in contact_points:
 		_emit_contact_for(point, intensity, source_velocity, motion_speed)
 

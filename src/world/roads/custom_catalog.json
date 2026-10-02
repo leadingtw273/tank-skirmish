@@ -1,0 +1,227 @@
+{
+	"models": [
+		{
+			"id": "Road1_Curve2_Custom45",
+			"materials": [],
+			"path": "res://src/world/roads/generated/custom/road1_curve2_45.tscn",
+			"snap_points": [
+				{
+					"name": "Entry",
+					"outward": [
+						0.0,
+						0.0,
+						-1.0
+					],
+					"position": [
+						0.0,
+						0.0,
+						-6.0
+					]
+				},
+				{
+					"name": "Exit45",
+					"outward": [
+						0.70710676908493,
+						0.0,
+						0.70710676908493
+					],
+					"position": [
+						7.02943706512451,
+						0.0,
+						10.9705629348755
+					]
+				}
+			]
+		},
+		{
+			"id": "Road11_Y_Splitter_45_Custom",
+			"materials": [],
+			"path": "res://src/world/roads/generated/custom/road11_y_splitter_45.tscn",
+			"snap_points": [
+				{
+					"name": "SouthOuter",
+					"outward": [
+						0.0,
+						0.0,
+						-1.0
+					],
+					"position": [
+						0.0,
+						0.0,
+						3.0
+					]
+				},
+				{
+					"name": "LeftOuter",
+					"outward": [
+						-0.707106828689575,
+						0.0,
+						0.707106828689575
+					],
+					"position": [
+						-4.59157991409302,
+						0.0,
+						13.5915803909302
+					]
+				},
+				{
+					"name": "RightOuter",
+					"outward": [
+						0.707106828689575,
+						0.0,
+						0.707106828689575
+					],
+					"position": [
+						4.59157991409302,
+						0.0,
+						13.5915803909302
+					]
+				}
+			]
+		},
+		{
+			"id": "Road12_Diagonal_Splitter_L_Custom",
+			"materials": [],
+			"path": "res://src/world/roads/generated/custom/road12_diagonal_splitter_l.tscn",
+			"snap_points": [
+				{
+					"name": "SouthOuter",
+					"outward": [
+						0.0,
+						0.0,
+						-1.0
+					],
+					"position": [
+						0.0,
+						0.0,
+						-6.0
+					]
+				},
+				{
+					"name": "NorthOuter",
+					"outward": [
+						0.0,
+						0.0,
+						1.0
+					],
+					"position": [
+						0.0,
+						0.0,
+						14.4852809906006
+					]
+				},
+				{
+					"name": "DiagonalOuter",
+					"outward": [
+						0.707106828689575,
+						0.0,
+						0.707106828689575
+					],
+					"position": [
+						10.2592725753784,
+						0.0,
+						10.2260084152222
+					]
+				},
+				{
+					"name": "DiagonalInner",
+					"outward": [
+						0.707106828689575,
+						0.0,
+						0.707106828689575
+					],
+					"position": [
+						8.13795280456543,
+						0.0,
+						8.10468769073486
+					]
+				},
+				{
+					"name": "NorthInner",
+					"outward": [
+						0.0,
+						0.0,
+						1.0
+					],
+					"position": [
+						0.0,
+						0.0,
+						11.4852809906006
+					]
+				}
+			]
+		},
+		{
+			"id": "Road12_Diagonal_Splitter_R_Custom",
+			"materials": [],
+			"path": "res://src/world/roads/generated/custom/road12_diagonal_splitter_r.tscn",
+			"snap_points": [
+				{
+					"name": "SouthOuter",
+					"outward": [
+						0.0,
+						0.0,
+						-1.0
+					],
+					"position": [
+						0.0,
+						0.0,
+						-6.0
+					]
+				},
+				{
+					"name": "NorthOuter",
+					"outward": [
+						0.0,
+						0.0,
+						1.0
+					],
+					"position": [
+						0.0,
+						0.0,
+						14.4852809906006
+					]
+				},
+				{
+					"name": "DiagonalOuter",
+					"outward": [
+						-0.707106828689575,
+						0.0,
+						0.707106828689575
+					],
+					"position": [
+						-10.2592725753784,
+						0.0,
+						10.2260084152222
+					]
+				},
+				{
+					"name": "DiagonalInner",
+					"outward": [
+						-0.707106828689575,
+						0.0,
+						0.707106828689575
+					],
+					"position": [
+						-8.13795280456543,
+						0.0,
+						8.10468769073486
+					]
+				},
+				{
+					"name": "NorthInner",
+					"outward": [
+						0.0,
+						0.0,
+						1.0
+					],
+					"position": [
+						0.0,
+						0.0,
+						11.4852809906006
+					]
+				}
+			]
+		}
+	]
+}

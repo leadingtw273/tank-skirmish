@@ -1,0 +1,221 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://src/world/roads/items/dirt/Dirt_Road_1_6m/Default.tscn" id="1_w3a2u"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/dirt/Dirt_Road_1_Curve_1/Default.tscn" id="2_fb4u4"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/dirt/Dirt_Road_1_Hill_1/Default.tscn" id="3_dljjj"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/dirt/Grass_Block_1/Default.tscn" id="4_06gro"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/dirt/Log_1/Default.tscn" id="5_fetnk"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/dirt/Log_2/Default.tscn" id="6_3hpdi"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/dirt/Log_Bridge_1/Default.tscn" id="7_1a0m8"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/dirt/Log_Fence_1/Default.tscn" id="8_xtemb"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/dirt/Log_Fence_2/Default.tscn" id="9_0ustr"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/dirt/Rock_1/Default.tscn" id="10_rjfo6"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/dirt/Rock_2/Default.tscn" id="11_47lf4"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/dirt/Rock_3/Default.tscn" id="12_ualpq"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/dirt/Wooden_Pole_1/Default.tscn" id="13_iykpf"]
+
+[sub_resource type="Environment" id="Environment_ow3fi"]
+background_mode = 1
+background_color = Color(0.11, 0.13, 0.16, 1)
+ambient_light_source = 2
+ambient_light_color = Color(1, 1, 1, 1)
+ambient_light_energy = 0.65
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_c1cwr"]
+albedo_color = Color(0.29, 0.31, 0.34, 1)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_4hgs7"]
+size = Vector2(100, 110.00001)
+
+[node name="dirt_demo" type="Node3D" unique_id=202016962]
+
+[node name="Models" type="Node3D" parent="." unique_id=386390324]
+
+[node name="Dirt_Road_1_6m__Default" type="StaticBody3D" parent="Models" unique_id=1006224957 instance=ExtResource("1_w3a2u")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -33, 0, -36)
+metadata/road_module = true
+metadata/road_id = "Dirt_Road_1_6m"
+metadata/variant = "Default"
+metadata/source_pack = "dirt"
+
+[node name="Dirt_Road_1_Curve_1__Default" type="StaticBody3D" parent="Models" unique_id=1447569802 instance=ExtResource("2_fb4u4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 0, -29.999998)
+metadata/road_module = true
+metadata/road_id = "Dirt_Road_1_Curve_1"
+metadata/variant = "Default"
+metadata/source_pack = "dirt"
+
+[node name="Dirt_Road_1_Hill_1__Default" type="StaticBody3D" parent="Models" unique_id=779776751 instance=ExtResource("3_dljjj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.0000014, 0, -36)
+metadata/road_module = true
+metadata/road_id = "Dirt_Road_1_Hill_1"
+metadata/variant = "Default"
+metadata/source_pack = "dirt"
+
+[node name="Grass_Block_1__Default" type="StaticBody3D" parent="Models" unique_id=652114515 instance=ExtResource("4_06gro")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 33, 0, -36)
+metadata/road_module = true
+metadata/road_id = "Grass_Block_1"
+metadata/variant = "Default"
+metadata/source_pack = "dirt"
+
+[node name="Log_1__Default" type="StaticBody3D" parent="Models" unique_id=1347345125 instance=ExtResource("5_fetnk")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -33, 0, -10.999998)
+metadata/road_module = true
+metadata/road_id = "Log_1"
+metadata/variant = "Default"
+metadata/source_pack = "dirt"
+
+[node name="Log_2__Default" type="StaticBody3D" parent="Models" unique_id=653183020 instance=ExtResource("6_3hpdi")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.971104, 0, -11.027624)
+metadata/road_module = true
+metadata/road_id = "Log_2"
+metadata/variant = "Default"
+metadata/source_pack = "dirt"
+
+[node name="Log_Bridge_1__Default" type="StaticBody3D" parent="Models" unique_id=737276669 instance=ExtResource("7_1a0m8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.000002, 0, -10.983152)
+metadata/road_module = true
+metadata/road_id = "Log_Bridge_1"
+metadata/variant = "Default"
+metadata/source_pack = "dirt"
+
+[node name="Log_Fence_1__Default" type="StaticBody3D" parent="Models" unique_id=1741375720 instance=ExtResource("8_xtemb")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 33.024014, 0, -10.951426)
+metadata/road_module = true
+metadata/road_id = "Log_Fence_1"
+metadata/variant = "Default"
+metadata/source_pack = "dirt"
+
+[node name="Log_Fence_2__Default" type="StaticBody3D" parent="Models" unique_id=2040962288 instance=ExtResource("9_0ustr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -32.975986, 0, 10.912559)
+metadata/road_module = true
+metadata/road_id = "Log_Fence_2"
+metadata/variant = "Default"
+metadata/source_pack = "dirt"
+
+[node name="Rock_1__Default" type="StaticBody3D" parent="Models" unique_id=532894399 instance=ExtResource("10_rjfo6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.015916, 0, 13.04618)
+metadata/road_module = true
+metadata/road_id = "Rock_1"
+metadata/variant = "Default"
+metadata/source_pack = "dirt"
+
+[node name="Rock_2__Default" type="StaticBody3D" parent="Models" unique_id=2091606432 instance=ExtResource("11_47lf4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.050007, 0, 12.951055)
+metadata/road_module = true
+metadata/road_id = "Rock_2"
+metadata/variant = "Default"
+metadata/source_pack = "dirt"
+
+[node name="Rock_3__Default" type="StaticBody3D" parent="Models" unique_id=135635955 instance=ExtResource("12_ualpq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 33.025154, 0, 13.01202)
+metadata/road_module = true
+metadata/road_id = "Rock_3"
+metadata/variant = "Default"
+metadata/source_pack = "dirt"
+
+[node name="Wooden_Pole_1__Default" type="StaticBody3D" parent="Models" unique_id=1296568247 instance=ExtResource("13_iykpf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -32.95681, 0, 37)
+metadata/road_module = true
+metadata/road_id = "Wooden_Pole_1"
+metadata/variant = "Default"
+metadata/source_pack = "dirt"
+
+[node name="Labels" type="Node3D" parent="." unique_id=1675201937]
+
+[node name="Label_0" type="Label3D" parent="Labels" unique_id=1378747940]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -33, 0.2, -25.999998)
+pixel_size = 0.04
+text = "Dirt_Road_1_6m
+Default"
+
+[node name="Label_1" type="Label3D" parent="Labels" unique_id=1677640278]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -11, 0.2, -25.999998)
+pixel_size = 0.04
+text = "Dirt_Road_1_Curve_1
+Default"
+
+[node name="Label_2" type="Label3D" parent="Labels" unique_id=1929028925]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 11, 0.2, -25.999998)
+pixel_size = 0.04
+text = "Dirt_Road_1_Hill_1
+Default"
+
+[node name="Label_3" type="Label3D" parent="Labels" unique_id=1838716362]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 33, 0.2, -25.999998)
+pixel_size = 0.04
+text = "Grass_Block_1
+Default"
+
+[node name="Label_4" type="Label3D" parent="Labels" unique_id=2005060452]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -33, 0.2, -1.9999981)
+pixel_size = 0.04
+text = "Log_1
+Default"
+
+[node name="Label_5" type="Label3D" parent="Labels" unique_id=893348203]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -11, 0.2, -1.9999981)
+pixel_size = 0.04
+text = "Log_2
+Default"
+
+[node name="Label_6" type="Label3D" parent="Labels" unique_id=856365879]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 11, 0.2, -1.9999981)
+pixel_size = 0.04
+text = "Log_Bridge_1
+Default"
+
+[node name="Label_7" type="Label3D" parent="Labels" unique_id=934578772]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 33, 0.2, -1.9999981)
+pixel_size = 0.04
+text = "Log_Fence_1
+Default"
+
+[node name="Label_8" type="Label3D" parent="Labels" unique_id=1731505401]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -33, 0.2, 22.000002)
+pixel_size = 0.04
+text = "Log_Fence_2
+Default"
+
+[node name="Label_9" type="Label3D" parent="Labels" unique_id=1589216017]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -11, 0.2, 22.000002)
+pixel_size = 0.04
+text = "Rock_1
+Default"
+
+[node name="Label_10" type="Label3D" parent="Labels" unique_id=1431444946]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 11, 0.2, 22.000002)
+pixel_size = 0.04
+text = "Rock_2
+Default"
+
+[node name="Label_11" type="Label3D" parent="Labels" unique_id=1477367084]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 33, 0.2, 22.000002)
+pixel_size = 0.04
+text = "Rock_3
+Default"
+
+[node name="Label_12" type="Label3D" parent="Labels" unique_id=1099772161]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -33, 0.2, 46)
+pixel_size = 0.04
+text = "Wooden_Pole_1
+Default"
+
+[node name="PreviewCamera" type="Camera3D" parent="." unique_id=410208975]
+transform = Transform3D(1, 0, 0, 0, 0.41036466, 0.9119215, 0, -0.9119215, 0.41036466, 0, 98.00001, 44.100002)
+projection = 1
+current = true
+size = 107.80001
+
+[node name="Sun" type="DirectionalLight3D" parent="." unique_id=601927042]
+transform = Transform3D(0.90630776, 0.34618863, -0.24240388, 0, 0.57357645, 0.81915206, 0.42261827, -0.74240386, 0.5198368, 0, 0, 0)
+light_energy = 1.1
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1762816805]
+environment = SubResource("Environment_ow3fi")
+
+[node name="PreviewFloor" type="MeshInstance3D" parent="." unique_id=2096920854]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.08, 0)
+material_override = SubResource("StandardMaterial3D_c1cwr")
+mesh = SubResource("PlaneMesh_4hgs7")

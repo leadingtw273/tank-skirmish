@@ -1,7 +1,7 @@
 ## LEA-175 Task 1/2：導航地圖、保守通道與純輸入需求的 headless smoke。
 extends SceneTree
 
-const PLAYTEST := preload("res://src/world/training_ground/training_ground_playtest.tscn")
+const PLAYTEST := preload("res://src/maps/training_ground/training_ground_playtest.tscn")
 const TankNavigation := preload("res://src/ai/tank_navigation.gd")
 const TANK2 := preload("res://src/actors/tank/variants/tank2/tank2.tscn")
 const NAV_RADIUS := 3.6427174

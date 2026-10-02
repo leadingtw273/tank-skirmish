@@ -30,7 +30,7 @@ func _init() -> void:
 
 func _validate(instance: Node) -> void:
 	var runtime := instance.get_node_or_null("CombatRuntime") as CombatRuntime
-	var tank := instance.get_node_or_null("Tank") as CharacterBody3D
+	var tank := instance.get_node_or_null("PlayerSpawnGroup/Tank") as RigidBody3D
 	var player_runtime := instance.get_node_or_null("PlayerRuntime")
 	var projectiles := instance.get_node_or_null("CombatRuntime/Projectiles") as Node3D
 	var effects := instance.get_node_or_null("CombatRuntime/Effects") as Node3D
@@ -66,8 +66,8 @@ func _validate(instance: Node) -> void:
 		return
 	var shot_event := observed_shots[0]
 	if not shot_event.is_valid() or not shot_event.direction.is_normalized() \
-			or not shot_event.muzzle_transform.is_equal_approx(tank.muzzle_point.global_transform) \
-			or shot_event.shooter_rid != tank.get_rid() or not is_equal_approx(shot_event.damage, tank.shell_damage):
+			or not shot_event.muzzle_transform.is_equal_approx(tank.combat_tank.muzzle_point.global_transform) \
+			or shot_event.shooter_rid != tank.get_rid() or not is_equal_approx(shot_event.damage, tank.combat_tank.shell_damage):
 		_fail("Tank must publish one closed ShotEvent with its final muzzle transform, direction, and RID.")
 		return
 	var projectile := projectiles.get_child(0) as TankProjectile

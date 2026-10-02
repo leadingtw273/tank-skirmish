@@ -4,7 +4,7 @@ extends SceneTree
 
 const Predictor := preload("res://src/ai/tank_driving_predictor.gd")
 const TankNavigation := preload("res://src/ai/tank_navigation.gd")
-const PLAYTEST := preload("res://src/world/training_ground/training_ground_playtest.tscn")
+const PLAYTEST := preload("res://src/maps/training_ground/training_ground_playtest.tscn")
 const TANK1 := preload("res://src/actors/tank/variants/tank1/tank1.tscn")
 const DT := 1.0 / 60.0
 const MAX_EXECUTION_FRAMES := 120
@@ -191,7 +191,7 @@ func _fixture(data: Dictionary, live_tank: bool) -> Dictionary:
 	root.add_child(scene)
 	await physics_frame
 	var tank := scene.get_node_or_null("Encounter/Enemy") as CharacterBody3D
-	var player := scene.get_node_or_null("Main/Tank") as CharacterBody3D
+	var player := scene.get_node_or_null("Main/PlayerSpawnGroup/Tank") as CharacterBody3D
 	if tank == null or player == null:
 		_fail("%s fixture requires Encounter/Enemy and Main/Tank." % data.label)
 		scene.queue_free()

@@ -1,12 +1,13 @@
 extends SceneTree
 
-const PLAYTEST_SCENE := "res://src/world/training_ground/training_ground_playtest.tscn"
+const PLAYTEST_SCENE := "res://src/maps/training_ground/training_ground_playtest.tscn"
 const TANK1_SCENE := "res://src/actors/tank/variants/tank1/tank1.tscn"
 const TANK2_SCENE := "res://src/actors/tank/variants/tank2/tank2.tscn"
 const TANK3_SCENE := "res://src/actors/tank/variants/tank3/tank3.tscn"
 const TANK4_SCENE := "res://src/actors/tank/variants/tank4/tank4.tscn"
 const HealthComponent := preload("res://src/combat/damage/health_component.gd")
 const TankVision := preload("res://src/actors/tank/perception/tank_vision.gd")
+const TankCatalog := preload("res://src/actors/tank/tank_catalog.gd")
 const TankCombatAI := preload("res://src/ai/tank_combat_ai.gd")
 
 
@@ -28,7 +29,7 @@ func _validate(playtest: Node3D) -> void:
 	var ai := encounter.get_node_or_null("CombatAI") as Node if encounter != null else null
 	var player_runtime := main.get_node_or_null("PlayerRuntime") as Node if main != null else null
 	var combat := main.get_node_or_null("CombatRuntime") as CombatRuntime if main != null else null
-	var player := main.get_node_or_null("Tank") as Node3D if main != null else null
+	var player := main.get_node_or_null("PlayerSpawnGroup/Tank") as Node3D if main != null else null
 	if main == null or encounter == null or enemy == null or vision == null or ai == null \
 			or player_runtime == null or combat == null or player == null:
 		_finish(playtest, "Enemy combat smoke requires Main, Encounter, Enemy, Vision, CombatAI, and player runtime.")
@@ -67,6 +68,8 @@ func _validate(playtest: Node3D) -> void:
 	if not _configure_vision_geometry_fixture(playtest, enemy, vision):
 		return
 	ai.call("set_combat_enabled", false)
+	var enemy_geometry_state := _freeze_geometry_body(enemy as RigidBody3D)
+	var player_geometry_state := _freeze_geometry_body(player as RigidBody3D)
 	## 幾何用例使用固定測試姿態，不要求使用者的實際場景保持原始擺放。
 	enemy.global_transform = Transform3D(Basis.IDENTITY, Vector3(60, 0, 8))
 	player.global_position = Vector3(0, 0, 8)
@@ -81,6 +84,8 @@ func _validate(playtest: Node3D) -> void:
 		return
 	if not await _validate_vision_geometry(playtest, enemy, player, vision):
 		return
+	_restore_geometry_body(enemy as RigidBody3D, enemy_geometry_state)
+	_restore_geometry_body(player as RigidBody3D, player_geometry_state)
 	if not await _validate_ai_hull_aim(playtest):
 		return
 	if not await _validate_hit_inspection_contract(playtest, ai):
@@ -241,7 +246,7 @@ func _validate_hit_inspection_contract(playtest: Node3D, ai: Node) -> bool:
 func _validate_near_hit_encounter_wiring(playtest: Node3D, main: Node3D, encounter: Node3D, player_runtime: Node, combat: CombatRuntime) -> bool:
 	## 從場景原始 Tank2 經真實粉色靶命中切到 Tank1，不能以改寫近圈 export 偽造 80m 規格。
 	var switch_target := playtest.get_node_or_null("TrainingControls/EnemyTypeSwitch") as StaticBody3D
-	var player := player_runtime.get("controlled_tank") as CharacterBody3D
+	var player := player_runtime.get("controlled_tank") as RigidBody3D
 	if switch_target == null or player == null:
 		_finish(playtest, "Near-hit regression requires the live player and enemy-switch target.")
 		return false
@@ -249,12 +254,12 @@ func _validate_near_hit_encounter_wiring(playtest: Node3D, main: Node3D, encount
 		if not await _fire_projectile_at(combat, player, switch_target) or not await _wait_for_enemy_scene(encounter, expected_scene):
 			_finish(playtest, "Near-hit regression requires real CombatRuntime switch impacts through Tank1.")
 			return false
-	var enemy := encounter.get_node_or_null("Enemy") as CharacterBody3D
+	var enemy := encounter.get_node_or_null("Enemy") as RigidBody3D
 	var vision := encounter.get_node_or_null("Vision") as Node
 	var ai := encounter.get_node_or_null("CombatAI") as Node
 	var health := enemy.get_node_or_null("HealthComponent") as HealthComponent if enemy != null else null
 	if enemy == null or vision == null or ai == null or health == null \
-			or enemy.scene_file_path != TANK1_SCENE or not is_equal_approx(float(enemy.get("vision_near_radius")), 80.0):
+			or not _matches_enemy_scene(enemy, TANK1_SCENE) or not is_equal_approx(float(enemy.get("vision_near_radius")), 80.0):
 		_finish(playtest, "Near-hit regression must use the authored Tank1 80m near radius.")
 		return false
 	## 50m 側向命中仍在 Tank1 近圈內；物理遮擋保證玩家未被看見，命中位置本身也不在初始 FOV。
@@ -263,14 +268,23 @@ func _validate_near_hit_encounter_wiring(playtest: Node3D, main: Node3D, encount
 	## PlayerAimController 會每 frame 改玩家砲塔，砲塔／砲管 surface samples 會離開方才建立的小屏幕。
 	var player_aim := player_runtime.get_node_or_null("PlayerAimController") as Node
 	var player_was_physics_processing := player.is_physics_processing()
+	var player_was_frozen := player.freeze
+	player.freeze = true
 	var player_aim_was_processing := player_aim.is_processing() if player_aim != null else false
 	player.set_physics_process(false)
 	if player_aim != null:
 		player_aim.set_process(false)
 	enemy.global_transform = Transform3D(Basis.IDENTITY, Vector3(0, 30, 0))
 	player.global_position = enemy.global_position + Vector3(0, 0, 50)
+	var near_hit_floor := _make_fixture_floor(float(enemy.call("hull_world_bottom")))
+	playtest.add_child(near_hit_floor)
 	await physics_frame
 	await physics_frame
+	var near_support: Dictionary = enemy.call("ground_support_at", enemy.global_transform)
+	if not bool(near_support.get("supported", false)) or absf(float(near_support.get("height_delta", INF))) > 0.02:
+		_finish(playtest, "Near-hit fixture requires real hull ground support at its authored pose.")
+		return false
+	print("fixture near-hit support=", near_support.get("supported"), " height_delta=", near_support.get("height_delta"))
 	## 先鎖定原右側合法彈道，再遮住敵方眼睛到玩家的部位射線；遮擋不能順便擋掉來襲砲彈。
 	var hit_position := _find_side_hit_surface_point(player, enemy, vision.call("target_world_position", enemy) as Vector3)
 	if not hit_position.is_finite():
@@ -313,7 +327,9 @@ func _validate_near_hit_encounter_wiring(playtest: Node3D, main: Node3D, encount
 	if not await _fire_projectile_at(combat, player, switch_target) or not await _wait_for_enemy_scene(encounter, TANK2_SCENE):
 		_finish(playtest, "Near-hit regression must restore Tank2 for the remaining smoke cases.")
 		return false
+	near_hit_floor.queue_free()
 	player.set_physics_process(player_was_physics_processing)
+	player.freeze = player_was_frozen
 	if player_aim != null:
 		player_aim.set_process(player_aim_was_processing)
 	return true
@@ -337,8 +353,8 @@ func _fire_projectile_at_node(combat: CombatRuntime, shooter: Node3D, target: No
 
 ## 本 fixture 的眼睛→玩家射線與玩家→受擊部位彈道不同；以兩條線的實際距離構造遮光尺寸。
 ## 屏幕位於 50m 側向玩家前方 10% 距離，不進入玩家幾何；不移動任何正式場景障礙。
-func _make_near_hit_visibility_screen(observer: CharacterBody3D, subject: CharacterBody3D, shot_origin: Vector3, shot_target: Vector3) -> Array[StaticBody3D]:
-	var origin := (observer.get_node("VisualRecoilPivot/TurretPivot") as Node3D).global_position
+func _make_near_hit_visibility_screen(observer: Node3D, subject: Node3D, shot_origin: Vector3, shot_target: Vector3) -> Array[StaticBody3D]:
+	var origin := (observer.get("turret_pivot") as Node3D).global_position
 	var points: PackedVector3Array = subject.call("part_world_surface_points") as PackedVector3Array
 	points.append(subject.call("stable_world_center") as Vector3)
 	var placements: Array[Vector4] = []
@@ -356,7 +372,7 @@ func _make_near_hit_visibility_screen(observer: CharacterBody3D, subject: Charac
 	for placement in placements:
 		blockers.append(_make_blocker(Vector3(placement.x, placement.y, placement.z), Vector3.ONE * placement.w))
 	return blockers
-func _find_side_hit_surface_point(shooter: Node3D, target: CharacterBody3D, stable_center: Vector3) -> Vector3:
+func _find_side_hit_surface_point(shooter: Node3D, target: Node3D, stable_center: Vector3) -> Vector3:
 	## 舊 Box 的 center + X 3 可能落在真實凸形外；只從離線烘焙且固定排序的表面 sample 選擇。
 	if shooter == null or target == null or target.get_world_3d() == null or not target.has_method(&"part_world_surface_points"):
 		return Vector3.INF
@@ -560,10 +576,10 @@ func _wait_for_inspection_motion(observer: CharacterBody3D, maximum_frames: int)
 
 func _validate_fixed_turret_ai_hull_aim(playtest: Node3D, scene_path: String, label: String, cancellation_cases: Array[StringName]) -> bool:
 	var fixture := await _make_ai_hull_aim_fixture(playtest, scene_path)
-	var observer := fixture["observer"] as CharacterBody3D
-	var target := fixture["target"] as CharacterBody3D
-	var vision := fixture["vision"] as Node
-	var ai := fixture["ai"] as Node
+	var observer := fixture.get("observer") as CharacterBody3D
+	var target := fixture.get("target") as CharacterBody3D
+	var vision := fixture.get("vision") as Node
+	var ai := fixture.get("ai") as Node
 	if observer == null or target == null or vision == null or ai == null:
 		_finish(playtest, "%s hull-aim fixture must create complete tanks with the original Vision and CombatAI." % label)
 		return false
@@ -589,7 +605,7 @@ func _validate_fixed_turret_ai_hull_aim(playtest: Node3D, scene_path: String, la
 			_finish(playtest, "%s must resume hull turning before the cancellation check." % label)
 			return false
 		if cancellation_case == &"lost_sight":
-			var view_origin := (observer.get_node("VisualRecoilPivot/TurretPivot") as Node3D).global_position
+			var view_origin := (observer.get("turret_pivot") as Node3D).global_position
 			var blocker := _make_blocker(Vector3.ZERO, Vector3.ONE)
 			fixture["root"].add_child(blocker)
 			_configure_full_visibility_blocker(blocker, observer, target)
@@ -634,9 +650,9 @@ func _validate_fixed_turret_ai_hull_aim(playtest: Node3D, scene_path: String, la
 
 func _validate_rotating_turret_ai_hull_aim(playtest: Node3D, scene_path: String, label: String) -> bool:
 	var fixture := await _make_ai_hull_aim_fixture(playtest, scene_path)
-	var observer := fixture["observer"] as CharacterBody3D
-	var target := fixture["target"] as CharacterBody3D
-	var ai := fixture["ai"] as Node
+	var observer := fixture.get("observer") as CharacterBody3D
+	var target := fixture.get("target") as CharacterBody3D
+	var ai := fixture.get("ai") as Node
 	var initial_position := observer.global_position
 	var initial_yaw := observer.global_rotation.y
 	ai.call("set_combat_enabled", true)
@@ -672,7 +688,8 @@ func _make_ai_hull_aim_fixture(playtest: Node3D, observer_scene_path: String) ->
 		return {}
 	observer.name = "Observer"
 	target.name = "Target"
-	## Tank 使用平面移動且沒有重力；浮空 fixture 可避開訓練場的視線房屋與靶子碰撞。
+	## Character donor 需要真接地；高處真平面保留原本避開地圖 LOS 的位置。
+	observer.set_physics_process(false)
 	observer.position = Vector3(0, 30, 0)
 	target.position = observer.position + Vector3.FORWARD * 12.0
 	target.set_physics_process(false)
@@ -688,12 +705,52 @@ func _make_ai_hull_aim_fixture(playtest: Node3D, observer_scene_path: String) ->
 	fixture.add_child(vision)
 	fixture.add_child(ai)
 	playtest.add_child(fixture)
+	observer.set_physics_process(false)
+	target.set_physics_process(false)
+	var snapshot: Dictionary = observer.call("predictive_driving_snapshot")
+	var ground_points: Array = snapshot.get("ground_points", [])
+	if ground_points.is_empty():
+		fixture.queue_free()
+		return {}
+	var hull_bottom := INF
+	for point: Vector3 in ground_points:
+		hull_bottom = minf(hull_bottom, (observer.global_transform * point).y)
+	fixture.add_child(_make_fixture_floor(hull_bottom))
+	await physics_frame
+	await physics_frame
+	var support: Dictionary = observer.call("ground_support_at", observer.global_transform)
+	if not bool(support.get("supported", false)) or absf(float(support.get("height_delta", INF))) > 0.0001:
+		print("fixture support failed: scene=", observer_scene_path, " support=", support)
+		fixture.queue_free()
+		return {}
+	print("fixture donor=", observer_scene_path, " supported=", support.get("supported"), " height_delta=", support.get("height_delta"))
+	observer.set_physics_process(true)
 	await physics_frame
 	await physics_frame
 	return {"root": fixture, "observer": observer, "target": target, "vision": vision, "ai": ai}
 
 
-func _wait_for_hull_rotation(observer: CharacterBody3D, initial_yaw: float, maximum_frames: int) -> bool:
+func _make_fixture_floor(hull_bottom: float) -> StaticBody3D:
+	var floor := _make_blocker(Vector3(0, hull_bottom - 0.5, 0), Vector3(160, 1, 160))
+	floor.name = "HullGroundFixture"
+	floor.collision_layer = 128
+	floor.collision_mask = 0
+	return floor
+
+
+func _freeze_geometry_body(body: RigidBody3D) -> Dictionary:
+	var state := {"freeze": body.freeze, "linear_velocity": body.linear_velocity, "angular_velocity": body.angular_velocity}
+	body.freeze = true
+	return state
+
+
+func _restore_geometry_body(body: RigidBody3D, state: Dictionary) -> void:
+	body.linear_velocity = state.linear_velocity
+	body.angular_velocity = state.angular_velocity
+	body.freeze = state.freeze
+
+
+func _wait_for_hull_rotation(observer: Node3D, initial_yaw: float, maximum_frames: int) -> bool:
 	for _frame in maximum_frames:
 		await physics_frame
 		if absf(angle_difference(initial_yaw, observer.global_rotation.y)) > deg_to_rad(5.0):
@@ -730,16 +787,17 @@ func _validate_combat_and_recovery(playtest: Node3D, main: Node3D, encounter: No
 	## 真實 ShotEvent 證明對準後才開火；遮擋、失聯、死亡與換車皆在同一組裝場景驗證。
 	var shots: Array[ShotEvent] = []
 	enemy.shot_event_fired.connect(func(event: ShotEvent) -> void: shots.append(event))
-	var turret := enemy.get_node_or_null("VisualRecoilPivot/TurretPivot") as Node3D
+	var combat_tank := enemy.get("combat_tank") as CharacterBody3D
+	var turret := enemy.get("turret_pivot") as Node3D
 	if turret == null:
 		_finish(playtest, "Enemy combat fixture requires the live turret pivot.")
 		return false
 	## 仍留在 90 度視野內，但先製造可見的偏航誤差，確認 AI 不會未對準就射擊。
 	turret.global_rotation.y = 0.6
 	## 固定此 smoke 的彈道，讓真實 ShotEvent 後能穩定驗證投射物確實傷害玩家。
-	enemy.set("aim_spread_base_degrees", 0.0)
-	enemy.set("aim_spread_cap_degrees", 0.0)
-	enemy.set("current_spread_degrees", 0.0)
+	combat_tank.set("aim_spread_base_degrees", 0.0)
+	combat_tank.set("aim_spread_cap_degrees", 0.0)
+	combat_tank.set("current_spread_degrees", 0.0)
 	var player_health := player.get_node_or_null("HealthComponent") as HealthComponent
 	if player_health == null:
 		_finish(playtest, "Enemy combat fixture requires the live player health component.")
@@ -760,10 +818,7 @@ func _validate_combat_and_recovery(playtest: Node3D, main: Node3D, encounter: No
 	ai.call("set_combat_enabled", false)
 	await _wait_for_frames(60)
 	## 此案例隔離射擊資格，固定車身但保留物理更新與真實射擊冷卻。
-	var original_body_speeds := Vector3(float(enemy.get("movement_speed")), float(enemy.get("reverse_movement_speed")), float(enemy.get("turn_speed")))
-	enemy.set("movement_speed", 0.0)
-	enemy.set("reverse_movement_speed", 0.0)
-	enemy.set("turn_speed", 0.0)
+	var muzzle_body_state := _freeze_geometry_body(enemy as RigidBody3D)
 	var settled_target := vision.call("target_world_position", player) as Vector3
 	enemy.call("aim_turret_at", settled_target, 10.0)
 	enemy.call("aim_gun_pitch_at_target", settled_target, 10.0)
@@ -771,10 +826,10 @@ func _validate_combat_and_recovery(playtest: Node3D, main: Node3D, encounter: No
 	if not bool(ai.call("_is_muzzle_aligned_and_clear", settled_target)):
 		_finish(playtest, "The isolated muzzle fixture must start aligned with an unobstructed player.")
 		return false
-	var original_turn_speed := float(enemy.get("turret_turn_speed"))
-	var original_pitch_speed := float(enemy.get("gun_pitch_speed"))
-	enemy.set("turret_turn_speed", 0.0)
-	enemy.set("gun_pitch_speed", 0.0)
+	var original_turn_speed := float(combat_tank.get("turret_turn_speed"))
+	var original_pitch_speed := float(combat_tank.get("gun_pitch_speed"))
+	combat_tank.set("turret_turn_speed", 0.0)
+	combat_tank.set("gun_pitch_speed", 0.0)
 	var muzzle := enemy.call("muzzle_global_position") as Vector3
 	var target_position := vision.call("target_world_position", player) as Vector3
 	var muzzle_direction := enemy.call("muzzle_global_direction") as Vector3
@@ -818,8 +873,8 @@ func _validate_combat_and_recovery(playtest: Node3D, main: Node3D, encounter: No
 			_finish(playtest, "A clear vision result with a blocked muzzle ray must not fire.")
 			return false
 	muzzle_blocker.queue_free()
-	enemy.set("turret_turn_speed", original_turn_speed)
-	enemy.set("gun_pitch_speed", original_pitch_speed)
+	combat_tank.set("turret_turn_speed", original_turn_speed)
+	combat_tank.set("gun_pitch_speed", original_pitch_speed)
 	await physics_frame
 	var sight_blocker := _make_blocker(Vector3.ZERO, Vector3.ONE)
 	playtest.add_child(sight_blocker)
@@ -838,13 +893,11 @@ func _validate_combat_and_recovery(playtest: Node3D, main: Node3D, encounter: No
 		return false
 	await physics_frame
 	if not await _wait_for_shots(shots, shots_before_block + 1, 360):
-		print("reacquire: enabled=", ai.get("combat_enabled"), " visible=", vision.call("can_see", player), " health=", player_health.current_health, " player=", player.global_position, " enemy=", enemy.global_position, " direction=", enemy.call("muzzle_global_direction"), " target=", vision.call("target_world_position", player), " speeds=", enemy.get("turret_turn_speed"), "/", enemy.get("gun_pitch_speed"), " shots=", shots.size(), "/", shots_before_block)
+		print("reacquire: enabled=", ai.get("combat_enabled"), " visible=", vision.call("can_see", player), " health=", player_health.current_health, " player=", player.global_position, " enemy=", enemy.global_position, " direction=", enemy.call("muzzle_global_direction"), " target=", vision.call("target_world_position", player), " speeds=", combat_tank.get("turret_turn_speed"), "/", combat_tank.get("gun_pitch_speed"), " shots=", shots.size(), "/", shots_before_block)
 		_finish(playtest, "Reacquiring an unobstructed target must resume enemy fire.")
 		return false
 	ai.call("set_combat_enabled", false)
-	enemy.set("movement_speed", original_body_speeds.x)
-	enemy.set("reverse_movement_speed", original_body_speeds.y)
-	enemy.set("turn_speed", original_body_speeds.z)
+	_restore_geometry_body(enemy as RigidBody3D, muzzle_body_state)
 	## R1-R5：死亡車留下，新實例於可編輯出生標記重生；鏡頭、無敵和操作都恢復。
 	## 移出視野，避免重生時被下一發擊中而誤判；瞬移後至少讓物理世界同步一次。
 	player.global_position = enemy.global_position + Vector3(150, 0, 0)
@@ -880,6 +933,7 @@ func _validate_combat_and_recovery(playtest: Node3D, main: Node3D, encounter: No
 		_finish(playtest, "Player respawn invulnerability must default to two seconds.")
 		return false
 	var player_controller := player_runtime.get_node_or_null("PlayerController") as Node
+	var reset_snapshot := _watch_player_reset(main, player, player_runtime)
 	if player_health == null or player_controller == null or not player_health.apply_damage(player_health.current_health):
 		_finish(playtest, "Player death fixture requires the live health and controller components.")
 		return false
@@ -888,16 +942,17 @@ func _validate_combat_and_recovery(playtest: Node3D, main: Node3D, encounter: No
 	if bool(player_runtime.get("controls_enabled")) or bool(ai.get("combat_enabled")):
 		_finish(playtest, "Player depletion must disable controls and enemy combat immediately.")
 		return false
-	if not await _wait_for_frames(120) or main.get_node_or_null("Tank") != player \
+	if not await _wait_for_frames(120) or main.get_node_or_null("PlayerSpawnGroup/Tank") != player \
 			or bool(player_runtime.get("controls_enabled")) or bool(ai.get("combat_enabled")):
 		_finish(playtest, "Before three seconds the depleted original tank must remain the disabled controlled instance.")
 		return false
 	var respawned := await _wait_for_player_replacement(main, player, 100)
 	var respawned_health := respawned.get_node_or_null("HealthComponent") as HealthComponent if respawned != null else null
-	if respawned == null or respawned.scene_file_path != player.scene_file_path \
-			or not respawned.global_transform.is_equal_approx(spawn_point.global_transform) \
+	if respawned == null or not _has_valid_reset_snapshot(reset_snapshot, respawned) \
+			or respawned.scene_file_path != player.scene_file_path \
+			or not (reset_snapshot["global_transform"] as Transform3D).is_equal_approx(spawn_point.global_transform) \
 			or respawned_health == null or not is_equal_approx(respawned_health.current_health, respawned_health.maximum_health) \
-			or not respawned.velocity.is_zero_approx() or not bool(player_runtime.get("controls_enabled")) \
+			or not (reset_snapshot["linear_velocity"] as Vector3).is_zero_approx() or not bool(player_runtime.get("controls_enabled")) \
 			or not bool(ai.get("combat_enabled")):
 		_finish(playtest, "After three seconds respawn must create a full-health, stationary same-variant tank at PlayerSpawnPoint.")
 		return false
@@ -907,7 +962,7 @@ func _validate_combat_and_recovery(playtest: Node3D, main: Node3D, encounter: No
 		_finish(playtest, "The old depleted tank must remain a disconnected player_wreck, never an input, AI, shot, or track-contact source.")
 		return false
 	var wreck_visuals := player.find_child("*DamageVisuals", true, false) as Node
-	var wreck_gun := player.get_node_or_null("VisualRecoilPivot/TurretPivot/GunPitchPivot") as Node3D
+	var wreck_gun := (player.get("turret_pivot") as Node3D).get_node_or_null("GunPitchPivot") as Node3D
 	if wreck_visuals == null or int(wreck_visuals.get("active_damage_stage")) != 0 or wreck_gun == null \
 			or is_zero_approx(wreck_gun.rotation.z):
 		_finish(playtest, "The retained player wreck must preserve its depleted grey-black damage state and lowered gun.")
@@ -915,7 +970,7 @@ func _validate_combat_and_recovery(playtest: Node3D, main: Node3D, encounter: No
 	if not camera_rig.global_basis.is_equal_approx(initial_camera_basis) \
 			or not camera.transform.is_equal_approx(initial_camera_transform) \
 			or not is_equal_approx(camera.size, initial_camera_size) \
-			or not (camera_rig.global_position - respawned.global_position).is_equal_approx(initial_camera_offset) \
+			or not (reset_snapshot["camera_relative_offset"] as Vector3).is_equal_approx(initial_camera_offset) \
 			or not (camera_rig.get("look_ahead_offset") as Vector3).is_zero_approx():
 		_finish(playtest, "Respawn must reset the camera to its initial relative view, size, and clear look-ahead.")
 		return false
@@ -938,14 +993,14 @@ func _validate_combat_and_recovery(playtest: Node3D, main: Node3D, encounter: No
 		_finish(playtest, "The two-second protection must reject real receiver damage while non-effect body meshes blink repeatedly.")
 		return false
 	## R6 前半：一般換車不重置保護；操作仍通過既有 PlayerRuntime。
-	var protected_replacement := main.call("replace_player_tank", load(TANK1_SCENE)) as Node3D
+	var protected_replacement := main.call("replace_player_vehicle", &"tank1") as Node3D
 	var protected_receiver := protected_replacement.get_node_or_null("DamageReceiver") as Node if protected_replacement != null else null
 	if protected_replacement == null or protected_receiver == null or bool(protected_receiver.get("enabled")) \
 			or player_runtime.get("controlled_tank") != protected_replacement:
 		_finish(playtest, "Changing tank during invulnerability must carry the remaining protection to the newly controlled tank.")
 		return false
 	player_controller.call("apply_commands", 1.0, 0.0, true)
-	if is_zero_approx(float(protected_replacement.get("movement_command"))):
+	if is_zero_approx(float(protected_replacement.get("_movement_input"))):
 		_finish(playtest, "Respawn protection must not lock normal player movement input.")
 		return false
 	if not await _wait_for_frames(60) or not bool(protected_receiver.get("enabled")) \
@@ -959,8 +1014,8 @@ func _validate_combat_and_recovery(playtest: Node3D, main: Node3D, encounter: No
 		return false
 	await process_frame
 	await physics_frame
-	var replacement := main.get_node_or_null("Tank") as Node3D
-	if replacement == null or replacement == player or replacement.scene_file_path != TANK1_SCENE \
+	var replacement := main.get_node_or_null("PlayerSpawnGroup/Tank") as Node3D
+	if replacement == null or replacement == player or replacement.scene_file_path != "res://src/actors/rigid_tank/variants/tank1.tscn" \
 			or ai.get("target") != replacement or not _has_exact_registered_sources(combat, [replacement, enemy]) \
 			or enemy.is_connected("shot_event_fired", Callable(player_runtime, "_on_controlled_tank_shot_event_fired")):
 		_finish(playtest, "Replacement must retarget AI, retain one player/enemy source each, and keep enemy out of camera recoil.")
@@ -970,14 +1025,14 @@ func _validate_combat_and_recovery(playtest: Node3D, main: Node3D, encounter: No
 	var replacement_health := replacement.get_node("HealthComponent") as HealthComponent
 	replacement_health.apply_damage(replacement_health.current_health)
 	var remaining_before_swap := float(encounter.get("_respawn_remaining"))
-	main.call("replace_player_tank", load(TANK1_SCENE))
+	main.call("replace_player_vehicle", &"tank1")
 	if bool(player_runtime.get("controls_enabled")) or bool(ai.get("combat_enabled")) \
 			or not is_equal_approx(float(encounter.get("_respawn_remaining")), remaining_before_swap):
 		_finish(playtest, "Changing tank during recovery must preserve the remaining delay and disabled controls.")
 		return false
 	var shots_before_death := shots.size()
 	## 倒數中的正常換車不取消倒數；210 幀後必須又由重生入口產生新實例，不能保留舊指標。
-	var countdown_tank := main.get_node("Tank") as Node3D
+	var countdown_tank := main.get_node("PlayerSpawnGroup/Tank") as Node3D
 	var encounter_child_count := encounter.get_child_count()
 	if enemy_health == null or not enemy_health.apply_damage(enemy_health.current_health):
 		_finish(playtest, "Enemy death fixture requires the complete Tank2 health component.")
@@ -986,11 +1041,11 @@ func _validate_combat_and_recovery(playtest: Node3D, main: Node3D, encounter: No
 	if not await _wait_for_frames(210) or shots.size() != shots_before_death \
 			or not is_instance_valid(enemy) or encounter.get_node_or_null("Enemy") != enemy \
 			or enemy_health.current_health != 0.0 or encounter.get_child_count() != encounter_child_count \
-			or main.get_node("Tank") == countdown_tank or not bool(player_runtime.get("controls_enabled")) \
+			or main.get_node("PlayerSpawnGroup/Tank") == countdown_tank or not bool(player_runtime.get("controls_enabled")) \
 			or not bool(ai.get("combat_enabled")):
 		_finish(playtest, "A depleted enemy must permanently stop firing; player recovery must still replace the countdown tank normally.")
 		return false
-	var active_player := main.get_node_or_null("Tank") as Node3D
+	var active_player := main.get_node_or_null("PlayerSpawnGroup/Tank") as Node3D
 	if not await _validate_enemy_type_switch(playtest, main, encounter, enemy, active_player, vision, ai, player_runtime, combat, initial_enemy_transform):
 		return false
 	if not await _validate_respawn_wreck_clearance(playtest, main, encounter, player_runtime, combat):
@@ -1048,22 +1103,24 @@ func _validate_enemy_type_switch(playtest: Node3D, main: Node3D, encounter: Node
 		return false
 	## 實例化前先留下錯誤狀態；每一種新車都必須回復最初世界姿態、滿血、零速度和原廠砲塔姿態。
 	initial_enemy.global_transform = Transform3D(Basis.from_euler(Vector3(0.3, -0.7, 0.2)), initial_enemy_transform.origin + Vector3(8, 0, -5))
-	initial_enemy.velocity = Vector3(6, 0, -4)
+	initial_enemy.linear_velocity = Vector3(6, 0, -4)
 	var expected_scenes := [TANK3_SCENE, TANK4_SCENE, TANK1_SCENE, TANK2_SCENE]
 	var current_enemy := initial_enemy
 	for index in expected_scenes.size():
 		var expected_scene: String = expected_scenes[index]
 		var current_player := player_runtime.get("controlled_tank") as Node3D
+		var enemy_reset_snapshot := _watch_enemy_reset(encounter, current_enemy, expected_scene, ai, vision, combat, current_player)
 		if current_player == null or not await _fire_projectile_at(combat, current_player, switch_target):
 			_finish(playtest, "The pink switch must react to a real CombatRuntime projectile impact.")
 			return false
 		if not await _wait_for_enemy_scene(encounter, expected_scene):
 			_finish(playtest, "Each pink-switch hit must cycle Tank2 → Tank3 → Tank4 → Tank1 → Tank2 exactly once.")
 			return false
-		var replacement := encounter.get_node_or_null("Enemy") as CharacterBody3D
+		var replacement := encounter.get_node_or_null("Enemy") as RigidBody3D
 		var health := replacement.get_node_or_null("HealthComponent") as HealthComponent if replacement != null else null
-		if replacement == null or not replacement.global_transform.is_equal_approx(initial_enemy_transform) \
-				or not replacement.velocity.is_zero_approx() or health == null \
+		if replacement == null or not _has_valid_enemy_reset_snapshot(enemy_reset_snapshot, replacement) \
+				or not (enemy_reset_snapshot["global_transform"] as Transform3D).is_equal_approx(initial_enemy_transform) \
+				or not (enemy_reset_snapshot["linear_velocity"] as Vector3).is_zero_approx() or health == null \
 				or not is_equal_approx(health.current_health, health.maximum_health) \
 				or not _has_default_turret_and_gun_pose(replacement, expected_scene) \
 			or ai.get("controlled_tank") != replacement or vision.get("observer") != replacement \
@@ -1112,7 +1169,7 @@ func _validate_respawn_wreck_clearance(playtest: Node3D, main: Node3D, encounter
 	var spawn_point := playtest.get_node_or_null("PlayerSpawnPoint") as Node3D
 	var zone := playtest.get_node_or_null("PlayerSpawnPoint/WreckCleanupZone") as Node3D
 	var area := zone.get_node_or_null("RegionVolume") as Area3D if zone != null else null
-	var player := main.get_node_or_null("Tank") as Node3D
+	var player := main.get_node_or_null("PlayerSpawnGroup/Tank") as Node3D
 	var player_health := player.get_node_or_null("HealthComponent") as HealthComponent if player != null else null
 	var player_controller := player_runtime.get_node_or_null("PlayerController") as Node
 	var ai := encounter.get_node_or_null("CombatAI") as Node
@@ -1141,7 +1198,7 @@ func _validate_respawn_wreck_clearance(playtest: Node3D, main: Node3D, encounter
 		if not is_instance_valid(player):
 			freed_early = true
 			break
-	if not freed_early or main.get_node_or_null("Tank") != null or player_runtime.get("controlled_tank") != null \
+	if not freed_early or main.get_node_or_null("PlayerSpawnGroup/Tank") != null or player_runtime.get("controlled_tank") != null \
 			or bool(player_runtime.get("controls_enabled")) or bool(ai.get("combat_enabled")):
 		_finish(playtest, "R8 zone cleanup must early-free the dead player while leaving recovery safely unbound and disabled.")
 		return false
@@ -1156,7 +1213,7 @@ func _validate_respawn_wreck_clearance(playtest: Node3D, main: Node3D, encounter
 		_finish(playtest, "R8 early zone cleanup must still produce the same full-health controlled respawn with AI and shot-source rebindings.")
 		return false
 	player_controller.call("apply_commands", 1.0, 0.0, true)
-	if is_zero_approx(float(respawned.get("movement_command"))):
+	if is_zero_approx(float(respawned.get("_movement_input"))):
 		_finish(playtest, "The R8 replacement tank must be controllable after early cleanup.")
 		return false
 	if not is_instance_valid(outside_wreck):
@@ -1215,15 +1272,117 @@ func _wait_for_enemy_scene(encounter: Node3D, expected_scene: String) -> bool:
 	for _frame in 60:
 		await process_frame
 		var current_enemy := encounter.get_node_or_null("Enemy") as Node3D
-		if current_enemy != null and current_enemy.scene_file_path == expected_scene:
+		if _matches_enemy_scene(current_enemy, expected_scene):
 			return true
 	return false
+
+
+func _matches_enemy_scene(enemy: Node3D, donor_path: String) -> bool:
+	if not enemy is RigidBody3D:
+		return false
+	for id in TankCatalog.IDS:
+		if TankCatalog.definition(id).get("donor_path") == donor_path:
+			var donor := enemy.get("combat_tank") as CharacterBody3D
+			return enemy.get("vehicle_id") == id and enemy.scene_file_path == TankCatalog.scene(id).resource_path \
+					and donor != null and donor.scene_file_path == donor_path
+	return false
+
+
+func _watch_player_reset(main: Node3D, previous: Node3D, player_runtime: Node) -> Dictionary:
+	var snapshot := {}
+	var spawn_group := main.get_node("PlayerSpawnGroup") as Node3D
+	var entered := func(child: Node) -> void:
+		if child is RigidBody3D and child != previous and child.name == &"Tank" and not snapshot.has("instance_id"):
+			snapshot["instance_id"] = child.get_instance_id()
+			snapshot["entered_physics_frame"] = Engine.get_physics_frames()
+			call_deferred("_capture_player_reset", child, player_runtime, snapshot)
+	spawn_group.child_entered_tree.connect(entered)
+	snapshot["watch_callback"] = entered
+	snapshot["spawn_group"] = spawn_group
+	return snapshot
+
+
+func _capture_player_reset(body: RigidBody3D, player_runtime: Node, snapshot: Dictionary) -> void:
+	if not is_instance_valid(body):
+		return
+	snapshot["capture_physics_frame"] = Engine.get_physics_frames()
+	snapshot["ready"] = body.is_node_ready()
+	snapshot["node"] = body
+	snapshot["global_transform"] = body.global_transform
+	snapshot["linear_velocity"] = body.linear_velocity
+	snapshot["scene_file_path"] = body.scene_file_path
+	snapshot["vehicle_id"] = body.get("vehicle_id")
+	var health := body.get_node_or_null("HealthComponent") as HealthComponent
+	snapshot["health"] = health.current_health if health != null else -1.0
+	snapshot["controlled"] = player_runtime.get("controlled_tank") == body
+	snapshot["controls_enabled"] = player_runtime.get("controls_enabled")
+	var camera_rig := player_runtime.get("camera_controller") as Node3D
+	var camera := camera_rig.get("camera") as Camera3D if camera_rig != null else null
+	if camera_rig != null and camera != null:
+		snapshot["camera_relative_offset"] = camera_rig.global_position - body.global_position
+		snapshot["camera_follow_target"] = camera_rig.get("follow_target")
+
+	var parent := snapshot["spawn_group"] as Node3D
+	parent.child_entered_tree.disconnect(snapshot["watch_callback"] as Callable)
+	snapshot.erase("watch_callback")
+	snapshot.erase("spawn_group")
+
+
+func _has_valid_reset_snapshot(snapshot: Dictionary, body: Node3D) -> bool:
+	return body != null and snapshot.get("node") == body and int(snapshot.get("instance_id", 0)) == body.get_instance_id() \
+			and bool(snapshot.get("ready", false)) and bool(snapshot.get("controlled", false)) \
+			and bool(snapshot.get("controls_enabled", false)) \
+			and snapshot.has("global_transform") and snapshot.has("linear_velocity") \
+			and snapshot.has("camera_relative_offset") and snapshot.get("camera_follow_target") == body \
+			and int(snapshot.get("entered_physics_frame", -1)) == int(snapshot.get("capture_physics_frame", -2))
+
+
+func _watch_enemy_reset(encounter: Node3D, previous: Node3D, donor_path: String, ai: Node, vision: Node, combat: CombatRuntime, player: Node3D) -> Dictionary:
+	var snapshot := {}
+	var entered := func(child: Node) -> void:
+		if child is RigidBody3D and child != previous and child.name == &"Enemy" and not snapshot.has("instance_id"):
+			snapshot["instance_id"] = child.get_instance_id()
+			snapshot["entered_physics_frame"] = Engine.get_physics_frames()
+			call_deferred("_capture_enemy_reset", child, donor_path, ai, vision, combat, player, snapshot)
+	encounter.child_entered_tree.connect(entered)
+	snapshot["watch_callback"] = entered
+	snapshot["encounter"] = encounter
+	return snapshot
+
+
+func _capture_enemy_reset(body: RigidBody3D, donor_path: String, ai: Node, vision: Node, combat: CombatRuntime, player: Node3D, snapshot: Dictionary) -> void:
+	if not is_instance_valid(body):
+		return
+	snapshot["capture_physics_frame"] = Engine.get_physics_frames()
+	snapshot["node"] = body
+	snapshot["ready"] = body.is_node_ready()
+	snapshot["global_transform"] = body.global_transform
+	snapshot["linear_velocity"] = body.linear_velocity
+	snapshot["scene_file_path"] = body.scene_file_path
+	snapshot["vehicle_id"] = body.get("vehicle_id")
+	snapshot["scene_match"] = _matches_enemy_scene(body, donor_path)
+	snapshot["ai_binding"] = ai.get("controlled_tank") == body
+	snapshot["vision_binding"] = vision.get("observer") == body
+	snapshot["registry_binding"] = _has_exact_registered_sources(combat, [player, body])
+	var parent := snapshot["encounter"] as Node3D
+	parent.child_entered_tree.disconnect(snapshot["watch_callback"] as Callable)
+	snapshot.erase("watch_callback")
+	snapshot.erase("encounter")
+
+
+func _has_valid_enemy_reset_snapshot(snapshot: Dictionary, body: Node3D) -> bool:
+	return body != null and snapshot.get("node") == body and int(snapshot.get("instance_id", 0)) == body.get_instance_id() \
+			and bool(snapshot.get("ready", false)) and bool(snapshot.get("scene_match", false)) \
+			and bool(snapshot.get("ai_binding", false)) and bool(snapshot.get("vision_binding", false)) \
+			and bool(snapshot.get("registry_binding", false)) \
+			and snapshot.has("global_transform") and snapshot.has("linear_velocity") \
+			and int(snapshot.get("entered_physics_frame", -1)) == int(snapshot.get("capture_physics_frame", -2))
 
 
 func _wait_for_player_replacement(main: Node3D, previous: Node3D, maximum_frames: int) -> Node3D:
 	for _frame in maximum_frames:
 		await physics_frame
-		var current := main.get_node_or_null("Tank") as Node3D
+		var current := main.get_node_or_null("PlayerSpawnGroup/Tank") as Node3D
 		if current != null and current != previous:
 			return current
 	return null
@@ -1248,8 +1407,8 @@ func _has_default_turret_and_gun_pose(enemy: Node3D, scene_path: String) -> bool
 		return false
 	## TankController 在 ready 時依模型 pivot 校正砲塔與砲管；裸實例也必須進樹完成同一初始化再比對。
 	parent.add_child(bare_variant)
-	var turret := enemy.get_node_or_null("VisualRecoilPivot/TurretPivot") as Node3D
-	var gun := enemy.get_node_or_null("VisualRecoilPivot/TurretPivot/GunPitchPivot") as Node3D
+	var turret := enemy.get("turret_pivot") as Node3D
+	var gun := turret.get_node_or_null("GunPitchPivot") as Node3D if turret != null else null
 	var bare_turret := bare_variant.get_node_or_null("VisualRecoilPivot/TurretPivot") as Node3D
 	var bare_gun := bare_variant.get_node_or_null("VisualRecoilPivot/TurretPivot/GunPitchPivot") as Node3D
 	var matches := turret != null and gun != null and bare_turret != null and bare_gun != null \
@@ -1261,7 +1420,7 @@ func _has_default_turret_and_gun_pose(enemy: Node3D, scene_path: String) -> bool
 
 func _configure_full_visibility_blocker(blocker: StaticBody3D, observer: Node3D, subject: Node3D, additional_subject_offset := Vector3.ZERO) -> void:
 	## 舊案例的單中心盒不足以遮住新 Vision 的所有表面射線；以視線中段平面與各射線交點包圍建屏。
-	var origin := (observer.get_node("VisualRecoilPivot/TurretPivot") as Node3D).global_position
+	var origin := (observer.get("turret_pivot") as Node3D).global_position
 	var points: PackedVector3Array = subject.call("part_world_surface_points") as PackedVector3Array
 	var stable_center := subject.call("stable_world_center") as Vector3
 	points.append(stable_center)

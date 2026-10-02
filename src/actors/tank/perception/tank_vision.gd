@@ -96,7 +96,7 @@ func target_world_position(target: Node3D) -> Vector3:
 func get_horizontal_forward() -> Vector3:
 	if not is_instance_valid(observer):
 		return Vector3.ZERO
-	var turret_pivot := observer.get_node_or_null("VisualRecoilPivot/TurretPivot") as Node3D
+	var turret_pivot := observer.get("turret_pivot") as Node3D
 	if turret_pivot == null:
 		return Vector3.ZERO
 	var forward := -turret_pivot.global_basis.x
@@ -105,5 +105,5 @@ func get_horizontal_forward() -> Vector3:
 
 
 func _view_origin() -> Vector3:
-	var turret_pivot := observer.get_node_or_null("VisualRecoilPivot/TurretPivot") as Node3D
+	var turret_pivot := observer.get("turret_pivot") as Node3D
 	return turret_pivot.global_position if turret_pivot != null else observer.global_position

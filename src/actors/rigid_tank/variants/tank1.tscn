@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="PackedScene" path="res://src/actors/rigid_tank/player_rigid_tank.tscn" id="1"]
+
+[node name="Tank" instance=ExtResource("1")]
+vehicle_id = &"tank1"

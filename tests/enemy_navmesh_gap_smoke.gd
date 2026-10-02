@@ -1,7 +1,7 @@
 ## R2 fixed last-seen case after local/direct routes were removed: only shared navmesh may plan it.
 extends SceneTree
 
-const PLAYTEST := preload("res://src/world/training_ground/training_ground_playtest.tscn")
+const PLAYTEST := preload("res://src/maps/training_ground/training_ground_playtest.tscn")
 const TankNavigation := preload("res://src/ai/tank_navigation.gd")
 const TANK1 := preload("res://src/actors/tank/variants/tank1/tank1.tscn")
 const DT := 1.0 / 60.0

@@ -1,8 +1,11 @@
-[gd_scene load_steps=3 format=3 uid="uid://ditdn0r5bmeb3"]
+[gd_scene format=3 uid="uid://ditdn0r5bmeb3"]
 
 [ext_resource type="PackedScene" path="res://src/gameplay_runtime.tscn" id="1_runtime"]
-[ext_resource type="PackedScene" path="res://src/world/world.tscn" id="2_world"]
+[ext_resource type="PackedScene" path="res://src/maps/main_battlefield/main_battlefield.tscn" id="2_world"]
+[node name="TankSkirmish" unique_id=328449764 instance=ExtResource("1_runtime")]
+startup_player_id = "tank2"
 
-[node name="TankSkirmish" instance=ExtResource("1_runtime")]
+[node name="PlayerSpawnGroup" parent="." index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -108, 0, -114)
 
-[node name="World" parent="." instance=ExtResource("2_world")]
+[node name="World" parent="." index="4" unique_id=1726407625 instance=ExtResource("2_world")]

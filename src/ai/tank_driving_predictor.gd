@@ -1,6 +1,16 @@
 ## 有限的三秒坦克駕駛預測器；只讀取當幀 snapshot，絕不寫入坦克或導航狀態。
 class_name TankDrivingPredictor
 extends RefCounted
+const NavigationControl := preload("res://src/ai/tank_navigation_control.gd")
+
+const RigidMotion := preload("res://src/ai/rigid_motion_prediction.gd")
+const BrakingSweep := preload("res://src/ai/rigid_braking_sweep.gd")
+const FAR_WORK_USEC := 5500 # Leave headroom for near-only requests and result bookkeeping.
+var _work_deadline_usec := 0
+var native_segment_enabled := true
+# Scheduling hint only: every skipped fast path still requires a fresh full terrain proof.
+const LAYERED_RETRY_CALLS := 6
+var _layered_retry_calls := 0
 
 const Recovery := preload("res://src/ai/tank_recovery.gd")
 
@@ -36,6 +46,7 @@ func setup(tank: Node3D) -> void:
 
 func reset() -> void:
 	_stats = _empty_stats(&"reset")
+	_layered_retry_calls = 0
 
 
 func get_stats() -> Dictionary:
@@ -43,8 +54,8 @@ func get_stats() -> Dictionary:
 
 
 ## allow_adjustment=false 供 nominal-only 呼叫端使用：只驗證原 command，不啟動候選選擇。
-func choose(movement: float, turn: float, goal: Vector3, delta: float, allow_reverse: bool = false, allow_adjustment: bool = true) -> Dictionary:
-	return _choose(movement, turn, goal, delta, allow_reverse, allow_adjustment, false)
+func choose(movement: float, turn: float, goal: Vector3, delta: float, allow_reverse: bool = false, allow_adjustment: bool = true, continuation: Dictionary = {}) -> Dictionary:
+	return _choose(movement, turn, goal, delta, allow_reverse, allow_adjustment, false, continuation)
 
 
 ## Recovery 只在原命令不安全時，於同一份 snapshot／接觸集／查詢額度內找固定順序的 first-safe 車身候選。
@@ -52,8 +63,15 @@ func choose_recovery(movement: float, turn: float, goal: Vector3, delta: float) 
 	return _choose(movement, turn, goal, delta, false, true, true)
 
 
+## Rejoining may execute a verified single step before its full handoff is clear.
+## This does not change the nominal-only choose() contract or Recovery ordering.
+func choose_handoff_step(movement: float, turn: float, goal: Vector3, delta: float) -> Dictionary:
+	return _choose(movement, turn, goal, delta, false, false, false, {}, true)
+
+
 ## 選向使用同一次快照與共享預算跑完整有限 profile；continuation 傳入單一 candidate 時仍只看三秒。
 func choose_escape_profile(blocked_forward: Vector3, candidates: Array[Dictionary], delta: float, continuation_state: Dictionary = {}) -> Dictionary:
+	_layered_retry_calls = 0
 	var started_usec := Time.get_ticks_usec()
 	_stats = _empty_stats(&"invalid")
 	_trace_begin()
@@ -62,12 +80,35 @@ func choose_escape_profile(blocked_forward: Vector3, candidates: Array[Dictionar
 	var snapshot: Dictionary = _tank.call(&"predictive_driving_snapshot")
 	if snapshot.is_empty() or not _valid_snapshot(snapshot): return _escape_result(false, {}, &"invalid_snapshot", started_usec)
 	_trace_prepare_shape_parts(snapshot)
-	var bounds := _part_local_bounds(snapshot.shapes as Array, snapshot.root_local_transforms as Array, snapshot.part_ranges as Array)
+	# Reuse geometry/support evidence only within this captured request, as normal driving does.
+	var bounds: Array[Dictionary]
+	if _tank.has_method(&"create_ground_motion_query"):
+		var ground_query: RefCounted = _tank.call(&"create_ground_motion_query", snapshot)
+		snapshot["ground_motion_query"] = ground_query
+		if ground_query.get("diagnostic") is Dictionary: _stats["ground_diagnostic"] = ground_query.diagnostic
+		bounds = ground_query.prediction_bounds()
+	else:
+		bounds = _part_local_bounds(snapshot.shapes as Array, snapshot.root_local_transforms as Array, snapshot.part_ranges as Array, snapshot.get("shape_vertices", []))
 	var space := _tank.get_world_3d().direct_space_state
 	var excluded := _supporting_floor_rids(space, snapshot, started_usec)
 	var initial := _initial_contacts(space, snapshot, excluded, started_usec)
 	if bool(initial.budget): return _escape_result(false, {}, &"budget", started_usec)
 	var continuation := not continuation_state.is_empty() and StringName(continuation_state.get("phase", &"turning")) != &"selecting_escape"
+	# The profile remains a full-horizon check. Its real next command also needs
+	# the rigid braking envelope: profile kinematics do not bound suspension braking.
+	if continuation and continuation_state.has("submitted_command") and _tank is RigidBody3D \
+			and absf(delta - 1.0 / Engine.physics_ticks_per_second) <= 0.00001 \
+			and (initial.contacts as Dictionary).is_empty() and bool(snapshot.get("approximate_rigid", false)):
+		var captured := RigidMotion.capture(_tank as RigidBody3D, snapshot)
+		if not captured.is_empty():
+			var near_radius := 0.1
+			for part: Dictionary in bounds: near_radius = maxf(near_radius, float(part.pivot_radius) + 0.01)
+			var command: Dictionary = continuation_state.submitted_command
+			var near := _probe_braking(snapshot, captured, near_radius, float(command.movement), float(command.turn), 1.0 / Engine.physics_ticks_per_second, started_usec)
+			if not near.is_empty():
+				if bool(near.budget): return _escape_result(false, {}, &"budget", started_usec)
+				if not bool(near.safe): return _escape_result(false, {}, &"braking_blocked", started_usec)
+				_stats.near_verified = true
 	for candidate in candidates:
 		if _budget_exhausted(started_usec): return _escape_result(false, candidate, &"budget", started_usec)
 		var heading: Vector3 = continuation_state.get("heading", Vector3.ZERO) as Vector3
@@ -84,21 +125,33 @@ func choose_escape_profile(blocked_forward: Vector3, candidates: Array[Dictionar
 	return _escape_result(false,{},&"blocked",started_usec)
 
 
-func _choose(movement: float, turn: float, goal: Vector3, delta: float, allow_reverse: bool, allow_adjustment: bool, recovery_selection: bool) -> Dictionary:
+func _choose(movement: float, turn: float, goal: Vector3, delta: float, allow_reverse: bool, allow_adjustment: bool, recovery_selection: bool, continuation: Dictionary = {}, handoff_step: bool = false) -> Dictionary:
+	if recovery_selection or handoff_step or not allow_adjustment or movement <= 0.0:
+		_layered_retry_calls = 0
 	var started_usec := Time.get_ticks_usec()
 	_stats = _empty_stats(&"invalid")
 	_trace_begin()
 	if _tank == null or not is_instance_valid(_tank) or _tank.get_world_3d() == null:
 		return _result(0.0, 0.0, true, false, &"invalid", started_usec)
 	var snapshot: Dictionary = _tank.call(&"predictive_driving_snapshot")
+	if allow_adjustment and not recovery_selection and not continuation.is_empty(): snapshot["navigation_continuation"] = continuation.duplicate(true)
 	if snapshot.is_empty() or not _valid_snapshot(snapshot):
 		return _result(0.0, 0.0, true, false, &"invalid_snapshot", started_usec)
 	_trace_prepare_shape_parts(snapshot)
 	## 凸形頂點只在本次最新 snapshot 建一次 part-local AABB，全部候選共用。
-	var part_bounds := _part_local_bounds(snapshot.shapes as Array, snapshot.root_local_transforms as Array, snapshot.part_ranges as Array)
+	var part_bounds: Array[Dictionary]
+	if _tank.has_method(&"create_ground_motion_query"):
+		var ground_query: RefCounted = _tank.call(&"create_ground_motion_query", snapshot)
+		snapshot["ground_motion_query"] = ground_query
+		if ground_query.get("diagnostic") is Dictionary: _stats["ground_diagnostic"] = ground_query.diagnostic
+		part_bounds = ground_query.prediction_bounds()
+	else:
+		part_bounds = _part_local_bounds(snapshot.shapes as Array, snapshot.root_local_transforms as Array, snapshot.part_ranges as Array, snapshot.get("shape_vertices", []))
 	if part_bounds.is_empty():
 		return _result(0.0, 0.0, true, false, &"invalid_snapshot", started_usec)
-	var snapshot_radius := _snapshot_radius(snapshot.shapes as Array, snapshot.transforms as Array, snapshot.root as Transform3D)
+	var snapshot_radius := 0.1
+	for part_bound in part_bounds:
+		snapshot_radius = maxf(snapshot_radius, float(part_bound.pivot_radius) + 0.01)
 	var space := _tank.get_world_3d().direct_space_state
 	var excluded := _supporting_floor_rids(space, snapshot, started_usec)
 	if _budget_exhausted(started_usec):
@@ -107,6 +160,21 @@ func _choose(movement: float, turn: float, goal: Vector3, delta: float, allow_re
 	if bool(initial.budget):
 		return _result(0.0, 0.0, true, false, &"budget", started_usec)
 	var contact := not (initial.contacts as Dictionary).is_empty()
+	if contact: _layered_retry_calls = 0
+	if handoff_step and not contact and bool(snapshot.get("approximate_rigid", false)):
+		var verified_step := _choose_handoff_step(snapshot, snapshot_radius, part_bounds, space, excluded, movement, turn, delta, started_usec)
+		if not verified_step.is_empty(): return verified_step
+	# Nominal-only calls include recovery handoff validation; retain their full horizon.
+	if not recovery_selection and allow_adjustment and not contact and bool(snapshot.get("approximate_rigid", false)):
+		if _layered_retry_calls > 0:
+			_layered_retry_calls -= 1
+			_stats["layered_schedule"] = &"terrain_retry"
+		else:
+			var layered := _choose_layered(snapshot, snapshot_radius, movement, turn, goal, delta, allow_reverse, allow_adjustment, started_usec)
+			if not layered.is_empty(): return layered
+			if movement > 0.0 and not str(_stats.get("near_unknown_reason", "")).is_empty():
+				_layered_retry_calls = LAYERED_RETRY_CALLS
+				_stats["layered_schedule"] = &"terrain_after_unknown"
 	var nominal_trace := _trace_candidate(movement, turn)
 	var nominal := _probe(space, snapshot, snapshot_radius, part_bounds, excluded, initial.contacts as Dictionary, movement, turn, started_usec, nominal_trace)
 	var nominal_trace_index := _trace_finish_candidate(nominal_trace, nominal)
@@ -125,6 +193,13 @@ func _choose(movement: float, turn: float, goal: Vector3, delta: float, allow_re
 	for candidate in candidates:
 		if _budget_exhausted(started_usec):
 			return _result(0.0, 0.0, true, contact, &"budget", started_usec)
+		var score := 0.0
+		if not recovery_selection:
+			score = _score(_command_root(snapshot, float(candidate.movement), float(candidate.turn), delta), snapshot.root as Transform3D, goal, initial.contacts as Dictionary)
+			## best 已完整驗證安全；同分或低分不可能取代它，無須再跑三秒 probe。
+			## 非有限分數不剪枝，Recovery 仍完全依原候選順序檢查。
+			if not best.is_empty() and is_finite(score) and is_finite(float(best.score)) and score <= float(best.score):
+				continue
 		var is_nominal := is_equal_approx(float(candidate.movement), movement) and is_equal_approx(float(candidate.turn), turn)
 		var candidate_trace := {} if is_nominal else _trace_candidate(float(candidate.movement), float(candidate.turn))
 		var probe := nominal if is_nominal else _probe(
@@ -138,7 +213,6 @@ func _choose(movement: float, turn: float, goal: Vector3, delta: float, allow_re
 		if recovery_selection:
 			return _result(float(candidate.movement), float(candidate.turn), true, contact, &"contact_escape" if contact else &"risk", started_usec)
 		## 三秒 probe 證明完整命令軌跡安全；選擇時只評分呼叫端本幀真正會執行的短段。
-		var score := _score(_command_root(snapshot, float(candidate.movement), float(candidate.turn), delta), snapshot.root as Transform3D, goal, initial.contacts as Dictionary)
 		_trace_set_score(candidate_trace_index, score)
 		if best.is_empty() or score > float(best.score):
 			best = {"movement": float(candidate.movement), "turn": float(candidate.turn), "score": score}
@@ -160,29 +234,21 @@ func _valid_snapshot(snapshot: Dictionary) -> bool:
 
 
 func _supporting_floor_rids(space: PhysicsDirectSpaceState3D, snapshot: Dictionary, started_usec: int) -> Array[RID]:
-	var excludes: Array[RID] = [snapshot.self_rid as RID]
-	var root: Transform3D = snapshot.root
-	var probes := [root.origin, root.origin + root.basis * Vector3.LEFT * 1.0, root.origin - root.basis * Vector3.LEFT * 1.0]
-	for point in probes:
-		if _budget_exhausted(started_usec):
-			break
-		var ray := PhysicsRayQueryParameters3D.create(point + Vector3.UP * FLOOR_RAY_HEIGHT, point - Vector3.UP * FLOOR_RAY_DEPTH, int(snapshot.collision_mask), excludes)
-		ray.collide_with_bodies = true
-		ray.collide_with_areas = false
-		var hit := space.intersect_ray(ray)
-		_stats.query_count = int(_stats.query_count) + 1
-		var normal := hit.get("normal", Vector3.ZERO) as Vector3
-		var hit_position := hit.get("position", root.origin) as Vector3
-		## 只排除車底向上的承載面；牆面／高處物不會因同層 static body 被一併略過。
-		if hit.has("rid") and normal.y >= SUPPORT_NORMAL_MIN_Y and hit_position.y <= root.origin.y + CONTACT_EPSILON and not excludes.has(hit.rid as RID):
-			excludes.append(hit.rid as RID)
-	return excludes
+	# 同一道路 body 可能同時包含路面、護欄與橋底，不得以 RID 整體排除。
+	# 真實履帶淺接觸由 narrow query 依接觸法線／深度區分。
+	return [snapshot.self_rid as RID]
 
 
 func _initial_contacts(space: PhysicsDirectSpaceState3D, snapshot: Dictionary, excluded: Array[RID], started_usec: int) -> Dictionary:
 	var contacts: Dictionary = {}
+	var ground_query := _ground_solver(snapshot, {}, started_usec)
 	for record in snapshot.get("contacts", []):
 		if record is Dictionary and record.get("rid") is RID:
+			if ground_query != null and ground_query.has_method("is_traversable_contact"):
+				var traversable: bool = ground_query.is_traversable_contact(record, snapshot.root as Transform3D)
+				_stats.query_count = int(ground_query.queries)
+				if bool(ground_query.at_cap): return {"contacts": contacts, "budget": true}
+				if traversable: continue
 			var known_normal := record.get("normal", Vector3.ZERO) as Vector3
 			contacts[(record.rid as RID).get_id()] = {"rid": record.rid as RID, "normal": known_normal.normalized() if not known_normal.is_zero_approx() else Vector3.ZERO}
 			if _trace_enabled:
@@ -192,6 +258,12 @@ func _initial_contacts(space: PhysicsDirectSpaceState3D, snapshot: Dictionary, e
 	for index in shapes.size():
 		if _budget_exhausted(started_usec):
 			return {"contacts": contacts, "budget": true}
+		if ground_query != null:
+			ground_query.queries = int(_stats.query_count)
+			var only_support: bool = ground_query._clear_shape(index, snapshot.root as Transform3D)
+			_stats.query_count = int(ground_query.queries)
+			if bool(ground_query.at_cap): return {"contacts": contacts, "budget": true}
+			if only_support: continue
 		for hit in _hits(space, shapes[index] as Shape3D, transforms[index] as Transform3D, excluded, &"narrow"):
 			var rid: RID = hit.rid
 			var normal := _contact_normal(hit, snapshot.root as Transform3D)
@@ -202,7 +274,10 @@ func _initial_contacts(space: PhysicsDirectSpaceState3D, snapshot: Dictionary, e
 
 
 func _probe(space: PhysicsDirectSpaceState3D, snapshot: Dictionary, radius: float, part_bounds: Array[Dictionary], excluded: Array[RID], old_contacts: Dictionary, movement: float, turn: float, started_usec: int, trace_candidate: Dictionary = {}) -> Dictionary:
+	if _tank.has_method(&"create_ground_motion_query"):
+		return _probe_ground_motion(snapshot, radius, movement, turn, started_usec, trace_candidate, old_contacts)
 	var root: Transform3D = snapshot.root
+	var vertical_speed := float(snapshot.get("vertical_speed", 0.0))
 	var speed := float(snapshot.forward_speed)
 	var angular := float(snapshot.angular_speed)
 	var shapes: Array = snapshot.shapes
@@ -230,8 +305,14 @@ func _probe(space: PhysicsDirectSpaceState3D, snapshot: Dictionary, radius: floa
 				return {"safe": false, "budget": false, "final_root": root}
 			speed = float(state.forward_speed)
 			angular = float(state.angular_speed)
-			root = root.rotated_local(Vector3.UP, angular * sub_delta)
+			root.basis = Basis(Vector3.UP, angular * sub_delta) * root.basis
 			root.origin += root.basis * Vector3.LEFT * speed * sub_delta
+			if _tank.has_method(&"predict_ground_pose"):
+				var terrain: Dictionary = _tank.call(&"predict_ground_pose", root, sub_delta, vertical_speed)
+				if not bool(terrain.get("safe", false)):
+					return {"safe": false, "budget": false, "final_root": root}
+				root = terrain.root
+				vertical_speed = float(terrain.vertical_speed)
 			segment_roots.append(root)
 		var gap_metrics := _segment_gap_metrics(segment_start, segment_roots)
 		var active_parts: Array[Dictionary] = []
@@ -284,8 +365,139 @@ func _probe(space: PhysicsDirectSpaceState3D, snapshot: Dictionary, radius: floa
 	return {"safe": not exhausted, "budget": exhausted, "final_root": root}
 
 
-func _probe_profile(space: PhysicsDirectSpaceState3D, snapshot: Dictionary, radius: float, part_bounds: Array[Dictionary], excluded: Array[RID], old_contacts: Dictionary, heading: Vector3, started_usec: int, horizon: float, trace_candidate: Dictionary, continuation_state: Dictionary = {}) -> Dictionary:
+## 共用解算已驗完完整路徑，不再對同一平移重跑另一套 sweep。
+func _ground_solver(snapshot: Dictionary, old_contacts: Dictionary, started_usec: int) -> RefCounted:
+	if not _tank.has_method(&"create_ground_motion_query"): return null
+	var solver: RefCounted = snapshot.get("ground_motion_query")
+	if solver == null:
+		solver = _tank.call(&"create_ground_motion_query", snapshot)
+	solver.at_cap = false
+	solver.capture_blocker = _trace_enabled
+	solver.blocker = {}
+	# 不把含 solver 本身的 snapshot 綁回 callback，避免 RefCounted 循環持有。
+	if solver.has_method("reset_prediction"): solver.reset_prediction()
+	var contact_snapshot := {"shapes": snapshot.shapes, "transforms": snapshot.transforms}
+	solver.set_contact_policy(Callable() if old_contacts.is_empty() else _ground_old_contact_allowed.bind(contact_snapshot, old_contacts))
+	solver.queries = int(_stats.query_count)
+	solver.query_limit = MAX_QUERIES
+	solver.deadline_usec = mini(started_usec + MAX_ELAPSED_USEC, _work_deadline_usec) if _work_deadline_usec > 0 else started_usec + MAX_ELAPSED_USEC
+	return solver
+
+
+func _probe_ground_motion(snapshot: Dictionary, radius: float, movement: float, turn: float, started_usec: int, trace_candidate: Dictionary, old_contacts: Dictionary = {}) -> Dictionary:
+	var solver := _ground_solver(snapshot, old_contacts, started_usec)
 	var root: Transform3D = snapshot.root
+	var speed := float(snapshot.forward_speed)
+	var angular := float(snapshot.angular_speed)
+	var vertical := float(snapshot.get("vertical_speed", 0.0))
+	var grounded := bool(snapshot.get("grounded", false))
+	var continuation: Dictionary = (snapshot.get("navigation_continuation", {}) as Dictionary).duplicate(true)
+	for outer_step in ceili(HORIZON_SECONDS / STEP_SECONDS):
+		if outer_step > 0 and not continuation.is_empty():
+			var drift: Vector3 = solver.get("_drift") if solver.has_method("prediction_drift") else Vector3.ZERO
+			var command := NavigationControl.forecast(root,speed,angular,-root.basis.x*speed+drift,continuation)
+			movement = float(command.movement)
+			turn = float(command.turn)
+		var preview: Dictionary = solver.predictive_driving_step(speed, angular, movement, turn, STEP_SECONDS) if solver.has_method("predictive_driving_step") else _tank.call(&"predictive_driving_step", speed, angular, movement, turn, STEP_SECONDS)
+		if not preview.has("angular_speed"): return {"safe": false, "budget": false, "final_root": root}
+		var count := maxi(1, ceili(radius * maxf(absf(angular), absf(float(preview.angular_speed))) * STEP_SECONDS / MAX_SWEEP_DISTANCE))
+		var dt := STEP_SECONDS / count
+		var result: Dictionary = {}
+		var native_count := ceili(STEP_SECONDS * Engine.physics_ticks_per_second)
+		if native_segment_enabled and count > native_count and solver.has_method("try_terrain_segment"):
+			result = _native_ground_segment(solver, root, speed, angular, movement, turn, native_count, STEP_SECONDS / native_count, vertical, grounded)
+		if result.is_empty():
+			result = _ground_segment(solver, root, speed, angular, movement, turn, count, dt, vertical, grounded)
+		_stats.query_count = int(solver.queries)
+		if outer_step == ceili(HORIZON_SECONDS / STEP_SECONDS) - 1:
+			_stats["last_segment_safe"] = bool(result.get("safe", false))
+			_stats["last_segment_cap"] = bool(solver.at_cap)
+		if not bool(result.get("safe", false)) or _budget_exhausted(started_usec):
+			if _trace_enabled: _trace_first_blocker(trace_candidate, _trace_ground_blocker(solver, outer_step * STEP_SECONDS + float(result.get("elapsed", 0.0))))
+			return {"safe": false, "budget": bool(solver.at_cap) or _budget_exhausted(started_usec), "final_root": root}
+		root = result.root
+		speed = float(result.speed)
+		angular = float(result.angular)
+		vertical = float(result.vertical_speed)
+		grounded = bool(result.grounded)
+	return {"safe": true, "budget": false, "final_root": root}
+
+
+# Native-rate motion is an alternate approximation, accepted only after a complete
+# conservative swept-volume proof. Unknown geometry retains the original fine path.
+func _native_ground_segment(solver: RefCounted, root: Transform3D, speed: float, angular: float, movement: float, turn: float, count: int, dt: float, vertical: float, grounded: bool) -> Dictionary:
+	var saved_drift: Vector3 = solver.get("_drift")
+	var states: Array[Dictionary] = []
+	for unused in count:
+		var state: Dictionary = solver.predictive_driving_step(speed, angular, movement, turn, dt)
+		if not state.has("forward_speed") or not state.has("angular_speed"):
+			solver.set("_drift", saved_drift)
+			return {}
+		speed = float(state.forward_speed)
+		angular = float(state.angular_speed)
+		state["drift"] = solver.prediction_drift(dt)
+		states.append(state)
+	var result: Dictionary = solver.try_terrain_segment(root, states, dt, vertical, grounded)
+	if result.is_empty(): solver.set("_drift", saved_drift)
+	return result
+
+
+func _ground_segment(solver: RefCounted, root: Transform3D, speed: float, angular: float, movement: float, turn: float, count: int, dt: float, vertical: float, grounded: bool) -> Dictionary:
+	solver.blocker = {}
+	var states: Array[Dictionary] = []
+	var path: Array[Transform3D] = []
+	var planned := root
+	for unused in count:
+		var state: Dictionary = solver.predictive_driving_step(speed, angular, movement, turn, dt) if solver.has_method("predictive_driving_step") else _tank.call(&"predictive_driving_step", speed, angular, movement, turn, dt)
+		if not state.has("forward_speed") or not state.has("angular_speed"): return {"safe": false}
+		speed = float(state.forward_speed)
+		angular = float(state.angular_speed)
+		var drift: Vector3 = solver.prediction_drift(dt) if solver.has_method("prediction_drift") else Vector3.ZERO
+		state["drift"] = drift
+		states.append(state)
+	# Native support sampling avoids costly failed continuous-plane proofs at mesh seams.
+	# It uses exactly the original states and keeps the complete segment sweep.
+	if solver.has_method("try_terrain_segment"):
+		var terrain_segment: Dictionary = solver.try_terrain_segment(root, states, dt, vertical, grounded)
+		if not terrain_segment.is_empty(): return terrain_segment
+	if grounded and solver.has_method("try_flat_segment"):
+		var flat: Dictionary = solver.try_flat_segment(root, states, dt)
+		if not flat.is_empty(): return flat
+	# The legacy flat fallback alone consumes this path; successful segment proofs need no duplicate integration.
+	if grounded and is_zero_approx(vertical):
+		for state: Dictionary in states:
+			planned.basis = Basis(Vector3.UP, float(state.angular_speed) * dt) * planned.basis
+			path.append(planned)
+			planned.origin += planned.basis * Vector3.LEFT * float(state.forward_speed) * dt + (state.get("drift", Vector3.ZERO) as Vector3)
+			path.append(planned)
+	if grounded and is_zero_approx(vertical) and solver.flat_path_clear(root, path):
+		return {"safe": not solver.at_cap, "root": planned, "speed": speed, "angular": angular, "vertical_speed": 0.0, "grounded": true}
+	if solver.at_cap: return {"safe": false}
+	var elapsed := 0.0
+	for state in states:
+		solver.blocker = {}
+		elapsed += dt
+		var rotated := Transform3D(Basis(Vector3.UP, float(state.angular_speed) * dt) * root.basis, root.origin)
+		var result: Dictionary = {"safe": false}
+		if is_zero_approx(float(state.angular_speed)) or solver.clear_pose(rotated):
+			result = solver.advance(rotated, rotated.basis * Vector3.LEFT * float(state.forward_speed) * dt + (state.get("drift", Vector3.ZERO) as Vector3), dt, vertical, grounded)
+		if not bool(result.get("safe", false)): return {"safe": false, "elapsed": elapsed}
+		root = result.root
+		vertical = float(result.vertical_speed)
+		grounded = bool(result.grounded)
+	return {"safe": true, "root": root, "speed": speed, "angular": angular, "vertical_speed": vertical, "grounded": grounded}
+
+
+func _ground_old_contact_allowed(index: int, candidate: Transform3D, rid: RID, _pairs: PackedVector3Array, snapshot: Dictionary, old_contacts: Dictionary) -> bool:
+	var old: Dictionary = old_contacts.get(rid.get_id(), {})
+	return not old.is_empty() and _old_contact_separates(old, snapshot.shapes[index] as Shape3D, snapshot.transforms[index] as Transform3D, candidate)
+
+
+func _probe_profile(space: PhysicsDirectSpaceState3D, snapshot: Dictionary, radius: float, part_bounds: Array[Dictionary], excluded: Array[RID], old_contacts: Dictionary, heading: Vector3, started_usec: int, horizon: float, trace_candidate: Dictionary, continuation_state: Dictionary = {}) -> Dictionary:
+	var solver := _ground_solver(snapshot, old_contacts, started_usec)
+	var grounded := bool(snapshot.get("grounded", false))
+	var root: Transform3D = snapshot.root
+	var vertical_speed := float(snapshot.get("vertical_speed", 0.0))
 	var speed := float(snapshot.forward_speed)
 	var angular := float(snapshot.angular_speed)
 	var shapes: Array = snapshot.shapes
@@ -320,11 +532,38 @@ func _probe_profile(space: PhysicsDirectSpaceState3D, snapshot: Dictionary, radi
 		if not preview.has("angular_speed"): return {"safe":false,"budget":false,"final_root":root,"phase":phase,"positive_advance":advance,"action":last_action}
 		var substeps := maxi(1, ceili(radius * maxf(absf(angular),absf(float(preview.angular_speed))) * STEP_SECONDS / MAX_SWEEP_DISTANCE))
 		var sub_delta := STEP_SECONDS / float(substeps); var roots: Array[Transform3D] = []; var start := root
+		if solver != null:
+			var terrain: Dictionary = {}
+			var native_count := ceili(STEP_SECONDS * Engine.physics_ticks_per_second)
+			if native_segment_enabled and bool(snapshot.get("approximate_rigid", false)) and substeps > native_count and solver.has_method("try_terrain_segment"):
+				terrain = _native_ground_segment(solver, root, speed, angular, movement, turn, native_count, STEP_SECONDS / native_count, vertical_speed, grounded)
+			if terrain.is_empty():
+				terrain = _ground_segment(solver, root, speed, angular, movement, turn, substeps, sub_delta, vertical_speed, grounded)
+			_stats.query_count = int(solver.queries)
+			if not bool(terrain.get("safe", false)) or _budget_exhausted(started_usec):
+				if _trace_enabled: _trace_first_blocker(trace_candidate, _trace_ground_blocker(solver, outer_step * STEP_SECONDS + float(terrain.get("elapsed", 0.0))))
+				return {"safe": false, "budget": bool(solver.at_cap) or _budget_exhausted(started_usec), "final_root": root, "phase": phase, "positive_advance": advance, "action": last_action}
+			root = terrain.root
+			speed = float(terrain.speed)
+			angular = float(terrain.angular)
+			vertical_speed = float(terrain.vertical_speed)
+			grounded = bool(terrain.grounded)
+			continue
 		for unused in substeps:
 			if _budget_exhausted(started_usec): return {"safe":false,"budget":true,"final_root":root,"phase":phase,"positive_advance":advance,"action":last_action}
 			var state: Dictionary = _tank.call(&"predictive_driving_step",speed,angular,movement,turn,sub_delta)
-			if not state.has("forward_speed"): return {"safe":false,"budget":false,"final_root":root,"phase":phase,"positive_advance":advance,"action":last_action}
-			speed=float(state.forward_speed); angular=float(state.angular_speed); root=root.rotated_local(Vector3.UP,angular*sub_delta); root.origin += root.basis*Vector3.LEFT*speed*sub_delta; roots.append(root)
+			if not state.has("forward_speed") or not state.has("angular_speed"): return {"safe":false,"budget":false,"final_root":root,"phase":phase,"positive_advance":advance,"action":last_action}
+			speed = float(state.forward_speed)
+			angular = float(state.angular_speed)
+			root.basis = Basis(Vector3.UP, angular * sub_delta) * root.basis
+			root.origin += root.basis * Vector3.LEFT * speed * sub_delta
+			if _tank.has_method(&"predict_ground_pose"):
+				var terrain: Dictionary = _tank.call(&"predict_ground_pose", root, sub_delta, vertical_speed)
+				if not bool(terrain.get("safe", false)):
+					return {"safe": false, "budget": false, "final_root": root, "phase": phase, "positive_advance": advance, "action": last_action}
+				root = terrain.root
+				vertical_speed = float(terrain.vertical_speed)
+			roots.append(root)
 		var metrics := _segment_gap_metrics(start,roots); var active: Array[int] = []
 		for part in part_bounds:
 			var bound := _segment_bound(part,start,roots,float(metrics.translation),float(metrics.half_sine))
@@ -381,6 +620,10 @@ func _hits(space: PhysicsDirectSpaceState3D, shape: Shape3D, transform: Transfor
 	_stats["broad_queries" if kind == &"broad" else "narrow_queries"] = int(_stats.get("broad_queries" if kind == &"broad" else "narrow_queries", 0)) + 1
 	if hits.size() >= MAX_HITS:
 		_stats.at_cap = true
+	if kind == &"narrow" and not hits.is_empty() and _tank.has_method(&"shape_has_only_ground_contacts"):
+		_stats.query_count = int(_stats.query_count) + 1
+		if bool(_tank.call(&"shape_has_only_ground_contacts", shape, transform, excluded)):
+			return []
 	return hits
 
 
@@ -462,7 +705,7 @@ func _root_transforms(root: Transform3D, local_transforms: Array) -> Array[Trans
 	return transforms
 
 
-func _part_local_bounds(shapes: Array, local_transforms: Array, part_ranges: Array) -> Array[Dictionary]:
+func _part_local_bounds(shapes: Array, local_transforms: Array, part_ranges: Array, cached_vertices: Array = []) -> Array[Dictionary]:
 	var bounds: Array[Dictionary] = []
 	for part_range in part_ranges:
 		var has_point := false
@@ -476,7 +719,8 @@ func _part_local_bounds(shapes: Array, local_transforms: Array, part_ranges: Arr
 			var child_minimum := Vector3.ZERO
 			var child_maximum := Vector3.ZERO
 			var child_has_point := false
-			for point in convex.points:
+			var vertices: PackedVector3Array = cached_vertices[index] if cached_vertices.size() == shapes.size() else convex.points
+			for point in vertices:
 				var local_point := (local_transforms[index] as Transform3D) * point
 				minimum = local_point if not has_point else minimum.min(local_point)
 				maximum = local_point if not has_point else maximum.max(local_point)
@@ -669,6 +913,18 @@ func _trace_part(shape_index: int) -> Dictionary:
 	return _trace_shape_parts[shape_index] if shape_index >= 0 and shape_index < _trace_shape_parts.size() else {}
 
 
+func _trace_ground_blocker(solver: RefCounted, prediction_time: float) -> Dictionary:
+	var evidence: Dictionary = solver.blocker
+	var index := int(evidence.get("shape_index", -1))
+	var part := _trace_part(index)
+	return {
+		"source": evidence.get("source", &"query_budget" if solver.at_cap else &"ground_support"),
+		"shape_index": index, "part_id": part.get("part_id", null), "anchor": part.get("anchor", null),
+		"prediction_time_seconds": prediction_time, "safe_fraction": evidence.get("safe_fraction"),
+		"collider_id": null, "collider_shape": null, "collider_unknown": true,
+	}
+
+
 func _trace_blocker_from_hit(source: StringName, shape_index: int, hit: Dictionary, prediction_time_seconds: float) -> Dictionary:
 	var part := _trace_part(shape_index)
 	return {
@@ -719,6 +975,7 @@ func _trace_attach() -> void:
 
 
 func _budget_exhausted(started_usec: int) -> bool:
+	if _work_deadline_usec > 0 and Time.get_ticks_usec() >= _work_deadline_usec: return true
 	if int(_stats.query_count) >= MAX_QUERIES or bool(_stats.at_cap):
 		return true
 	return started_usec > 0 and Time.get_ticks_usec() - started_usec >= MAX_ELAPSED_USEC
@@ -733,4 +990,187 @@ func _result(movement: float, turn: float, intervened: bool, contact: bool, reas
 
 
 func _empty_stats(reason: StringName) -> Dictionary:
-	return {"query_count": 0, "broad_queries": 0, "narrow_queries": 0, "elapsed_usec": 0, "reason": reason, "at_cap": false, "horizon_seconds": HORIZON_SECONDS, "step_seconds": STEP_SECONDS}
+	return {"near_verified": false, "far_status": &"not_run", "prediction_mode": &"legacy", "query_count": 0, "broad_queries": 0, "narrow_queries": 0, "elapsed_usec": 0, "reason": reason, "at_cap": false, "horizon_seconds": HORIZON_SECONDS, "step_seconds": STEP_SECONDS}
+
+
+func _choose_handoff_step(snapshot: Dictionary, radius: float, bounds: Array[Dictionary], space: PhysicsDirectSpaceState3D, excluded: Array[RID], movement: float, turn: float, delta: float, started_usec: int) -> Dictionary:
+	var dt := 1.0 / Engine.physics_ticks_per_second
+	if absf(delta - dt) > 0.00001 or not (_tank is RigidBody3D): return {}
+	var captured := RigidMotion.capture(_tank as RigidBody3D, snapshot)
+	if captured.is_empty(): return {}
+	var trace := _trace_candidate(movement, turn)
+	trace["phase"] = "handoff_near"
+	var near := _probe_braking(snapshot, captured, radius, movement, turn, dt, started_usec)
+	if _trace_enabled: trace["braking_profiles"] = (_stats.get("braking_profiles", {}) as Dictionary).duplicate(true)
+	if near.is_empty():
+		trace["near_unknown_reason"] = str(_stats.get("near_unknown_reason", "unknown"))
+		_trace_finish_candidate(trace, {"safe": false, "budget": false})
+		return {}
+	_trace_finish_candidate(trace, near)
+	if bool(near.budget) or _budget_exhausted(started_usec):
+		_stats["handoff_validation"] = "hard_budget"
+		return _result(0.0, 0.0, true, false, &"budget", started_usec)
+	if not bool(near.safe): return _result(0.0, 0.0, true, false, &"blocked", started_usec)
+	_stats.near_verified = true
+	_stats.prediction_mode = &"layered_handoff"
+	var far_trace := _trace_candidate(movement, turn)
+	far_trace["phase"] = "handoff_full_horizon"
+	_work_deadline_usec = mini(started_usec + MAX_ELAPSED_USEC, Time.get_ticks_usec() + FAR_WORK_USEC)
+	var far := _probe(space, snapshot, radius, bounds, excluded, {}, movement, turn, started_usec, far_trace)
+	_work_deadline_usec = 0
+	_trace_finish_candidate(far_trace, far)
+	# A soft far deadline cannot revoke the near certificate. The actual shared
+	# query/time ceiling still prevents this request from issuing a command.
+	_stats.at_cap = int(_stats.query_count) >= MAX_QUERIES
+	if bool(_stats.at_cap) or Time.get_ticks_usec() - started_usec >= MAX_ELAPSED_USEC:
+		_stats.near_verified = false
+		_stats.far_status = &"unknown"
+		_stats["handoff_validation"] = "hard_budget"
+		return _result(0.0, 0.0, true, false, &"budget", started_usec)
+	if not bool(far.budget) and bool(far.safe):
+		_stats.far_status = &"clear"
+		_stats["handoff_validation"] = "full_horizon_clear"
+		return _result(movement, turn, false, false, &"clear", started_usec)
+	_stats.far_status = &"unknown" if bool(far.budget) else &"blocked"
+	_stats["handoff_validation"] = "far_soft_unknown" if bool(far.budget) else "far_blocked"
+	return _result(movement, turn, false, false, &"near_only", started_usec)
+
+# Flat-only finite model: whole hull/turret/gun sweep plus calibrated pose reserve.
+func _choose_layered(snapshot: Dictionary, radius: float, movement: float, turn: float, goal: Vector3, delta: float, allow_reverse: bool, allow_adjustment: bool, started_usec: int) -> Dictionary:
+	var dt := 1.0 / Engine.physics_ticks_per_second
+	if absf(delta - dt) > 0.00001 or not (_tank is RigidBody3D): return {}
+	var captured := RigidMotion.capture(_tank as RigidBody3D, snapshot)
+	if captured.is_empty(): return {}
+	captured.config.braking_feedforward = true
+	var desired: Array[Dictionary] = [{"movement": movement, "turn": turn}]
+	if allow_adjustment:
+		for candidate in _candidates(movement, turn, allow_reverse, false):
+			if not (is_equal_approx(float(candidate.movement), movement) and is_equal_approx(float(candidate.turn), turn)):
+				desired.append(candidate)
+	var best: Dictionary = {}
+	var near_known := false
+	var candidate_unknown := false
+	var last_near_usec := 0
+	for candidate in desired:
+		# Leave the existing terrain fallback time when no near result is known.
+		# The nominal dual-stop probe always finishes before this soft check.
+		# Admit another unknown candidate only when the previous near cost fits the
+		# remaining soft window. This estimate never changes the hard safety cap.
+		if candidate_unknown and not near_known and best.is_empty() and Time.get_ticks_usec() - started_usec + last_near_usec > FAR_WORK_USEC: break
+		if not best.is_empty() and Time.get_ticks_usec() >= started_usec + FAR_WORK_USEC: break
+		var trace := _trace_candidate(float(candidate.movement), float(candidate.turn))
+		var near_started_usec := Time.get_ticks_usec()
+		var near := _probe_braking(snapshot, captured, radius, float(candidate.movement), float(candidate.turn), dt, started_usec)
+		last_near_usec = Time.get_ticks_usec() - near_started_usec
+		if _trace_enabled: trace["braking_profiles"] = (_stats.get("braking_profiles", {}) as Dictionary).duplicate(true)
+		if near.is_empty():
+			trace["near_unknown_reason"] = str(_stats.get("near_unknown_reason", "unknown"))
+			_trace_finish_candidate(trace, {"safe": false, "budget": false})
+			if best.is_empty():
+				# A mesh witness rejects this trajectory, not every other command.
+				# Request-wide support/model unknown still uses the terrain fallback.
+				var failure: Dictionary = _stats.get("near_failure_detail", {})
+				if str(_stats.get("near_unknown_reason", "")) == "braking_sweep:B16" and not (failure.get("mesh_oriented_failure", {}) as Dictionary).is_empty():
+					candidate_unknown = true
+					continue
+				return {}
+			break
+		near_known = true
+		_trace_finish_candidate(trace, near)
+		if bool(near.budget):
+			if best.is_empty(): return _result(0.0, 0.0, true, false, &"budget", started_usec)
+			break
+		if not bool(near.safe): continue
+		var score := _score(_command_root(snapshot, float(candidate.movement), float(candidate.turn), delta), snapshot.root as Transform3D, goal, {})
+		var is_nominal := is_equal_approx(float(candidate.movement), movement) and is_equal_approx(float(candidate.turn), turn)
+		var risk := &"unknown"
+		if (is_nominal or score > 0.0) and Time.get_ticks_usec() < started_usec + FAR_WORK_USEC:
+			_work_deadline_usec = started_usec + FAR_WORK_USEC
+			var far := _probe_ground_motion(snapshot, radius, float(candidate.movement), float(candidate.turn), started_usec, {}, {})
+			_work_deadline_usec = 0
+			if not bool(far.budget): risk = &"clear" if bool(far.safe) else &"blocked"
+			# Soft far exhaustion never invalidates an already checked near path.
+			_stats.at_cap = int(_stats.query_count) >= MAX_QUERIES
+		if risk == &"blocked": score -= 0.05
+		if best.is_empty() or score > float(best.score):
+			best = {"movement": candidate.movement, "turn": candidate.turn, "score": score, "risk": risk}
+		if (is_nominal or score > 0.0) and risk != &"blocked": break
+	if not best.is_empty():
+		_stats.near_verified = true
+		_stats.far_status = best.risk
+		_stats.prediction_mode = &"layered_flat"
+		var changed := not is_equal_approx(float(best.movement), movement) or not is_equal_approx(float(best.turn), turn)
+		return _result(float(best.movement), float(best.turn), changed, false, &"risk" if changed else &"clear", started_usec)
+	if near_known:
+		_stats.prediction_mode = &"layered_flat"
+		# Zero input is the existing fallback, not a claim of verified safe stopping.
+		return _result(0.0, 0.0, true, false, &"blocked", started_usec)
+	return {}
+
+
+func _probe_braking(snapshot: Dictionary, captured: Dictionary, radius: float, movement: float, turn: float, dt: float, started_usec: int) -> Dictionary:
+	_stats["braking_profiles"] = {"feedforward": {"outcome": "not_run"}, "feedback_only": {"outcome": "not_run"}}
+	_stats.erase("near_failure_detail")
+	_stats.erase("near_unknown_reason")
+	# Reject a known unsupported flat domain before constructing its two braking trajectories.
+	# This is only an early fallback; the complete BrakingSweep remains authoritative.
+	var support_solver := _ground_solver(snapshot, {}, started_usec)
+	var support: Dictionary = support_solver._support(snapshot.root as Transform3D, 0.0)
+	_stats.query_count = int(support_solver.queries)
+	if support_solver.at_cap or _budget_exhausted(started_usec): return {"safe": false, "budget": true}
+	var hits: Array = support.get("raw_hits", [])
+	if not bool(support.get("supported", false)) or hits.size() != 4:
+		_stats["near_unknown_reason"] = "initial_support"
+		return {}
+	var floor_y: float = hits[0].hit.position.y
+	for record: Dictionary in hits:
+		if (record.hit.normal as Vector3).distance_to(Vector3.UP) > 0.000001 or absf((record.hit.position as Vector3).y - floor_y) > 0.00001:
+			_stats["near_unknown_reason"] = "mixed_support"
+			return {}
+	# Both calibrated trajectories must clear: nominal drive feedforward can overstate
+	# braking during intermittent spring contact. The feedback-only release adds its
+	# longer stopping path without discarding the nominal turning trajectory.
+	for feedforward in [true, false]:
+		var checked := _probe_braking_model(snapshot, captured, radius, movement, turn, dt, started_usec, feedforward)
+		var profile_key := "feedforward" if feedforward else "feedback_only"
+		var profile: Dictionary = _stats.braking_profiles[profile_key]
+		profile["outcome"] = "unknown" if checked.is_empty() else ("budget" if bool(checked.budget) else ("safe" if bool(checked.safe) else "unsafe"))
+		if checked.is_empty():
+			_stats["near_failure_detail"] = (snapshot.ground_motion_query as RefCounted).diagnostic.duplicate(true)
+			_stats["near_unknown_reason"] = "braking_sweep:" + str((snapshot.ground_motion_query as RefCounted).diagnostic.get("braking_unknown", "missing"))
+			return checked
+		if bool(checked.budget) or not bool(checked.safe): return checked
+	return {"safe": true, "budget": false}
+
+
+func _probe_braking_model(snapshot: Dictionary, captured: Dictionary, radius: float, movement: float, turn: float, dt: float, started_usec: int, feedforward: bool) -> Dictionary:
+	var model_started := Time.get_ticks_usec()
+	assert(int(captured.physics_frame) == Engine.get_physics_frames())
+	var model := RigidMotion.new()
+	var parameters: Dictionary = captured.config.duplicate()
+	parameters.braking_feedforward = feedforward
+	model.initialize(parameters, captured.initial)
+	var path: Array[Transform3D] = [snapshot.root as Transform3D]
+	var tail := INF
+	var vertex_speed := model.velocity.length() + radius * absf(model.angular)
+	for tick in 900:
+		if tick % 12 == 0 and _budget_exhausted(started_usec): return {"safe": false, "budget": true}
+		model.step(movement if tick == 0 else 0.0, turn if tick == 0 else 0.0, tick > 0, dt)
+		path.append(model.root)
+		vertex_speed = maxf(vertex_speed, model.velocity.length() + radius * absf(model.angular))
+		if tick % 6 == 0:
+			tail = model.remaining_vertex_travel(radius, dt)
+			if tail <= 0.002: break
+	if tail > 0.002: return {"safe": false, "budget": false}
+	var solver := _ground_solver(snapshot, {}, started_usec)
+	# Finite flat pose calibration scales with motion; stationary snapshots are exact.
+	var reserve := 0.01 + 0.08 * vertex_speed + tail
+	var sweep_started := Time.get_ticks_usec()
+	var checked := BrakingSweep.check(solver, snapshot.root as Transform3D, path, reserve, vertex_speed)
+	var profiles: Dictionary = _stats.get("braking_profiles", {})
+	profiles["feedforward" if feedforward else "feedback_only"] = {"model_usec": sweep_started-model_started, "sweep_usec": Time.get_ticks_usec()-sweep_started, "at_cap": solver.at_cap, "queries": solver.queries, "stages": solver.diagnostic.get("braking_profile", {}).duplicate(), "unknown": checked.is_empty()}
+	_stats["braking_profiles"] = profiles
+	_stats.query_count = int(solver.queries)
+	if bool(solver.at_cap) or _budget_exhausted(started_usec): return {"safe": false, "budget": true}
+	if checked.is_empty(): return {}
+	return {"safe": bool(checked.safe), "budget": false}

@@ -1,0 +1,431 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://src/world/roads/items/custom/Road11_Y_Splitter_45_Custom/Default.tscn" id="1_2vl7b"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/base/Road1/Road1_B__Road1_A.tscn" id="2_plf0b"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/base/Road10_90angle_Corner/Road1_B__Road1_A.tscn" id="3_exddx"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/custom/Road12_Diagonal_Splitter_L_Custom/Default.tscn" id="4_o2nbr"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/custom/Road12_Diagonal_Splitter_R_Custom/Default.tscn" id="5_ic6rm"]
+
+[sub_resource type="Environment" id="Environment_7nb7p"]
+ambient_light_source = 2
+ambient_light_color = Color(1, 1, 1, 1)
+ambient_light_energy = 0.5
+
+[node name="CompactLoopDemo" type="Node3D" unique_id=834137437]
+
+[node name="SmallRight" type="Node3D" parent="." unique_id=1781036387]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -90, 0, 0)
+
+[node name="Y1" type="StaticBody3D" parent="SmallRight" unique_id=206342045 instance=ExtResource("1_2vl7b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.03, 0)
+metadata/road_module = true
+metadata/road_id = "Road11_Y_Splitter_45_Custom"
+metadata/variant = "Default"
+metadata/source_pack = "custom"
+
+[node name="Road1_0" type="StaticBody3D" parent="SmallRight" unique_id=97174495 instance=ExtResource("2_plf0b")]
+transform = Transform3D(0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, 0.70710677, 8.834221, 0.03, 17.83422)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Y2" type="StaticBody3D" parent="SmallRight" unique_id=923879830 instance=ExtResource("1_2vl7b")]
+transform = Transform3D(0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, 0.70710677, 10.95554, 0.03, 19.955542)
+metadata/road_module = true
+metadata/road_id = "Road11_Y_Splitter_45_Custom"
+metadata/variant = "Default"
+metadata/source_pack = "custom"
+
+[node name="Corner1" type="StaticBody3D" parent="SmallRight" unique_id=1782222787 instance=ExtResource("3_exddx")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 29.812977, 0.03, 26.319504)
+metadata/road_module = true
+metadata/road_id = "Road10_90angle_Corner"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="@StaticBody3D@2" type="StaticBody3D" parent="SmallRight" unique_id=869294599 instance=ExtResource("2_plf0b")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 29.812977, 0.03, 14.319504)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Y3" type="StaticBody3D" parent="SmallRight" unique_id=769678418 instance=ExtResource("1_2vl7b")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 29.812977, 0.03, 11.319504)
+metadata/road_module = true
+metadata/road_id = "Road11_Y_Splitter_45_Custom"
+metadata/variant = "Default"
+metadata/source_pack = "custom"
+
+[node name="@StaticBody3D@3" type="StaticBody3D" parent="SmallRight" unique_id=25095222 instance=ExtResource("2_plf0b")]
+transform = Transform3D(-0.70710677, 0, -0.70710677, 0, 1, 0, 0.70710677, 0, -0.70710677, 20.978756, 0.03, -6.514717)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Y4" type="StaticBody3D" parent="SmallRight" unique_id=473978366 instance=ExtResource("1_2vl7b")]
+transform = Transform3D(-0.7071068, 0, -0.7071067, 0, 1, 0, 0.7071067, 0, -0.7071068, 18.857437, 0.03, -8.636038)
+metadata/road_module = true
+metadata/road_id = "Road11_Y_Splitter_45_Custom"
+metadata/variant = "Default"
+metadata/source_pack = "custom"
+
+[node name="Corner2" type="StaticBody3D" parent="SmallRight" unique_id=2099146831 instance=ExtResource("3_exddx")]
+transform = Transform3D(1.1924881e-08, 0, -1, 0, 1, 0, 1, 0, 1.1924881e-08, 9.536743e-07, 0.03, -14.999999)
+metadata/road_module = true
+metadata/road_id = "Road10_90angle_Corner"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="@StaticBody3D@4" type="StaticBody3D" parent="SmallRight" unique_id=348541014 instance=ExtResource("2_plf0b")]
+transform = Transform3D(1, 0, -1.8369701e-16, 0, 1, 0, 1.8369701e-16, 0, 1, 9.536743e-07, 0.03, -2.999999)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="SmallLeft" type="Node3D" parent="." unique_id=1513738059]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 90, 0, 0)
+
+[node name="Y1" type="StaticBody3D" parent="SmallLeft" unique_id=469792771 instance=ExtResource("1_2vl7b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.03, 0)
+metadata/road_module = true
+metadata/road_id = "Road11_Y_Splitter_45_Custom"
+metadata/variant = "Default"
+metadata/source_pack = "custom"
+
+[node name="Road1_0" type="StaticBody3D" parent="SmallLeft" unique_id=396866950 instance=ExtResource("2_plf0b")]
+transform = Transform3D(0.70710677, 0, -0.70710677, 0, 1, 0, 0.70710677, 0, 0.70710677, -8.834221, 0.03, 17.83422)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Y2" type="StaticBody3D" parent="SmallLeft" unique_id=460123140 instance=ExtResource("1_2vl7b")]
+transform = Transform3D(0.70710665, 0, -0.7071069, 0, 1, 0, 0.7071069, 0, 0.70710665, -10.95554, 0.03, 19.955542)
+metadata/road_module = true
+metadata/road_id = "Road11_Y_Splitter_45_Custom"
+metadata/variant = "Default"
+metadata/source_pack = "custom"
+
+[node name="Corner1" type="StaticBody3D" parent="SmallLeft" unique_id=898525656 instance=ExtResource("3_exddx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -29.812977, 0.03, 26.319504)
+metadata/road_module = true
+metadata/road_id = "Road10_90angle_Corner"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="@StaticBody3D@5" type="StaticBody3D" parent="SmallLeft" unique_id=1262829730 instance=ExtResource("2_plf0b")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -29.812977, 0.03, 14.319504)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Y3" type="StaticBody3D" parent="SmallLeft" unique_id=1338401898 instance=ExtResource("1_2vl7b")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -29.812977, 0.03, 11.319504)
+metadata/road_module = true
+metadata/road_id = "Road11_Y_Splitter_45_Custom"
+metadata/variant = "Default"
+metadata/source_pack = "custom"
+
+[node name="@StaticBody3D@6" type="StaticBody3D" parent="SmallLeft" unique_id=1413432773 instance=ExtResource("2_plf0b")]
+transform = Transform3D(-0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, -0.70710677, -20.978756, 0.03, -6.514717)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Y4" type="StaticBody3D" parent="SmallLeft" unique_id=499061748 instance=ExtResource("1_2vl7b")]
+transform = Transform3D(-0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, -0.70710677, -18.857437, 0.03, -8.636038)
+metadata/road_module = true
+metadata/road_id = "Road11_Y_Splitter_45_Custom"
+metadata/variant = "Default"
+metadata/source_pack = "custom"
+
+[node name="Corner2" type="StaticBody3D" parent="SmallLeft" unique_id=290108854 instance=ExtResource("3_exddx")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -9.536743e-07, 0.03, -14.999999)
+metadata/road_module = true
+metadata/road_id = "Road10_90angle_Corner"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="@StaticBody3D@7" type="StaticBody3D" parent="SmallLeft" unique_id=1423773379 instance=ExtResource("2_plf0b")]
+transform = Transform3D(1, 0, -1.2246469e-16, 0, 1, 0, 1.2246469e-16, 0, 1, -9.536743e-07, 0.03, -2.999999)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="LargeLeft" type="Node3D" parent="." unique_id=288108234]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -180, 0, 0)
+
+[node name="Y1" type="StaticBody3D" parent="LargeLeft" unique_id=389976274 instance=ExtResource("4_o2nbr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.03, 0)
+metadata/road_module = true
+metadata/road_id = "Road12_Diagonal_Splitter_L_Custom"
+metadata/variant = "Default"
+metadata/source_pack = "custom"
+
+[node name="Road1_0" type="StaticBody3D" parent="LargeLeft" unique_id=1810952883 instance=ExtResource("2_plf0b")]
+transform = Transform3D(0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, 0.70710677, 14.501913, 0.03, 14.468649)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Road1_1" type="StaticBody3D" parent="LargeLeft" unique_id=1477778714 instance=ExtResource("2_plf0b")]
+transform = Transform3D(0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, 0.70710677, 22.987194, 0.03, 22.95393)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Road1_2" type="StaticBody3D" parent="LargeLeft" unique_id=1425634429 instance=ExtResource("2_plf0b")]
+transform = Transform3D(0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, 0.70710677, 31.472475, 0.03, 31.43921)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Y2" type="StaticBody3D" parent="LargeLeft" unique_id=1007342798 instance=ExtResource("4_o2nbr")]
+transform = Transform3D(0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, 0.70710677, 39.957756, 0.03, 39.92449)
+metadata/road_module = true
+metadata/road_id = "Road12_Diagonal_Splitter_L_Custom"
+metadata/variant = "Default"
+metadata/source_pack = "custom"
+
+[node name="Corner1" type="StaticBody3D" parent="LargeLeft" unique_id=280027411 instance=ExtResource("3_exddx")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 60.44304, 0.03, 39.90097)
+metadata/road_module = true
+metadata/road_id = "Road10_90angle_Corner"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="@StaticBody3D@8" type="StaticBody3D" parent="LargeLeft" unique_id=512888137 instance=ExtResource("2_plf0b")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 60.44304, 0.03, 27.90097)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="@StaticBody3D@9" type="StaticBody3D" parent="LargeLeft" unique_id=1043323031 instance=ExtResource("2_plf0b")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 60.44304, 0.03, 15.90097)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="@StaticBody3D@10" type="StaticBody3D" parent="LargeLeft" unique_id=964262100 instance=ExtResource("2_plf0b")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 60.44304, 0.03, 3.9009705)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Y3" type="StaticBody3D" parent="LargeLeft" unique_id=151056162 instance=ExtResource("4_o2nbr")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 60.44304, 0.03, -8.09903)
+metadata/road_module = true
+metadata/road_id = "Road12_Diagonal_Splitter_L_Custom"
+metadata/variant = "Default"
+metadata/source_pack = "custom"
+
+[node name="@StaticBody3D@11" type="StaticBody3D" parent="LargeLeft" unique_id=127936356 instance=ExtResource("2_plf0b")]
+transform = Transform3D(-0.70710677, 0, -0.70710677, 0, 1, 0, 0.70710677, 0, -0.70710677, 45.941124, 0.03, -22.56768)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="@StaticBody3D@12" type="StaticBody3D" parent="LargeLeft" unique_id=1312205590 instance=ExtResource("2_plf0b")]
+transform = Transform3D(-0.70710677, 0, -0.70710677, 0, 1, 0, 0.70710677, 0, -0.70710677, 37.455845, 0.03, -31.052961)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="@StaticBody3D@13" type="StaticBody3D" parent="LargeLeft" unique_id=84678275 instance=ExtResource("2_plf0b")]
+transform = Transform3D(-0.70710677, 0, -0.70710677, 0, 1, 0, 0.70710677, 0, -0.70710677, 28.970562, 0.03, -39.538242)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Y4" type="StaticBody3D" parent="LargeLeft" unique_id=1148908145 instance=ExtResource("4_o2nbr")]
+transform = Transform3D(-0.7071068, 0, -0.7071067, 0, 1, 0, 0.7071067, 0, -0.7071068, 20.485283, 0.03, -48.023525)
+metadata/road_module = true
+metadata/road_id = "Road12_Diagonal_Splitter_L_Custom"
+metadata/variant = "Default"
+metadata/source_pack = "custom"
+
+[node name="Corner2" type="StaticBody3D" parent="LargeLeft" unique_id=1336413923 instance=ExtResource("3_exddx")]
+transform = Transform3D(1.1924881e-08, 0, -1, 0, 1, 0, 1, 0, 1.1924881e-08, 1.9073486e-06, 0.03, -48.000004)
+metadata/road_module = true
+metadata/road_id = "Road10_90angle_Corner"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="@StaticBody3D@14" type="StaticBody3D" parent="LargeLeft" unique_id=2061406324 instance=ExtResource("2_plf0b")]
+transform = Transform3D(1, 0, -1.8369701e-16, 0, 1, 0, 1.8369701e-16, 0, 1, 1.9073486e-06, 0.03, -36.000004)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="@StaticBody3D@15" type="StaticBody3D" parent="LargeLeft" unique_id=2147230791 instance=ExtResource("2_plf0b")]
+transform = Transform3D(1, 0, -1.8369701e-16, 0, 1, 0, 1.8369701e-16, 0, 1, 1.9073486e-06, 0.03, -24.000004)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="@StaticBody3D@16" type="StaticBody3D" parent="LargeLeft" unique_id=523705292 instance=ExtResource("2_plf0b")]
+transform = Transform3D(1, 0, -1.8369701e-16, 0, 1, 0, 1.8369701e-16, 0, 1, 1.9073486e-06, 0.03, -12.000004)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="LargeRight" type="Node3D" parent="." unique_id=1221160500]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 180, 0, 0)
+
+[node name="Y1" type="StaticBody3D" parent="LargeRight" unique_id=1788143117 instance=ExtResource("5_ic6rm")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.03, 0)
+metadata/road_module = true
+metadata/road_id = "Road12_Diagonal_Splitter_R_Custom"
+metadata/variant = "Default"
+metadata/source_pack = "custom"
+
+[node name="Road1_0" type="StaticBody3D" parent="LargeRight" unique_id=1725792602 instance=ExtResource("2_plf0b")]
+transform = Transform3D(0.70710677, 0, -0.70710677, 0, 1, 0, 0.70710677, 0, 0.70710677, -14.501913, 0.03, 14.468649)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Road1_1" type="StaticBody3D" parent="LargeRight" unique_id=1916950838 instance=ExtResource("2_plf0b")]
+transform = Transform3D(0.70710677, 0, -0.70710677, 0, 1, 0, 0.70710677, 0, 0.70710677, -22.987194, 0.03, 22.95393)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Road1_2" type="StaticBody3D" parent="LargeRight" unique_id=1935281066 instance=ExtResource("2_plf0b")]
+transform = Transform3D(0.70710677, 0, -0.70710677, 0, 1, 0, 0.70710677, 0, 0.70710677, -31.472475, 0.03, 31.43921)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Y2" type="StaticBody3D" parent="LargeRight" unique_id=479985648 instance=ExtResource("5_ic6rm")]
+transform = Transform3D(0.70710665, 0, -0.7071069, 0, 1, 0, 0.7071069, 0, 0.70710665, -39.957756, 0.03, 39.92449)
+metadata/road_module = true
+metadata/road_id = "Road12_Diagonal_Splitter_R_Custom"
+metadata/variant = "Default"
+metadata/source_pack = "custom"
+
+[node name="Corner1" type="StaticBody3D" parent="LargeRight" unique_id=1513730736 instance=ExtResource("3_exddx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -60.44304, 0.03, 39.90097)
+metadata/road_module = true
+metadata/road_id = "Road10_90angle_Corner"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="@StaticBody3D@17" type="StaticBody3D" parent="LargeRight" unique_id=2096941034 instance=ExtResource("2_plf0b")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -60.44304, 0.03, 27.90097)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="@StaticBody3D@18" type="StaticBody3D" parent="LargeRight" unique_id=184870660 instance=ExtResource("2_plf0b")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -60.44304, 0.03, 15.90097)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="@StaticBody3D@19" type="StaticBody3D" parent="LargeRight" unique_id=230845991 instance=ExtResource("2_plf0b")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -60.44304, 0.03, 3.9009705)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Y3" type="StaticBody3D" parent="LargeRight" unique_id=317169671 instance=ExtResource("5_ic6rm")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -60.44304, 0.03, -8.09903)
+metadata/road_module = true
+metadata/road_id = "Road12_Diagonal_Splitter_R_Custom"
+metadata/variant = "Default"
+metadata/source_pack = "custom"
+
+[node name="@StaticBody3D@20" type="StaticBody3D" parent="LargeRight" unique_id=1976859090 instance=ExtResource("2_plf0b")]
+transform = Transform3D(-0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, -0.70710677, -45.941124, 0.03, -22.56768)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="@StaticBody3D@21" type="StaticBody3D" parent="LargeRight" unique_id=279049617 instance=ExtResource("2_plf0b")]
+transform = Transform3D(-0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, -0.70710677, -37.455845, 0.03, -31.052961)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="@StaticBody3D@22" type="StaticBody3D" parent="LargeRight" unique_id=887654785 instance=ExtResource("2_plf0b")]
+transform = Transform3D(-0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, -0.70710677, -28.970562, 0.03, -39.538242)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Y4" type="StaticBody3D" parent="LargeRight" unique_id=888293310 instance=ExtResource("5_ic6rm")]
+transform = Transform3D(-0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, -0.70710677, -20.485283, 0.03, -48.023525)
+metadata/road_module = true
+metadata/road_id = "Road12_Diagonal_Splitter_R_Custom"
+metadata/variant = "Default"
+metadata/source_pack = "custom"
+
+[node name="Corner2" type="StaticBody3D" parent="LargeRight" unique_id=507593969 instance=ExtResource("3_exddx")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -1.9073486e-06, 0.03, -48.000004)
+metadata/road_module = true
+metadata/road_id = "Road10_90angle_Corner"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="@StaticBody3D@23" type="StaticBody3D" parent="LargeRight" unique_id=632709485 instance=ExtResource("2_plf0b")]
+transform = Transform3D(1, 0, -1.2246469e-16, 0, 1, 0, 1.2246469e-16, 0, 1, -1.9073486e-06, 0.03, -36.000004)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="@StaticBody3D@24" type="StaticBody3D" parent="LargeRight" unique_id=44184797 instance=ExtResource("2_plf0b")]
+transform = Transform3D(1, 0, -1.2246469e-16, 0, 1, 0, 1.2246469e-16, 0, 1, -1.9073486e-06, 0.03, -24.000004)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="@StaticBody3D@25" type="StaticBody3D" parent="LargeRight" unique_id=308668345 instance=ExtResource("2_plf0b")]
+transform = Transform3D(1, 0, -1.2246469e-16, 0, 1, 0, 1.2246469e-16, 0, 1, -1.9073486e-06, 0.03, -12.000004)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="PreviewEnvironment" type="WorldEnvironment" parent="." unique_id=1476171802]
+environment = SubResource("Environment_7nb7p")
+
+[node name="PreviewCamera" type="Camera3D" parent="." unique_id=968043095]
+transform = Transform3D(1, 0, 0, 0, 0.24253564, 0.97014254, 0, -0.97014254, 0.24253564, 0, 360, 90)
+projection = 1
+current = true
+size = 470.0
+
+[node name="PreviewSun" type="DirectionalLight3D" parent="." unique_id=1283277071]
+transform = Transform3D(0.90630776, 0.34618863, -0.24240388, 0, 0.57357645, 0.81915206, 0.42261827, -0.74240386, 0.5198368, 0, 0, 0)
+light_energy = 1.15

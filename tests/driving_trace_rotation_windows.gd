@@ -1,7 +1,7 @@
 ## Windows 視窗驗證入口：只在本次測試將 recorder 單段設小，正式 F6 配置不變。
 extends SceneTree
 
-const PLAYTEST := "res://src/world/training_ground/training_ground_playtest.tscn"
+const PLAYTEST := "res://src/maps/training_ground/training_ground_playtest.tscn"
 const Recorder := preload("res://src/debug/driving_trace_recorder.gd")
 const TEST_LIMIT := 262144
 

@@ -1,0 +1,32 @@
+{
+  "models": [
+    {
+      "id": "Road5_Shoulder2",
+      "pack": "parking",
+      "path": "res://src/world/roads/generated/converted/parking/Road5_Shoulder2.glb",
+      "materials": [
+        {
+          "name": "Road5_Shoulder2",
+          "image_name": "Road5_Shoulder2_B"
+        }
+      ]
+    },
+    {
+      "id": "SignCircle",
+      "pack": "signs",
+      "path": "res://src/world/roads/generated/converted/signs/SignCircle.glb",
+      "materials": []
+    },
+    {
+      "id": "Racetrack1_YellowBlue_Curbs_Curve_45_Long_Right",
+      "pack": "racetrack",
+      "path": "res://src/world/roads/generated/converted/racetrack/Racetrack1_YellowBlue_Curbs_Curve_45_Long_Right.glb",
+      "materials": [
+        {
+          "name": "roads_material",
+          "image_name": ""
+        }
+      ]
+    }
+  ]
+}

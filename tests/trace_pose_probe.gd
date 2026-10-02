@@ -3,7 +3,7 @@
 extends SceneTree
 
 const Predictor := preload("res://src/ai/tank_driving_predictor.gd")
-const PLAYTEST := preload("res://src/world/training_ground/training_ground_playtest.tscn")
+const PLAYTEST := preload("res://src/maps/training_ground/training_ground_playtest.tscn")
 const DT := 1.0 / 60.0
 
 const CASES := [
@@ -50,7 +50,7 @@ func _probe_case(data: Dictionary) -> void:
 	root.add_child(scene)
 	await physics_frame
 	var enemy := scene.get_node_or_null("Encounter/Enemy") as CharacterBody3D
-	var player := scene.get_node_or_null("Main/Tank") as CharacterBody3D
+	var player := scene.get_node_or_null("Main/PlayerSpawnGroup/Tank") as CharacterBody3D
 	if enemy == null or player == null:
 		_fail("%s: expected Encounter/Enemy and Main/Tank." % data.label)
 		scene.queue_free()

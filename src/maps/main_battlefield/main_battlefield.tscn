@@ -1,0 +1,2136 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://src/world/roads/items/base/Road2_T/Road2_X_B__Road2_X_A.tscn" id="1_vpaa6"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/base/Road10_90angle_Corner/Road1_B__Road1_A.tscn" id="2_7jq4q"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/custom/Road12_Diagonal_Splitter_R_Custom/Default.tscn" id="3_41a4l"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/base/Road1/Road1_B__Road1_A.tscn" id="4_st1a5"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/base/Road1_Curve1/Road1_B__Road1_A.tscn" id="5_cont5"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/base/Road2_X/Road2_X_B__Road2_X_A.tscn" id="6_3tqsm"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/custom/Road11_Y_Splitter_45_Custom/Default.tscn" id="7_mqql6"]
+[ext_resource type="PackedScene" path="res://src/world/roads/items/custom/Road12_Diagonal_Splitter_L_Custom/Default.tscn" id="8_o34lk"]
+[ext_resource type="PackedScene" path="res://src/world/roads/generated/fit/road1_6_03326.tscn" id="9_xe4od"]
+[ext_resource type="PackedScene" path="res://src/world/roads/generated/fit/road1_9_48145.tscn" id="10_hnbb5"]
+[ext_resource type="PackedScene" path="res://src/world/roads/generated/fit/road1_6_00000.tscn" id="11_f6ppi"]
+[ext_resource type="PackedScene" path="res://src/world/roads/generated/fit/road1_9_43233.tscn" id="12_ca43t"]
+[ext_resource type="PackedScene" path="res://src/world/roads/generated/fit/road1_9_85786.tscn" id="13_dlm8o"]
+[ext_resource type="PackedScene" path="res://src/world/roads/generated/fit/road1_3_92000.tscn" id="14_nqrmu"]
+[ext_resource type="PackedScene" path="res://src/world/roads/generated/fit/road1_1_43472.tscn" id="15_b7pwo"]
+[ext_resource type="PackedScene" path="res://src/world/roads/generated/fit/road1_2_25527.tscn" id="16_l2hta"]
+[ext_resource type="PackedScene" path="res://src/world/roads/generated/fit/road1_1_50653.tscn" id="17_eeapr"]
+[ext_resource type="PackedScene" path="res://src/world/roads/generated/fit/road1_10_00000.tscn" id="18_131lt"]
+[ext_resource type="PackedScene" path="res://src/world/roads/generated/fit/road1_2_00000.tscn" id="19_05alk"]
+[ext_resource type="PackedScene" path="res://src/world/roads/generated/fit/road1_3_42652.tscn" id="20_efu1n"]
+[ext_resource type="PackedScene" path="res://src/world/roads/generated/fit/road1_3_49120.tscn" id="21_1vc0p"]
+[ext_resource type="PackedScene" path="res://src/world/roads/generated/fit/road1_9_48092.tscn" id="22_sncri"]
+[ext_resource type="PackedScene" path="res://src/world/roads/generated/fit/road1_0_92911.tscn" id="23_dk3rx"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/materials/default/4Story_Wide_2Doors_Mat.tscn" id="24_8k4uf"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/materials/default/4Story_Wide_2Doors_Roof_Mat.tscn" id="25_efvkq"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/materials/default/2Story_Wide_Mat.tscn" id="26_jeghc"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/materials/default/4Story_Mat.tscn" id="27_s3nex"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/materials/default/4Story_Center_Mat.tscn" id="28_056ws"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/materials/default/3Story_Slim_Mat.tscn" id="29_nbuyt"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/materials/default/2Story_Wide_2Doors_Mat.tscn" id="30_7kpyp"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/materials/default/2Story_2_Mat.tscn" id="31_wjcfb"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/materials/default/2Story_Balcony_Mat.tscn" id="32_h3xxb"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/materials/default/2Story_Center_Mat.tscn" id="33_b0i5f"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/materials/default/2Story_Columns_Mat.tscn" id="34_70w15"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/materials/default/2Story_Double_Mat.tscn" id="35_eqm77"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/materials/default/2Story_Sidehouse_Mat.tscn" id="36_hs1uw"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/materials/default/2Story_Slim_Mat.tscn" id="37_amsn6"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/materials/default/3Story_Balcony_Mat.tscn" id="38_pt7l8"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/materials/default/3Story_Small_Mat.tscn" id="39_tr4d8"]
+[ext_resource type="PackedScene" path="res://src/world/buildings/quaternius/items/materials/default/6Story_Stack_Mat.tscn" id="40_avexc"]
+[ext_resource type="Shader" path="res://assets/BinbunSkies/shader/main.gdshader" id="41_d2as3"]
+[ext_resource type="Texture2D" path="res://assets/BinbunSkies/textures/clouds/clouds_01.tres" id="42_i7060"]
+[ext_resource type="Texture2D" path="res://assets/BinbunSkies/textures/clouds/clouds_02.tres" id="43_mwgf4"]
+
+[sub_resource type="StandardMaterial3D" id="GroundMaterial"]
+albedo_color = Color(0.42, 0.26, 0.12, 1)
+roughness = 0.92
+
+[sub_resource type="BoxMesh" id="GroundMesh"]
+material = SubResource("GroundMaterial")
+size = Vector3(1920, 0.2, 1920)
+
+[sub_resource type="BoxShape3D" id="GroundCollisionShape"]
+size = Vector3(1920, 0.2, 1920)
+
+[sub_resource type="ShaderMaterial" id="SkyShaderMaterial"]
+shader = ExtResource("41_d2as3")
+shader_parameter/sky_day = Color(0, 0.3, 0.7, 1)
+shader_parameter/horizon_day = Color(0.75, 0.85, 0.85, 1)
+shader_parameter/horizon_sunset = Color(0.95, 0.42, 0.22, 1)
+shader_parameter/sky_sunset = Color(0.16, 0.12, 0.3, 1)
+shader_parameter/horizon_night = Color(0.1, 0.15, 0.2, 1)
+shader_parameter/sky_night = Color(0.05, 0.1, 0.15, 1)
+shader_parameter/day_night_mix = 0.8
+shader_parameter/use_directional_light = true
+shader_parameter/horizon_exponent = 2.0
+shader_parameter/sunset_amount_exponent = 0.7
+shader_parameter/night_amount_exponent = 4.0
+shader_parameter/cloud_tex_01 = ExtResource("42_i7060")
+shader_parameter/cloud_tex_02 = ExtResource("43_mwgf4")
+shader_parameter/cloud_color = Color(0.48, 0.36, 0.46, 1)
+shader_parameter/cloud_tiling = Vector2(1, 1)
+shader_parameter/wind_speed = Vector2(0.5, 0.5)
+shader_parameter/cloud_density = 0.85
+shader_parameter/cloud_depth = 2.0
+shader_parameter/cloud_shape_exponent = 2.0
+shader_parameter/cloud_occlude_exponent = 1.0
+shader_parameter/sun_scale = 0.05
+shader_parameter/sun_strength = 4.0
+shader_parameter/sun_color = Color(1, 0.66, 0.38, 1)
+shader_parameter/moon_scale = 0.03
+shader_parameter/moon_strength = 15.0
+shader_parameter/moon_color = Color(0.5, 0.55, 0.7, 1)
+
+[sub_resource type="Sky" id="SceneSky"]
+sky_material = SubResource("SkyShaderMaterial")
+
+[sub_resource type="Environment" id="SceneEnvironment"]
+background_mode = 2
+background_color = Color(0.24, 0.4, 0.56, 1)
+sky = SubResource("SceneSky")
+ambient_light_source = 2
+ambient_light_color = Color(0.38, 0.36, 0.5, 1)
+ambient_light_energy = 0.8
+reflected_light_source = 2
+tonemap_mode = 2
+
+[node name="World" type="Node3D" unique_id=737820505]
+
+[node name="Ground" type="StaticBody3D" parent="." unique_id=1175506458]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
+collision_layer = 128
+collision_mask = 0
+
+[node name="Visual" type="MeshInstance3D" parent="Ground" unique_id=1759327700]
+mesh = SubResource("GroundMesh")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ground" unique_id=1635041540]
+shape = SubResource("GroundCollisionShape")
+
+[node name="Roads" type="Node3D" parent="." unique_id=1922168979]
+
+[node name="Junctions" type="Node3D" parent="Roads" unique_id=1154543801]
+
+[node name="UL0__T" type="StaticBody3D" parent="Roads/Junctions" unique_id=1597640300 instance=ExtResource("1_vpaa6")]
+transform = Transform3D(1.1924881e-08, 0, -1, 0, 1, 0, 1, 0, 1.1924881e-08, -132, 0.0075, -72)
+metadata/road_module = true
+metadata/road_id = "Road2_T"
+metadata/variant = "Road2_X_B__Road2_X_A"
+metadata/source_pack = "base"
+
+[node name="UL1__Corner90" type="StaticBody3D" parent="Roads/Junctions" unique_id=575318242 instance=ExtResource("2_7jq4q")]
+transform = Transform3D(1.1924881e-08, 0, -1, 0, 1, 0, 1, 0, 1.1924881e-08, -132, 0.0075, -132)
+metadata/road_module = true
+metadata/road_id = "Road10_90angle_Corner"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="UL4__Corner90" type="StaticBody3D" parent="Roads/Junctions" unique_id=495361995 instance=ExtResource("2_7jq4q")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -84, 0.0075, -132)
+metadata/road_module = true
+metadata/road_id = "Road10_90angle_Corner"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="G0__T" type="StaticBody3D" parent="Roads/Junctions" unique_id=106155405 instance=ExtResource("1_vpaa6")]
+transform = Transform3D(1.1924881e-08, 0, -1, 0, 1, 0, 1, 0, 1.1924881e-08, -84, 0.0075, -96)
+metadata/road_module = true
+metadata/road_id = "Road2_T"
+metadata/variant = "Road2_X_B__Road2_X_A"
+metadata/source_pack = "base"
+
+[node name="G1__T" type="StaticBody3D" parent="Roads/Junctions" unique_id=1705391364 instance=ExtResource("1_vpaa6")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -48, 0.0075, -96)
+metadata/road_module = true
+metadata/road_id = "Road2_T"
+metadata/variant = "Road2_X_B__Road2_X_A"
+metadata/source_pack = "base"
+
+[node name="G2__T" type="StaticBody3D" parent="Roads/Junctions" unique_id=535743040 instance=ExtResource("1_vpaa6")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0.0075, -96)
+metadata/road_module = true
+metadata/road_id = "Road2_T"
+metadata/variant = "Road2_X_B__Road2_X_A"
+metadata/source_pack = "base"
+
+[node name="G3__SplitR" type="StaticBody3D" parent="Roads/Junctions" unique_id=541919164 instance=ExtResource("3_41a4l")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 30.033264, 0.0075, -96)
+metadata/road_module = true
+metadata/road_id = "Road12_Diagonal_Splitter_R_Custom"
+metadata/variant = "Default"
+metadata/source_pack = "custom"
+
+[node name="G4__Corner90" type="StaticBody3D" parent="Roads/Junctions" unique_id=1012124389 instance=ExtResource("2_7jq4q")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 84, 0.0075, -96)
+metadata/road_module = true
+metadata/road_id = "Road10_90angle_Corner"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="R0__T" type="StaticBody3D" parent="Roads/Junctions" unique_id=1839344198 instance=ExtResource("1_vpaa6")]
+transform = Transform3D(1.1924881e-08, 0, -1, 0, 1, 0, 1, 0, 1.1924881e-08, 84, 0.0075, -48)
+metadata/road_module = true
+metadata/road_id = "Road2_T"
+metadata/variant = "Road2_X_B__Road2_X_A"
+metadata/source_pack = "base"
+
+[node name="R1__Corner90" type="StaticBody3D" parent="Roads/Junctions" unique_id=1072450687 instance=ExtResource("2_7jq4q")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 111.92, 0.0075, -48)
+metadata/road_module = true
+metadata/road_id = "Road10_90angle_Corner"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="R2__Road1" type="StaticBody3D" parent="Roads/Junctions" unique_id=475285379 instance=ExtResource("4_st1a5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 111.92, 0.0075, 0)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="RI__T" type="StaticBody3D" parent="Roads/Junctions" unique_id=301856417 instance=ExtResource("1_vpaa6")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 84, 0.0075, -24)
+metadata/road_module = true
+metadata/road_id = "Road2_T"
+metadata/variant = "Road2_X_B__Road2_X_A"
+metadata/source_pack = "base"
+
+[node name="RM__T" type="StaticBody3D" parent="Roads/Junctions" unique_id=452371090 instance=ExtResource("1_vpaa6")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 84, 0.0075, 0)
+metadata/road_module = true
+metadata/road_id = "Road2_T"
+metadata/variant = "Road2_X_B__Road2_X_A"
+metadata/source_pack = "base"
+
+[node name="D0__Curve45" type="StaticBody3D" parent="Roads/Junctions" unique_id=209811345 instance=ExtResource("5_cont5")]
+transform = Transform3D(0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, 0.70710677, 59.656857, 0.0075, -66.34315)
+metadata/road_module = true
+metadata/road_id = "Road1_Curve1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="D1__T" type="StaticBody3D" parent="Roads/Junctions" unique_id=1337336267 instance=ExtResource("1_vpaa6")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 84, 0.0075, -66)
+metadata/road_module = true
+metadata/road_id = "Road2_T"
+metadata/variant = "Road2_X_B__Road2_X_A"
+metadata/source_pack = "base"
+
+[node name="H0__Cross" type="StaticBody3D" parent="Roads/Junctions" unique_id=1668225854 instance=ExtResource("6_3tqsm")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -84, 0.0075, -72)
+metadata/road_module = true
+metadata/road_id = "Road2_X"
+metadata/variant = "Road2_X_B__Road2_X_A"
+metadata/source_pack = "base"
+
+[node name="H1__T" type="StaticBody3D" parent="Roads/Junctions" unique_id=928916197 instance=ExtResource("1_vpaa6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -48, 0.0075, -72)
+metadata/road_module = true
+metadata/road_id = "Road2_T"
+metadata/variant = "Road2_X_B__Road2_X_A"
+metadata/source_pack = "base"
+
+[node name="H2__T" type="StaticBody3D" parent="Roads/Junctions" unique_id=2143986927 instance=ExtResource("1_vpaa6")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0.0075, -72)
+metadata/road_module = true
+metadata/road_id = "Road2_T"
+metadata/variant = "Road2_X_B__Road2_X_A"
+metadata/source_pack = "base"
+
+[node name="L0__Curve45" type="StaticBody3D" parent="Roads/Junctions" unique_id=178733708 instance=ExtResource("5_cont5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -132, 0.0075, -58.56528)
+metadata/road_module = true
+metadata/road_id = "Road1_Curve1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="L1__Y" type="StaticBody3D" parent="Roads/Junctions" unique_id=1654879230 instance=ExtResource("7_mqql6")]
+transform = Transform3D(0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, 0.70710677, -118.28396, 0.0075, -44.36396)
+metadata/road_module = true
+metadata/road_id = "Road11_Y_Splitter_45_Custom"
+metadata/variant = "Default"
+metadata/source_pack = "custom"
+
+[node name="LJoin__T" type="StaticBody3D" parent="Roads/Junctions" unique_id=646364800 instance=ExtResource("1_vpaa6")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -84, 0.0075, -38)
+metadata/road_module = true
+metadata/road_id = "Road2_T"
+metadata/variant = "Road2_X_B__Road2_X_A"
+metadata/source_pack = "base"
+
+[node name="L2__Road1" type="StaticBody3D" parent="Roads/Junctions" unique_id=2129310910 instance=ExtResource("4_st1a5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -111.92, 0.0075, 0)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="LI__T" type="StaticBody3D" parent="Roads/Junctions" unique_id=1878458865 instance=ExtResource("1_vpaa6")]
+transform = Transform3D(1.1924881e-08, 0, -1, 0, 1, 0, 1, 0, 1.1924881e-08, -84, 0.0075, -24)
+metadata/road_module = true
+metadata/road_id = "Road2_T"
+metadata/variant = "Road2_X_B__Road2_X_A"
+metadata/source_pack = "base"
+
+[node name="LM__T" type="StaticBody3D" parent="Roads/Junctions" unique_id=1660035819 instance=ExtResource("1_vpaa6")]
+transform = Transform3D(1.1924881e-08, 0, -1, 0, 1, 0, 1, 0, 1.1924881e-08, -84, 0.0075, 0)
+metadata/road_module = true
+metadata/road_id = "Road2_T"
+metadata/variant = "Road2_X_B__Road2_X_A"
+metadata/source_pack = "base"
+
+[node name="N__Y" type="StaticBody3D" parent="Roads/Junctions" unique_id=2051287943 instance=ExtResource("7_mqql6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0075, -57)
+metadata/road_module = true
+metadata/road_id = "Road11_Y_Splitter_45_Custom"
+metadata/variant = "Default"
+metadata/source_pack = "custom"
+
+[node name="NW__SplitR" type="StaticBody3D" parent="Roads/Junctions" unique_id=1518645054 instance=ExtResource("3_41a4l")]
+transform = Transform3D(0.70710665, 0, -0.7071069, 0, 1, 0, 0.7071069, 0, 0.70710665, -24.023521, 0.0075, -23.976479)
+metadata/road_module = true
+metadata/road_id = "Road12_Diagonal_Splitter_R_Custom"
+metadata/variant = "Default"
+metadata/source_pack = "custom"
+
+[node name="NE__SplitL" type="StaticBody3D" parent="Roads/Junctions" unique_id=1640956827 instance=ExtResource("8_o34lk")]
+transform = Transform3D(0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, 0.70710677, 24.023521, 0.0075, -23.976479)
+metadata/road_module = true
+metadata/road_id = "Road12_Diagonal_Splitter_L_Custom"
+metadata/variant = "Default"
+metadata/source_pack = "custom"
+
+[node name="W__Y" type="StaticBody3D" parent="Roads/Junctions" unique_id=1255395020 instance=ExtResource("7_mqql6")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -57, 0.0075, 3.934025e-07)
+metadata/road_module = true
+metadata/road_id = "Road11_Y_Splitter_45_Custom"
+metadata/variant = "Default"
+metadata/source_pack = "custom"
+
+[node name="E__Y" type="StaticBody3D" parent="Roads/Junctions" unique_id=2134988708 instance=ExtResource("7_mqql6")]
+transform = Transform3D(1.1924881e-08, 0, -1, 0, 1, 0, 1, 0, 1.1924881e-08, 57, 0.0075, -1.0732393e-07)
+metadata/road_module = true
+metadata/road_id = "Road11_Y_Splitter_45_Custom"
+metadata/variant = "Default"
+metadata/source_pack = "custom"
+
+[node name="Mirror_UL0__T" type="StaticBody3D" parent="Roads/Junctions" unique_id=2133335060 instance=ExtResource("1_vpaa6")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 132, 0.0075, 72)
+metadata/road_module = true
+metadata/road_id = "Road2_T"
+metadata/variant = "Road2_X_B__Road2_X_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_UL1__Corner90" type="StaticBody3D" parent="Roads/Junctions" unique_id=1914767351 instance=ExtResource("2_7jq4q")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 132, 0.0075, 132)
+metadata/road_module = true
+metadata/road_id = "Road10_90angle_Corner"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_UL4__Corner90" type="StaticBody3D" parent="Roads/Junctions" unique_id=356949369 instance=ExtResource("2_7jq4q")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 84, 0.0075, 132)
+metadata/road_module = true
+metadata/road_id = "Road10_90angle_Corner"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_G0__T" type="StaticBody3D" parent="Roads/Junctions" unique_id=527236857 instance=ExtResource("1_vpaa6")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 84, 0.0075, 96)
+metadata/road_module = true
+metadata/road_id = "Road2_T"
+metadata/variant = "Road2_X_B__Road2_X_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_G1__T" type="StaticBody3D" parent="Roads/Junctions" unique_id=1520274656 instance=ExtResource("1_vpaa6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 48, 0.0075, 96)
+metadata/road_module = true
+metadata/road_id = "Road2_T"
+metadata/variant = "Road2_X_B__Road2_X_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_G2__T" type="StaticBody3D" parent="Roads/Junctions" unique_id=425925267 instance=ExtResource("1_vpaa6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0075, 96)
+metadata/road_module = true
+metadata/road_id = "Road2_T"
+metadata/variant = "Road2_X_B__Road2_X_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_G3__SplitR" type="StaticBody3D" parent="Roads/Junctions" unique_id=1954552104 instance=ExtResource("3_41a4l")]
+transform = Transform3D(1.1924881e-08, 0, -1, 0, 1, 0, 1, 0, 1.1924881e-08, -30.033264, 0.0075, 96)
+metadata/road_module = true
+metadata/road_id = "Road12_Diagonal_Splitter_R_Custom"
+metadata/variant = "Default"
+metadata/source_pack = "custom"
+
+[node name="Mirror_G4__Corner90" type="StaticBody3D" parent="Roads/Junctions" unique_id=1531673387 instance=ExtResource("2_7jq4q")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -84, 0.0075, 96)
+metadata/road_module = true
+metadata/road_id = "Road10_90angle_Corner"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_R0__T" type="StaticBody3D" parent="Roads/Junctions" unique_id=1355962759 instance=ExtResource("1_vpaa6")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -84, 0.0075, 48)
+metadata/road_module = true
+metadata/road_id = "Road2_T"
+metadata/variant = "Road2_X_B__Road2_X_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_R1__Corner90" type="StaticBody3D" parent="Roads/Junctions" unique_id=1885245527 instance=ExtResource("2_7jq4q")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -111.92, 0.0075, 48)
+metadata/road_module = true
+metadata/road_id = "Road10_90angle_Corner"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_RI__T" type="StaticBody3D" parent="Roads/Junctions" unique_id=268365691 instance=ExtResource("1_vpaa6")]
+transform = Transform3D(1.1924881e-08, 0, -1, 0, 1, 0, 1, 0, 1.1924881e-08, -84, 0.0075, 24)
+metadata/road_module = true
+metadata/road_id = "Road2_T"
+metadata/variant = "Road2_X_B__Road2_X_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_D0__Curve45" type="StaticBody3D" parent="Roads/Junctions" unique_id=1880124382 instance=ExtResource("5_cont5")]
+transform = Transform3D(-0.7071068, 0, -0.7071067, 0, 1, 0, 0.7071067, 0, -0.7071068, -59.656857, 0.0075, 66.34315)
+metadata/road_module = true
+metadata/road_id = "Road1_Curve1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_D1__T" type="StaticBody3D" parent="Roads/Junctions" unique_id=920976484 instance=ExtResource("1_vpaa6")]
+transform = Transform3D(1.1924881e-08, 0, -1, 0, 1, 0, 1, 0, 1.1924881e-08, -84, 0.0075, 66)
+metadata/road_module = true
+metadata/road_id = "Road2_T"
+metadata/variant = "Road2_X_B__Road2_X_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_H0__Cross" type="StaticBody3D" parent="Roads/Junctions" unique_id=1312309967 instance=ExtResource("6_3tqsm")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 84, 0.0075, 72)
+metadata/road_module = true
+metadata/road_id = "Road2_X"
+metadata/variant = "Road2_X_B__Road2_X_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_H1__T" type="StaticBody3D" parent="Roads/Junctions" unique_id=1773801889 instance=ExtResource("1_vpaa6")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 48, 0.0075, 72)
+metadata/road_module = true
+metadata/road_id = "Road2_T"
+metadata/variant = "Road2_X_B__Road2_X_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_H2__T" type="StaticBody3D" parent="Roads/Junctions" unique_id=1283193305 instance=ExtResource("1_vpaa6")]
+transform = Transform3D(1.1924881e-08, 0, -1, 0, 1, 0, 1, 0, 1.1924881e-08, 0, 0.0075, 72)
+metadata/road_module = true
+metadata/road_id = "Road2_T"
+metadata/variant = "Road2_X_B__Road2_X_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_L0__Curve45" type="StaticBody3D" parent="Roads/Junctions" unique_id=899605843 instance=ExtResource("5_cont5")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 132, 0.0075, 58.56528)
+metadata/road_module = true
+metadata/road_id = "Road1_Curve1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_L1__Y" type="StaticBody3D" parent="Roads/Junctions" unique_id=729270350 instance=ExtResource("7_mqql6")]
+transform = Transform3D(-0.7071068, 0, -0.7071067, 0, 1, 0, 0.7071067, 0, -0.7071068, 118.28396, 0.0075, 44.36396)
+metadata/road_module = true
+metadata/road_id = "Road11_Y_Splitter_45_Custom"
+metadata/variant = "Default"
+metadata/source_pack = "custom"
+
+[node name="Mirror_LJoin__T" type="StaticBody3D" parent="Roads/Junctions" unique_id=216424396 instance=ExtResource("1_vpaa6")]
+transform = Transform3D(1.1924881e-08, 0, -1, 0, 1, 0, 1, 0, 1.1924881e-08, 84, 0.0075, 38)
+metadata/road_module = true
+metadata/road_id = "Road2_T"
+metadata/variant = "Road2_X_B__Road2_X_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_LI__T" type="StaticBody3D" parent="Roads/Junctions" unique_id=2050106678 instance=ExtResource("1_vpaa6")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 84, 0.0075, 24)
+metadata/road_module = true
+metadata/road_id = "Road2_T"
+metadata/variant = "Road2_X_B__Road2_X_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_N__Y" type="StaticBody3D" parent="Roads/Junctions" unique_id=1029354184 instance=ExtResource("7_mqql6")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 7.86805e-07, 0.0075, 57)
+metadata/road_module = true
+metadata/road_id = "Road11_Y_Splitter_45_Custom"
+metadata/variant = "Default"
+metadata/source_pack = "custom"
+
+[node name="Mirror_NW__SplitR" type="StaticBody3D" parent="Roads/Junctions" unique_id=557250072 instance=ExtResource("3_41a4l")]
+transform = Transform3D(-0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, -0.70710677, 24.023521, 0.0075, 23.976479)
+metadata/road_module = true
+metadata/road_id = "Road12_Diagonal_Splitter_R_Custom"
+metadata/variant = "Default"
+metadata/source_pack = "custom"
+
+[node name="Mirror_NE__SplitL" type="StaticBody3D" parent="Roads/Junctions" unique_id=1176251232 instance=ExtResource("8_o34lk")]
+transform = Transform3D(-0.7071068, 0, -0.7071067, 0, 1, 0, 0.7071067, 0, -0.7071068, -24.023521, 0.0075, 23.976479)
+metadata/road_module = true
+metadata/road_id = "Road12_Diagonal_Splitter_L_Custom"
+metadata/variant = "Default"
+metadata/source_pack = "custom"
+
+[node name="Connections" type="Node3D" parent="Roads" unique_id=692565365]
+
+[node name="UL0_to_UL1_00" type="StaticBody3D" parent="Roads/Connections" unique_id=489047442 instance=ExtResource("4_st1a5")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -132, 0.0075, -84)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="UL0_to_UL1_01" type="StaticBody3D" parent="Roads/Connections" unique_id=985853064 instance=ExtResource("4_st1a5")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -132, 0.0075, -96)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="UL0_to_UL1_02" type="StaticBody3D" parent="Roads/Connections" unique_id=1887511090 instance=ExtResource("4_st1a5")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -132, 0.0075, -108)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="UL0_to_UL1_03" type="StaticBody3D" parent="Roads/Connections" unique_id=876648905 instance=ExtResource("4_st1a5")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -132, 0.0075, -120)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_UL0_to_Mirror_UL1_00" type="StaticBody3D" parent="Roads/Connections" unique_id=901215133 instance=ExtResource("4_st1a5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 132, 0.0075, 84)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_UL0_to_Mirror_UL1_01" type="StaticBody3D" parent="Roads/Connections" unique_id=871594466 instance=ExtResource("4_st1a5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 132, 0.0075, 96)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_UL0_to_Mirror_UL1_02" type="StaticBody3D" parent="Roads/Connections" unique_id=457284269 instance=ExtResource("4_st1a5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 132, 0.0075, 108)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_UL0_to_Mirror_UL1_03" type="StaticBody3D" parent="Roads/Connections" unique_id=1324143939 instance=ExtResource("4_st1a5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 132, 0.0075, 120)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="UL1_to_UL4_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1071351315 instance=ExtResource("4_st1a5")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -120, 0.0075, -132)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="UL1_to_UL4_01" type="StaticBody3D" parent="Roads/Connections" unique_id=1247305952 instance=ExtResource("4_st1a5")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -108, 0.0075, -132)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="UL1_to_UL4_02" type="StaticBody3D" parent="Roads/Connections" unique_id=1126590688 instance=ExtResource("4_st1a5")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -96, 0.0075, -132)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_UL1_to_Mirror_UL4_00" type="StaticBody3D" parent="Roads/Connections" unique_id=43498374 instance=ExtResource("4_st1a5")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 120, 0.0075, 132)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_UL1_to_Mirror_UL4_01" type="StaticBody3D" parent="Roads/Connections" unique_id=331964732 instance=ExtResource("4_st1a5")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 108, 0.0075, 132)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_UL1_to_Mirror_UL4_02" type="StaticBody3D" parent="Roads/Connections" unique_id=1834090638 instance=ExtResource("4_st1a5")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 96, 0.0075, 132)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="UL4_to_G0_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1609604580 instance=ExtResource("4_st1a5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -84, 0.0075, -120)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="UL4_to_G0_01" type="StaticBody3D" parent="Roads/Connections" unique_id=446020931 instance=ExtResource("4_st1a5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -84, 0.0075, -108)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_UL4_to_Mirror_G0_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1113265640 instance=ExtResource("4_st1a5")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 84, 0.0075, 120)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_UL4_to_Mirror_G0_01" type="StaticBody3D" parent="Roads/Connections" unique_id=1007706801 instance=ExtResource("4_st1a5")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 84, 0.0075, 108)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="G0_to_G1_00" type="StaticBody3D" parent="Roads/Connections" unique_id=2060308860 instance=ExtResource("4_st1a5")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -72, 0.0075, -96)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="G0_to_G1_01" type="StaticBody3D" parent="Roads/Connections" unique_id=1879546677 instance=ExtResource("4_st1a5")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -60, 0.0075, -96)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_G0_to_Mirror_G1_00" type="StaticBody3D" parent="Roads/Connections" unique_id=804085807 instance=ExtResource("4_st1a5")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 72, 0.0075, 96)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_G0_to_Mirror_G1_01" type="StaticBody3D" parent="Roads/Connections" unique_id=1432280527 instance=ExtResource("4_st1a5")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 60, 0.0075, 96)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="G1_to_G2_00" type="StaticBody3D" parent="Roads/Connections" unique_id=356382964 instance=ExtResource("4_st1a5")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -36, 0.0075, -96)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="G1_to_G2_01" type="StaticBody3D" parent="Roads/Connections" unique_id=1241431183 instance=ExtResource("4_st1a5")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -24, 0.0075, -96)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="G1_to_G2_02" type="StaticBody3D" parent="Roads/Connections" unique_id=225188099 instance=ExtResource("4_st1a5")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -12, 0.0075, -96)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_G1_to_Mirror_G2_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1616729983 instance=ExtResource("4_st1a5")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 36, 0.0075, 96)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_G1_to_Mirror_G2_01" type="StaticBody3D" parent="Roads/Connections" unique_id=367847814 instance=ExtResource("4_st1a5")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 24, 0.0075, 96)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_G1_to_Mirror_G2_02" type="StaticBody3D" parent="Roads/Connections" unique_id=975668583 instance=ExtResource("4_st1a5")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 12, 0.0075, 96)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="G2_to_G3_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1938065516 instance=ExtResource("4_st1a5")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 12, 0.0075, -96)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="G2_to_G3_01" type="StaticBody3D" parent="Roads/Connections" unique_id=730912458 instance=ExtResource("9_xe4od")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 21.016632, 0.0075, -96)
+metadata/road_module = true
+metadata/fit_length_m = 6.033264
+
+[node name="Mirror_G2_to_Mirror_G3_00" type="StaticBody3D" parent="Roads/Connections" unique_id=705722415 instance=ExtResource("4_st1a5")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -12, 0.0075, 96)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_G2_to_Mirror_G3_01" type="StaticBody3D" parent="Roads/Connections" unique_id=698712086 instance=ExtResource("9_xe4od")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -21.016632, 0.0075, 96)
+metadata/road_module = true
+metadata/fit_length_m = 6.033264
+
+[node name="G3_to_G4_00" type="StaticBody3D" parent="Roads/Connections" unique_id=2006924062 instance=ExtResource("4_st1a5")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 50.518547, 0.0075, -96)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="G3_to_G4_01" type="StaticBody3D" parent="Roads/Connections" unique_id=1662706113 instance=ExtResource("4_st1a5")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 62.518547, 0.0075, -96)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="G3_to_G4_02" type="StaticBody3D" parent="Roads/Connections" unique_id=105412675 instance=ExtResource("10_hnbb5")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 73.25928, 0.0075, -96)
+metadata/road_module = true
+metadata/fit_length_m = 9.481453
+
+[node name="Mirror_G3_to_Mirror_G4_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1253120439 instance=ExtResource("4_st1a5")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -50.518547, 0.0075, 96)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_G3_to_Mirror_G4_01" type="StaticBody3D" parent="Roads/Connections" unique_id=1843934595 instance=ExtResource("4_st1a5")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -62.518547, 0.0075, 96)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_G3_to_Mirror_G4_02" type="StaticBody3D" parent="Roads/Connections" unique_id=1273302672 instance=ExtResource("10_hnbb5")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -73.25928, 0.0075, 96)
+metadata/road_module = true
+metadata/fit_length_m = 9.481453
+
+[node name="G4_to_D1_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1754917584 instance=ExtResource("4_st1a5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 84, 0.0075, -84)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="G4_to_D1_01" type="StaticBody3D" parent="Roads/Connections" unique_id=672688752 instance=ExtResource("11_f6ppi")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 84, 0.0075, -75)
+metadata/road_module = true
+metadata/fit_length_m = 6.0
+
+[node name="Mirror_G4_to_Mirror_D1_00" type="StaticBody3D" parent="Roads/Connections" unique_id=918771729 instance=ExtResource("4_st1a5")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -84, 0.0075, 84)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_G4_to_Mirror_D1_01" type="StaticBody3D" parent="Roads/Connections" unique_id=144576419 instance=ExtResource("11_f6ppi")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -84, 0.0075, 75)
+metadata/road_module = true
+metadata/fit_length_m = 6.0
+
+[node name="G3_to_D0_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1865775352 instance=ExtResource("4_st1a5")]
+transform = Transform3D(0.7071068, 0, 0.7071068, 0, 1.0000001, 0, -0.7071068, 0, 0.7071068, 44.501915, 0.0075, -81.49809)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="G3_to_D0_01" type="StaticBody3D" parent="Roads/Connections" unique_id=348982783 instance=ExtResource("12_ca43t")]
+transform = Transform3D(0.7071068, 0, 0.7071068, 0, 1.0000001, 0, -0.7071068, 0, 0.7071068, 52.079384, 0.0075, -73.920616)
+metadata/road_module = true
+metadata/fit_length_m = 9.432327
+
+[node name="Mirror_G3_to_Mirror_D0_00" type="StaticBody3D" parent="Roads/Connections" unique_id=661480745 instance=ExtResource("4_st1a5")]
+transform = Transform3D(-0.7071068, 0, -0.7071068, 0, 1.0000001, 0, 0.7071068, 0, -0.7071068, -44.501915, 0.0075, 81.49809)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_G3_to_Mirror_D0_01" type="StaticBody3D" parent="Roads/Connections" unique_id=830229287 instance=ExtResource("12_ca43t")]
+transform = Transform3D(-0.7071068, 0, -0.7071068, 0, 1.0000001, 0, 0.7071068, 0, -0.7071068, -52.079384, 0.0075, 73.920616)
+metadata/road_module = true
+metadata/fit_length_m = 9.432327
+
+[node name="D0_to_D1_00" type="StaticBody3D" parent="Roads/Connections" unique_id=489153158 instance=ExtResource("13_dlm8o")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 73.07107, 0.0075, -66)
+metadata/road_module = true
+metadata/fit_length_m = 9.857864
+
+[node name="Mirror_D0_to_Mirror_D1_00" type="StaticBody3D" parent="Roads/Connections" unique_id=2023736262 instance=ExtResource("13_dlm8o")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -73.07107, 0.0075, 66)
+metadata/road_module = true
+metadata/fit_length_m = 9.857864
+
+[node name="D1_to_R0_00" type="StaticBody3D" parent="Roads/Connections" unique_id=791260279 instance=ExtResource("11_f6ppi")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 84, 0.0075, -57)
+metadata/road_module = true
+metadata/fit_length_m = 6.0
+
+[node name="Mirror_D1_to_Mirror_R0_00" type="StaticBody3D" parent="Roads/Connections" unique_id=314336954 instance=ExtResource("11_f6ppi")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -84, 0.0075, 57)
+metadata/road_module = true
+metadata/fit_length_m = 6.0
+
+[node name="R0_to_R1_00" type="StaticBody3D" parent="Roads/Connections" unique_id=887831306 instance=ExtResource("4_st1a5")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 96, 0.0075, -48)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="R0_to_R1_01" type="StaticBody3D" parent="Roads/Connections" unique_id=2032096320 instance=ExtResource("14_nqrmu")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 103.96, 0.0075, -48)
+metadata/road_module = true
+metadata/fit_length_m = 3.9199982
+
+[node name="Mirror_R0_to_Mirror_R1_00" type="StaticBody3D" parent="Roads/Connections" unique_id=590979847 instance=ExtResource("4_st1a5")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -96, 0.0075, 48)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_R0_to_Mirror_R1_01" type="StaticBody3D" parent="Roads/Connections" unique_id=2058651710 instance=ExtResource("14_nqrmu")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -103.96, 0.0075, 48)
+metadata/road_module = true
+metadata/fit_length_m = 3.9199982
+
+[node name="R1_to_R2_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1586473802 instance=ExtResource("4_st1a5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 111.92, 0.0075, -36)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="R1_to_R2_01" type="StaticBody3D" parent="Roads/Connections" unique_id=149400320 instance=ExtResource("4_st1a5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 111.92, 0.0075, -24)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="R1_to_R2_02" type="StaticBody3D" parent="Roads/Connections" unique_id=1556675619 instance=ExtResource("4_st1a5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 111.92, 0.0075, -12)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_R1_to_L2_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1318920204 instance=ExtResource("4_st1a5")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -111.92, 0.0075, 36)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_R1_to_L2_01" type="StaticBody3D" parent="Roads/Connections" unique_id=94787371 instance=ExtResource("4_st1a5")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -111.92, 0.0075, 24)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_R1_to_L2_02" type="StaticBody3D" parent="Roads/Connections" unique_id=1215618435 instance=ExtResource("4_st1a5")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -111.92, 0.0075, 12)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="R0_to_RI_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1228377103 instance=ExtResource("4_st1a5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 84, 0.0075, -36)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_R0_to_Mirror_RI_00" type="StaticBody3D" parent="Roads/Connections" unique_id=67363747 instance=ExtResource("4_st1a5")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -84, 0.0075, 36)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="RI_to_RM_00" type="StaticBody3D" parent="Roads/Connections" unique_id=632611951 instance=ExtResource("4_st1a5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 84, 0.0075, -12)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_RI_to_LM_00" type="StaticBody3D" parent="Roads/Connections" unique_id=875190733 instance=ExtResource("4_st1a5")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -84, 0.0075, 12)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="UL0_to_H0_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1179083578 instance=ExtResource("4_st1a5")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -120, 0.0075, -72)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="UL0_to_H0_01" type="StaticBody3D" parent="Roads/Connections" unique_id=1468155886 instance=ExtResource("4_st1a5")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -108, 0.0075, -72)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="UL0_to_H0_02" type="StaticBody3D" parent="Roads/Connections" unique_id=866065128 instance=ExtResource("4_st1a5")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -96, 0.0075, -72)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_UL0_to_Mirror_H0_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1281421365 instance=ExtResource("4_st1a5")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 120, 0.0075, 72)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_UL0_to_Mirror_H0_01" type="StaticBody3D" parent="Roads/Connections" unique_id=172363939 instance=ExtResource("4_st1a5")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 108, 0.0075, 72)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_UL0_to_Mirror_H0_02" type="StaticBody3D" parent="Roads/Connections" unique_id=2023068542 instance=ExtResource("4_st1a5")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 96, 0.0075, 72)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="H0_to_H1_00" type="StaticBody3D" parent="Roads/Connections" unique_id=876272312 instance=ExtResource("4_st1a5")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -72, 0.0075, -72)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="H0_to_H1_01" type="StaticBody3D" parent="Roads/Connections" unique_id=160557863 instance=ExtResource("4_st1a5")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -60, 0.0075, -72)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_H0_to_Mirror_H1_00" type="StaticBody3D" parent="Roads/Connections" unique_id=900926306 instance=ExtResource("4_st1a5")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 72, 0.0075, 72)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_H0_to_Mirror_H1_01" type="StaticBody3D" parent="Roads/Connections" unique_id=809906672 instance=ExtResource("4_st1a5")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 60, 0.0075, 72)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="H1_to_H2_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1264214554 instance=ExtResource("4_st1a5")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -36, 0.0075, -72)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="H1_to_H2_01" type="StaticBody3D" parent="Roads/Connections" unique_id=1015879422 instance=ExtResource("4_st1a5")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -24, 0.0075, -72)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="H1_to_H2_02" type="StaticBody3D" parent="Roads/Connections" unique_id=640718437 instance=ExtResource("4_st1a5")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -12, 0.0075, -72)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_H1_to_Mirror_H2_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1538101698 instance=ExtResource("4_st1a5")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 36, 0.0075, 72)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_H1_to_Mirror_H2_01" type="StaticBody3D" parent="Roads/Connections" unique_id=134042579 instance=ExtResource("4_st1a5")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 24, 0.0075, 72)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_H1_to_Mirror_H2_02" type="StaticBody3D" parent="Roads/Connections" unique_id=680730398 instance=ExtResource("4_st1a5")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 12, 0.0075, 72)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="G0_to_H0_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1379154297 instance=ExtResource("4_st1a5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -84, 0.0075, -84)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_G0_to_Mirror_H0_00" type="StaticBody3D" parent="Roads/Connections" unique_id=778435249 instance=ExtResource("4_st1a5")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 84, 0.0075, 84)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="G1_to_H1_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1802203021 instance=ExtResource("4_st1a5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -48, 0.0075, -84)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_G1_to_Mirror_H1_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1810446034 instance=ExtResource("4_st1a5")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 48, 0.0075, 84)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="G2_to_H2_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1135722041 instance=ExtResource("4_st1a5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.2453663e-07, 0.0075, -84)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_G2_to_Mirror_H2_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1520220763 instance=ExtResource("4_st1a5")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0.0075, 84)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="H2_to_N_00" type="StaticBody3D" parent="Roads/Connections" unique_id=800604677 instance=ExtResource("4_st1a5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.6226832e-07, 0.0075, -60)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_H2_to_Mirror_N_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1914227849 instance=ExtResource("4_st1a5")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -7.154928e-08, 0.0075, 60)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="UL0_to_L0_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1176669858 instance=ExtResource("15_b7pwo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -132, 0.0075, -65.28264)
+metadata/road_module = true
+metadata/fit_length_m = 1.4347153
+
+[node name="Mirror_UL0_to_Mirror_L0_00" type="StaticBody3D" parent="Roads/Connections" unique_id=284318011 instance=ExtResource("15_b7pwo")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 132, 0.0075, 65.28264)
+metadata/road_module = true
+metadata/fit_length_m = 1.4347153
+
+[node name="L0_to_L1_00" type="StaticBody3D" parent="Roads/Connections" unique_id=438268794 instance=ExtResource("4_st1a5")]
+transform = Transform3D(0.7071068, 0, 0.7071068, 0, 1.0000001, 0, -0.7071068, 0, 0.7071068, -122, 0.0075, -48.08)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="L0_to_L1_01" type="StaticBody3D" parent="Roads/Connections" unique_id=1389764695 instance=ExtResource("16_l2hta")]
+transform = Transform3D(0.7071068, 0, 0.7071068, 0, 1.0000001, 0, -0.7071068, 0, 0.7071068, -116.96, 0.0075, -43.04)
+metadata/road_module = true
+metadata/fit_length_m = 2.2552748
+
+[node name="Mirror_L0_to_Mirror_L1_00" type="StaticBody3D" parent="Roads/Connections" unique_id=608684310 instance=ExtResource("4_st1a5")]
+transform = Transform3D(-0.7071068, 0, -0.7071068, 0, 1.0000001, 0, 0.7071068, 0, -0.7071068, 122, 0.0075, 48.08)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_L0_to_Mirror_L1_01" type="StaticBody3D" parent="Roads/Connections" unique_id=1562218539 instance=ExtResource("16_l2hta")]
+transform = Transform3D(-0.7071068, 0, -0.7071068, 0, 1.0000001, 0, 0.7071068, 0, -0.7071068, 116.96, 0.0075, 43.04)
+metadata/road_module = true
+metadata/fit_length_m = 2.2552748
+
+[node name="L1_to_L2_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1737187624 instance=ExtResource("4_st1a5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -111.92, 0.0075, -25.506525)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="L1_to_L2_01" type="StaticBody3D" parent="Roads/Connections" unique_id=913615232 instance=ExtResource("4_st1a5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -111.92, 0.0075, -13.506525)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="L1_to_L2_02" type="StaticBody3D" parent="Roads/Connections" unique_id=61321197 instance=ExtResource("17_eeapr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -111.92, 0.0075, -6.7532635)
+metadata/road_module = true
+metadata/fit_length_m = 1.506525
+
+[node name="Mirror_L1_to_R2_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1897071734 instance=ExtResource("4_st1a5")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 111.92, 0.0075, 25.506525)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_L1_to_R2_01" type="StaticBody3D" parent="Roads/Connections" unique_id=1756076556 instance=ExtResource("4_st1a5")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 111.92, 0.0075, 13.506525)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_L1_to_R2_02" type="StaticBody3D" parent="Roads/Connections" unique_id=1176685557 instance=ExtResource("17_eeapr")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 111.92, 0.0075, 6.7532635)
+metadata/road_module = true
+metadata/fit_length_m = 1.506525
+
+[node name="H0_to_LJoin_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1581077358 instance=ExtResource("4_st1a5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -84, 0.0075, -60)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="H0_to_LJoin_01" type="StaticBody3D" parent="Roads/Connections" unique_id=1665589682 instance=ExtResource("18_131lt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -84, 0.0075, -49)
+metadata/road_module = true
+metadata/fit_length_m = 10.0
+
+[node name="Mirror_H0_to_Mirror_LJoin_00" type="StaticBody3D" parent="Roads/Connections" unique_id=911727362 instance=ExtResource("4_st1a5")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 84, 0.0075, 60)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_H0_to_Mirror_LJoin_01" type="StaticBody3D" parent="Roads/Connections" unique_id=1136191442 instance=ExtResource("18_131lt")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 84, 0.0075, 49)
+metadata/road_module = true
+metadata/fit_length_m = 10.0
+
+[node name="LJoin_to_LI_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1096785026 instance=ExtResource("19_05alk")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -84, 0.0075, -31)
+metadata/road_module = true
+metadata/fit_length_m = 2.0
+
+[node name="Mirror_LJoin_to_Mirror_LI_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1281796239 instance=ExtResource("19_05alk")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 84, 0.0075, 31)
+metadata/road_module = true
+metadata/fit_length_m = 2.0
+
+[node name="L1_to_LJoin_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1135090333 instance=ExtResource("4_st1a5")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -99.42652, 0.0075, -38)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="L1_to_LJoin_01" type="StaticBody3D" parent="Roads/Connections" unique_id=1548953591 instance=ExtResource("20_efu1n")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -91.71326, 0.0075, -38)
+metadata/road_module = true
+metadata/fit_length_m = 3.4265213
+
+[node name="Mirror_L1_to_Mirror_LJoin_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1498631751 instance=ExtResource("4_st1a5")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 99.42652, 0.0075, 38)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_L1_to_Mirror_LJoin_01" type="StaticBody3D" parent="Roads/Connections" unique_id=1969511192 instance=ExtResource("20_efu1n")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 91.71326, 0.0075, 38)
+metadata/road_module = true
+metadata/fit_length_m = 3.4265213
+
+[node name="LI_to_LM_00" type="StaticBody3D" parent="Roads/Connections" unique_id=786395835 instance=ExtResource("4_st1a5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -84, 0.0075, -12)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_LI_to_RM_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1143868749 instance=ExtResource("4_st1a5")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 84, 0.0075, 12)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="LI_to_NW_00" type="StaticBody3D" parent="Roads/Connections" unique_id=295531479 instance=ExtResource("4_st1a5")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -72, 0.0075, -24)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="LI_to_NW_01" type="StaticBody3D" parent="Roads/Connections" unique_id=1557374368 instance=ExtResource("4_st1a5")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -60, 0.0075, -24)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="LI_to_NW_02" type="StaticBody3D" parent="Roads/Connections" unique_id=1909619278 instance=ExtResource("4_st1a5")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -48, 0.0075, -24)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="LI_to_NW_03" type="StaticBody3D" parent="Roads/Connections" unique_id=755384113 instance=ExtResource("21_1vc0p")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -40.254402, 0.0075, -24)
+metadata/road_module = true
+metadata/fit_length_m = 3.4911957
+
+[node name="Mirror_LI_to_Mirror_NW_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1032747510 instance=ExtResource("4_st1a5")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 72, 0.0075, 24)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_LI_to_Mirror_NW_01" type="StaticBody3D" parent="Roads/Connections" unique_id=1419503776 instance=ExtResource("4_st1a5")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 60, 0.0075, 24)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_LI_to_Mirror_NW_02" type="StaticBody3D" parent="Roads/Connections" unique_id=1226558980 instance=ExtResource("4_st1a5")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 48, 0.0075, 24)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_LI_to_Mirror_NW_03" type="StaticBody3D" parent="Roads/Connections" unique_id=1243135946 instance=ExtResource("21_1vc0p")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 40.254402, 0.0075, 24)
+metadata/road_module = true
+metadata/fit_length_m = 3.4911957
+
+[node name="RI_to_NE_00" type="StaticBody3D" parent="Roads/Connections" unique_id=164889654 instance=ExtResource("4_st1a5")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 72, 0.0075, -24)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="RI_to_NE_01" type="StaticBody3D" parent="Roads/Connections" unique_id=560065106 instance=ExtResource("4_st1a5")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 60, 0.0075, -24)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="RI_to_NE_02" type="StaticBody3D" parent="Roads/Connections" unique_id=1088997040 instance=ExtResource("4_st1a5")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 48, 0.0075, -24)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="RI_to_NE_03" type="StaticBody3D" parent="Roads/Connections" unique_id=1970046589 instance=ExtResource("21_1vc0p")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 40.254402, 0.0075, -24)
+metadata/road_module = true
+metadata/fit_length_m = 3.4911957
+
+[node name="Mirror_RI_to_Mirror_NE_00" type="StaticBody3D" parent="Roads/Connections" unique_id=918362213 instance=ExtResource("4_st1a5")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -72, 0.0075, 24)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_RI_to_Mirror_NE_01" type="StaticBody3D" parent="Roads/Connections" unique_id=263978008 instance=ExtResource("4_st1a5")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -60, 0.0075, 24)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_RI_to_Mirror_NE_02" type="StaticBody3D" parent="Roads/Connections" unique_id=235661700 instance=ExtResource("4_st1a5")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -48, 0.0075, 24)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_RI_to_Mirror_NE_03" type="StaticBody3D" parent="Roads/Connections" unique_id=400892464 instance=ExtResource("21_1vc0p")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -40.254402, 0.0075, 24)
+metadata/road_module = true
+metadata/fit_length_m = 3.4911957
+
+[node name="N_to_NW_00" type="StaticBody3D" parent="Roads/Connections" unique_id=751087245 instance=ExtResource("4_st1a5")]
+transform = Transform3D(0.7071068, 0, -0.7071068, 0, 1.0000001, 0, 0.7071068, 0, 0.7071068, -8.834221, 0.0075, -39.16578)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="N_to_NW_01" type="StaticBody3D" parent="Roads/Connections" unique_id=1829387452 instance=ExtResource("22_sncri")]
+transform = Transform3D(0.7071068, 0, -0.7071068, 0, 1.0000001, 0, 0.7071068, 0, 0.7071068, -16.428873, 0.0075, -31.571127)
+metadata/road_module = true
+metadata/fit_length_m = 9.480919
+
+[node name="Mirror_N_to_Mirror_NW_00" type="StaticBody3D" parent="Roads/Connections" unique_id=231590190 instance=ExtResource("4_st1a5")]
+transform = Transform3D(-0.7071068, 0, 0.7071068, 0, 1.0000001, 0, -0.7071068, 0, -0.7071068, 8.834221, 0.0075, 39.16578)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_N_to_Mirror_NW_01" type="StaticBody3D" parent="Roads/Connections" unique_id=1164136623 instance=ExtResource("22_sncri")]
+transform = Transform3D(-0.7071068, 0, 0.7071068, 0, 1.0000001, 0, -0.7071068, 0, -0.7071068, 16.428873, 0.0075, 31.571127)
+metadata/road_module = true
+metadata/fit_length_m = 9.480919
+
+[node name="N_to_NE_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1365036850 instance=ExtResource("4_st1a5")]
+transform = Transform3D(0.7071068, 0, 0.7071068, 0, 1.0000001, 0, -0.7071068, 0, 0.7071068, 8.834221, 0.0075, -39.16578)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="N_to_NE_01" type="StaticBody3D" parent="Roads/Connections" unique_id=63012872 instance=ExtResource("22_sncri")]
+transform = Transform3D(0.7071068, 0, 0.7071068, 0, 1.0000001, 0, -0.7071068, 0, 0.7071068, 16.428873, 0.0075, -31.571127)
+metadata/road_module = true
+metadata/fit_length_m = 9.480919
+
+[node name="Mirror_N_to_Mirror_NE_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1435157483 instance=ExtResource("4_st1a5")]
+transform = Transform3D(-0.7071068, 0, -0.7071068, 0, 1.0000001, 0, 0.7071068, 0, -0.7071068, -8.834221, 0.0075, 39.16578)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_N_to_Mirror_NE_01" type="StaticBody3D" parent="Roads/Connections" unique_id=701536811 instance=ExtResource("22_sncri")]
+transform = Transform3D(-0.7071068, 0, -0.7071068, 0, 1.0000001, 0, 0.7071068, 0, -0.7071068, -16.428871, 0.0075, 31.571129)
+metadata/road_module = true
+metadata/fit_length_m = 9.480919
+
+[node name="NW_to_W_00" type="StaticBody3D" parent="Roads/Connections" unique_id=149737724 instance=ExtResource("4_st1a5")]
+transform = Transform3D(0.7071068, 0, -0.7071068, 0, 1.0000001, 0, 0.7071068, 0, 0.7071068, -38.508804, 0.0075, -9.4911995)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="NW_to_W_01" type="StaticBody3D" parent="Roads/Connections" unique_id=2094141188 instance=ExtResource("23_dk3rx")]
+transform = Transform3D(0.7071068, 0, -0.7071068, 0, 1.0000001, 0, 0.7071068, 0, 0.7071068, -43.079933, 0.0075, -4.9200687)
+metadata/road_module = true
+metadata/fit_length_m = 0.92910767
+
+[node name="Mirror_NW_to_E_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1176459866 instance=ExtResource("4_st1a5")]
+transform = Transform3D(-0.7071068, 0, 0.7071068, 0, 1.0000001, 0, -0.7071068, 0, -0.7071068, 38.508804, 0.0075, 9.491198)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_NW_to_E_01" type="StaticBody3D" parent="Roads/Connections" unique_id=1113273532 instance=ExtResource("23_dk3rx")]
+transform = Transform3D(-0.7071068, 0, 0.7071068, 0, 1.0000001, 0, -0.7071068, 0, -0.7071068, 43.079933, 0.0075, 4.920068)
+metadata/road_module = true
+metadata/fit_length_m = 0.92910767
+
+[node name="NE_to_E_00" type="StaticBody3D" parent="Roads/Connections" unique_id=393109908 instance=ExtResource("4_st1a5")]
+transform = Transform3D(0.7071068, 0, 0.7071068, 0, 1.0000001, 0, -0.7071068, 0, 0.7071068, 38.508804, 0.0075, -9.491198)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="NE_to_E_01" type="StaticBody3D" parent="Roads/Connections" unique_id=703291733 instance=ExtResource("23_dk3rx")]
+transform = Transform3D(0.7071068, 0, 0.7071068, 0, 1.0000001, 0, -0.7071068, 0, 0.7071068, 43.079933, 0.0075, -4.920068)
+metadata/road_module = true
+metadata/fit_length_m = 0.92910767
+
+[node name="Mirror_NE_to_W_00" type="StaticBody3D" parent="Roads/Connections" unique_id=828453358 instance=ExtResource("4_st1a5")]
+transform = Transform3D(-0.7071068, 0, -0.7071068, 0, 1.0000001, 0, 0.7071068, 0, -0.7071068, -38.5088, 0.0075, 9.491196)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Mirror_NE_to_W_01" type="StaticBody3D" parent="Roads/Connections" unique_id=945955037 instance=ExtResource("23_dk3rx")]
+transform = Transform3D(-0.7071068, 0, -0.7071068, 0, 1.0000001, 0, 0.7071068, 0, -0.7071068, -43.07993, 0.0075, 4.920066)
+metadata/road_module = true
+metadata/fit_length_m = 0.92910767
+
+[node name="W_to_LM_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1088505484 instance=ExtResource("4_st1a5")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -60, 0.0075, 2.6226832e-07)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="W_to_LM_01" type="StaticBody3D" parent="Roads/Connections" unique_id=262975773 instance=ExtResource("4_st1a5")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -72, 0.0075, 2.6226832e-07)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="E_to_RM_00" type="StaticBody3D" parent="Roads/Connections" unique_id=2006167919 instance=ExtResource("4_st1a5")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 60, 0.0075, -7.154928e-08)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="E_to_RM_01" type="StaticBody3D" parent="Roads/Connections" unique_id=941512753 instance=ExtResource("4_st1a5")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 72, 0.0075, -7.154928e-08)
+metadata/road_module = true
+metadata/road_id = "Road1"
+metadata/variant = "Road1_B__Road1_A"
+metadata/source_pack = "base"
+
+[node name="Buildings" type="Node3D" parent="." unique_id=781292706]
+
+[node name="4Story_Wide_2Doors_Mat_default" type="StaticBody3D" parent="Buildings" unique_id=302448275 instance=ExtResource("24_8k4uf")]
+transform = Transform3D(0.7071067, 0, 0.7071067, 0, 1, 0, -0.7071067, 0, 0.7071067, 5.7774377, -7.6293945e-06, 25.25822)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/4Story_Wide_2Doors_Mat.glb"
+
+[node name="4Story_Wide_2Doors_Roof_Mat_default" type="StaticBody3D" parent="Buildings" unique_id=1433535277 instance=ExtResource("25_efvkq")]
+transform = Transform3D(-0.7071067, 0, -0.7071067, 0, 1, 0, 0.7071067, 0, -0.7071067, -5.747316, 0, -25.344074)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/4Story_Wide_2Doors_Roof_Mat.glb"
+
+[node name="2Story_Wide_Mat_default" type="StaticBody3D" parent="Buildings" unique_id=1501410809 instance=ExtResource("26_jeghc")]
+transform = Transform3D(0.7071067, 0, 0.7071067, 0, 1, 0, -0.7071067, 0, 0.7071067, 30.279041, 1.9073486e-06, 2.4364572)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Wide_Mat.glb"
+
+[node name="2Story_Wide_Mat_default2" type="StaticBody3D" parent="Buildings" unique_id=796049770 instance=ExtResource("26_jeghc")]
+transform = Transform3D(-0.70710677, 0, -0.70710677, 0, 1, 0, 0.70710677, 0, -0.70710677, -30.205181, 1.9073486e-06, -3.2198014)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Wide_Mat.glb"
+
+[node name="4Story_Mat_default" type="StaticBody3D" parent="Buildings" unique_id=1101664251 instance=ExtResource("27_s3nex")]
+transform = Transform3D(0.7071067, 0, -0.7071067, 0, 1, 0, 0.7071067, 0, 0.7071067, -6.821748, 0, 24.512426)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/4Story_Mat.glb"
+
+[node name="4Story_Center_Mat_default" type="StaticBody3D" parent="Buildings" unique_id=1967948810 instance=ExtResource("28_056ws")]
+transform = Transform3D(-0.7071067, 0, 0.7071067, 0, 1, 0, -0.7071067, 0, -0.7071067, 6.3257236, 0, -25.26589)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/4Story_Center_Mat.glb"
+
+[node name="2Story_Wide_Mat_default3" type="StaticBody3D" parent="Buildings" unique_id=438069790 instance=ExtResource("26_jeghc")]
+transform = Transform3D(-0.7071067, 0, -0.7071067, 0, 1, 0, 0.7071067, 0, -0.7071067, 1.3071804, 1.9073486e-06, 17.928978)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Wide_Mat.glb"
+
+[node name="2Story_Wide_Mat_default4" type="StaticBody3D" parent="Buildings" unique_id=167320087 instance=ExtResource("26_jeghc")]
+transform = Transform3D(0.70710653, 0, 0.70710653, 0, 1, 0, -0.70710653, 0, 0.70710653, -1.3066964, 1.9073486e-06, -18.295956)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Wide_Mat.glb"
+
+[node name="3Story_Slim_Mat_default" type="StaticBody3D" parent="Buildings" unique_id=1350207728 instance=ExtResource("29_nbuyt")]
+transform = Transform3D(0.7071067, 0, 0.7071067, 0, 1, 0, -0.7071067, 0, 0.7071067, -7.2781434, -0.1, -12.355865)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/3Story_Slim_Mat.glb"
+
+[node name="3Story_Slim_Mat_default2" type="StaticBody3D" parent="Buildings" unique_id=1329248417 instance=ExtResource("29_nbuyt")]
+transform = Transform3D(-0.7071067, 0, -0.7071067, 0, 1, 0, 0.7071067, 0, -0.7071067, 7.2725058, -0.1, 12.151252)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/3Story_Slim_Mat.glb"
+
+[node name="2Story_Wide_2Doors_Mat_default" type="StaticBody3D" parent="Buildings" unique_id=1366670208 instance=ExtResource("30_7kpyp")]
+transform = Transform3D(-0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, -0.70710677, 20.778402, 0, -11.428785)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Wide_2Doors_Mat.glb"
+
+[node name="2Story_Wide_2Doors_Mat_default2" type="StaticBody3D" parent="Buildings" unique_id=1356552012 instance=ExtResource("30_7kpyp")]
+transform = Transform3D(0.7071067, 0, -0.7071067, 0, 1, 0, 0.7071067, 0, 0.7071067, -20.7384, 0, 10.776804)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Wide_2Doors_Mat.glb"
+
+[node name="2Story_2_Mat_default2" type="StaticBody3D" parent="Buildings" unique_id=63735407 instance=ExtResource("31_wjcfb")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -56.50049, 1.5258789e-05, -106.26234)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_2_Mat.glb"
+
+[node name="2Story_Balcony_Mat_default2" type="StaticBody3D" parent="Buildings" unique_id=890898277 instance=ExtResource("32_h3xxb")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -23.980394, 0, -106.98207)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Balcony_Mat.glb"
+
+[node name="2Story_Center_Mat_default3" type="StaticBody3D" parent="Buildings" unique_id=784349415 instance=ExtResource("33_b0i5f")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -137.86168, 0, 10.838585)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Center_Mat.glb"
+
+[node name="2Story_Center_Mat_default2" type="StaticBody3D" parent="Buildings" unique_id=1525708578 instance=ExtResource("33_b0i5f")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.558704, 0, -83.57425)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Center_Mat.glb"
+
+[node name="2Story_Columns_Mat_default3" type="StaticBody3D" parent="Buildings" unique_id=302654770 instance=ExtResource("34_70w15")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -66.06262, 7.6293945e-06, -107.27023)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Columns_Mat.glb"
+
+[node name="2Story_Columns_Mat_default4" type="StaticBody3D" parent="Buildings" unique_id=1437438335 instance=ExtResource("34_70w15")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -72.48682, 7.6293945e-06, -126.92708)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Columns_Mat.glb"
+
+[node name="2Story_Columns_Mat_default2" type="StaticBody3D" parent="Buildings" unique_id=1386274848 instance=ExtResource("34_70w15")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -33.31656, 0, -106.65333)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Columns_Mat.glb"
+
+[node name="2Story_Double_Mat_default3" type="StaticBody3D" parent="Buildings" unique_id=1502488628 instance=ExtResource("35_eqm77")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 69.651146, -7.6293945e-06, -108.212074)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Double_Mat.glb"
+
+[node name="2Story_Double_Mat_default2" type="StaticBody3D" parent="Buildings" unique_id=1234515454 instance=ExtResource("35_eqm77")]
+transform = Transform3D(-4.3711385e-08, 0, 0.99999994, 0, 1, 0, -0.99999994, 0, -4.3711385e-08, -47.0154, -7.6293945e-06, -46.500614)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Double_Mat.glb"
+
+[node name="2Story_Sidehouse_Mat_default6" type="StaticBody3D" parent="Buildings" unique_id=1442316437 instance=ExtResource("36_hs1uw")]
+transform = Transform3D(-4.3711385e-08, 0, -0.99999994, 0, 1, 0, 0.99999994, 0, -4.3711385e-08, -73.31765, 7.6293945e-06, -136.6014)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Sidehouse_Mat.glb"
+
+[node name="2Story_Sidehouse_Mat_default5" type="StaticBody3D" parent="Buildings" unique_id=2012394540 instance=ExtResource("36_hs1uw")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -144.37665, 7.6293945e-06, -57.2747)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Sidehouse_Mat.glb"
+
+[node name="2Story_Sidehouse_Mat_default4" type="StaticBody3D" parent="Buildings" unique_id=109695667 instance=ExtResource("36_hs1uw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -42.820915, 0, -105.65139)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Sidehouse_Mat.glb"
+
+[node name="2Story_Sidehouse_Mat_default3" type="StaticBody3D" parent="Buildings" unique_id=1149701086 instance=ExtResource("36_hs1uw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -96.19394, 0, -49.658035)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Sidehouse_Mat.glb"
+
+[node name="2Story_Sidehouse_Mat_default2" type="StaticBody3D" parent="Buildings" unique_id=1089273101 instance=ExtResource("36_hs1uw")]
+transform = Transform3D(-0.99999994, 0, 8.742277e-08, 0, 1, 0, -8.742277e-08, 0, -0.99999994, 11.519634, 0, -84.7447)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Sidehouse_Mat.glb"
+
+[node name="2Story_Slim_Mat_default5" type="StaticBody3D" parent="Buildings" unique_id=913905372 instance=ExtResource("37_amsn6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.357544, 1.5258789e-05, -107.519035)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Slim_Mat.glb"
+
+[node name="2Story_Slim_Mat_default4" type="StaticBody3D" parent="Buildings" unique_id=1628662230 instance=ExtResource("37_amsn6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16.25914, 7.6293945e-06, -106.47603)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Slim_Mat.glb"
+
+[node name="2Story_Slim_Mat_default2" type="StaticBody3D" parent="Buildings" unique_id=1483067020 instance=ExtResource("37_amsn6")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -48.554035, -3.8146973e-06, 15.058457)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Slim_Mat.glb"
+
+[node name="2Story_Slim_Mat_default3" type="StaticBody3D" parent="Buildings" unique_id=1392015897 instance=ExtResource("37_amsn6")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -48.858425, -3.8146973e-06, -15.620025)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Slim_Mat.glb"
+
+[node name="2Story_Wide_2Doors_Mat_default21" type="StaticBody3D" parent="Buildings" unique_id=971579049 instance=ExtResource("30_7kpyp")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 95.649704, -7.6293945e-06, -76.1573)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Wide_2Doors_Mat.glb"
+
+[node name="2Story_Wide_2Doors_Mat_default20" type="StaticBody3D" parent="Buildings" unique_id=528774372 instance=ExtResource("30_7kpyp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 38.667164, -7.6293945e-06, -107.43942)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Wide_2Doors_Mat.glb"
+
+[node name="2Story_Wide_2Doors_Mat_default19" type="StaticBody3D" parent="Buildings" unique_id=1048707921 instance=ExtResource("30_7kpyp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -134.20427, -7.6293945e-06, -143.46172)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Wide_2Doors_Mat.glb"
+
+[node name="2Story_Wide_2Doors_Mat_default17" type="StaticBody3D" parent="Buildings" unique_id=1180015693 instance=ExtResource("30_7kpyp")]
+transform = Transform3D(-0.99999994, 0, -8.742277e-08, 0, 1, 0, 8.742277e-08, 0, -0.99999994, -103.60294, -7.6293945e-06, 59.685257)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Wide_2Doors_Mat.glb"
+
+[node name="2Story_Wide_2Doors_Mat_default18" type="StaticBody3D" parent="Buildings" unique_id=2007524391 instance=ExtResource("30_7kpyp")]
+transform = Transform3D(-0.99999994, 0, -8.742277e-08, 0, 1, 0, 8.742277e-08, 0, -0.99999994, -129.27504, -7.6293945e-06, 59.45806)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Wide_2Doors_Mat.glb"
+
+[node name="2Story_Wide_2Doors_Mat_default16" type="StaticBody3D" parent="Buildings" unique_id=1603262437 instance=ExtResource("30_7kpyp")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -122.30914, -7.6293945e-06, -21.209042)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Wide_2Doors_Mat.glb"
+
+[node name="2Story_Wide_2Doors_Mat_default15" type="StaticBody3D" parent="Buildings" unique_id=1079573122 instance=ExtResource("30_7kpyp")]
+transform = Transform3D(-1.0000001, 0, -8.7422784e-08, 0, 1, 0, 8.7422784e-08, 0, -1.0000001, -139.44214, -7.6293945e-06, -39.27176)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Wide_2Doors_Mat.glb"
+
+[node name="2Story_Wide_2Doors_Mat_default14" type="StaticBody3D" parent="Buildings" unique_id=550988546 instance=ExtResource("30_7kpyp")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -142.99168, -2.2888184e-05, -109.30456)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Wide_2Doors_Mat.glb"
+
+[node name="2Story_Wide_2Doors_Mat_default13" type="StaticBody3D" parent="Buildings" unique_id=1255423441 instance=ExtResource("30_7kpyp")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 40.073036, -7.6293945e-06, -47.018333)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Wide_2Doors_Mat.glb"
+
+[node name="2Story_Wide_2Doors_Mat_default11" type="StaticBody3D" parent="Buildings" unique_id=291883337 instance=ExtResource("30_7kpyp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -65.58859, 0, -13.920737)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Wide_2Doors_Mat.glb"
+
+[node name="2Story_Wide_2Doors_Mat_default12" type="StaticBody3D" parent="Buildings" unique_id=1603106126 instance=ExtResource("30_7kpyp")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -65.34912, 0, 13.566944)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Wide_2Doors_Mat.glb"
+
+[node name="2Story_Wide_2Doors_Mat_default10" type="StaticBody3D" parent="Buildings" unique_id=713037508 instance=ExtResource("30_7kpyp")]
+transform = Transform3D(-0.99999994, 0, 8.742277e-08, 0, 1, 0, -8.742277e-08, 0, -0.99999994, -109.236534, 0, -61.170486)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Wide_2Doors_Mat.glb"
+
+[node name="2Story_Wide_2Doors_Mat_default8" type="StaticBody3D" parent="Buildings" unique_id=1141523939 instance=ExtResource("30_7kpyp")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -121.04142, 0, -102.43808)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Wide_2Doors_Mat.glb"
+
+[node name="2Story_Wide_2Doors_Mat_default9" type="StaticBody3D" parent="Buildings" unique_id=616793487 instance=ExtResource("30_7kpyp")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1.0000001, 0, 1, 0, -4.371139e-08, -95.22757, -3.8146973e-06, -90.486275)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Wide_2Doors_Mat.glb"
+
+[node name="2Story_Wide_2Doors_Mat_default7" type="StaticBody3D" parent="Buildings" unique_id=1072731027 instance=ExtResource("30_7kpyp")]
+transform = Transform3D(0.99999994, 0, 0, 0, 1, 0, 0, 0, 0.99999994, 65.609955, 0, -85.467316)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Wide_2Doors_Mat.glb"
+
+[node name="2Story_Wide_2Doors_Mat_default6" type="StaticBody3D" parent="Buildings" unique_id=1653737651 instance=ExtResource("30_7kpyp")]
+transform = Transform3D(-0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, -0.70710677, 45.94016, 0, -65.93857)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Wide_2Doors_Mat.glb"
+
+[node name="2Story_Wide_2Doors_Mat_default5" type="StaticBody3D" parent="Buildings" unique_id=986025734 instance=ExtResource("30_7kpyp")]
+transform = Transform3D(0.7071067, 0, -0.7071067, 0, 1, 0, 0.7071067, 0, 0.7071067, 21.042406, 0, -43.156372)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Wide_2Doors_Mat.glb"
+
+[node name="2Story_Wide_2Doors_Mat_default4" type="StaticBody3D" parent="Buildings" unique_id=1978139330 instance=ExtResource("30_7kpyp")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -37.823383, 0, -59.29645)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Wide_2Doors_Mat.glb"
+
+[node name="2Story_Wide_Mat_default15" type="StaticBody3D" parent="Buildings" unique_id=290749439 instance=ExtResource("26_jeghc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 82.46312, 7.6293945e-06, -107.472946)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Wide_Mat.glb"
+
+[node name="2Story_Wide_Mat_default14" type="StaticBody3D" parent="Buildings" unique_id=1156226494 instance=ExtResource("26_jeghc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.783512, 7.6293945e-06, -107.015015)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Wide_Mat.glb"
+
+[node name="2Story_Wide_Mat_default13" type="StaticBody3D" parent="Buildings" unique_id=1329568384 instance=ExtResource("26_jeghc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -88.037994, 0, -144.04189)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Wide_Mat.glb"
+
+[node name="2Story_Wide_Mat_default12" type="StaticBody3D" parent="Buildings" unique_id=1743132591 instance=ExtResource("26_jeghc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -113.54314, 7.6293945e-06, -143.57423)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Wide_Mat.glb"
+
+[node name="2Story_Wide_Mat_default11" type="StaticBody3D" parent="Buildings" unique_id=841457040 instance=ExtResource("26_jeghc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -125.48556, 7.6293945e-06, 10.877745)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Wide_Mat.glb"
+
+[node name="2Story_Wide_Mat_default10" type="StaticBody3D" parent="Buildings" unique_id=281680023 instance=ExtResource("26_jeghc")]
+transform = Transform3D(-4.3711385e-08, 0, 0.99999994, 0, 1, 0, -0.99999994, 0, -4.3711385e-08, -143.25897, 7.6293945e-06, -87.86161)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Wide_Mat.glb"
+
+[node name="2Story_Wide_Mat_default9" type="StaticBody3D" parent="Buildings" unique_id=1992151060 instance=ExtResource("26_jeghc")]
+transform = Transform3D(0.70710677, 0, -0.70710677, 0, 1, 0, 0.70710677, 0, 0.70710677, 37.00317, 7.6293945e-06, -61.744694)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Wide_Mat.glb"
+
+[node name="2Story_Wide_Mat_default8" type="StaticBody3D" parent="Buildings" unique_id=1505412624 instance=ExtResource("26_jeghc")]
+transform = Transform3D(-0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, -0.70710677, 30.479046, 0, -81.25064)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Wide_Mat.glb"
+
+[node name="2Story_Wide_Mat_default7" type="StaticBody3D" parent="Buildings" unique_id=690581931 instance=ExtResource("26_jeghc")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -72.43924, 3.8146973e-06, -37.373276)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Wide_Mat.glb"
+
+[node name="2Story_Wide_Mat_default6" type="StaticBody3D" parent="Buildings" unique_id=1717430413 instance=ExtResource("26_jeghc")]
+transform = Transform3D(-1.0000001, 0, 8.7422784e-08, 0, 1, 0, -8.7422784e-08, 0, -1.0000001, -14.032259, 0, -59.572067)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Wide_Mat.glb"
+
+[node name="3Story_Balcony_Mat_default2" type="StaticBody3D" parent="Buildings" unique_id=764206536 instance=ExtResource("38_pt7l8")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 19.733644, 1.5258789e-05, -68.60861)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/3Story_Balcony_Mat.glb"
+
+[node name="3Story_Slim_Mat_default6" type="StaticBody3D" parent="Buildings" unique_id=784928122 instance=ExtResource("29_nbuyt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 62.591553, 7.6293945e-06, -107.28341)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/3Story_Slim_Mat.glb"
+
+[node name="3Story_Slim_Mat_default9" type="StaticBody3D" parent="Buildings" unique_id=1657337500 instance=ExtResource("29_nbuyt")]
+transform = Transform3D(-4.3711385e-08, 0, -0.99999994, 0, 1, 0, 0.99999994, 0, -4.3711385e-08, 61.57807, 7.6293945e-06, -46.238194)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/3Story_Slim_Mat.glb"
+
+[node name="3Story_Slim_Mat_default8" type="StaticBody3D" parent="Buildings" unique_id=218660437 instance=ExtResource("29_nbuyt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -73.67705, 0, -106.096176)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/3Story_Slim_Mat.glb"
+
+[node name="3Story_Slim_Mat_default7" type="StaticBody3D" parent="Buildings" unique_id=354904689 instance=ExtResource("29_nbuyt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.177631, 3.8146973e-06, -105.840836)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/3Story_Slim_Mat.glb"
+
+[node name="3Story_Slim_Mat_default5" type="StaticBody3D" parent="Buildings" unique_id=709794029 instance=ExtResource("29_nbuyt")]
+transform = Transform3D(-0.99999994, 0, 8.742277e-08, 0, 1, 0, -8.742277e-08, 0, -0.99999994, -93.98086, 0, -60.61829)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/3Story_Slim_Mat.glb"
+
+[node name="3Story_Slim_Mat_default4" type="StaticBody3D" parent="Buildings" unique_id=34513460 instance=ExtResource("29_nbuyt")]
+transform = Transform3D(-0.9999998, 0, 8.742276e-08, 0, 1, 0, -8.742276e-08, 0, -0.9999998, -22.983301, 0, -59.567444)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/3Story_Slim_Mat.glb"
+
+[node name="3Story_Small_Mat_default5" type="StaticBody3D" parent="Buildings" unique_id=862806144 instance=ExtResource("39_tr4d8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 55.584183, 7.6293945e-06, -106.66779)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/3Story_Small_Mat.glb"
+
+[node name="3Story_Small_Mat_default4" type="StaticBody3D" parent="Buildings" unique_id=1395737360 instance=ExtResource("39_tr4d8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.917107, -7.6293945e-06, -57.667908)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/3Story_Small_Mat.glb"
+
+[node name="3Story_Small_Mat_default2" type="StaticBody3D" parent="Buildings" unique_id=2138424749 instance=ExtResource("39_tr4d8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -73.050095, 0, -82.63063)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/3Story_Small_Mat.glb"
+
+[node name="3Story_Small_Mat_default3" type="StaticBody3D" parent="Buildings" unique_id=1002635435 instance=ExtResource("39_tr4d8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -58.869823, -3.8146973e-06, -82.59055)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/3Story_Small_Mat.glb"
+
+[node name="4Story_Center_Mat_default8" type="StaticBody3D" parent="Buildings" unique_id=1654464434 instance=ExtResource("28_056ws")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -97.46566, 0, 32.370358)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/4Story_Center_Mat.glb"
+
+[node name="4Story_Center_Mat_default6" type="StaticBody3D" parent="Buildings" unique_id=340369437 instance=ExtResource("28_056ws")]
+transform = Transform3D(-4.3711385e-08, 0, -0.99999994, 0, 1, 0, 0.99999994, 0, -4.3711385e-08, -120.73071, 0, -121.12986)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/4Story_Center_Mat.glb"
+
+[node name="4Story_Center_Mat_default7" type="StaticBody3D" parent="Buildings" unique_id=170180553 instance=ExtResource("28_056ws")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -120.286, 0, -84.65871)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/4Story_Center_Mat.glb"
+
+[node name="4Story_Center_Mat_default5" type="StaticBody3D" parent="Buildings" unique_id=827371867 instance=ExtResource("28_056ws")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 63.02606, 0, -54.839745)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/4Story_Center_Mat.glb"
+
+[node name="4Story_Center_Mat_default4" type="StaticBody3D" parent="Buildings" unique_id=628294505 instance=ExtResource("28_056ws")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 37.333393, 0, -36.13929)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/4Story_Center_Mat.glb"
+
+[node name="4Story_Center_Mat_default3" type="StaticBody3D" parent="Buildings" unique_id=1762389672 instance=ExtResource("28_056ws")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -72.357475, 0, -50.698887)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/4Story_Center_Mat.glb"
+
+[node name="4Story_Mat_default4" type="StaticBody3D" parent="Buildings" unique_id=360629600 instance=ExtResource("27_s3nex")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -101.02642, -7.6293945e-06, -143.54144)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/4Story_Mat.glb"
+
+[node name="4Story_Mat_default3" type="StaticBody3D" parent="Buildings" unique_id=83009857 instance=ExtResource("27_s3nex")]
+transform = Transform3D(0.99999994, 0, 0, 0, 1, 0, 0, 0, 0.99999994, -17.32825, 0, -58.253418)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/4Story_Mat.glb"
+
+[node name="4Story_Wide_2Doors_Mat_default7" type="StaticBody3D" parent="Buildings" unique_id=1651644486 instance=ExtResource("24_8k4uf")]
+transform = Transform3D(-4.3711385e-08, 0, 0.99999994, 0, 1, 0, -0.99999994, 0, -4.3711385e-08, -97.96614, 0, -14.838613)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/4Story_Wide_2Doors_Mat.glb"
+
+[node name="4Story_Wide_2Doors_Mat_default8" type="StaticBody3D" parent="Buildings" unique_id=2072236338 instance=ExtResource("24_8k4uf")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -98.107735, 3.8146973e-06, 15.807291)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/4Story_Wide_2Doors_Mat.glb"
+
+[node name="4Story_Wide_2Doors_Mat_default6" type="StaticBody3D" parent="Buildings" unique_id=2091515301 instance=ExtResource("24_8k4uf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -102.90646, 0, -121.76887)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/4Story_Wide_2Doors_Mat.glb"
+
+[node name="4Story_Wide_2Doors_Mat_default4" type="StaticBody3D" parent="Buildings" unique_id=1534690399 instance=ExtResource("24_8k4uf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 56.154842, 0, -36.80391)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/4Story_Wide_2Doors_Mat.glb"
+
+[node name="4Story_Wide_2Doors_Mat_default5" type="StaticBody3D" parent="Buildings" unique_id=1978240669 instance=ExtResource("24_8k4uf")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 72.46834, -7.6293945e-06, -44.580765)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/4Story_Wide_2Doors_Mat.glb"
+
+[node name="4Story_Wide_2Doors_Mat_default3" type="StaticBody3D" parent="Buildings" unique_id=1124416613 instance=ExtResource("24_8k4uf")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -63.750446, -7.6293945e-06, -59.574055)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/4Story_Wide_2Doors_Mat.glb"
+
+[node name="4Story_Wide_2Doors_Roof_Mat_default6" type="StaticBody3D" parent="Buildings" unique_id=1146941000 instance=ExtResource("25_efvkq")]
+transform = Transform3D(-4.3711392e-08, 0, 1.0000001, 0, 1, 0, -1.0000001, 0, -4.3711392e-08, -132.79324, 1.5258789e-05, 28.437899)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/4Story_Wide_2Doors_Roof_Mat.glb"
+
+[node name="4Story_Wide_2Doors_Roof_Mat_default5" type="StaticBody3D" parent="Buildings" unique_id=905450438 instance=ExtResource("25_efvkq")]
+transform = Transform3D(-4.3711385e-08, 0, -0.99999994, 0, 1, 0, 0.99999994, 0, -4.3711385e-08, 11.0241375, 0, -67.26926)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/4Story_Wide_2Doors_Roof_Mat.glb"
+
+[node name="4Story_Wide_2Doors_Roof_Mat_default4" type="StaticBody3D" parent="Buildings" unique_id=210233714 instance=ExtResource("25_efvkq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -54.6872, 0, -35.851322)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/4Story_Wide_2Doors_Roof_Mat.glb"
+
+[node name="4Story_Wide_2Doors_Roof_Mat_default3" type="StaticBody3D" parent="Buildings" unique_id=664491576 instance=ExtResource("25_efvkq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -28.053528, -3.8146973e-06, -84.23033)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/4Story_Wide_2Doors_Roof_Mat.glb"
+
+[node name="6Story_Stack_Mat_default5" type="StaticBody3D" parent="Buildings" unique_id=1741015865 instance=ExtResource("40_avexc")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 20.006735, 0, -59.639107)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/6Story_Stack_Mat.glb"
+
+[node name="6Story_Stack_Mat_default4" type="StaticBody3D" parent="Buildings" unique_id=1954455738 instance=ExtResource("40_avexc")]
+transform = Transform3D(-4.3711385e-08, 0, 0.99999994, 0, 1, 0, -0.99999994, 0, -4.3711385e-08, -97.97397, 0, 0.63477993)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/6Story_Stack_Mat.glb"
+
+[node name="6Story_Stack_Mat_default3" type="StaticBody3D" parent="Buildings" unique_id=1770108239 instance=ExtResource("40_avexc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -64.33439, -7.6293945e-06, -50.17216)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/6Story_Stack_Mat.glb"
+
+[node name="6Story_Stack_Mat_default2" type="StaticBody3D" parent="Buildings" unique_id=198523880 instance=ExtResource("40_avexc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -65.97998, -1.5258789e-05, -83.72528)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/6Story_Stack_Mat.glb"
+
+[node name="Rot180_2Story_2_Mat_default2" type="StaticBody3D" parent="Buildings" unique_id=1985183220 instance=ExtResource("31_wjcfb")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 56.500496, 1.5258789e-05, 106.26233)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_2_Mat.glb"
+
+[node name="Rot180_2Story_Balcony_Mat_default2" type="StaticBody3D" parent="Buildings" unique_id=567406523 instance=ExtResource("32_h3xxb")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 23.980404, 0, 106.98207)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Balcony_Mat.glb"
+
+[node name="Rot180_2Story_Center_Mat_default3" type="StaticBody3D" parent="Buildings" unique_id=2097416082 instance=ExtResource("33_b0i5f")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 137.86168, 0, -10.838597)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Center_Mat.glb"
+
+[node name="Rot180_2Story_Center_Mat_default2" type="StaticBody3D" parent="Buildings" unique_id=1578826451 instance=ExtResource("33_b0i5f")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 10.558712, 0, 83.57425)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Center_Mat.glb"
+
+[node name="Rot180_2Story_Columns_Mat_default3" type="StaticBody3D" parent="Buildings" unique_id=364505486 instance=ExtResource("34_70w15")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 66.06263, 7.6293945e-06, 107.270226)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Columns_Mat.glb"
+
+[node name="Rot180_2Story_Columns_Mat_default4" type="StaticBody3D" parent="Buildings" unique_id=1488001763 instance=ExtResource("34_70w15")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 72.486824, 7.6293945e-06, 126.92707)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Columns_Mat.glb"
+
+[node name="Rot180_2Story_Columns_Mat_default2" type="StaticBody3D" parent="Buildings" unique_id=1397295178 instance=ExtResource("34_70w15")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 33.316566, 0, 106.65333)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Columns_Mat.glb"
+
+[node name="Rot180_2Story_Double_Mat_default3" type="StaticBody3D" parent="Buildings" unique_id=830524869 instance=ExtResource("35_eqm77")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -69.65114, -7.6293945e-06, 108.21208)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Double_Mat.glb"
+
+[node name="Rot180_2Story_Double_Mat_default2" type="StaticBody3D" parent="Buildings" unique_id=1261193283 instance=ExtResource("35_eqm77")]
+transform = Transform3D(-4.3711385e-08, 0, -0.99999994, 0, 1, 0, 0.99999994, 0, -4.3711385e-08, 47.015404, -7.6293945e-06, 46.50061)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Double_Mat.glb"
+
+[node name="Rot180_2Story_Sidehouse_Mat_default6" type="StaticBody3D" parent="Buildings" unique_id=1679489196 instance=ExtResource("36_hs1uw")]
+transform = Transform3D(-4.3711385e-08, 0, 0.99999994, 0, 1, 0, -0.99999994, 0, -4.3711385e-08, 73.317665, 7.6293945e-06, 136.6014)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Sidehouse_Mat.glb"
+
+[node name="Rot180_2Story_Sidehouse_Mat_default5" type="StaticBody3D" parent="Buildings" unique_id=991794020 instance=ExtResource("36_hs1uw")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 144.37665, 7.6293945e-06, 57.27469)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Sidehouse_Mat.glb"
+
+[node name="Rot180_2Story_Sidehouse_Mat_default4" type="StaticBody3D" parent="Buildings" unique_id=1217124842 instance=ExtResource("36_hs1uw")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 42.820923, 0, 105.65139)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Sidehouse_Mat.glb"
+
+[node name="Rot180_2Story_Sidehouse_Mat_default3" type="StaticBody3D" parent="Buildings" unique_id=1788486528 instance=ExtResource("36_hs1uw")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 96.19395, 0, 49.658028)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Sidehouse_Mat.glb"
+
+[node name="Rot180_2Story_Sidehouse_Mat_default2" type="StaticBody3D" parent="Buildings" unique_id=524128991 instance=ExtResource("36_hs1uw")]
+transform = Transform3D(0.99999994, 0, 0, 0, 1, 0, 0, 0, 0.99999994, -11.519627, 0, 84.7447)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Sidehouse_Mat.glb"
+
+[node name="Rot180_2Story_Slim_Mat_default5" type="StaticBody3D" parent="Buildings" unique_id=1226589978 instance=ExtResource("37_amsn6")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -22.357534, 1.5258789e-05, 107.519035)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Slim_Mat.glb"
+
+[node name="Rot180_2Story_Slim_Mat_default4" type="StaticBody3D" parent="Buildings" unique_id=1116616550 instance=ExtResource("37_amsn6")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 16.25915, 7.6293945e-06, 106.47603)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Slim_Mat.glb"
+
+[node name="Rot180_2Story_Slim_Mat_default2" type="StaticBody3D" parent="Buildings" unique_id=97124836 instance=ExtResource("37_amsn6")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 48.554035, -3.8146973e-06, -15.058461)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Slim_Mat.glb"
+
+[node name="Rot180_2Story_Slim_Mat_default3" type="StaticBody3D" parent="Buildings" unique_id=96169469 instance=ExtResource("37_amsn6")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 48.858425, -3.8146973e-06, 15.620021)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Slim_Mat.glb"
+
+[node name="Rot180_2Story_Wide_2Doors_Mat_default21" type="StaticBody3D" parent="Buildings" unique_id=22075648 instance=ExtResource("30_7kpyp")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -95.6497, -7.6293945e-06, 76.15731)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Wide_2Doors_Mat.glb"
+
+[node name="Rot180_2Story_Wide_2Doors_Mat_default20" type="StaticBody3D" parent="Buildings" unique_id=2119522033 instance=ExtResource("30_7kpyp")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -38.667156, -7.6293945e-06, 107.43942)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Wide_2Doors_Mat.glb"
+
+[node name="Rot180_2Story_Wide_2Doors_Mat_default19" type="StaticBody3D" parent="Buildings" unique_id=957148595 instance=ExtResource("30_7kpyp")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 134.20428, -7.6293945e-06, 143.4617)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Wide_2Doors_Mat.glb"
+
+[node name="Rot180_2Story_Wide_2Doors_Mat_default17" type="StaticBody3D" parent="Buildings" unique_id=2119423750 instance=ExtResource("30_7kpyp")]
+transform = Transform3D(0.99999994, 0, 0, 0, 1, 0, 0, 0, 0.99999994, 103.602936, -7.6293945e-06, -59.685265)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Wide_2Doors_Mat.glb"
+
+[node name="Rot180_2Story_Wide_2Doors_Mat_default18" type="StaticBody3D" parent="Buildings" unique_id=1427585305 instance=ExtResource("30_7kpyp")]
+transform = Transform3D(0.99999994, 0, 0, 0, 1, 0, 0, 0, 0.99999994, 129.27504, -7.6293945e-06, -59.458073)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Wide_2Doors_Mat.glb"
+
+[node name="Rot180_2Story_Wide_2Doors_Mat_default16" type="StaticBody3D" parent="Buildings" unique_id=1046838160 instance=ExtResource("30_7kpyp")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 122.30914, -7.6293945e-06, 21.20903)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Wide_2Doors_Mat.glb"
+
+[node name="Rot180_2Story_Wide_2Doors_Mat_default15" type="StaticBody3D" parent="Buildings" unique_id=1055899157 instance=ExtResource("30_7kpyp")]
+transform = Transform3D(1.0000001, 0, 0, 0, 1, 0, 0, 0, 1.0000001, 139.44214, -7.6293945e-06, 39.271748)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Wide_2Doors_Mat.glb"
+
+[node name="Rot180_2Story_Wide_2Doors_Mat_default14" type="StaticBody3D" parent="Buildings" unique_id=1040232027 instance=ExtResource("30_7kpyp")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 142.9917, -2.2888184e-05, 109.30454)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Wide_2Doors_Mat.glb"
+
+[node name="Rot180_2Story_Wide_2Doors_Mat_default13" type="StaticBody3D" parent="Buildings" unique_id=1493997347 instance=ExtResource("30_7kpyp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -40.073032, -7.6293945e-06, 47.018337)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Wide_2Doors_Mat.glb"
+
+[node name="Rot180_2Story_Wide_2Doors_Mat_default11" type="StaticBody3D" parent="Buildings" unique_id=28660284 instance=ExtResource("30_7kpyp")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 65.58859, 0, 13.920732)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Wide_2Doors_Mat.glb"
+
+[node name="Rot180_2Story_Wide_2Doors_Mat_default12" type="StaticBody3D" parent="Buildings" unique_id=2095848287 instance=ExtResource("30_7kpyp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 65.34912, 0, -13.56695)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Wide_2Doors_Mat.glb"
+
+[node name="Rot180_2Story_Wide_2Doors_Mat_default10" type="StaticBody3D" parent="Buildings" unique_id=1827151917 instance=ExtResource("30_7kpyp")]
+transform = Transform3D(0.99999994, 0, 0, 0, 1, 0, 0, 0, 0.99999994, 109.23654, 0, 61.170475)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Wide_2Doors_Mat.glb"
+
+[node name="Rot180_2Story_Wide_2Doors_Mat_default8" type="StaticBody3D" parent="Buildings" unique_id=228788016 instance=ExtResource("30_7kpyp")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 121.04143, 0, 102.43807)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Wide_2Doors_Mat.glb"
+
+[node name="Rot180_2Story_Wide_2Doors_Mat_default9" type="StaticBody3D" parent="Buildings" unique_id=413987281 instance=ExtResource("30_7kpyp")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1.0000001, 0, -1, 0, -4.371139e-08, 95.22758, -3.8146973e-06, 90.48627)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Wide_2Doors_Mat.glb"
+
+[node name="Rot180_2Story_Wide_2Doors_Mat_default7" type="StaticBody3D" parent="Buildings" unique_id=1933579391 instance=ExtResource("30_7kpyp")]
+transform = Transform3D(-0.99999994, 0, 8.742277e-08, 0, 1, 0, -8.742277e-08, 0, -0.99999994, -65.60995, 0, 85.46732)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Wide_2Doors_Mat.glb"
+
+[node name="Rot180_2Story_Wide_2Doors_Mat_default6" type="StaticBody3D" parent="Buildings" unique_id=519456941 instance=ExtResource("30_7kpyp")]
+transform = Transform3D(0.70710677, 0, -0.70710677, 0, 1, 0, 0.70710677, 0, 0.70710677, -45.94015, 0, 65.938576)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Wide_2Doors_Mat.glb"
+
+[node name="Rot180_2Story_Wide_2Doors_Mat_default5" type="StaticBody3D" parent="Buildings" unique_id=620460663 instance=ExtResource("30_7kpyp")]
+transform = Transform3D(-0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, -0.70710677, -21.042402, 0, 43.156372)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Wide_2Doors_Mat.glb"
+
+[node name="Rot180_2Story_Wide_2Doors_Mat_default4" type="StaticBody3D" parent="Buildings" unique_id=1642602366 instance=ExtResource("30_7kpyp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 37.823387, 0, 59.296448)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Wide_2Doors_Mat.glb"
+
+[node name="Rot180_2Story_Wide_Mat_default15" type="StaticBody3D" parent="Buildings" unique_id=307152610 instance=ExtResource("26_jeghc")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -82.46311, 7.6293945e-06, 107.47295)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Wide_Mat.glb"
+
+[node name="Rot180_2Story_Wide_Mat_default14" type="StaticBody3D" parent="Buildings" unique_id=445208583 instance=ExtResource("26_jeghc")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -12.783503, 7.6293945e-06, 107.015015)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Wide_Mat.glb"
+
+[node name="Rot180_2Story_Wide_Mat_default13" type="StaticBody3D" parent="Buildings" unique_id=1112324825 instance=ExtResource("26_jeghc")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 88.03801, 0, 144.04187)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Wide_Mat.glb"
+
+[node name="Rot180_2Story_Wide_Mat_default12" type="StaticBody3D" parent="Buildings" unique_id=1336934436 instance=ExtResource("26_jeghc")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 113.54315, 7.6293945e-06, 143.57422)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Wide_Mat.glb"
+
+[node name="Rot180_2Story_Wide_Mat_default11" type="StaticBody3D" parent="Buildings" unique_id=1370343064 instance=ExtResource("26_jeghc")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 125.48556, 7.6293945e-06, -10.877756)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Wide_Mat.glb"
+
+[node name="Rot180_2Story_Wide_Mat_default10" type="StaticBody3D" parent="Buildings" unique_id=1975543985 instance=ExtResource("26_jeghc")]
+transform = Transform3D(-4.3711385e-08, 0, -0.99999994, 0, 1, 0, 0.99999994, 0, -4.3711385e-08, 143.25899, 7.6293945e-06, 87.861595)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Wide_Mat.glb"
+
+[node name="Rot180_2Story_Wide_Mat_default9" type="StaticBody3D" parent="Buildings" unique_id=2015152710 instance=ExtResource("26_jeghc")]
+transform = Transform3D(-0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, -0.70710677, -37.003166, 7.6293945e-06, 61.744698)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Wide_Mat.glb"
+
+[node name="Rot180_2Story_Wide_Mat_default8" type="StaticBody3D" parent="Buildings" unique_id=1717597583 instance=ExtResource("26_jeghc")]
+transform = Transform3D(0.70710677, 0, -0.70710677, 0, 1, 0, 0.70710677, 0, 0.70710677, -30.479038, 0, 81.25064)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Wide_Mat.glb"
+
+[node name="Rot180_2Story_Wide_Mat_default7" type="StaticBody3D" parent="Buildings" unique_id=1800493063 instance=ExtResource("26_jeghc")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 72.43924, 3.8146973e-06, 37.37327)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Wide_Mat.glb"
+
+[node name="Rot180_2Story_Wide_Mat_default6" type="StaticBody3D" parent="Buildings" unique_id=794327158 instance=ExtResource("26_jeghc")]
+transform = Transform3D(1.0000001, 0, 0, 0, 1, 0, 0, 0, 1.0000001, 14.032264, 0, 59.572067)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/2Story_Wide_Mat.glb"
+
+[node name="Rot180_3Story_Balcony_Mat_default2" type="StaticBody3D" parent="Buildings" unique_id=1019874736 instance=ExtResource("38_pt7l8")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -19.733639, 1.5258789e-05, 68.60861)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/3Story_Balcony_Mat.glb"
+
+[node name="Rot180_3Story_Slim_Mat_default6" type="StaticBody3D" parent="Buildings" unique_id=1397272592 instance=ExtResource("29_nbuyt")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -62.591545, 7.6293945e-06, 107.28342)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/3Story_Slim_Mat.glb"
+
+[node name="Rot180_3Story_Slim_Mat_default9" type="StaticBody3D" parent="Buildings" unique_id=464783130 instance=ExtResource("29_nbuyt")]
+transform = Transform3D(-4.3711385e-08, 0, 0.99999994, 0, 1, 0, -0.99999994, 0, -4.3711385e-08, -61.578068, 7.6293945e-06, 46.238197)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/3Story_Slim_Mat.glb"
+
+[node name="Rot180_3Story_Slim_Mat_default8" type="StaticBody3D" parent="Buildings" unique_id=1103270722 instance=ExtResource("29_nbuyt")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 73.677055, 0, 106.09617)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/3Story_Slim_Mat.glb"
+
+[node name="Rot180_3Story_Slim_Mat_default7" type="StaticBody3D" parent="Buildings" unique_id=2111631691 instance=ExtResource("29_nbuyt")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 11.177641, 3.8146973e-06, 105.840836)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/3Story_Slim_Mat.glb"
+
+[node name="Rot180_3Story_Slim_Mat_default5" type="StaticBody3D" parent="Buildings" unique_id=1242567914 instance=ExtResource("29_nbuyt")]
+transform = Transform3D(0.99999994, 0, 0, 0, 1, 0, 0, 0, 0.99999994, 93.980865, 0, 60.618282)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/3Story_Slim_Mat.glb"
+
+[node name="Rot180_3Story_Slim_Mat_default4" type="StaticBody3D" parent="Buildings" unique_id=439130761 instance=ExtResource("29_nbuyt")]
+transform = Transform3D(0.9999998, 0, 0, 0, 1, 0, 0, 0, 0.9999998, 22.983307, 0, 59.56744)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/3Story_Slim_Mat.glb"
+
+[node name="Rot180_3Story_Small_Mat_default5" type="StaticBody3D" parent="Buildings" unique_id=1011836285 instance=ExtResource("39_tr4d8")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -55.584175, 7.6293945e-06, 106.6678)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/3Story_Small_Mat.glb"
+
+[node name="Rot180_3Story_Small_Mat_default4" type="StaticBody3D" parent="Buildings" unique_id=1274273698 instance=ExtResource("39_tr4d8")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 38.91711, -7.6293945e-06, 57.667904)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/3Story_Small_Mat.glb"
+
+[node name="Rot180_3Story_Small_Mat_default2" type="StaticBody3D" parent="Buildings" unique_id=1172040108 instance=ExtResource("39_tr4d8")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 73.0501, 0, 82.63062)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/3Story_Small_Mat.glb"
+
+[node name="Rot180_3Story_Small_Mat_default3" type="StaticBody3D" parent="Buildings" unique_id=1042657449 instance=ExtResource("39_tr4d8")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 58.86983, -3.8146973e-06, 82.590546)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/3Story_Small_Mat.glb"
+
+[node name="Rot180_4Story_Center_Mat_default8" type="StaticBody3D" parent="Buildings" unique_id=313972030 instance=ExtResource("28_056ws")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 97.46566, 0, -32.370365)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/4Story_Center_Mat.glb"
+
+[node name="Rot180_4Story_Center_Mat_default6" type="StaticBody3D" parent="Buildings" unique_id=20993728 instance=ExtResource("28_056ws")]
+transform = Transform3D(-4.3711385e-08, 0, 0.99999994, 0, 1, 0, -0.99999994, 0, -4.3711385e-08, 120.73072, 0, 121.12985)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/4Story_Center_Mat.glb"
+
+[node name="Rot180_4Story_Center_Mat_default7" type="StaticBody3D" parent="Buildings" unique_id=335984953 instance=ExtResource("28_056ws")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 120.28601, 0, 84.6587)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/4Story_Center_Mat.glb"
+
+[node name="Rot180_4Story_Center_Mat_default5" type="StaticBody3D" parent="Buildings" unique_id=1387526874 instance=ExtResource("28_056ws")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -63.026054, 0, 54.83975)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/4Story_Center_Mat.glb"
+
+[node name="Rot180_4Story_Center_Mat_default4" type="StaticBody3D" parent="Buildings" unique_id=124890354 instance=ExtResource("28_056ws")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -37.33339, 0, 36.139294)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/4Story_Center_Mat.glb"
+
+[node name="Rot180_4Story_Center_Mat_default3" type="StaticBody3D" parent="Buildings" unique_id=874091243 instance=ExtResource("28_056ws")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 72.35748, 0, 50.69888)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/4Story_Center_Mat.glb"
+
+[node name="Rot180_4Story_Mat_default4" type="StaticBody3D" parent="Buildings" unique_id=1970691997 instance=ExtResource("27_s3nex")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 101.026436, -7.6293945e-06, 143.54143)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/4Story_Mat.glb"
+
+[node name="Rot180_4Story_Mat_default3" type="StaticBody3D" parent="Buildings" unique_id=1780701233 instance=ExtResource("27_s3nex")]
+transform = Transform3D(-0.99999994, 0, -8.742277e-08, 0, 1, 0, 8.742277e-08, 0, -0.99999994, 17.328257, 0, 58.253418)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/4Story_Mat.glb"
+
+[node name="Rot180_4Story_Wide_2Doors_Mat_default7" type="StaticBody3D" parent="Buildings" unique_id=1859072838 instance=ExtResource("24_8k4uf")]
+transform = Transform3D(-4.3711385e-08, 0, -0.99999994, 0, 1, 0, 0.99999994, 0, -4.3711385e-08, 97.96614, 0, 14.838604)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/4Story_Wide_2Doors_Mat.glb"
+
+[node name="Rot180_4Story_Wide_2Doors_Mat_default8" type="StaticBody3D" parent="Buildings" unique_id=1120461944 instance=ExtResource("24_8k4uf")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 98.107735, 3.8146973e-06, -15.8073)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/4Story_Wide_2Doors_Mat.glb"
+
+[node name="Rot180_4Story_Wide_2Doors_Mat_default6" type="StaticBody3D" parent="Buildings" unique_id=388109811 instance=ExtResource("24_8k4uf")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 102.90647, 0, 121.76886)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/4Story_Wide_2Doors_Mat.glb"
+
+[node name="Rot180_4Story_Wide_2Doors_Mat_default4" type="StaticBody3D" parent="Buildings" unique_id=1224447380 instance=ExtResource("24_8k4uf")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -56.15484, 0, 36.803913)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/4Story_Wide_2Doors_Mat.glb"
+
+[node name="Rot180_4Story_Wide_2Doors_Mat_default5" type="StaticBody3D" parent="Buildings" unique_id=1710405606 instance=ExtResource("24_8k4uf")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -72.46833, -7.6293945e-06, 44.580772)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/4Story_Wide_2Doors_Mat.glb"
+
+[node name="Rot180_4Story_Wide_2Doors_Mat_default3" type="StaticBody3D" parent="Buildings" unique_id=2044453200 instance=ExtResource("24_8k4uf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 63.75045, -7.6293945e-06, 59.57405)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/4Story_Wide_2Doors_Mat.glb"
+
+[node name="Rot180_4Story_Wide_2Doors_Roof_Mat_default6" type="StaticBody3D" parent="Buildings" unique_id=153271264 instance=ExtResource("25_efvkq")]
+transform = Transform3D(-4.3711392e-08, 0, -1.0000001, 0, 1, 0, 1.0000001, 0, -4.3711392e-08, 132.79324, 1.5258789e-05, -28.43791)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/4Story_Wide_2Doors_Roof_Mat.glb"
+
+[node name="Rot180_4Story_Wide_2Doors_Roof_Mat_default5" type="StaticBody3D" parent="Buildings" unique_id=1875695081 instance=ExtResource("25_efvkq")]
+transform = Transform3D(-4.3711385e-08, 0, 0.99999994, 0, 1, 0, -0.99999994, 0, -4.3711385e-08, -11.024132, 0, 67.26926)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/4Story_Wide_2Doors_Roof_Mat.glb"
+
+[node name="Rot180_4Story_Wide_2Doors_Roof_Mat_default4" type="StaticBody3D" parent="Buildings" unique_id=1399790128 instance=ExtResource("25_efvkq")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 54.687202, 0, 35.85132)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/4Story_Wide_2Doors_Roof_Mat.glb"
+
+[node name="Rot180_4Story_Wide_2Doors_Roof_Mat_default3" type="StaticBody3D" parent="Buildings" unique_id=643609265 instance=ExtResource("25_efvkq")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 28.053535, -3.8146973e-06, 84.23033)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/4Story_Wide_2Doors_Roof_Mat.glb"
+
+[node name="Rot180_6Story_Stack_Mat_default5" type="StaticBody3D" parent="Buildings" unique_id=1224953424 instance=ExtResource("40_avexc")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -20.00673, 0, 59.639107)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/6Story_Stack_Mat.glb"
+
+[node name="Rot180_6Story_Stack_Mat_default4" type="StaticBody3D" parent="Buildings" unique_id=2025244967 instance=ExtResource("40_avexc")]
+transform = Transform3D(-4.3711385e-08, 0, -0.99999994, 0, 1, 0, 0.99999994, 0, -4.3711385e-08, 97.97397, 0, -0.6347885)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/6Story_Stack_Mat.glb"
+
+[node name="Rot180_6Story_Stack_Mat_default3" type="StaticBody3D" parent="Buildings" unique_id=996726987 instance=ExtResource("40_avexc")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 64.3344, -7.6293945e-06, 50.172157)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/6Story_Stack_Mat.glb"
+
+[node name="Rot180_6Story_Stack_Mat_default2" type="StaticBody3D" parent="Buildings" unique_id=1285282670 instance=ExtResource("40_avexc")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 65.97999, -1.5258789e-05, 83.72527)
+metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/6Story_Stack_Mat.glb"
+
+[node name="GrassField" type="Node3D" parent="." unique_id=1305721088]
+
+[node name="Lighting" type="Node3D" parent="." unique_id=2128133978]
+
+[node name="Sun" type="DirectionalLight3D" parent="Lighting" unique_id=129475564]
+transform = Transform3D(0.8191522, 0.28678825, -0.4967315, 0, 0.86602527, 0.50000024, 0.5735762, -0.4095763, 0.7094065, 0, 0, 0)
+light_color = Color(1, 0.72, 0.5, 1)
+light_energy = 0.55
+shadow_enabled = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Lighting" unique_id=518585028]
+environment = SubResource("SceneEnvironment")

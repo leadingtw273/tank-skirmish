@@ -2,7 +2,7 @@
 ## The Tank2 scene, authored blockers, AI, NavigationAgent and controller physics stay live.
 extends SceneTree
 
-const PLAYTEST := preload("res://src/world/training_ground/training_ground_playtest.tscn")
+const PLAYTEST := preload("res://src/maps/training_ground/training_ground_playtest.tscn")
 const DT := 1.0 / 60.0
 const START := Vector3(41.5591201782227, 0.0, -63.5641975402832)
 const PLAYER_START := Vector3(74.1377792358398, 0.0, -75.8793716430664)
@@ -36,7 +36,7 @@ func _reproduce_recorded_handoff() -> void:
 	root.add_child(scene)
 	await physics_frame
 	var enemy := scene.get_node_or_null("Encounter/Enemy") as CharacterBody3D
-	var player := scene.get_node_or_null("Main/Tank") as CharacterBody3D
+	var player := scene.get_node_or_null("Main/PlayerSpawnGroup/Tank") as CharacterBody3D
 	var ai := scene.get_node_or_null("Encounter/CombatAI") as Node
 	if enemy == null or player == null or ai == null or not enemy.scene_file_path.ends_with("tank2.tscn"):
 		_fail("author scene must expose its real Tank2 Enemy, player, and CombatAI.")

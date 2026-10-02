@@ -7,3 +7,16 @@ export/
 Thumbs.db
 *.tmp
 *.log
+
+# Purchased sources / generated geometry are preserved in the local asset library.
+# Keep recipes, manifests, and scene references in Git; do not publish source art.
+assets/AtomicRealmModularRoads/
+assets/QuaterniusBuildings/
+docs/maps/references/*.import
+src/world/roads/generated/
+src/world/roads/items/
+src/world/buildings/quaternius/meshes/
+src/world/buildings/quaternius/collisions/
+src/world/buildings/quaternius/items/
+artifacts-local/
+__pycache__/

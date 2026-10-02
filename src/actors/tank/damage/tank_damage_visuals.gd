@@ -21,6 +21,8 @@ const HealthComponent := preload("res://src/combat/damage/health_component.gd")
 var active_damage_stage := 100
 
 var _health_component: HealthComponent
+## 剛體玩家共用根層血量；舊車型未注入時維持原路徑。
+var health_source: HealthComponent
 var _tank: Node3D
 var _gun_pitch_pivot: Node3D
 var _hull_anchor: Node3D
@@ -40,7 +42,7 @@ func _ready() -> void:
 
 func _bind_to_tank() -> void:
 	_tank = get_parent() as Node3D
-	_health_component = _tank.get_node_or_null("HealthComponent") as HealthComponent
+	_health_component = health_source if health_source != null else _tank.get_node_or_null("HealthComponent") as HealthComponent
 	var visual_recoil_pivot := _tank.get_node_or_null("VisualRecoilPivot") as Node3D
 	var turret_pivot := _tank.get_node_or_null("VisualRecoilPivot/TurretPivot") as Node3D
 	_gun_pitch_pivot = _tank.get_node_or_null("VisualRecoilPivot/TurretPivot/GunPitchPivot") as Node3D

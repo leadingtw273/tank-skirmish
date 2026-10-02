@@ -1,10 +1,11 @@
 ## LEA-173 H1--H5：只經正式 Tank 公開入口驗證接觸滑動與慢速 yaw。
 extends SceneTree
 
-const PLAYTEST_SCENE := preload("res://src/world/training_ground/training_ground_playtest.tscn")
+const PLAYTEST_SCENE := preload("res://src/maps/training_ground/training_ground_playtest.tscn")
 const TANK_SCENES := [preload("res://src/actors/tank/variants/tank1/tank1.tscn"), preload("res://src/actors/tank/variants/tank2/tank2.tscn"), preload("res://src/actors/tank/variants/tank3/tank3.tscn"), preload("res://src/actors/tank/variants/tank4/tank4.tscn")]
 const PLAYER_CONTROLLER := preload("res://src/player/player_controller.gd")
 const DT := 1.0 / 60.0
+var _fixture_ground_rids: Array[RID] = []
 
 
 func _init() -> void:
@@ -66,6 +67,8 @@ func _case(index: int, angle_degrees: float) -> Dictionary:
 	root.add_child(tank)
 	tank.global_rotation.y = deg_to_rad(angle_degrees)
 	await physics_frame
+	var ground := _fixture_ground_for(tank)
+	for unused in 3: await physics_frame
 	var wall := _wall_at_face(_support_min_x(tank) - 0.10)
 	root.add_child(wall)
 	await physics_frame
@@ -87,9 +90,16 @@ func _case(index: int, angle_degrees: float) -> Dictionary:
 	var tread_distinguishable_count := 0
 	var max_spread_error := 0.0
 	var previous_spread: float = float(tank.get_current_spread_degrees())
+	var first_external := "<none>"
 	for unused in 120:
 		await physics_frame
-		contacted = contacted or tank.get_slide_collision_count() > 0
+		## shared ground solver 可能採用不同於 native move_and_slide 的安全終點；首次接觸
+		## 以終點完整 shape 外部近接與 controller 真實 contact record 認定；不能再要求
+		## 未採用的 native 路徑同幀回報同一接觸（停車時它可能只回報地板）。
+		if _overlap(tank, 0.004) and bool(tank.get_contact_response_stats().active):
+			contacted = true
+			if first_external == "<none>":
+				first_external = _first_external_slide_collider_name(tank)
 		var pose_rate := angle_difference(previous_yaw, tank.global_rotation.y) / DT
 		previous_yaw = tank.global_rotation.y
 		var actual_spread: float = float(tank.get_current_spread_degrees())
@@ -149,7 +159,9 @@ func _case(index: int, angle_degrees: float) -> Dictionary:
 			var stable_start_z := tank.global_position.z
 			for unused in 30:
 				await physics_frame
-				stable_contact = stable_contact and tank.get_slide_collision_count() > 0 and bool(tank.get_contact_response_stats().active)
+				# 零水平速度時，重力 move_and_slide 可以只回報地板；另以完整形狀
+				# 查詢確認毫米級安全皮層內仍有外部接觸，不能只信 controller 的 active。
+				stable_contact = stable_contact and _overlap(tank, 0.004) and bool(tank.get_contact_response_stats().active)
 			var window_tangent := absf(tank.global_position.z - stable_start_z)
 			max_window_tangent = maxf(max_window_tangent, window_tangent)
 			stable_tangent += window_tangent
@@ -158,9 +170,9 @@ func _case(index: int, angle_degrees: float) -> Dictionary:
 		tank.set_movement_input(-1.0)
 		for unused in 90: await physics_frame
 		exited = tank.global_position.x > blocked_position.x + 0.02
-	var result := {"start_clear": start_clear, "contact": contacted, "yaw_delta": tank.global_rotation.y - yaw_before, "tangent": tank.global_position.z - start.z, "stable_tangent": stable_tangent, "max_window_tangent": max_window_tangent, "stable_contact": stable_contact, "exited": exited, "slide": stats.get("slide_velocity", Vector3.ZERO), "stats": stats, "h2_bounds_ok": h2_bounds_ok, "h2_consumers_ok": h2_consumers_ok, "consumer_check_count": consumer_check_count, "consumer_nonzero_auto_count": consumer_nonzero_auto_count, "spread_distinguishable_count": spread_distinguishable_count, "tread_distinguishable_count": tread_distinguishable_count, "auto_cap": auto_cap, "max_actual_rate": max_actual_rate, "max_persistent_base": max_persistent_base, "max_rate_error": max_rate_error, "max_spread_error": max_spread_error}
+	var result := {"start_clear": start_clear, "contact": contacted, "first_external": first_external, "yaw_delta": tank.global_rotation.y - yaw_before, "tangent": tank.global_position.z - start.z, "stable_tangent": stable_tangent, "max_window_tangent": max_window_tangent, "stable_contact": stable_contact, "exited": exited, "slide": stats.get("slide_velocity", Vector3.ZERO), "stats": stats, "h2_bounds_ok": h2_bounds_ok, "h2_consumers_ok": h2_consumers_ok, "consumer_check_count": consumer_check_count, "consumer_nonzero_auto_count": consumer_nonzero_auto_count, "spread_distinguishable_count": spread_distinguishable_count, "tread_distinguishable_count": tread_distinguishable_count, "auto_cap": auto_cap, "max_actual_rate": max_actual_rate, "max_persistent_base": max_persistent_base, "max_rate_error": max_rate_error, "max_spread_error": max_spread_error}
 	print("CONTACT_RESPONSE Tank%d angle=%.0f %s" % [index + 1, angle_degrees, result])
-	tank.queue_free()
+	tank.queue_free(); ground.queue_free()
 	wall.queue_free()
 	await physics_frame
 	return result
@@ -212,15 +224,17 @@ func _manual_case(index: int, manual_turn: float) -> Dictionary:
 	## 每個 A/D case 都是 fresh fixture，並鏡像成該手動方向可安全轉離牆面。
 	tank.global_rotation.y = deg_to_rad(45.0 * signf(manual_turn))
 	await physics_frame
+	var ground := _fixture_ground_for(tank)
+	for unused in 3: await physics_frame
 	var wall := _wall_at_face(_support_min_x(tank) - 0.10)
 	root.add_child(wall)
 	await physics_frame
-	var start_clear := tank.get_slide_collision_count() == 0
+	var start_clear := not _has_external_slide_collision(tank)
 	tank.set_movement_input(1.0)
 	var contacted := false
 	for unused in 90:
 		await physics_frame
-		contacted = contacted or tank.get_slide_collision_count() > 0
+		contacted = contacted or _has_external_slide_collision(tank)
 	tank.set_manual_turn_active(true)
 	tank.set_turn_input(manual_turn)
 	var auto_zero := true
@@ -238,7 +252,7 @@ func _manual_case(index: int, manual_turn: float) -> Dictionary:
 	var cleared_stats: Dictionary = tank.get_contact_response_stats()
 	var result := {"start_clear": start_clear, "contact": contacted, "auto_yaw": 0.0 if auto_zero else stats.get("auto_yaw_requested", 0.0), "manual_yaw": manual_yaw, "turned_out": signf(manual_yaw) == signf(manual_turn) and absf(manual_yaw) > 0.0001, "cleared": not bool(cleared_stats.active) and int(cleared_stats.contact_count) == 0 and String(cleared_stats.reason) == "cleared", "turn": manual_turn}
 	print("CONTACT_RESPONSE H3 Tank%d %s" % [index + 1, result])
-	tank.queue_free(); wall.queue_free(); await physics_frame
+	tank.queue_free(); wall.queue_free(); ground.queue_free(); await physics_frame
 	return result
 
 
@@ -247,12 +261,14 @@ func _corner_case() -> Dictionary:
 	root.add_child(tank)
 	tank.global_rotation.y = deg_to_rad(45.0)
 	await physics_frame
+	var ground := _fixture_ground_for(tank)
+	for unused in 3: await physics_frame
 	var forward := (tank.transform.basis * Vector3(-1, 0, 0)).normalized()
 	var wall_x := _wall_at_plane(tank, Vector3.RIGHT, 0.10)
 	var wall_z := _wall_at_plane(tank, Vector3.FORWARD, 0.10)
 	root.add_child(wall_x); root.add_child(wall_z)
 	await physics_frame
-	var start_clear := tank.get_slide_collision_count() == 0
+	var start_clear := not _has_external_slide_collision(tank)
 	var no_safe_inward_tangent := forward.dot(Vector3.RIGHT) < 0.0 and forward.dot(Vector3.FORWARD) < 0.0
 	tank.set_movement_input(1.0)
 	var contacted := false
@@ -260,7 +276,7 @@ func _corner_case() -> Dictionary:
 	var observed_normals: Dictionary = {}
 	for unused in 120:
 		await physics_frame
-		contacted = contacted or tank.get_slide_collision_count() > 0
+		contacted = contacted or _has_external_slide_collision(tank)
 		var frame_rids: Array[RID] = []
 		for collision_index in tank.get_slide_collision_count():
 			var collision := tank.get_slide_collision(collision_index)
@@ -278,7 +294,7 @@ func _corner_case() -> Dictionary:
 	for unused in 90: await physics_frame
 	var result := {"start_clear": start_clear, "premise": no_safe_inward_tangent and actual_two_face_premise, "both_walls_same_frame": both_walls_same_frame, "normals": observed_normals, "contact": contacted, "stopped": stopped, "exited": tank.global_position.distance_to(before) > 0.02}
 	print("CONTACT_RESPONSE H4 ", result)
-	tank.queue_free(); wall_x.queue_free(); wall_z.queue_free(); await physics_frame
+	tank.queue_free(); wall_x.queue_free(); wall_z.queue_free(); ground.queue_free(); await physics_frame
 	return result
 
 
@@ -291,6 +307,9 @@ func _controller_clear_case() -> Dictionary:
 	new_tank.position.z = 50.0
 	root.add_child(old_tank); root.add_child(new_tank)
 	await physics_frame
+	var old_ground := _fixture_ground_for(old_tank)
+	var new_ground := _fixture_ground_for(new_tank)
+	for unused in 3: await physics_frame
 	controller.set_controlled_tank(old_tank)
 	var old_wall := _wall_at_face(_support_min_x(old_tank) - 0.10)
 	root.add_child(old_wall)
@@ -310,7 +329,7 @@ func _controller_clear_case() -> Dictionary:
 	var disabled := new_contact and String(new_tank.get_contact_response_stats().reason) == "cleared"
 	var result := {"switch_old": switch_old, "switch_new": switch_new, "disabled": disabled}
 	print("CONTACT_RESPONSE H3 controller ", result)
-	controller.queue_free(); old_tank.queue_free(); new_tank.queue_free(); old_wall.queue_free(); new_wall.queue_free()
+	controller.queue_free(); old_tank.queue_free(); new_tank.queue_free(); old_wall.queue_free(); new_wall.queue_free(); old_ground.queue_free(); new_ground.queue_free()
 	await physics_frame
 	return result
 
@@ -329,9 +348,14 @@ func _tank_pair_case(moving_index: int, other_index: int) -> Dictionary:
 	var other_local_back := other_back - direction.dot(other.global_position)
 	other.global_position = direction * (moving_front + 0.10 - other_local_back)
 	other.call("_sync_part_collision_shapes")
+	var moving_ground := _fixture_ground_for(moving)
+	var other_ground := _fixture_ground_for(other)
+	var moving_before_settle := moving.global_position
+	var other_before_settle := other.global_position
 	moving.clear_contact_response_state()
 	for unused in 3: await physics_frame
-	var start_clear := moving.get_slide_collision_count() == 0 and other.get_slide_collision_count() == 0
+	var start_clear := not _has_external_slide_collision(moving) and not _has_external_slide_collision(other)
+	print("CONTACT_RESPONSE H5_SETUP moving_before=%s moving_settled=%s other_before=%s other_settled=%s start_clear=%s first_external=%s" % [moving_before_settle, moving.global_position, other_before_settle, other.global_position, start_clear, _first_external_slide_collider_name(moving)])
 	var other_start := other.global_position
 	moving.set_movement_input(1.0)
 	var contacted := false
@@ -341,7 +365,7 @@ func _tank_pair_case(moving_index: int, other_index: int) -> Dictionary:
 			contacted = contacted or moving.get_slide_collision(collision_index).get_collider() == other
 	var result := {"start_clear": start_clear, "angle": 30.0, "contact": contacted, "other_delta": other.global_position.distance_to(other_start), "moving": moving.global_position, "other": other.global_position}
 	print("CONTACT_RESPONSE H5 moving=Tank%d other=Tank%d %s" % [moving_index + 1, other_index + 1, result])
-	moving.queue_free(); other.queue_free(); await physics_frame
+	moving.queue_free(); other.queue_free(); moving_ground.queue_free(); other_ground.queue_free(); await physics_frame
 	return result
 
 
@@ -368,16 +392,60 @@ func _wall_at_plane(tank: CharacterBody3D, outward_normal: Vector3, gap: float) 
 	return wall
 
 
-func _overlap(tank: CharacterBody3D) -> bool:
+func _overlap(tank: CharacterBody3D, margin: float = 0.0) -> bool:
 	var state := root.get_world_3d().direct_space_state
 	for child in tank.get_children():
 		if child is CollisionShape3D and child.shape != null:
 			var query := PhysicsShapeQueryParameters3D.new()
 			query.shape = child.shape
 			query.transform = child.global_transform
+			query.margin = margin
 			query.collision_mask = tank.collision_mask
 			query.exclude = [tank.get_rid()]
 			query.collide_with_bodies = true
-			if not state.intersect_shape(query, 1).is_empty():
-				return true
+			for hit in state.intersect_shape(query, 16):
+				var collider := hit.get("collider") as Node
+				if not _is_fixture_ground(collider):
+					return true
 	return false
+
+
+func _has_external_slide_collision(tank: CharacterBody3D) -> bool:
+	for collision_index in tank.get_slide_collision_count():
+		var collision := tank.get_slide_collision(collision_index)
+		var collider := collision.get_collider() as Node
+		if not _is_fixture_ground(collider):
+			return true
+	return false
+
+
+func _first_external_slide_collider_name(tank: CharacterBody3D) -> String:
+	for collision_index in tank.get_slide_collision_count():
+		var collision := tank.get_slide_collision(collision_index)
+		var collider := collision.get_collider() as Node
+		if not _is_fixture_ground(collider):
+			return "<null>" if collider == null else collider.name
+	return "<none>"
+
+
+func _is_fixture_ground(collider: Node) -> bool:
+	return collider is CollisionObject3D and _fixture_ground_rids.has((collider as CollisionObject3D).get_rid())
+
+
+## 接地後 fixture 必須有實體支撐面；高度由正式 convex shape 的當前最低點量得。
+func _fixture_ground_for(tank: CharacterBody3D) -> StaticBody3D:
+	tank.call("_sync_part_collision_shapes")
+	var ground := StaticBody3D.new()
+	ground.name = "ContactFixtureGround"
+	ground.collision_layer = 1
+	var thickness := 0.2
+	var top_y: float = tank.part_world_bounds().position.y + 0.001
+	ground.position = Vector3(tank.global_position.x, top_y - thickness * 0.5, tank.global_position.z)
+	var collision := CollisionShape3D.new()
+	var shape := BoxShape3D.new()
+	shape.size = Vector3(40.0, thickness, 40.0)
+	collision.shape = shape
+	ground.add_child(collision)
+	root.add_child(ground)
+	_fixture_ground_rids.append(ground.get_rid())
+	return ground

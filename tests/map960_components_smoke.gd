@@ -1,7 +1,7 @@
 extends SceneTree
 
-const SATELLITE_DISTRICT_SCENE := "res://src/world/satellite_district.tscn"
-const ARTERIAL_CORRIDOR_SCENE := "res://src/world/arterial_corridor.tscn"
+const SATELLITE_DISTRICT_SCENE := "res://src/maps/archive/town_layout/satellite_district.tscn"
+const ARTERIAL_CORRIDOR_SCENE := "res://src/maps/archive/town_layout/arterial_corridor.tscn"
 const GRASS_FIELD_SCRIPT := "res://src/world/grass_field.gd"
 const GRID_SIZE := 20.0
 const ROAD_SCALE := Vector3(10, 1, 10)

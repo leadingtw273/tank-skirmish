@@ -18,14 +18,20 @@ concurrency:
 jobs:
   quality:
     name: quality
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
+    runs-on: [self-hosted, Linux, X64, tank-skirmish-private-assets]
+    timeout-minutes: 30
     env:
       GODOT_VERSION: 4.7.1-stable
       GODOT_ARCHIVE_SHA256: c7ff14fd28472c8d4f193043de30278dcf7e5241a1dcf7566b02e27addaa33ba
     steps:
       - name: Check out repository
         uses: actions/checkout@v7
+
+      - name: Restore verified local assets
+        shell: bash
+        env:
+          TANK_CI_ASSET_ARCHIVE: /opt/tank-skirmish-ci-assets/quarter.tar
+        run: python3 scripts/restore-local-ci-assets.py --wait-seconds 120
 
       - name: Cache Godot
         id: cache-godot

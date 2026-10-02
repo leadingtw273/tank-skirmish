@@ -1,0 +1,1012 @@
+{
+	"connections": [
+		{
+			"end_error_m": 0.0,
+			"from": "UL0",
+			"length_m": 48.0,
+			"segments": 4,
+			"to": "UL1"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "Mirror_UL0",
+			"length_m": 48.0,
+			"segments": 4,
+			"to": "Mirror_UL1"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "UL1",
+			"length_m": 36.0,
+			"segments": 3,
+			"to": "UL4"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "Mirror_UL1",
+			"length_m": 36.0,
+			"segments": 3,
+			"to": "Mirror_UL4"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "UL4",
+			"length_m": 24.0,
+			"segments": 2,
+			"to": "G0"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "Mirror_UL4",
+			"length_m": 24.0,
+			"segments": 2,
+			"to": "Mirror_G0"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "G0",
+			"length_m": 24.0,
+			"segments": 2,
+			"to": "G1"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "Mirror_G0",
+			"length_m": 24.0,
+			"segments": 2,
+			"to": "Mirror_G1"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "G1",
+			"length_m": 36.0,
+			"segments": 3,
+			"to": "G2"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "Mirror_G1",
+			"length_m": 36.0,
+			"segments": 3,
+			"to": "Mirror_G2"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "G2",
+			"length_m": 18.0332641601562,
+			"segments": 2,
+			"to": "G3"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "Mirror_G2",
+			"length_m": 18.0332641601562,
+			"segments": 2,
+			"to": "Mirror_G3"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "G3",
+			"length_m": 33.4814529418945,
+			"segments": 3,
+			"to": "G4"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "Mirror_G3",
+			"length_m": 33.4814529418945,
+			"segments": 3,
+			"to": "Mirror_G4"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "G4",
+			"length_m": 18.0,
+			"segments": 2,
+			"to": "D1"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "Mirror_G4",
+			"length_m": 18.0,
+			"segments": 2,
+			"to": "Mirror_D1"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "G3",
+			"length_m": 21.4323272705078,
+			"segments": 2,
+			"to": "D0"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "Mirror_G3",
+			"length_m": 21.4323272705078,
+			"segments": 2,
+			"to": "Mirror_D0"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "D0",
+			"length_m": 9.85786437988281,
+			"segments": 1,
+			"to": "D1"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "Mirror_D0",
+			"length_m": 9.85786437988281,
+			"segments": 1,
+			"to": "Mirror_D1"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "D1",
+			"length_m": 6.0,
+			"segments": 1,
+			"to": "R0"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "Mirror_D1",
+			"length_m": 6.0,
+			"segments": 1,
+			"to": "Mirror_R0"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "R0",
+			"length_m": 15.9199981689453,
+			"segments": 2,
+			"to": "R1"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "Mirror_R0",
+			"length_m": 15.9199981689453,
+			"segments": 2,
+			"to": "Mirror_R1"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "R1",
+			"length_m": 36.0,
+			"segments": 3,
+			"to": "R2"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "Mirror_R1",
+			"length_m": 36.0,
+			"segments": 3,
+			"to": "L2"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "R0",
+			"length_m": 12.0,
+			"segments": 1,
+			"to": "RI"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "Mirror_R0",
+			"length_m": 12.0,
+			"segments": 1,
+			"to": "Mirror_RI"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "RI",
+			"length_m": 12.0,
+			"segments": 1,
+			"to": "RM"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "Mirror_RI",
+			"length_m": 12.0,
+			"segments": 1,
+			"to": "LM"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "UL0",
+			"length_m": 36.0,
+			"segments": 3,
+			"to": "H0"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "Mirror_UL0",
+			"length_m": 36.0,
+			"segments": 3,
+			"to": "Mirror_H0"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "H0",
+			"length_m": 24.0,
+			"segments": 2,
+			"to": "H1"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "Mirror_H0",
+			"length_m": 24.0,
+			"segments": 2,
+			"to": "Mirror_H1"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "H1",
+			"length_m": 36.0,
+			"segments": 3,
+			"to": "H2"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "Mirror_H1",
+			"length_m": 36.0,
+			"segments": 3,
+			"to": "Mirror_H2"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "G0",
+			"length_m": 12.0,
+			"segments": 1,
+			"to": "H0"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "Mirror_G0",
+			"length_m": 12.0,
+			"segments": 1,
+			"to": "Mirror_H0"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "G1",
+			"length_m": 12.0,
+			"segments": 1,
+			"to": "H1"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "Mirror_G1",
+			"length_m": 12.0,
+			"segments": 1,
+			"to": "Mirror_H1"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "G2",
+			"length_m": 12.0,
+			"segments": 1,
+			"to": "H2"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "Mirror_G2",
+			"length_m": 12.0,
+			"segments": 1,
+			"to": "Mirror_H2"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "H2",
+			"length_m": 12.0,
+			"segments": 1,
+			"to": "N"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "Mirror_H2",
+			"length_m": 12.0,
+			"segments": 1,
+			"to": "Mirror_N"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "UL0",
+			"length_m": 1.43471527099609,
+			"segments": 1,
+			"to": "L0"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "Mirror_UL0",
+			"length_m": 1.43471527099609,
+			"segments": 1,
+			"to": "Mirror_L0"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "L0",
+			"length_m": 14.255274772644,
+			"segments": 2,
+			"to": "L1"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "Mirror_L0",
+			"length_m": 14.255274772644,
+			"segments": 2,
+			"to": "Mirror_L1"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "L1",
+			"length_m": 25.5065250396729,
+			"segments": 3,
+			"to": "L2"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "Mirror_L1",
+			"length_m": 25.5065250396729,
+			"segments": 3,
+			"to": "R2"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "H0",
+			"length_m": 22.0,
+			"segments": 2,
+			"to": "LJoin"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "Mirror_H0",
+			"length_m": 22.0,
+			"segments": 2,
+			"to": "Mirror_LJoin"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "LJoin",
+			"length_m": 2.0,
+			"segments": 1,
+			"to": "LI"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "Mirror_LJoin",
+			"length_m": 2.0,
+			"segments": 1,
+			"to": "Mirror_LI"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "L1",
+			"length_m": 15.4265213012695,
+			"segments": 2,
+			"to": "LJoin"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "Mirror_L1",
+			"length_m": 15.4265213012695,
+			"segments": 2,
+			"to": "Mirror_LJoin"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "LI",
+			"length_m": 12.0,
+			"segments": 1,
+			"to": "LM"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "Mirror_LI",
+			"length_m": 12.0,
+			"segments": 1,
+			"to": "RM"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "LI",
+			"length_m": 39.4911956787109,
+			"segments": 4,
+			"to": "NW"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "Mirror_LI",
+			"length_m": 39.4911956787109,
+			"segments": 4,
+			"to": "Mirror_NW"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "RI",
+			"length_m": 39.4911956787109,
+			"segments": 4,
+			"to": "NE"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "Mirror_RI",
+			"length_m": 39.4911956787109,
+			"segments": 4,
+			"to": "Mirror_NE"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "N",
+			"length_m": 21.4809188842773,
+			"segments": 2,
+			"to": "NW"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "Mirror_N",
+			"length_m": 21.4809169769287,
+			"segments": 2,
+			"to": "Mirror_NW"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "N",
+			"length_m": 21.4809169769287,
+			"segments": 2,
+			"to": "NE"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "Mirror_N",
+			"length_m": 21.4809150695801,
+			"segments": 2,
+			"to": "Mirror_NE"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "NW",
+			"length_m": 12.9291076660156,
+			"segments": 2,
+			"to": "W"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "Mirror_NW",
+			"length_m": 12.929105758667,
+			"segments": 2,
+			"to": "E"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "NE",
+			"length_m": 12.929105758667,
+			"segments": 2,
+			"to": "E"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "Mirror_NE",
+			"length_m": 12.9291086196899,
+			"segments": 2,
+			"to": "W"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "W",
+			"length_m": 24.0,
+			"segments": 2,
+			"to": "LM"
+		},
+		{
+			"end_error_m": 0.0,
+			"from": "E",
+			"length_m": 24.0,
+			"segments": 2,
+			"to": "RM"
+		}
+	],
+	"edges": [
+		[
+			"UL0",
+			"UL1"
+		],
+		[
+			"Mirror_UL0",
+			"Mirror_UL1"
+		],
+		[
+			"UL1",
+			"UL4"
+		],
+		[
+			"Mirror_UL1",
+			"Mirror_UL4"
+		],
+		[
+			"UL4",
+			"G0"
+		],
+		[
+			"Mirror_UL4",
+			"Mirror_G0"
+		],
+		[
+			"G0",
+			"G1"
+		],
+		[
+			"Mirror_G0",
+			"Mirror_G1"
+		],
+		[
+			"G1",
+			"G2"
+		],
+		[
+			"Mirror_G1",
+			"Mirror_G2"
+		],
+		[
+			"G2",
+			"G3"
+		],
+		[
+			"Mirror_G2",
+			"Mirror_G3"
+		],
+		[
+			"G3",
+			"G4"
+		],
+		[
+			"Mirror_G3",
+			"Mirror_G4"
+		],
+		[
+			"G4",
+			"D1"
+		],
+		[
+			"Mirror_G4",
+			"Mirror_D1"
+		],
+		[
+			"G3",
+			"D0"
+		],
+		[
+			"Mirror_G3",
+			"Mirror_D0"
+		],
+		[
+			"D0",
+			"D1"
+		],
+		[
+			"Mirror_D0",
+			"Mirror_D1"
+		],
+		[
+			"D1",
+			"R0"
+		],
+		[
+			"Mirror_D1",
+			"Mirror_R0"
+		],
+		[
+			"R0",
+			"R1"
+		],
+		[
+			"Mirror_R0",
+			"Mirror_R1"
+		],
+		[
+			"R1",
+			"R2"
+		],
+		[
+			"Mirror_R1",
+			"L2"
+		],
+		[
+			"R0",
+			"RI"
+		],
+		[
+			"Mirror_R0",
+			"Mirror_RI"
+		],
+		[
+			"RI",
+			"RM"
+		],
+		[
+			"Mirror_RI",
+			"LM"
+		],
+		[
+			"UL0",
+			"H0"
+		],
+		[
+			"Mirror_UL0",
+			"Mirror_H0"
+		],
+		[
+			"H0",
+			"H1"
+		],
+		[
+			"Mirror_H0",
+			"Mirror_H1"
+		],
+		[
+			"H1",
+			"H2"
+		],
+		[
+			"Mirror_H1",
+			"Mirror_H2"
+		],
+		[
+			"G0",
+			"H0"
+		],
+		[
+			"Mirror_G0",
+			"Mirror_H0"
+		],
+		[
+			"G1",
+			"H1"
+		],
+		[
+			"Mirror_G1",
+			"Mirror_H1"
+		],
+		[
+			"G2",
+			"H2"
+		],
+		[
+			"Mirror_G2",
+			"Mirror_H2"
+		],
+		[
+			"H2",
+			"N"
+		],
+		[
+			"Mirror_H2",
+			"Mirror_N"
+		],
+		[
+			"UL0",
+			"L0"
+		],
+		[
+			"Mirror_UL0",
+			"Mirror_L0"
+		],
+		[
+			"L0",
+			"L1"
+		],
+		[
+			"Mirror_L0",
+			"Mirror_L1"
+		],
+		[
+			"L1",
+			"L2"
+		],
+		[
+			"Mirror_L1",
+			"R2"
+		],
+		[
+			"H0",
+			"LJoin"
+		],
+		[
+			"Mirror_H0",
+			"Mirror_LJoin"
+		],
+		[
+			"LJoin",
+			"LI"
+		],
+		[
+			"Mirror_LJoin",
+			"Mirror_LI"
+		],
+		[
+			"L1",
+			"LJoin"
+		],
+		[
+			"Mirror_L1",
+			"Mirror_LJoin"
+		],
+		[
+			"LI",
+			"LM"
+		],
+		[
+			"Mirror_LI",
+			"RM"
+		],
+		[
+			"LI",
+			"NW"
+		],
+		[
+			"Mirror_LI",
+			"Mirror_NW"
+		],
+		[
+			"RI",
+			"NE"
+		],
+		[
+			"Mirror_RI",
+			"Mirror_NE"
+		],
+		[
+			"N",
+			"NW"
+		],
+		[
+			"Mirror_N",
+			"Mirror_NW"
+		],
+		[
+			"N",
+			"NE"
+		],
+		[
+			"Mirror_N",
+			"Mirror_NE"
+		],
+		[
+			"NW",
+			"W"
+		],
+		[
+			"Mirror_NW",
+			"E"
+		],
+		[
+			"NE",
+			"E"
+		],
+		[
+			"Mirror_NE",
+			"W"
+		],
+		[
+			"W",
+			"LM"
+		],
+		[
+			"E",
+			"RM"
+		]
+	],
+	"nodes": {
+		"D0": [
+			60.0,
+			-66.0
+		],
+		"D1": [
+			84.0,
+			-66.0
+		],
+		"E": [
+			48.0,
+			0.0
+		],
+		"G0": [
+			-84.0,
+			-96.0
+		],
+		"G1": [
+			-48.0,
+			-96.0
+		],
+		"G2": [
+			0.0,
+			-96.0
+		],
+		"G3": [
+			30.0,
+			-96.0
+		],
+		"G4": [
+			84.0,
+			-96.0
+		],
+		"H0": [
+			-84.0,
+			-72.0
+		],
+		"H1": [
+			-48.0,
+			-72.0
+		],
+		"H2": [
+			0.0,
+			-72.0
+		],
+		"L0": [
+			-132.0,
+			-58.0800018310547
+		],
+		"L1": [
+			-111.919998168945,
+			-38.0
+		],
+		"L2": [
+			-111.919998168945,
+			0.0
+		],
+		"LI": [
+			-84.0,
+			-24.0
+		],
+		"LJoin": [
+			-84.0,
+			-38.0
+		],
+		"LM": [
+			-84.0,
+			0.0
+		],
+		"Mirror_D0": [
+			-60.0,
+			66.0
+		],
+		"Mirror_D1": [
+			-84.0,
+			66.0
+		],
+		"Mirror_G0": [
+			84.0,
+			96.0
+		],
+		"Mirror_G1": [
+			48.0,
+			96.0
+		],
+		"Mirror_G2": [
+			0.0,
+			96.0
+		],
+		"Mirror_G3": [
+			-30.0,
+			96.0
+		],
+		"Mirror_G4": [
+			-84.0,
+			96.0
+		],
+		"Mirror_H0": [
+			84.0,
+			72.0
+		],
+		"Mirror_H1": [
+			48.0,
+			72.0
+		],
+		"Mirror_H2": [
+			0.0,
+			72.0
+		],
+		"Mirror_L0": [
+			132.0,
+			58.0800018310547
+		],
+		"Mirror_L1": [
+			111.919998168945,
+			38.0
+		],
+		"Mirror_LI": [
+			84.0,
+			24.0
+		],
+		"Mirror_LJoin": [
+			84.0,
+			38.0
+		],
+		"Mirror_N": [
+			0.0,
+			48.0
+		],
+		"Mirror_NE": [
+			-24.0,
+			24.0
+		],
+		"Mirror_NW": [
+			24.0,
+			24.0
+		],
+		"Mirror_R0": [
+			-84.0,
+			48.0
+		],
+		"Mirror_R1": [
+			-111.919998168945,
+			48.0
+		],
+		"Mirror_RI": [
+			-84.0,
+			24.0
+		],
+		"Mirror_UL0": [
+			132.0,
+			72.0
+		],
+		"Mirror_UL1": [
+			132.0,
+			132.0
+		],
+		"Mirror_UL4": [
+			84.0,
+			132.0
+		],
+		"N": [
+			0.0,
+			-48.0
+		],
+		"NE": [
+			24.0,
+			-24.0
+		],
+		"NW": [
+			-24.0,
+			-24.0
+		],
+		"R0": [
+			84.0,
+			-48.0
+		],
+		"R1": [
+			111.919998168945,
+			-48.0
+		],
+		"R2": [
+			111.919998168945,
+			0.0
+		],
+		"RI": [
+			84.0,
+			-24.0
+		],
+		"RM": [
+			84.0,
+			0.0
+		],
+		"UL0": [
+			-132.0,
+			-72.0
+		],
+		"UL1": [
+			-132.0,
+			-132.0
+		],
+		"UL4": [
+			-84.0,
+			-132.0
+		],
+		"W": [
+			-48.0,
+			0.0
+		]
+	},
+	"original_clearance_m": 7.96,
+	"reconstruction": "reference-derived approximation, not recovered original transforms",
+	"road_width_m": 12.0,
+	"side_passage_clearance_m": 15.92
+}

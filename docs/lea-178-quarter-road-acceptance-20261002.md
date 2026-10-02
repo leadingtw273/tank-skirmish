@@ -35,7 +35,9 @@
 
 AI 已由使用者人工接受，原四角加 NE／SW repeat 矩陣已補齊 6/6，本機交接與版本審查材料已整理。leadi 已明確核准送至 Linear LEA-178 的具體摘要、標題及完成狀態；工單已更新為「已完成」，標題為「新主世界地圖：AI 尋路、25% 道路／路肩與移動效率」，完成時間 2026-10-02T06:27:31.105Z。實際遠端讀回確認核准摘要完全相符，原高度階段的歷史描述完整保留。前兩次自動核准拒絕紀錄保留作歷史；本次核准與同步證據為 `/home/markchou/project/agent-team/tmp/lea178-quarter-closeout-20261002/linear-approved-request.json`、`linear-approved-sync-result.json` 與 `linear-final-readback.json`。本機驗收及文件讀回見 `fresh-acceptance.json`、`docs-apply-result.json`。
 
-本次 Git 收尾沿用 `feat/lea-177-main-world-rebuild`：封閉範圍為 142 個必要來源，含已接受的 LEA-176 runtime／支撐依賴、TurnSpace v6、25% 道路生成規則、有限回歸與交接文件；主地圖保留先前 Ground 修正。其餘 110 個原有修改保留，主 checkout 的使用者修改不覆蓋。來源清單及逐檔 SHA 見 `/home/markchou/project/agent-team/tmp/lea178-git-finish-20261002/root-sealed-commit-plan.json`；提交、PR、CI、審查及合併的實際讀回以同目錄 `git-closeout-result.json` 為準。商用來源與 525 個 generated 道路資源依既有素材庫政策留在本機，Git 保存永久生成配方；本機重建驗證搭配 586 檔必要資源 overlay，不宣稱單靠 Git checkout 自含全部素材。先前 patch／snapshot 版本材料保留為歷史。
+本次 Git 收尾沿用 `feat/lea-177-main-world-rebuild`：初始提交 `1a943b25bda7a6d86176438d4fa3092c7eec353b` 封存 142 個必要來源，含已接受的 LEA-176 runtime／支撐依賴、TurnSpace v6、25% 道路生成規則、有限回歸與交接文件；主地圖保留先前 Ground 修正。收尾再納入 4 個已獨立驗收的 CI／入口測試合約與 19 個對應正式來源的 Godot UID，合計 165 個唯一來源路徑。其餘 110 個原有修改及 16 個診斷 UID 保留，不覆蓋主 checkout。來源逐檔清單見 `/home/markchou/project/agent-team/tmp/lea178-git-finish-20261002/final-source-manifest.json`；實際提交、PR、CI、審查及合併讀回以同目錄 `git-closeout-result.json` 為準。
+
+目前新增 19 個正式回歸案例全部通過，4 個 CI／入口合約修正通過 fresh-context 驗收；完整本機 CI 仍在既有 `enemy_combat_smoke.gd` 的舊場景合約失敗。該測試的第 5 檔隔離修正提案未通過，沒有套用正式來源，不宣稱完整 CI 通過。正式 AI／25% 道路來源與原六案證據保持不變。商用來源與 525 個 generated 道路資源依既有政策留在本機，Git 保存永久生成配方；本機重建需 586 檔必要資源 overlay。現有 GitHub workflow 未還原這些忽略素材，乾淨 checkout 尚不自含必要資源，見 `github-ci-assets-preflight.json`。推送曾遭自動核准拒絕；尚未外送來源、建立 PR、發布審查通過狀態或合併。待具體外送核准及既有 CI／素材缺口處理後續接，先前 patch／snapshot 版本材料保留為歷史。
 
 ## 證據範圍
 

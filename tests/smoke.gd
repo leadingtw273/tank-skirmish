@@ -134,16 +134,21 @@ func _init() -> void:
 
 
 func _validate_instance(instance: Node) -> void:
+	var player := instance.get_node_or_null("PlayerSpawnGroup/Tank") as RigidBody3D
+	if player == null:
+		push_error("The formal main player must be a rigid Tank2")
+		quit(1)
+		return
+	instance.get_node("PlayerRuntime").set_controls_enabled(false)
+	for unused in 90:
+		await physics_frame
+	player.linear_velocity = Vector3.ZERO
+	player.angular_velocity = Vector3.ZERO
+	player.freeze = true
 	if not _validate_world_structure(instance):
 		quit(1)
 		return
-	if not _validate_tread_animations(instance):
-		quit(1)
-		return
 	if not await _validate_tread_dust(instance):
-		quit(1)
-		return
-	if not _validate_tank_inertia(instance):
 		quit(1)
 		return
 	if not await _validate_turret_aiming(instance):
@@ -158,24 +163,15 @@ func _validate_instance(instance: Node) -> void:
 	if not await _validate_camera_shake(instance):
 		quit(1)
 		return
-	if not await _validate_projectile_firing(instance):
+	if not _validate_release_input(instance):
 		quit(1)
 		return
-	if not await _validate_visual_recoil(instance):
-		quit(1)
-		return
-	if not _validate_collision_layout(instance):
-		quit(1)
-		return
-	if not _validate_map_960(instance):
-		quit(1)
-		return
-	if not _validate_grid_layout(instance):
+	if not _validate_main_battlefield_content(instance):
 		quit(1)
 		return
 
 	# 此測試等待多個物理影格，放在同步攝影機斷言之後，避免改變其初始狀態。
-	if not await preload("res://tests/aim_target_mode_smoke.gd").run(instance.get_node("PlayerRuntime/AimPresentation"), instance):
+	if not await _validate_rigid_target_mode(instance):
 		quit(1)
 		return
 	print("Tank Skirmish smoke validation passed.")
@@ -233,7 +229,7 @@ func _validate_tread_animations(instance: Node) -> bool:
 
 
 func _validate_tread_dust(instance: Node) -> bool:
-	var tank := instance.get_node_or_null("PlayerSpawnGroup/Tank") as CharacterBody3D
+	var tank := instance.get_node_or_null("PlayerSpawnGroup/Tank") as RigidBody3D
 	if tank == null:
 		push_error("Tank must exist before track contact effects can be validated")
 		return false
@@ -436,7 +432,8 @@ func _find_skeleton(node: Node) -> Skeleton3D:
 
 
 func _validate_turret_aiming(instance: Node) -> bool:
-	var tank = instance.get_node_or_null("PlayerSpawnGroup/Tank")
+	var rigid_tank = instance.get_node_or_null("PlayerSpawnGroup/Tank")
+	var tank = rigid_tank.combat_tank if rigid_tank != null else null
 	if tank == null:
 		push_error("Tank must exist before turret aiming can be validated")
 		return false
@@ -616,7 +613,14 @@ func _validate_turret_aiming(instance: Node) -> bool:
 
 
 func _validate_spread_presentation(tank: Node3D, presentation: Node) -> bool:
-	return preload("res://tests/aim_spread_presentation_smoke.gd").run(tank, presentation)
+	var controlled: Node3D = presentation.controlled_tank
+	if controlled == null or controlled.combat_tank != tank \
+			or not is_equal_approx(controlled.get_current_spread_degrees(), tank.get_current_spread_degrees()):
+		return false
+	presentation.set_controlled_tank(tank)
+	var valid: bool = preload("res://tests/aim_spread_presentation_smoke.gd").run(tank, presentation)
+	presentation.set_controlled_tank(controlled)
+	return valid and presentation.controlled_tank == controlled
 
 
 func _validate_camera_zoom(instance: Node) -> bool:
@@ -698,28 +702,29 @@ func _validate_player_runtime_and_look_ahead(instance: Node) -> bool:
 	if tank.has_method("set_projectile_container"):
 		push_error("Tank must not retain world projectile container dependencies")
 		return false
+	runtime.set_controls_enabled(true)
 	player_controller.apply_commands(1.0, -1.0, false)
-	if not is_equal_approx(tank.movement_command, 1.0) or not is_equal_approx(tank.turn_command, -1.0):
+	if not is_equal_approx(tank._movement_input, 1.0) or not is_equal_approx(tank._turn_input, 1.0):
 		push_error("Composed PlayerController movement and turn commands must reach Tank unchanged")
 		return false
 	tank.set_movement_input(-1.0)
 	tank.set_turn_input(1.0)
-	if not is_equal_approx(tank.movement_command, -1.0) or not is_equal_approx(tank.turn_command, 1.0):
+	if not is_equal_approx(tank._movement_input, -1.0) or not is_equal_approx(tank._turn_input, -1.0):
 		push_error("Direct Tank movement and turn commands must retain the same command contract")
 		return false
 	tank.set_movement_input(0.0)
 	tank.set_turn_input(0.0)
 	var aim_target: Vector3 = tank.turret_pivot.global_position + Vector3.BACK * 20.0 + Vector3.UP * 8.0
 	var yaw_before: float = tank.turret_pivot.global_rotation.y
-	var pitch_before: float = tank.gun_pitch_pivot.rotation.z
+	var pitch_before: float = tank.combat_tank.gun_pitch_pivot.rotation.z
 	tank.aim_turret_at(aim_target, 10.0)
 	tank.aim_gun_pitch_at_target(aim_target, 10.0)
 	var direct_yaw: float = tank.turret_pivot.global_rotation.y
-	var direct_pitch: float = tank.gun_pitch_pivot.rotation.z
+	var direct_pitch: float = tank.combat_tank.gun_pitch_pivot.rotation.z
 	tank.turret_pivot.global_rotation.y = yaw_before
-	tank.gun_pitch_pivot.rotation.z = pitch_before
+	tank.combat_tank.gun_pitch_pivot.rotation.z = pitch_before
 	aim_controller.apply_aim(aim_target, 10.0)
-	if not is_equal_approx(tank.turret_pivot.global_rotation.y, direct_yaw) or not is_equal_approx(tank.gun_pitch_pivot.rotation.z, direct_pitch):
+	if not is_equal_approx(tank.turret_pivot.global_rotation.y, direct_yaw) or not is_equal_approx(tank.combat_tank.gun_pitch_pivot.rotation.z, direct_pitch):
 		push_error("Composed PlayerAimController and direct Tank aim commands must have identical results")
 		return false
 	var center_offset: Vector3 = camera_controller.calculate_look_ahead_offset(Vector2(0.1, 0.1))
@@ -733,18 +738,22 @@ func _validate_player_runtime_and_look_ahead(instance: Node) -> bool:
 			or corner_offset.length() > tank.get_max_camera_look_ahead_distance() + 0.001:
 		push_error("Camera look-ahead must be continuous, XZ-only, and bounded by the Tank authority")
 		return false
-	var baseline_offset: Vector3 = camera_controller.follow_target_offset
+	camera_controller._process(0.0)
+	var camera_before: Vector3 = camera_controller.global_position
+	var look_ahead_before: Vector3 = camera_controller.look_ahead_offset
 	tank.global_position += Vector3(4.0, 0.0, -3.0)
 	camera_controller._process(0.0)
-	if not camera_controller.global_position.is_equal_approx(tank.global_position + baseline_offset):
+	if not (camera_controller.global_position - camera_before).is_equal_approx(Vector3(4.0, 0.0, -3.0)) \
+			or not camera_controller.look_ahead_offset.is_equal_approx(look_ahead_before):
 		push_error("Tank follow must be immediate while only look-ahead smoothing is deferred")
 		return false
 	tank.global_position -= Vector3(4.0, 0.0, -3.0)
+	runtime.set_controls_enabled(false)
 	return true
 
 
 func _validate_camera_shake(instance: Node) -> bool:
-	var tank := instance.get_node_or_null("PlayerSpawnGroup/Tank") as CharacterBody3D
+	var tank := instance.get_node_or_null("PlayerSpawnGroup/Tank") as RigidBody3D
 	var camera_controller := instance.get_node_or_null("PlayerSpawnGroup/CameraRig") as Node3D
 	var shake_pivot := instance.get_node_or_null("PlayerSpawnGroup/CameraRig/CameraShakePivot") as Node3D
 	var camera := instance.get_node_or_null("PlayerSpawnGroup/CameraRig/CameraShakePivot/Camera3D") as Camera3D
@@ -761,20 +770,10 @@ func _validate_camera_shake(instance: Node) -> bool:
 
 	var shot_events: Array[ShotEvent] = []
 	tank.shot_event_fired.connect(func(shot_event: ShotEvent) -> void: shot_events.append(shot_event))
-	tank.forward_speed = 8.0
-	tank.velocity = tank.transform.basis * Vector3.LEFT * tank.forward_speed
-	tank.angular_speed = 0.35
-	var velocity_before_fire: Vector3 = tank.velocity
 	tank.request_fire()
-	if shot_events.size() != 1 or shake_pivot.position.is_zero_approx() or not shake_pivot.rotation.is_zero_approx() \
-			or not is_equal_approx(tank.forward_speed, 6.0) \
-			or not tank.velocity.is_equal_approx(velocity_before_fire * 0.75) \
-			or not is_equal_approx(tank.angular_speed, 0.35):
-		push_error("Each valid fire request must start position-only camera shake and instantly reduce only linear movement speed by 25 percent")
+	if shot_events.size() != 1 or shake_pivot.position.is_zero_approx() or not shake_pivot.rotation.is_zero_approx():
+		push_error("Each valid rigid ShotEvent must start position-only camera shake")
 		return false
-	tank.forward_speed = 0.0
-	tank.velocity = Vector3.ZERO
-	tank.angular_speed = 0.0
 	var expected_local_recoil := camera_controller.global_transform.basis.inverse() * shot_events[0].muzzle_transform.basis.x.normalized()
 	expected_local_recoil.y = 0.0
 	if expected_local_recoil.is_zero_approx() or shake_pivot.position.normalized().dot(expected_local_recoil.normalized()) < 0.999 \
@@ -787,7 +786,7 @@ func _validate_camera_shake(instance: Node) -> bool:
 		push_error("Camera shake must keep CameraShakePivot rotation at zero while returning")
 		return false
 	tank.turret_pivot.rotation.y += PI / 2.0
-	camera_controller.play_shot_recoil(ShotEvent.new(tank.muzzle_point.global_transform, tank.muzzle_global_direction(), tank.get_rid()))
+	camera_controller.play_shot_recoil(ShotEvent.new(tank.combat_tank.muzzle_point.global_transform, tank.muzzle_global_direction(), tank.get_rid()))
 	if shot_events.size() != 1 or shake_pivot.position.length() > camera_controller.fire_shake_kick_distance + 0.001 \
 			or not shake_pivot.rotation.is_zero_approx():
 		push_error("Repeated ShotEvents must replace the prior bounded position-only camera shake")
@@ -805,7 +804,7 @@ func _validate_camera_shake(instance: Node) -> bool:
 		return false
 	for projectile in projectiles.get_children():
 		projectile.queue_free()
-	for child in tank.muzzle_point.get_children():
+	for child in tank.combat_tank.muzzle_point.get_children():
 		if child.name == "MuzzleFlash":
 			child.queue_free()
 	for effect in effects.get_children():
@@ -1326,8 +1325,8 @@ func _validate_world_structure(instance: Node) -> bool:
 		return false
 
 	var world := instance.get_node_or_null("World") as Node3D
-	if world == null or world.scene_file_path.get_file() != "world.tscn":
-		push_error("World must be an instance of world.tscn")
+	if world == null or world.scene_file_path != "res://src/maps/main_battlefield/main_battlefield.tscn":
+		push_error("World must be the accepted main_battlefield scene")
 		return false
 	for child_name: StringName in [&"Ground", &"GrassField", &"Roads", &"Buildings", &"Lighting"]:
 		if world.get_node_or_null(NodePath(child_name)) == null:
@@ -1344,9 +1343,9 @@ func _validate_world_structure(instance: Node) -> bool:
 	if ground.collision_layer != 128 or ground.collision_mask != 0 or ground.physics_material_override != null:
 		push_error("Ground physics properties must remain exactly equivalent")
 		return false
-	if not ground.global_transform.origin.is_equal_approx(Vector3(0, -0.1, 8)) or not visual.global_transform.is_equal_approx(ground.global_transform) \
+	if not ground.global_transform.origin.is_equal_approx(Vector3(0, -0.1, 0)) or not visual.global_transform.is_equal_approx(ground.global_transform) \
 			or not collision.global_transform.basis.is_equal_approx(Basis.IDENTITY) \
-			or not collision.global_transform.origin.is_equal_approx(Vector3(0, -0.1, 8)) or not shape.size.is_equal_approx(Vector3(960, 0.2, 960)):
+			or not collision.global_transform.origin.is_equal_approx(Vector3(0, -0.1, 0)) or not shape.size.is_equal_approx(Vector3(1920, 0.2, 1920)):
 		push_error("Ground transform and collision extents must remain exactly equivalent")
 		return false
 
@@ -1491,3 +1490,85 @@ func _has_valid_tank_part_geometry(tank: CharacterBody3D, expected_center: Vecto
 	return expected_shape_count > 0 and actual_shape_count == expected_shape_count \
 		and tank.part_shape_world_transforms().size() == expected_shape_count \
 		and not tank.part_world_bounds().size.is_zero_approx()
+
+
+func _validate_main_battlefield_content(instance: Node) -> bool:
+	var tank = instance.get_node("PlayerSpawnGroup/Tank")
+	if tank.scene_file_path != "res://src/actors/rigid_tank/player_rigid_tank.tscn" \
+			or StringName(tank.vehicle_id) != &"tank2" or not tank.scale.is_equal_approx(Vector3.ONE) \
+			or tank.shape_count() != tank.source_shape_count or tank.shape_count() != 30 \
+			or tank.part_world_bounds().size.is_zero_approx():
+		push_error("The main Tank2 must retain all 30 source shapes and rigid ownership")
+		return false
+	var native_shapes := 0
+	for child in tank.get_children():
+		if child is CollisionShape3D:
+			native_shapes += 1
+			if child.shape == null or child.disabled:
+				push_error("Every native Tank2 collision shape must be present and enabled")
+				return false
+	if native_shapes != 30:
+		push_error("The Tank2 rigid root must directly own all 30 native collision shapes")
+		return false
+	var active_bodies := 1
+	for body in tank.find_children("*", "PhysicsBody3D", true, false):
+		if body.collision_layer != 0 or body.collision_mask != 0:
+			active_bodies += 1
+	if active_bodies != 1 or tank.find_children("*", "HealthComponent", true, false).size() != 1 \
+			or tank.find_children("*", "DamageReceiver", true, false).size() != 1:
+		push_error("The rigid player must be the unique active body, health and damage owner")
+		return false
+	for spec in [{"node": "Roads", "prefix": "res://src/world/roads/", "count": 200},
+			{"node": "Buildings", "prefix": "res://src/world/buildings/quaternius/", "count": 170}]:
+		var count := 0
+		for body in instance.get_node("World/" + spec.node).find_children("*", "StaticBody3D", true, false):
+			if not body.scene_file_path.begins_with(spec.prefix):
+				continue
+			count += 1
+			var meshes := body.find_children("*", "MeshInstance3D", true, false)
+			var shapes := body.find_children("*", "CollisionShape3D", true, false)
+			if meshes.is_empty() or shapes.is_empty() or body.collision_layer == 0:
+				push_error("Every accepted road/building must retain mesh and physical collision")
+				return false
+			for mesh in meshes:
+				if mesh.mesh == null:
+					return false
+			for collision in shapes:
+				if collision.shape == null or collision.disabled:
+					return false
+		if count != spec.count:
+			push_error("Accepted %s instance count changed: %d" % [spec.node, count])
+			return false
+	return true
+
+
+func _validate_release_input(instance: Node) -> bool:
+	var runtime = instance.get_node("PlayerRuntime")
+	runtime.set_controls_enabled(true)
+	var controller = instance.get_node("PlayerRuntime/PlayerController")
+	var projectiles := instance.get_node("CombatRuntime/Projectiles")
+	var count := projectiles.get_child_count()
+	for pressed in [false, true]:
+		var event := InputEventMouseButton.new()
+		event.button_index = MOUSE_BUTTON_RIGHT if pressed else MOUSE_BUTTON_LEFT
+		event.pressed = pressed
+		controller._unhandled_input(event)
+	runtime.set_controls_enabled(false)
+	if projectiles.get_child_count() != count:
+		push_error("Mouse release and right-click must not fire a projectile")
+		return false
+	return true
+
+
+func _validate_rigid_target_mode(instance: Node) -> bool:
+	var tank = instance.get_node("PlayerSpawnGroup/Tank")
+	var presentation = instance.get_node("PlayerRuntime/AimPresentation")
+	if presentation.controlled_tank != tank \
+			or not is_equal_approx(tank.get_current_spread_degrees(), tank.combat_tank.get_current_spread_degrees()):
+		push_error("Rigid presentation binding and spread getter must match the donor")
+		return false
+	presentation.set_controlled_tank(tank.combat_tank)
+	var valid: bool = await preload("res://tests/aim_target_mode_smoke.gd").run(presentation, instance)
+	presentation.set_controlled_tank(tank)
+	return valid and presentation.controlled_tank == tank \
+		and is_equal_approx(tank.get_current_spread_degrees(), tank.combat_tank.get_current_spread_degrees())

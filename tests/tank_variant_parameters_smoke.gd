@@ -2,7 +2,7 @@ extends SceneTree
 
 const HealthComponent := preload("res://src/combat/damage/health_component.gd")
 const MAIN_SCENE := preload("res://src/main.tscn")
-const DEFAULT_PLAYER_TANK_SCENE := "res://src/actors/tank/variants/tank2/tank2.tscn"
+const DEFAULT_PLAYER_TANK_SCENE := "res://src/actors/rigid_tank/player_rigid_tank.tscn"
 
 const VARIANTS := {
 	"tank1": {
@@ -80,8 +80,10 @@ func _validate_default_player_tank() -> bool:
 	root.add_child(main)
 	await process_frame
 	await process_frame
-	var player_tank := main.get_node_or_null("PlayerSpawnGroup/Tank") as CharacterBody3D
-	var valid := player_tank != null and player_tank.scene_file_path == DEFAULT_PLAYER_TANK_SCENE
+	var player_tank := main.get_node_or_null("PlayerSpawnGroup/Tank") as RigidBody3D
+	var valid: bool = player_tank != null and player_tank.scene_file_path == DEFAULT_PLAYER_TANK_SCENE \
+		and StringName(player_tank.vehicle_id) == &"tank2" \
+		and player_tank.combat_tank.scene_file_path == "res://src/actors/tank/variants/tank2/tank2.tscn"
 	main.queue_free()
 	await process_frame
 	if not valid:

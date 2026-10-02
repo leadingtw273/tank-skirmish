@@ -27,6 +27,7 @@ var _reset_in_progress := false
 
 
 func _ready() -> void:
+	_resolve_subject_components()
 	if subject == null or health_component == null or damage_receiver == null or health_label == null:
 		push_error("TrainingTargetController requires its subject, health, receiver, and label references.")
 		return
@@ -34,6 +35,18 @@ func _ready() -> void:
 	health_component.depleted.connect(_on_depleted)
 	_apply_target_material(subject)
 	_update_label(health_component.current_health, health_component.maximum_health)
+
+
+## 剛體 actor 會在自身 ready 將 HealthComponent 搬到根節點；以最終 subject 樹重新取得引用。
+func _resolve_subject_components() -> void:
+	if subject == null:
+		subject = get_node_or_null("../SubjectSlot/Tank") as Node3D
+	if subject == null:
+		return
+	health_component = subject.get_node_or_null("HealthComponent") as HealthComponent
+	damage_receiver = subject.get_node_or_null("DamageReceiver") as DamageReceiver
+	if health_label == null:
+		health_label = get_node_or_null("../HealthLabel3D") as Label3D
 
 
 func _on_health_changed(current_health: float, maximum_health: float) -> void:

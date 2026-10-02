@@ -17,7 +17,9 @@ func _init() -> void:
 func _run() -> void:
 	_validate_progress_and_trigger()
 	_validate_two_bounded_reverse_attempts()
+	_validate_settle_before_handoff()
 	_validate_reset_lifecycle()
+	await _validate_recovery_budget_preserves_attempt()
 	await _validate_near_terminal_stall_counts()
 	await _validate_combat_ai_intent_and_lifecycle()
 	await _validate_rear_wall_collision()
@@ -109,6 +111,37 @@ func _validate_reset_lifecycle() -> void:
 		_fail("New goal / clear lifecycle reset must cancel reverse state and restore retry budget.")
 
 
+func _validate_settle_before_handoff() -> void:
+	var recovery := Recovery.new()
+	recovery.reset(Vector3.ZERO, Vector3.LEFT)
+	recovery.phase = &"advancing"
+	recovery.escape_heading = Vector3.LEFT
+	recovery.positive_advance = Recovery.PROGRESS_METRES - 0.01
+	recovery.attempts = 2
+	recovery.set("_attempt_elapsed", 7.25)
+	var elapsed_before := float(recovery.get("_attempt_elapsed"))
+	if recovery.settle_before_handoff() or recovery.phase != &"advancing" or recovery.positive_advance != Recovery.PROGRESS_METRES - 0.01 or recovery.attempts != 2 or float(recovery.get("_attempt_elapsed")) != elapsed_before:
+		_fail("Sub-progress advance must reject settle-before-handoff without mutating recovery state or attempt deadline.")
+	recovery.phase = &"rejoining"
+	recovery.positive_advance = Recovery.PROGRESS_METRES
+	if recovery.settle_before_handoff() or recovery.phase != &"rejoining":
+		_fail("Only advancing may request settle-before-handoff; rejoining must not be accepted as a handoff shortcut.")
+	recovery.phase = &"advancing"
+	if not recovery.settle_before_handoff() or recovery.phase != &"escape_settling" or recovery.attempts != 2 or float(recovery.get("_attempt_elapsed")) != elapsed_before:
+		_fail("Eligible advance must enter escape_settling without resetting attempts or the attempt deadline.")
+		return
+	if recovery.handoff_ready():
+		_fail("escape_settling must not report handoff-ready before the standard drive stop gate.")
+		return
+	var moving := recovery.drive(Vector3.ZERO, Vector3.LEFT, Recovery.STOP_SPEED + 0.01, 2.0, 1.0, DT, 15.0, Recovery.STOP_ANGULAR_SPEED + 0.01)
+	if recovery.phase != &"escape_settling" or recovery.handoff_ready() or float(moving.movement) != 0.0 or float(moving.turn) != 0.0:
+		_fail("Unsettled escape_settling must stay under recovery ownership with zero command; got %s phase=%s." % [moving, recovery.phase])
+		return
+	recovery.drive(Vector3.ZERO, Vector3.LEFT, Recovery.STOP_SPEED, 2.0, 1.0, DT, 15.0, Recovery.STOP_ANGULAR_SPEED)
+	if recovery.phase != &"rejoining" or not recovery.handoff_ready():
+		_fail("Only the standard stopped drive transition may make settled eligible advance handoff-ready; phase=%s." % recovery.phase)
+
+
 ## A near-stop positive drive demand is still a stall candidate.  Keep the tank frozen on
 ## purpose: this isolates the old braking predicate regression from wall/physics behavior.
 func _validate_near_terminal_stall_counts() -> void:
@@ -155,19 +188,22 @@ func _validate_combat_ai_intent_and_lifecycle() -> void:
 	root.add_child(scene)
 	await physics_frame
 	var ai := scene.get_node_or_null("Encounter/CombatAI") as Node
-	var tank := scene.get_node_or_null("Encounter/Enemy") as CharacterBody3D
-	var player := scene.get_node_or_null("Main/PlayerSpawnGroup/Tank") as CharacterBody3D
+	var tank := scene.get_node_or_null("Encounter/Enemy") as Node3D
+	var runtime := scene.get_node_or_null("Main/PlayerRuntime") as Node
+	var player := runtime.get("controlled_tank") as Node3D if runtime != null else null
 	if ai == null or tank == null or player == null:
-		_fail("CombatAI recovery integration fixture requires Encounter/CombatAI, Enemy, and Main/Tank.")
+		_fail("CombatAI recovery integration fixture requires Encounter/CombatAI, rigid Enemy, and Main/PlayerRuntime.controlled_tank.")
 	else:
 		ai.set_physics_process(false)
 		## Recovering commands own both body axes; stationary target-facing must not replace a side-turn.
-		ai.call("_submit_navigation_intent", {"movement": -0.5, "turn": 0.4, "status": &"recovering"}, player.stable_world_center())
-		if float(tank.get("movement_command")) >= 0.0 or not is_equal_approx(float(tank.get("turn_command")), 0.4):
+		ai.call("_submit_navigation_intent", {"movement": -0.5, "turn": 0.4, "status": &"recovering"}, player.call("stable_world_center") as Vector3)
+		var submitted: Dictionary = ai.get("_trace_submitted")
+		if not is_equal_approx(float(submitted.get("movement", 0.0)), -0.5) or not is_equal_approx(float(submitted.get("turn", 0.0)), 0.4):
 			_fail("CombatAI must pass recovering negative movement and non-zero turn without target-facing overwrite.")
 		## A stuck intent has precedence over stationary-facing correction even when target is off-heading.
-		ai.call("_submit_navigation_intent", {"movement": 0.0, "turn": 0.0, "status": &"stuck"}, tank.stable_world_center() + Vector3.FORWARD * 30.0)
-		if not is_zero_approx(float(tank.get("movement_command"))) or not is_zero_approx(float(tank.get("turn_command"))):
+		ai.call("_submit_navigation_intent", {"movement": 0.0, "turn": 0.0, "status": &"stuck"}, (tank.call("stable_world_center") as Vector3) + Vector3.FORWARD * 30.0)
+		submitted = ai.get("_trace_submitted")
+		if not is_zero_approx(float(submitted.get("movement", 0.0))) or not is_zero_approx(float(submitted.get("turn", 0.0))):
 			_fail("CombatAI stuck intent must hold body movement/turn at zero, without stationary-facing overwrite.")
 		ai.call("_ensure_navigation")
 		var navigation := ai.get("_navigation") as RefCounted
@@ -175,20 +211,24 @@ func _validate_combat_ai_intent_and_lifecycle() -> void:
 		if recovery == null:
 			_fail("CombatAI must own a TankNavigation recovery instance.")
 		else:
-			_arm_actual_escape_selection(recovery, tank.stable_world_center(), tank.global_basis * Vector3.LEFT)
-			ai.call("_submit_navigation_intent", {"movement": -0.5, "turn": 0.0, "status": &"recovering"}, player.stable_world_center())
-			if float(tank.get("movement_command")) >= 0.0:
+			_arm_actual_escape_selection(recovery, tank.call("stable_world_center") as Vector3, tank.global_basis * Vector3.LEFT)
+			ai.call("_submit_navigation_intent", {"movement": -0.5, "turn": 0.0, "status": &"recovering"}, player.call("stable_world_center") as Vector3)
+			submitted = ai.get("_trace_submitted")
+			if float(submitted.get("movement", 0.0)) >= 0.0:
 				_fail("set_combat_enabled lifecycle setup must begin from an actual recovering negative command.")
 			ai.call("set_combat_enabled", false)
-			if recovery.phase != &"normal" or not recovery.escape_heading.is_zero_approx() or not is_zero_approx(float(tank.get("movement_command"))):
+			submitted = ai.get("_trace_submitted")
+			if recovery.phase != &"normal" or not recovery.escape_heading.is_zero_approx() or not is_zero_approx(float(submitted.get("movement", 0.0))):
 				_fail("set_combat_enabled(false) must cancel an in-flight reverse, side direction, and stop the tank.")
 			ai.call("set_combat_enabled", true)
-			_arm_actual_escape_selection(recovery, tank.stable_world_center(), tank.global_basis * Vector3.LEFT)
-			ai.call("_submit_navigation_intent", {"movement": -0.5, "turn": 0.0, "status": &"recovering"}, player.stable_world_center())
-			if float(tank.get("movement_command")) >= 0.0:
+			_arm_actual_escape_selection(recovery, tank.call("stable_world_center") as Vector3, tank.global_basis * Vector3.LEFT)
+			ai.call("_submit_navigation_intent", {"movement": -0.5, "turn": 0.0, "status": &"recovering"}, player.call("stable_world_center") as Vector3)
+			submitted = ai.get("_trace_submitted")
+			if float(submitted.get("movement", 0.0)) >= 0.0:
 				_fail("set_target lifecycle setup must begin from an actual recovering negative command.")
 			ai.call("set_target", null)
-			if recovery.phase != &"normal" or not recovery.escape_heading.is_zero_approx() or not is_zero_approx(float(tank.get("movement_command"))):
+			submitted = ai.get("_trace_submitted")
+			if recovery.phase != &"normal" or not recovery.escape_heading.is_zero_approx() or not is_zero_approx(float(submitted.get("movement", 0.0))):
 				_fail("set_target replacement must cancel an in-flight reverse, side direction, and stop the tank.")
 	scene.queue_free()
 	await physics_frame
@@ -391,3 +431,80 @@ func _part_hits_wall(tank: CharacterBody3D, wall: StaticBody3D) -> bool:
 
 func _fail(message: String) -> void:
 	_failures.append(message)
+
+
+class BudgetPredictor extends TankDrivingPredictor:
+	var response_reason: StringName = &"budget"
+	func choose(movement: float, turn: float, goal: Vector3, delta: float, allow_reverse: bool = false, allow_adjustment: bool = true, continuation: Dictionary = {}) -> Dictionary:
+		return {"movement": 0.0, "turn": 0.0, "intervened": true, "contact": false, "reason": response_reason}
+
+	func choose_handoff_step(movement: float, turn: float, goal: Vector3, delta: float) -> Dictionary:
+		return {"movement": 0.0, "turn": 0.0, "intervened": true, "contact": false, "reason": response_reason}
+
+	func choose_recovery(movement: float, turn: float, goal: Vector3, delta: float) -> Dictionary:
+		return {"movement": 0.0, "turn": 0.0, "intervened": true, "contact": false, "reason": response_reason}
+
+	func choose_escape_profile(blocked_forward: Vector3, candidates: Array[Dictionary], delta: float, continuation_state: Dictionary = {}) -> Dictionary:
+		return {"safe": false, "movement": 0.0, "turn": 0.0, "reason": response_reason}
+
+
+func _validate_recovery_budget_preserves_attempt() -> void:
+	var scene := PLAYTEST.instantiate() as Node3D
+	scene.process_mode = Node.PROCESS_MODE_DISABLED
+	(scene.get_node("Main/World/Ground") as StaticBody3D).process_mode = Node.PROCESS_MODE_ALWAYS
+	root.add_child(scene)
+	if not await _await_navigation(scene):
+		scene.queue_free()
+		return
+	var tank := TANK1.instantiate() as CharacterBody3D
+	tank.process_mode = Node.PROCESS_MODE_DISABLED
+	scene.add_child(tank)
+	tank.global_position = Vector3(-120.0, 0.0, 80.0)
+	await physics_frame
+	var driver := TankNavigation.new()
+	driver.setup(tank)
+	var agent := tank.get_node_or_null("TankNavigationAgent") as NavigationAgent3D
+	if agent != null:
+		agent.process_mode = Node.PROCESS_MODE_ALWAYS
+	var fake := BudgetPredictor.new()
+	fake.setup(tank)
+	driver.set("_predictor", fake)
+	var recovery := driver.get("_recovery") as RefCounted
+	var forward := tank.global_basis * Vector3.LEFT
+	## Escape selection: budget is unknown, so it must hold zero without consuming an attempt.
+	recovery.set("phase", &"selecting_escape")
+	recovery.set("escape_heading", Vector3.FORWARD)
+	recovery.set("attempts", 1)
+	recovery.set("_attempt_elapsed", Recovery.ATTEMPT_SECONDS - DT * 2.0)
+	var elapsed_before := float(recovery.get("_attempt_elapsed"))
+	var continuation: Dictionary = driver.call("_drive_recovery", DT, &"safe_nominal", 0.0, 0.0)
+	if continuation.status != &"recovering" or float(continuation.movement) != 0.0 or float(continuation.turn) != 0.0 \
+			or recovery.get("phase") != &"selecting_escape" or int(recovery.get("attempts")) != 1 \
+			or float(recovery.get("_attempt_elapsed")) <= elapsed_before:
+		_fail("Escape selection predictor budget must hold zero, preserve selecting_escape/attempt, and still advance its deadline; got %s phase=%s attempts=%s elapsed=%s." % [continuation, recovery.get("phase"), recovery.get("attempts"), recovery.get("_attempt_elapsed")])
+	## Deadline expiry is real recovery failure: it must consume the next attempt instead of being masked by budget.
+	driver.call("_drive_recovery", DT * 2.0, &"safe_nominal", 0.0, 0.0)
+	if int(recovery.get("attempts")) != 2 or recovery.get("phase") not in [&"braking", &"reversing"]:
+		_fail("Recovery deadline must consume an attempt even when the predictor reports budget; phase=%s attempts=%s." % [recovery.get("phase"), recovery.get("attempts")])
+	## Nominal-only safe-hold handoff has the same unknown-budget rule.
+	recovery.set("phase", &"rejoining")
+	recovery.set("positive_advance", Recovery.PROGRESS_METRES)
+	recovery.set("attempts", 1)
+	recovery.set("_attempt_elapsed", 4.0)
+	elapsed_before = float(recovery.get("_attempt_elapsed"))
+	var handoff: Dictionary = driver.call("_drive_recovery", DT, &"safe_hold", 0.0, 0.0)
+	if handoff.status != &"recovering" or float(handoff.movement) != 0.0 or float(handoff.turn) != 0.0 \
+			or recovery.get("phase") != &"rejoining" or int(recovery.get("attempts")) != 1 \
+			or float(recovery.get("_attempt_elapsed")) <= elapsed_before:
+		_fail("Nominal handoff predictor budget must hold zero, preserve rejoining/attempt, and still advance its deadline; got %s phase=%s attempts=%s elapsed=%s." % [handoff, recovery.get("phase"), recovery.get("attempts"), recovery.get("_attempt_elapsed")])
+	## A proven blocked selection still rejects immediately; budget handling is not unlimited retry.
+	recovery.set("phase", &"selecting_escape")
+	recovery.set("_attempt_elapsed", 4.0)
+	fake.response_reason = &"blocked"
+	driver.call("_drive_recovery", DT, &"safe_nominal", 0.0, 0.0)
+	if int(recovery.get("attempts")) != 2 or recovery.get("phase") != &"braking":
+		_fail("A blocked selection must still consume the next attempt.")
+	driver.dispose()
+	tank.queue_free()
+	scene.queue_free()
+	await physics_frame

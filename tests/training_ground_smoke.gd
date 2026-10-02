@@ -51,7 +51,7 @@ const EXPECTED_TARGET_COLOR := Color(0.16, 0.18, 0.2, 1)
 
 
 func _init() -> void:
-	if not _validate_training_ground() or not await _validate_playtest_composition():
+	if not await _validate_training_ground() or not await _validate_playtest_composition():
 		quit(1)
 		return
 	print("Training ground smoke validation passed.")
@@ -63,6 +63,9 @@ func _validate_training_ground() -> bool:
 	var training_ground := training_ground_scene.instantiate() as Node3D if training_ground_scene != null else null
 	if training_ground == null or training_ground.name != "TrainingGround":
 		return _fail("Training ground scene must load as a TrainingGround Node3D.")
+	## 剛體 actor 在 ready 建立 donor 並把 HealthComponent 搬到 root；不可讀序列化 legacy 子樹。
+	root.add_child(training_ground)
+	await process_frame
 	if training_ground.get_child_count() != 4 or training_ground.get_node_or_null("Range") == null:
 		training_ground.free()
 		return _fail("Training ground must contain Ground, Targets, Lighting, and the accuracy Range roots.")
@@ -77,22 +80,23 @@ func _validate_training_ground() -> bool:
 	for target_name: String in TRAINING_TARGET_VARIANTS:
 		var expected: Dictionary = TRAINING_TARGET_VARIANTS[target_name]
 		var training_target := targets.get_node_or_null(target_name) as Node3D
-		var target_tank := training_target.get_node_or_null("SubjectSlot/Tank") as CharacterBody3D \
+		var target_tank := training_target.get_node_or_null("SubjectSlot/Tank") as RigidBody3D \
 				if training_target != null else null
-		var target_geometry := target_tank.part_geometry as TankPartGeometry if target_tank != null else null
+		var target_donor := target_tank.get("combat_tank") as CharacterBody3D if target_tank != null else null
+		var target_geometry := target_donor.part_geometry as TankPartGeometry if target_donor != null else null
 		var target_model_path := "VisualRecoilPivot/TankVisualSlot/HullVisual/%s" % expected.model
-		var target_model := target_tank.get_node_or_null(target_model_path) as Node3D if target_tank != null else null
+		var target_model := target_donor.get_node_or_null(target_model_path) as Node3D if target_donor != null else null
 		var health_label := training_target.get_node_or_null("HealthLabel3D") as Label3D if training_target != null else null
 		if training_target == null or training_target.scene_file_path != expected.scene \
 				or not training_target.position.is_equal_approx(expected.position) \
 				or not is_equal_approx(training_target.rotation.y, float(expected.rotation_y)) \
-				or target_tank == null or not target_tank.scale.is_equal_approx(Vector3.ONE) \
+				or target_tank == null or not target_tank.freeze or not target_tank.scale.is_equal_approx(Vector3.ONE) \
 				or target_tank.collision_layer != 1 \
 				or target_model == null or not target_model.scale.is_equal_approx(expected.model_scale) \
 				or target_geometry == null or not target_geometry.is_valid_geometry() \
 				or not target_geometry.stable_center.is_equal_approx(_stable_center_for_target(target_name)) \
 				or health_label == null or health_label.font_size <= 0 or health_label.position.y <= target_geometry.stable_center.y \
-				or health_label.text != "%s\n100 / 100" % expected.display_name:
+				or health_label.text != "%s\n%d / %d" % [expected.display_name, int(expected.maximum_health), int(expected.maximum_health)]:
 			training_ground.free()
 			return _fail("%s must preserve its authored model scale with grounded collision, the expected facing, and a readable health label." % target_name)
 
@@ -130,7 +134,8 @@ func _validate_training_ground() -> bool:
 	var valid_lighting := lighting != null and sun != null and sun.shadow_enabled and environment != null \
 		and environment.background_mode == Environment.BG_SKY and environment.sky != null \
 		and environment.ambient_light_color.is_equal_approx(EXPECTED_AMBIENT_COLOR)
-	training_ground.free()
+	training_ground.queue_free()
+	await process_frame
 	if not valid_lighting:
 		return _fail("Training ground must provide shadowed noon lighting, a blue sky, and neutral ambient light.")
 	return true
@@ -161,7 +166,7 @@ func _validate_playtest_composition() -> bool:
 	var preview := playtest.get_node_or_null("Encounter/VisionPreview") as MeshInstance3D
 	var enemy_vision := playtest.get_node_or_null("Encounter/Vision")
 	var vision_observer := playtest.get_node_or_null("Encounter/Enemy") as Node3D
-	var player := gameplay_runtime.get_node_or_null("PlayerSpawnGroup/Tank") as CharacterBody3D if gameplay_runtime != null else null
+	var player := gameplay_runtime.get_node_or_null("PlayerSpawnGroup/Tank") as RigidBody3D if gameplay_runtime != null else null
 	var combat_ai := encounter.get_node_or_null("CombatAI") as Node if encounter != null else null
 	## 預覽 read-back 期間固定 observer 姿態，避免 AI 瞄準／開火使 snapshot 前提漂移。
 	if combat_ai != null:
@@ -198,7 +203,7 @@ func _validate_playtest_composition() -> bool:
 	if valid:
 		for target_name: String in TRAINING_TARGET_VARIANTS:
 			var training_target := targets.get_node_or_null(target_name) as Node3D
-			var target_tank := training_target.get_node_or_null("SubjectSlot/Tank") as CharacterBody3D \
+			var target_tank := training_target.get_node_or_null("SubjectSlot/Tank") as RigidBody3D \
 					if training_target != null else null
 			var health := target_tank.get_node_or_null("HealthComponent") as HealthComponent \
 					if target_tank != null else null
@@ -207,7 +212,7 @@ func _validate_playtest_composition() -> bool:
 			var health_label := training_target.get_node_or_null("HealthLabel3D") as Label3D \
 					if training_target != null else null
 			var expected_health: float = TRAINING_TARGET_VARIANTS[target_name].maximum_health
-			if training_target == null or target_tank == null or target_tank.collision_layer != 1 \
+			if training_target == null or target_tank == null or not target_tank.freeze or target_tank.collision_layer != 1 \
 				or not _has_valid_tank_part_geometry(target_tank, _stable_center_for_target(target_name)) \
 				or health == null or receiver == null or health_label == null \
 					or not is_equal_approx(health.maximum_health, expected_health) \
@@ -226,6 +231,9 @@ func _validate_playtest_composition() -> bool:
 		if pre_replacement_aim_controller != null:
 			## 本段只驗證換車瞬間保留 transform；避免新車在等待 read-back 的一幀內依滑鼠位置開始正常轉向。
 			pre_replacement_aim_controller.set_process(false)
+		# 固定換車前一刻的姿態，避免等待 read-back 時重力改變新車位置。
+		original_player_transform = original_player_tank.global_transform
+		playtest.process_mode = Node.PROCESS_MODE_DISABLED
 		if tank1_health == null or tank1_receiver == null or pre_replacement_aim_controller == null \
 				or not tank1_receiver.receive_damage(tank1_health.current_health):
 			valid = false
@@ -243,7 +251,8 @@ func _validate_playtest_composition() -> bool:
 			var surface_effects := gameplay_runtime.get_node_or_null("SurfaceEffects") as Node
 			var enemy := encounter.get_node_or_null("Enemy") as Node3D
 			valid = replacement_tank != null and replacement_tank != original_player_tank \
-					and replacement_tank.scene_file_path == TANK1_SCENE \
+					and replacement_tank is RigidBody3D \
+					and StringName(replacement_tank.get("vehicle_id")) == &"tank1" \
 					and replacement_tank.global_transform.is_equal_approx(original_player_transform) \
 					and player_runtime.get("controlled_tank") == replacement_tank \
 					and camera_controller.get("follow_target") == replacement_tank \
@@ -329,7 +338,7 @@ func _validate_preview_published_outline_with_fixed_physics(preview: MeshInstanc
 		previous_angle = angle
 	if outline[0].is_equal_approx(outline[outline.size() - 1]):
 		return _fail("Published outline must not repeat its closing endpoint.")
-	var turret := observer.get_node_or_null("VisualRecoilPivot/TurretPivot") as Node3D
+	var turret := observer.call("get_turret_pivot") as Node3D if observer.has_method("get_turret_pivot") else null
 	if turret == null:
 		return _fail("Training scene must retain the observer turret.")
 	var previous_rotation := turret.rotation
@@ -412,7 +421,7 @@ func _validate_accuracy_range(gameplay_runtime: Node3D) -> bool:
 	## 用真實投射物射線與 CombatRuntime 事件驗完整接線，不只直接呼叫靶子的回呼。
 	var accuracy_range := gameplay_runtime.get_node_or_null("World/Range") as Node3D
 	var combat := gameplay_runtime.get_node_or_null("CombatRuntime") as CombatRuntime
-	var tank := gameplay_runtime.get_node_or_null("PlayerSpawnGroup/Tank") as CharacterBody3D
+	var tank := gameplay_runtime.get_node_or_null("PlayerSpawnGroup/Tank") as RigidBody3D
 	if accuracy_range == null or combat == null or tank == null \
 			or not combat.impact_resolved.is_connected(accuracy_range.consume_impact):
 		return _fail("Training range must consume the existing runtime impact signal.")
@@ -492,10 +501,11 @@ func _stable_center_for_target(target_name: String) -> Vector3:
 	return Vector3.INF
 
 
-func _has_valid_tank_part_geometry(tank: CharacterBody3D, expected_center: Vector3) -> bool:
-	var geometry := tank.part_geometry as TankPartGeometry
+func _has_valid_tank_part_geometry(tank: RigidBody3D, expected_center: Vector3) -> bool:
+	var donor := tank.get("combat_tank") as CharacterBody3D
+	var geometry := donor.part_geometry as TankPartGeometry if donor != null else null
 	if geometry == null or not geometry.is_valid_geometry() \
-			or not tank.stable_world_center().is_equal_approx(tank.global_transform * expected_center):
+			or not (tank.call("stable_world_center") as Vector3).is_equal_approx(tank.global_transform * expected_center):
 		return false
 	var expected_shape_count := 0
 	for part in geometry.parts:
@@ -508,5 +518,5 @@ func _has_valid_tank_part_geometry(tank: CharacterBody3D, expected_center: Vecto
 				return false
 			actual_shape_count += 1
 	return expected_shape_count > 0 and actual_shape_count == expected_shape_count \
-		and tank.part_shape_world_transforms().size() == expected_shape_count \
-		and not tank.part_world_bounds().size.is_zero_approx()
+		and donor.part_shape_world_transforms().size() == expected_shape_count \
+		and not donor.part_world_bounds().size.is_zero_approx()

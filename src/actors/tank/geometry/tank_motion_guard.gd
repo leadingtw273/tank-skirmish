@@ -52,8 +52,8 @@ func attempt(angle_delta: float, shapes: Array[Dictionary], transforms_at_fracti
 		if candidate_transforms.size() != shapes.size() or not _all_finite(candidate_transforms):
 			return _result(current_fraction, angle_delta, false, "invalid-candidate-snapshot", query_count, substeps, shapes.size(), started_usec)
 		for shape_index in shapes.size():
-			var candidate_overlap := _overlaps(shapes[shape_index].shape, candidate_transforms[shape_index])
-			query_count += 1
+			var candidate_overlap := _overlaps(shapes[shape_index].shape, candidate_transforms[shape_index], shapes[shape_index].get("ground_filter", Callable()))
+			query_count += int(candidate_overlap.get("query_count", 1))
 			if candidate_overlap.bad:
 				return _result(current_fraction, angle_delta, false, String(candidate_overlap.reason), query_count, substeps, shapes.size(), started_usec)
 			var known: Dictionary = snapshots.items[shape_index].by_rid
@@ -63,7 +63,7 @@ func attempt(angle_delta: float, shapes: Array[Dictionary], transforms_at_fracti
 			for rid_id in known:
 				var old: Dictionary = known[rid_id]
 				var pairs := _pairs_for_rid(shapes[shape_index].shape, candidate_transforms[shape_index], old.rid, candidate_overlap.rids)
-				query_count += 1
+				query_count += int(pairs.get("query_count", 1))
 				if pairs.bad:
 					return _result(current_fraction, angle_delta, false, String(pairs.reason), query_count, substeps, shapes.size(), started_usec)
 				if not _old_contact_is_safe(old, pairs, candidate_transforms[shape_index]):
@@ -83,7 +83,7 @@ func _snapshot_all(shapes: Array[Dictionary], transforms: Array) -> Dictionary:
 	var items: Array[Dictionary] = []
 	var query_count := 0
 	for index in shapes.size():
-		var snapshot := _snapshot_contacts(shapes[index].shape, transforms[index])
+		var snapshot := _snapshot_contacts(shapes[index].shape, transforms[index], shapes[index].get("ground_filter", Callable()))
 		query_count += int(snapshot.query_count)
 		if snapshot.bad:
 			return {"bad": true, "reason": snapshot.reason, "query_count": query_count}
@@ -103,24 +103,33 @@ func _query(shape: Shape3D, transform: Transform3D, excluded: Array[RID]) -> Phy
 	return query
 
 
-func _overlaps(shape: Shape3D, transform: Transform3D) -> Dictionary:
+func _overlaps(shape: Shape3D, transform: Transform3D, ground_filter := Callable()) -> Dictionary:
+	var query_count := 0
+	var rids: Array[RID] = []
+	if ground_filter.is_valid():
+		var support: Dictionary = ground_filter.call(transform)
+		query_count = int(support.get("queries", 0))
+		if bool(support.get("bad", true)):
+			return {"bad": true, "reason": "ground-query-incomplete", "rids": rids, "query_count": query_count}
+		if bool(support.get("safe", false)):
+			return {"bad": false, "rids": rids, "query_count": query_count}
+	query_count += 1
 	var hits := _space.intersect_shape(_query(shape, transform, [_self_rid]), _scene_node_count)
 	if hits.size() >= _scene_node_count:
-		return {"bad": true, "reason": "overlap-results-at-cap:%d" % _scene_node_count, "rids": []}
-	var rids: Array[RID] = []
+		return {"bad": true, "reason": "overlap-results-at-cap:%d" % _scene_node_count, "rids": rids, "query_count": query_count}
 	for hit in hits:
 		var rid: RID = hit.rid
 		if not rids.has(rid):
 			rids.append(rid)
-	return {"bad": false, "rids": rids}
+	return {"bad": false, "rids": rids, "query_count": query_count}
 
 
-func _snapshot_contacts(shape: Shape3D, transform: Transform3D) -> Dictionary:
-	var overlap := _overlaps(shape, transform)
+func _snapshot_contacts(shape: Shape3D, transform: Transform3D, ground_filter := Callable()) -> Dictionary:
+	var overlap := _overlaps(shape, transform, ground_filter)
 	if overlap.bad:
 		return {"bad": true, "reason": overlap.reason, "query_count": 1}
 	var by_rid := {}
-	var query_count := 1
+	var query_count := int(overlap.get("query_count", 1))
 	for rid in overlap.rids:
 		var pairs := _pairs_for_rid(shape, transform, rid, overlap.rids)
 		query_count += 1
@@ -131,6 +140,10 @@ func _snapshot_contacts(shape: Shape3D, transform: Transform3D) -> Dictionary:
 
 
 func _pairs_for_rid(shape: Shape3D, transform: Transform3D, only_rid: RID, all_rids: Array[RID]) -> Dictionary:
+	# overlap／接地分類已證明此 collider 不在目前姿態，不能再把其他
+	# 物件（例如被接地分類移除的地板）的 contact pairs 誤掛到舊牆 RID。
+	if not all_rids.has(only_rid):
+		return {"bad": false, "rid": only_rid, "entries": [], "depth": 0.0, "query_count": 0}
 	var excluded: Array[RID] = [_self_rid]
 	for rid in all_rids:
 		if rid != only_rid:

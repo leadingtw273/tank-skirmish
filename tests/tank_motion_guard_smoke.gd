@@ -6,6 +6,7 @@ const TANK_SCENES := [preload("res://src/actors/tank/variants/tank1/tank1.tscn")
 const DT := 1.0 / 60.0
 var failures: Array[String] = []
 var samples: Dictionary = {&"open_public": [], &"wall_public": [], &"helper": [], &"three_axis_open": [], &"three_axis_near_wall": []}
+var _fixture_grounds: Dictionary = {}
 
 func _init() -> void:
 	call_deferred("_run")
@@ -75,7 +76,8 @@ func _wall_tank2(building: StaticBody3D) -> void:
 	if clearance < 0.0:
 		failures.append("B/wall: no non-overlapping Tank2 start beside building.")
 		return
-	await physics_frame
+	_refresh_fixture_ground(tank)
+	for unused in 3: await physics_frame
 	var pivot := tank.get_node("VisualRecoilPivot/TurretPivot") as Node3D
 	var blocked := false
 	for frame in 240:
@@ -102,7 +104,7 @@ func _wall_tank2(building: StaticBody3D) -> void:
 ## guard 的 .002 margin，接觸 assert 以 ground RID 為準，不能把「場內有地板」當成接地證據。
 func _ground_contact_four(building: StaticBody3D) -> void:
 	for index in TANK_SCENES.size():
-		var tank := await _spawn(index, building.global_position + Vector3(42 + index * 14, 0, 52))
+		var tank := await _spawn(index, building.global_position + Vector3(42 + index * 14, 0, 52), false)
 		if tank == null: continue
 		tank.call("_sync_part_collision_shapes")
 		var lowest_y: float = tank.part_world_bounds().position.y
@@ -118,13 +120,18 @@ func _ground_contact_four(building: StaticBody3D) -> void:
 		collision.shape = shape
 		ground.add_child(collision)
 		root.add_child(ground)
-		await physics_frame
 		if not _touches_rid(tank, ground.get_rid()):
 			failures.append("C/Tank%d ground: no initial part-shape contact with floor RID at lowest_y=%.6f top_y=%.6f." % [index + 1, lowest_y, top_y])
 		else:
 			print("RUNTIME_GUARD ground Tank%d initial_contact=true lowest_y=%.6f top_y=%.6f rid=%d" % [index + 1, lowest_y, top_y, ground.get_rid().get_id()])
 		var before := tank.global_rotation.y
 		tank.set_turn_input(1.0)
+		await physics_frame
+		_expect_stats("C/Tank%d-initial-contact-root" % (index + 1), tank, &"root", false)
+		if is_equal_approx(before, tank.global_rotation.y): failures.append("C/Tank%d ground: initial contact fully locked normal root yaw." % (index + 1))
+		var support: Dictionary = tank.ground_support_at(tank.global_transform)
+		if not bool(support.get("supported", false)) or not (support.get("support_rids", []) as Array).has(ground.get_rid()):
+			failures.append("C/Tank%d ground: post-align support must retain floor RID; support=%s." % [index + 1, support])
 		for unused in 6: await physics_frame
 		tank.set_turn_input(0.0)
 		_expect_stats("C/Tank%d-ground-root" % (index + 1), tank, &"root", false)
@@ -145,6 +152,8 @@ func _other_tank_is_not_pushed(building: StaticBody3D) -> void:
 		await physics_frame
 		collided = collided or primary.get_slide_collision_count() > 0
 	primary.set_movement_input(0.0)
+	var other_delta := other.global_position - other_start
+	print("RUNTIME_GUARD other_tank_delta xyz=%s y=%.6f xz=%.6f" % [other_delta, other_delta.y, Vector2(other_delta.x, other_delta.z).length()])
 	if not collided: failures.append("F/other-tank: primary never reached the stationary tank.")
 	if other.global_position.distance_to(other_start) > 0.00001:
 		failures.append("F/other-tank: stationary tank was pushed by another tank (delta=%f)." % other.global_position.distance_to(other_start))
@@ -211,7 +220,7 @@ func _print_profile_measurement(tank_number: int, profile: String, public_usec: 
 	var helper_p95: int = int(helper_usec[mini(helper_usec.size() - 1, ceili(helper_usec.size() * 0.95) - 1)])
 	print("RUNTIME_GUARD profile Tank%d/%s public_p95_max_usec=%d/%d helper_p95_max_usec=%d/%d shape_max=%d substeps_max=%d queries_max=%d" % [tank_number, profile, public_p95, public_usec.back(), helper_p95, helper_usec.back(), shape_count, substeps, queries])
 
-func _spawn(index: int, position: Vector3) -> CharacterBody3D:
+func _spawn(index: int, position: Vector3, with_fixture_ground: bool = true) -> CharacterBody3D:
 	var tank := TANK_SCENES[index].instantiate() as CharacterBody3D
 	if tank == null:
 		failures.append("D/Harness: Tank%d instantiate failed." % (index + 1))
@@ -220,7 +229,11 @@ func _spawn(index: int, position: Vector3) -> CharacterBody3D:
 	tank.global_position = position
 	tank.global_rotation = Vector3.ZERO
 	await physics_frame
-	await physics_frame
+	if with_fixture_ground:
+		var ground := _fixture_ground_for(tank)
+		_fixture_grounds[tank.get_instance_id()] = ground
+		tank.tree_exited.connect(ground.queue_free)
+	for unused in 3: await physics_frame
 	return tank
 
 func _clone_building() -> StaticBody3D:
@@ -258,8 +271,42 @@ func _overlap(tank: CharacterBody3D) -> bool:
 			query.collision_mask = tank.collision_mask
 			query.exclude = [tank.get_rid()]
 			query.collide_with_bodies = true
-			if not state.intersect_shape(query, 1).is_empty(): return true
+			for hit in state.intersect_shape(query, 16):
+				var fixture_ground := false
+				for ground in _fixture_grounds.values():
+					if is_instance_valid(ground) and ground.get_rid() == hit.rid:
+						fixture_ground = true
+						break
+				if not fixture_ground:
+					return true
 	return false
+
+## 每個既有 runtime case 都有獨立的實體 layer-1 地板；以正式 convex shape 最低點定位。
+## _overlap 只略過這個 fixture ground，建築、牆與其他車仍照原本查詢。
+func _fixture_ground_for(tank: CharacterBody3D) -> StaticBody3D:
+	tank.call("_sync_part_collision_shapes")
+	var ground := StaticBody3D.new()
+	ground.name = "RuntimeGuardFixtureGround"
+	ground.collision_layer = 1
+	var thickness := 0.2
+	var top_y: float = tank.part_world_bounds().position.y + 0.001
+	ground.position = Vector3(tank.global_position.x, top_y - thickness * 0.5, tank.global_position.z)
+	var collision := CollisionShape3D.new()
+	var shape := BoxShape3D.new()
+	shape.size = Vector3(40.0, thickness, 40.0)
+	collision.shape = shape
+	ground.add_child(collision)
+	root.add_child(ground)
+	return ground
+
+
+func _refresh_fixture_ground(tank: CharacterBody3D) -> void:
+	var previous := _fixture_grounds.get(tank.get_instance_id()) as StaticBody3D
+	if previous != null and is_instance_valid(previous):
+		previous.queue_free()
+	var ground := _fixture_ground_for(tank)
+	_fixture_grounds[tank.get_instance_id()] = ground
+	tank.tree_exited.connect(ground.queue_free)
 
 func _touches_rid(tank: CharacterBody3D, expected_rid: RID) -> bool:
 	var state := root.get_world_3d().direct_space_state

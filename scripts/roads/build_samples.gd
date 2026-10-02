@@ -1,4 +1,6 @@
 extends SceneTree
+
+const RoadHeight := preload("res://scripts/roads/road_height_baker.gd")
 ## Rebuild paid-source references locally; never edits vendor files.
 const SOURCE := "res://assets/AtomicRealmModularRoads/catalog.json"
 const OUT := "res://src/world/roads"
@@ -75,6 +77,17 @@ func build_model(pack: String, model: Dictionary, textures: Array) -> Array[Dict
 		failures.append("Empty model " + String(model.path))
 		source.free()
 		return result
+	var road_model := RoadHeight.is_road_model(pack, String(model.id))
+	if road_model:
+		var baker := RoadHeight.new()
+		var source_factor := float(source.get_meta(RoadHeight.HEIGHT_META, 1.0))
+		for item: Dictionary in meshes:
+			item.mesh = baker.mesh_at_height(item.mesh as ArrayMesh, item.transform, source_factor)
+		if not baker.is_valid():
+			failures.append_array(baker.failures)
+			failures.append("Height bake failed for " + String(model.id))
+			source.free()
+			return result
 	var options: Array[Dictionary] = [{"name": "Default", "image": "", "texture": ""}]
 	var seen: Dictionary = {}
 	for mat: Dictionary in model.materials:
@@ -115,6 +128,8 @@ func build_model(pack: String, model: Dictionary, textures: Array) -> Array[Dict
 		module.set_meta("road_id", model.id)
 		module.set_meta("variant", option.name)
 		module.set_meta("source_pack", pack)
+		if road_model:
+			module.set_meta(RoadHeight.HEIGHT_META, RoadHeight.HEIGHT_FACTOR)
 		for index: int in meshes.size():
 			var item: Dictionary = meshes[index]
 			var visual := MeshInstance3D.new()
@@ -148,7 +163,7 @@ func build_model(pack: String, model: Dictionary, textures: Array) -> Array[Dict
 		if save_scene(module, path):
 			result.append({"id": model.id, "pack": pack, "variant": option.name, "path": path,
 				"bounds": [bounds.position.x, bounds.position.y, bounds.position.z, bounds.size.x, bounds.size.y, bounds.size.z],
-				"meshes": meshes.size()})
+				"meshes": meshes.size(), "road_height_factor": RoadHeight.HEIGHT_FACTOR if road_model else 1.0})
 		module.free()
 	source.free()
 	return result
@@ -232,6 +247,8 @@ func add_snap_points(module: Node3D, model: Dictionary, bounds: AABB) -> void:
 		var marker := Marker3D.new()
 		marker.name = String(data.name)
 		marker.position = Vector3(data.position[0], data.position[1], data.position[2])
+		if module.has_meta(RoadHeight.HEIGHT_META):
+			marker.position.y *= RoadHeight.HEIGHT_FACTOR
 		var outward := Vector3(data.outward[0], data.outward[1], data.outward[2])
 		marker.basis = Basis.looking_at(outward, Vector3.UP)
 		holder.add_child(marker)

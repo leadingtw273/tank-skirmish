@@ -92,6 +92,15 @@ func select_escape(candidate: Dictionary) -> void:
 	escape_heading = blocked_forward.rotated(Vector3.UP, float(candidate.get("side", _attempt_side)) * float(candidate.get("angle", ESCAPE_ANGLE))).normalized()
 	phase = &"turning"; _elapsed = 0.0
 func handoff_ready() -> bool: return phase == &"rejoining" and positive_advance >= PROGRESS_METRES
+
+## 已達既有最小進展時，近期制動否決繼續前進便先停穩再交接。
+## 不重設 attempt 或期限，也不能跳過 rejoining 的安全驗證。
+func settle_before_handoff() -> bool:
+	if phase != &"advancing" or positive_advance < PROGRESS_METRES: return false
+	phase = &"escape_settling"
+	_elapsed = 0.0
+	return true
+
 func accept_handoff(reason: StringName, position := advance_origin) -> void:
 	rejoin_reason = reason; phase = &"normal"; escape_heading = Vector3.ZERO; interrupt_confirmation(position); reset_progress(position, blocked_forward)
 func reject_handoff(reason: StringName, position: Vector3, forward: Vector3) -> void: rejoin_reason = reason; _fail_attempt(position, forward)

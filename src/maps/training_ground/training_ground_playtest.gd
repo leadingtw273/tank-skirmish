@@ -40,8 +40,8 @@ func _connect_tank_replacement_targets(training_ground: Node3D) -> void:
 
 
 func _on_target_depleted(subject: Node3D) -> void:
-	var tank_scene := load(subject.scene_file_path) as PackedScene if subject != null else null
-	if tank_scene == null or _gameplay_runtime == null or not _gameplay_runtime.has_method("replace_player_tank"):
-		push_error("TrainingGroundPlaytest could not resolve the destroyed target tank scene.")
+	var vehicle_id := StringName(subject.get("vehicle_id")) if subject != null else &""
+	if vehicle_id.is_empty() or _gameplay_runtime == null or not _gameplay_runtime.has_method("replace_player_vehicle"):
+		push_error("TrainingGroundPlaytest could not resolve the destroyed target vehicle ID.")
 		return
-	_gameplay_runtime.call("replace_player_tank", tank_scene)
+	_gameplay_runtime.call("replace_player_vehicle", vehicle_id)

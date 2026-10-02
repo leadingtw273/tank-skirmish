@@ -2,10 +2,10 @@
 
 [ext_resource type="PackedScene" path="res://src/gameplay_runtime.tscn" id="1_runtime"]
 [ext_resource type="PackedScene" path="res://src/maps/main_battlefield/main_battlefield.tscn" id="2_world"]
-
 [node name="TankSkirmish" unique_id=328449764 instance=ExtResource("1_runtime")]
+startup_player_id = "tank2"
 
 [node name="PlayerSpawnGroup" parent="." index="0"]
-position = Vector3(-108, 0, -114)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -108, 0, -114)
 
 [node name="World" parent="." index="4" unique_id=1726407625 instance=ExtResource("2_world")]

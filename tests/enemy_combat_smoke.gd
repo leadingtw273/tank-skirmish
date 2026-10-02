@@ -241,7 +241,7 @@ func _validate_hit_inspection_contract(playtest: Node3D, ai: Node) -> bool:
 func _validate_near_hit_encounter_wiring(playtest: Node3D, main: Node3D, encounter: Node3D, player_runtime: Node, combat: CombatRuntime) -> bool:
 	## 從場景原始 Tank2 經真實粉色靶命中切到 Tank1，不能以改寫近圈 export 偽造 80m 規格。
 	var switch_target := playtest.get_node_or_null("TrainingControls/EnemyTypeSwitch") as StaticBody3D
-	var player := player_runtime.get("controlled_tank") as CharacterBody3D
+	var player := player_runtime.get("controlled_tank") as RigidBody3D
 	if switch_target == null or player == null:
 		_finish(playtest, "Near-hit regression requires the live player and enemy-switch target.")
 		return false
@@ -263,6 +263,8 @@ func _validate_near_hit_encounter_wiring(playtest: Node3D, main: Node3D, encount
 	## PlayerAimController 會每 frame 改玩家砲塔，砲塔／砲管 surface samples 會離開方才建立的小屏幕。
 	var player_aim := player_runtime.get_node_or_null("PlayerAimController") as Node
 	var player_was_physics_processing := player.is_physics_processing()
+	var player_was_frozen := player.freeze
+	player.freeze = true
 	var player_aim_was_processing := player_aim.is_processing() if player_aim != null else false
 	player.set_physics_process(false)
 	if player_aim != null:
@@ -314,6 +316,7 @@ func _validate_near_hit_encounter_wiring(playtest: Node3D, main: Node3D, encount
 		_finish(playtest, "Near-hit regression must restore Tank2 for the remaining smoke cases.")
 		return false
 	player.set_physics_process(player_was_physics_processing)
+	player.freeze = player_was_frozen
 	if player_aim != null:
 		player_aim.set_process(player_aim_was_processing)
 	return true
@@ -337,7 +340,7 @@ func _fire_projectile_at_node(combat: CombatRuntime, shooter: Node3D, target: No
 
 ## 本 fixture 的眼睛→玩家射線與玩家→受擊部位彈道不同；以兩條線的實際距離構造遮光尺寸。
 ## 屏幕位於 50m 側向玩家前方 10% 距離，不進入玩家幾何；不移動任何正式場景障礙。
-func _make_near_hit_visibility_screen(observer: CharacterBody3D, subject: CharacterBody3D, shot_origin: Vector3, shot_target: Vector3) -> Array[StaticBody3D]:
+func _make_near_hit_visibility_screen(observer: CharacterBody3D, subject: Node3D, shot_origin: Vector3, shot_target: Vector3) -> Array[StaticBody3D]:
 	var origin := (observer.get_node("VisualRecoilPivot/TurretPivot") as Node3D).global_position
 	var points: PackedVector3Array = subject.call("part_world_surface_points") as PackedVector3Array
 	points.append(subject.call("stable_world_center") as Vector3)
@@ -960,7 +963,7 @@ func _validate_combat_and_recovery(playtest: Node3D, main: Node3D, encounter: No
 	await process_frame
 	await physics_frame
 	var replacement := main.get_node_or_null("PlayerSpawnGroup/Tank") as Node3D
-	if replacement == null or replacement == player or replacement.scene_file_path != TANK1_SCENE \
+	if replacement == null or replacement == player or replacement.scene_file_path != "res://src/actors/rigid_tank/variants/tank1.tscn" \
 			or ai.get("target") != replacement or not _has_exact_registered_sources(combat, [replacement, enemy]) \
 			or enemy.is_connected("shot_event_fired", Callable(player_runtime, "_on_controlled_tank_shot_event_fired")):
 		_finish(playtest, "Replacement must retarget AI, retain one player/enemy source each, and keep enemy out of camera recoil.")

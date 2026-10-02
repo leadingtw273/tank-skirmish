@@ -18,6 +18,7 @@ extends Node3D
 @export_range(0.1, 10.0, 0.1) var player_invulnerability_seconds := 2.0
 const PLAYER_INVULNERABILITY_BLINK_SECONDS := 0.15
 const DrivingTraceRecorder := preload("res://src/debug/driving_trace_recorder.gd")
+const TankCatalog := preload("res://src/actors/tank/tank_catalog.gd")
 
 ## Debug GUI 預設可記錄；headless/release 是否實際啟用由 recorder 自己守門。
 @export var driving_trace_enabled := true
@@ -26,17 +27,11 @@ const DrivingTraceRecorder := preload("res://src/debug/driving_trace_recorder.gd
 @onready var combat_ai: Node = $CombatAI
 @onready var vision: Node = $Vision
 @onready var vision_preview: Node = $VisionPreview
-const ENEMY_VARIANTS: Array[PackedScene] = [
-	preload("res://src/actors/tank/variants/tank1/tank1.tscn"),
-	preload("res://src/actors/tank/variants/tank2/tank2.tscn"),
-	preload("res://src/actors/tank/variants/tank3/tank3.tscn"),
-	preload("res://src/actors/tank/variants/tank4/tank4.tscn"),
-]
 var _enemy_spawn_transform := Transform3D.IDENTITY
 var _enemy_variant_index := -1
 var _player_health: HealthComponent
 var _respawn_remaining := -1.0
-var _respawn_tank_scene: PackedScene
+var _respawn_vehicle_id: StringName
 var _invulnerability_remaining := -1.0
 var _invulnerability_elapsed := 0.0
 var _protected_receiver: DamageReceiver
@@ -50,8 +45,8 @@ func _ready() -> void:
 		return
 	## 只記錄場景啟動時的姿態；交戰期間移位或轉向不會改變重置點。
 	_enemy_spawn_transform = enemy.global_transform
-	for index in ENEMY_VARIANTS.size():
-		if ENEMY_VARIANTS[index].resource_path == enemy.scene_file_path:
+	for index in TankCatalog.IDS.size():
+		if enemy.get("vehicle_id") == TankCatalog.IDS[index]:
 			_enemy_variant_index = index
 			break
 	combat_runtime.register_shot_source(enemy)
@@ -80,14 +75,14 @@ func _on_impact_resolved(event: ImpactEvent) -> void:
 
 
 func _cycle_enemy() -> void:
-	## 完整車型重新實例化，自然回到該車型滿血、零速度與預設砲塔／砲管姿態。
+	## 以共同 catalog 重新實例化，自然回到該車型滿血、零速度與預設砲塔／砲管姿態。
 	if _enemy_variant_index < 0:
-		push_error("Enemy switch requires one of the four registered tank variants.")
+		push_error("Enemy switch requires one of the four registered vehicle IDs.")
 		return
-	var next_index := (_enemy_variant_index + 1) % ENEMY_VARIANTS.size()
-	var replacement := ENEMY_VARIANTS[next_index].instantiate() as Node3D
+	var next_index := (_enemy_variant_index + 1) % TankCatalog.IDS.size()
+	var replacement := TankCatalog.instantiate(TankCatalog.IDS[next_index])
 	if replacement == null:
-		push_error("Enemy switch could not instantiate the next tank variant.")
+		push_error("Enemy switch could not instantiate the next tank vehicle.")
 		return
 	combat_ai.call("set_combat_enabled", false)
 	var previous := enemy
@@ -139,7 +134,10 @@ func _on_player_depleted() -> void:
 	## HealthComponent 的 depleted 每次歸零只發出一次，因此不需要另一套死亡事件系統。
 	_finish_player_protection()
 	var tank := player_runtime.get("controlled_tank") as Node3D
-	_respawn_tank_scene = load(tank.scene_file_path) as PackedScene
+	_respawn_vehicle_id = StringName(tank.get("vehicle_id"))
+	if _respawn_vehicle_id.is_empty():
+		push_error("TrainingCombatEncounter could not save the destroyed player vehicle ID.")
+		return
 	player_runtime.call("set_controls_enabled", false)
 	combat_ai.call("set_combat_enabled", false)
 	_respawn_remaining = player_respawn_seconds
@@ -157,7 +155,7 @@ func _physics_process(delta: float) -> void:
 
 
 func _respawn_player() -> void:
-	var replacement := gameplay_runtime.call("respawn_player_tank", _respawn_tank_scene,
+	var replacement := gameplay_runtime.call("respawn_player_vehicle", _respawn_vehicle_id,
 		player_spawn_point.global_transform) as Node3D
 	if replacement == null:
 		push_error("TrainingCombatEncounter could not spawn the replacement player tank.")

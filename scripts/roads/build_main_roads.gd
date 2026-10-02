@@ -1,4 +1,6 @@
 extends SceneTree
+
+const RoadHeight := preload("res://scripts/roads/road_height_baker.gd")
 ## Reconstruct a connected, centrally symmetric street graph from the reference.
 const OUT := "res://src/world/roads/generated/fit"
 const MAIN := "res://src/maps/main_battlefield/main_battlefield.tscn"
@@ -186,7 +188,7 @@ func place_junction(id: String, holder: Node3D, world: Node3D) -> void:
 			if matched.size() == neighbors.size():
 				var module := load(String(candidate.path)).instantiate() as Node3D
 				module.name = id + "__" + String(candidate.id)
-				module.transform = Transform3D(rotation_, nodes[id] - rotation_ * candidate.pivot + Vector3(0, 0.03, 0))
+				module.transform = Transform3D(rotation_, nodes[id] - rotation_ * candidate.pivot + Vector3(0, RoadHeight.PLACEMENT_LIFT, 0))
 				holder.add_child(module)
 				module.owner = world
 				ports[id] = matched
@@ -210,7 +212,7 @@ func place_connection(edge: Array, holder: Node3D, world: Node3D) -> void:
 		var road := load(path).instantiate() as Node3D
 		road.name = "%s_to_%s_%02d" % [edge[0], edge[1], index]
 		road.basis = Basis.looking_at(-direction, Vector3.UP)
-		road.position = a + direction * (walked + segment / 2) + Vector3(0, 0.03, 0)
+		road.position = a + direction * (walked + segment / 2) + Vector3(0, RoadHeight.PLACEMENT_LIFT, 0)
 		holder.add_child(road)
 		road.owner = world
 		remaining -= segment
@@ -284,6 +286,12 @@ func make_fit(length: float) -> String:
 		marker.basis = Basis.looking_at(Vector3(0, 0, sign_), Vector3.UP)
 		snap.add_child(marker)
 		marker.owner = root_
+	var baker := RoadHeight.new()
+	if not baker.bake_module(root_):
+		failures.append_array(baker.failures)
+		root_.free()
+		source.free()
+		return ""
 	var scene := PackedScene.new()
 	scene.pack(root_)
 	var path := OUT + "/road1_%s.tscn" % key.replace(".", "_")

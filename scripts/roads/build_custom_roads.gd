@@ -1,4 +1,6 @@
 extends SceneTree
+
+const RoadHeight := preload("res://scripts/roads/road_height_baker.gd")
 ## Rebuilds only the bespoke road modules. Vendor GLBs are read, never modified.
 
 const OUT := "res://src/world/roads/generated/custom"
@@ -292,6 +294,11 @@ func add_mesh(root: Node3D, name_: String, mesh: ArrayMesh, material: Material =
 
 
 func pack(root: Node3D) -> PackedScene:
+	var baker := RoadHeight.new()
+	if not baker.bake_module(root):
+		push_error("Custom road height bake failed: " + str(baker.failures))
+		root.free()
+		return null
 	var scene := PackedScene.new()
 	scene.pack(root)
 	root.free()

@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" path="res://src/gameplay_runtime.tscn" id="2_main"]
 [ext_resource type="PackedScene" path="res://src/maps/training_ground/encounter/enemy_type_switch.tscn" id="12_enemy_switch"]
 [ext_resource type="Script" uid="uid://k25og2g2lj3e" path="res://src/maps/training_ground/encounter/training_combat_encounter.gd" id="3_encounter"]
-[ext_resource type="PackedScene" path="res://src/actors/tank/variants/tank2/tank2.tscn" id="4_enemy"]
+[ext_resource type="PackedScene" path="res://src/actors/rigid_tank/player_rigid_tank.tscn" id="4_enemy"]
 [ext_resource type="Script" uid="uid://dqltshvrb2i4m" path="res://src/actors/tank/perception/tank_vision.gd" id="5_vision"]
 [ext_resource type="Script" uid="uid://c8p2hn1v607kf" path="res://src/ai/tank_combat_ai.gd" id="6_ai"]
 [ext_resource type="PackedScene" uid="uid://dhflopmr0be63" path="res://assets/models/buildings/1story.glb" id="7_one_story"]
@@ -53,6 +53,7 @@ script = ExtResource("1_playtest")
 navigation_mesh = ExtResource("14_navigation_mesh")
 
 [node name="Main" parent="." unique_id=1929778273 instance=ExtResource("2_main")]
+startup_player_id = "tank2"
 
 [node name="World" parent="Main" unique_id=1419963957 instance=ExtResource("10_training_world")]
 
@@ -187,6 +188,7 @@ player_spawn_point = NodePath("../PlayerSpawnPoint")
 
 [node name="Enemy" parent="Encounter" unique_id=375400699 instance=ExtResource("4_enemy")]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 57.65064, 0, -42.685047)
+vehicle_id = &"tank2"
 
 [node name="Vision" type="Node" parent="Encounter" unique_id=890877284 node_paths=PackedStringArray("observer")]
 script = ExtResource("5_vision")

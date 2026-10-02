@@ -321,10 +321,10 @@ func _fixture() -> Dictionary:
 	encounter.player_runtime = runtime
 	encounter.enemy = enemy
 	encounter.combat_ai = ai
-	root.add_child(world)
-	## Local positions avoid querying global transforms before the fixture has completed tree entry.
+	## 先在 off-tree 建立兩車的本地位置，讓首次 physics 同步即使用正確 body pose。
 	player.position = Vector3(0, 2, 0)
 	enemy.position = Vector3(20, 2, 20)
+	root.add_child(world)
 	var front := _support_plane(player, Vector3.LEFT)
 	## 牆右面與真凸形支撐面留 10cm，避免 fixture 初始重疊；後續必須由實際前進取得 contact。
 	var wall := _box(Vector3(front.x - 0.35, 2, 0), Vector3(0.5, 5, 16))
@@ -333,6 +333,12 @@ func _fixture() -> Dictionary:
 	world.add_child(_box(Vector3(enemy.global_position.x + enemy_front.x - 0.35, 2, enemy.global_position.z), Vector3(0.5, 5, 16)))
 	for unused in 3:
 		await physics_frame
+	if absf(player.global_position.x) > 1.0 or absf(player.global_position.z) > 1.0 \
+			or absf(enemy.global_position.x - 20.0) > 1.0 or absf(enemy.global_position.z - 20.0) > 1.0 \
+			or player.global_position.distance_to(enemy.global_position) < 10.0 or _tanks_overlap(player, enemy):
+		_fail("fixture setup must retain separated player/enemy poses; player=%s enemy=%s" % [player.global_position, enemy.global_position])
+		await _free_fixture({"world": world})
+		return {}
 	return {"world": world, "encounter": encounter, "player": player, "enemy": enemy, "ai": ai}
 
 
@@ -358,6 +364,23 @@ func _support_plane(tank: CharacterBody3D, direction: Vector3) -> Vector3:
 				best = maxf(best, direction.dot(transforms[index] * point))
 			index += 1
 	return direction.normalized() * best
+
+
+func _tanks_overlap(player: CharacterBody3D, enemy: CharacterBody3D) -> bool:
+	var transforms: Array[Transform3D] = player.part_shape_world_transforms()
+	var shape_index := 0
+	for part in player.part_geometry.parts:
+		for shape in part.convex_shapes:
+			var query := PhysicsShapeQueryParameters3D.new()
+			query.shape = shape
+			query.transform = transforms[shape_index]
+			query.collision_mask = player.collision_mask
+			query.exclude = [player.get_rid()]
+			for hit in player.get_world_3d().direct_space_state.intersect_shape(query, 64):
+				if (hit as Dictionary).get("collider", null) == enemy:
+					return true
+			shape_index += 1
+	return false
 
 
 func _json_numbers(value: Variant) -> bool:

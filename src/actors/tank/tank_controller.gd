@@ -2,6 +2,20 @@
 ## 它不會實體化投射物或擁有世界戰鬥容器；CombatRuntime 消費其事件。
 extends CharacterBody3D
 
+const Grounding = preload("res://src/actors/tank/geometry/tank_grounding.gd")
+
+@export_category("地形接地")
+@export_range(0.0, 2.0, 0.01) var ground_step_height := 0.5
+@export_range(0.0, 60.0, 0.5) var ground_max_slope_degrees := 35.0
+@export_range(0.01, 1.0, 0.01) var ground_snap_distance := 0.3
+@export_range(0.1, 30.0, 0.1) var ground_alignment_rate := 8.0
+@export var ground_gravity := 9.8
+var _ground_points: Array[Vector3] = []
+var _ground_vertical_speed := 0.0
+var _ground_support: Dictionary = {}
+var _ground_motion_accepted := false
+var _ground_native_moved := false
+
 @export_category("車型介面")
 ## 派生車型是否已提供完整視覺與動畫接線；TankBase 本身保持關閉。
 @export var variant_interface_enabled := false
@@ -205,6 +219,24 @@ var _contact_auto_yaw_applied := 0.0
 var _contact_reason := "no-contact"
 var _contact_count := 0
 
+## 可選的外部物理權威；null 保持所有原 CharacterBody 車型行為。
+var _external_physics_body: RigidBody3D
+
+
+func configure_external_physics(body: RigidBody3D) -> void:
+	_external_physics_body = body
+	collision_layer = 0
+	collision_mask = 0
+	get_node("TrackContactEffects").set_physics_process(false)
+
+
+func _query_self_rid() -> RID:
+	return _external_physics_body.get_rid() if is_instance_valid(_external_physics_body) else get_rid()
+
+
+func _query_collision_mask() -> int:
+	return _external_physics_body.collision_mask if is_instance_valid(_external_physics_body) else collision_mask
+
 
 func _ready() -> void:
 	## 每次實例化都從此車型的 base 值開始，避免重生或場景覆用保留上次交戰擴散。
@@ -235,6 +267,169 @@ func _ready() -> void:
 		tank_gun.global_transform * local_muzzle,
 	)
 	_setup_tread_animations()
+	_setup_grounding()
+
+
+func _setup_grounding() -> void:
+	collision_mask |= 128
+	floor_max_angle = deg_to_rad(ground_max_slope_degrees)
+	floor_snap_length = ground_snap_distance
+	floor_stop_on_slope = true
+	floor_constant_speed = true
+	var bottom := INF
+	var transforms := candidate_part_shape_world_transforms(Transform3D.IDENTITY, 0.0, 0.0)
+	var index := 0
+	for part in part_geometry.parts:
+		for unused in part.convex_shapes:
+			if part.anchor == "hull":
+				for point in _part_shape_vertices[index]:
+					bottom = minf(bottom, (transforms[index] * point).y)
+			index += 1
+	for point_name in ["LeftFront", "LeftRear", "RightFront", "RightRear"]:
+		var marker := get_node("TrackContactEffects/" + point_name) as Marker3D
+		var point := to_local(marker.global_position)
+		point.y = bottom
+		_ground_points.append(point)
+
+
+func ground_support_at(pose: Transform3D, step_height: float = 0.0) -> Dictionary:
+	return Grounding.sample_support(get_world_3d().direct_space_state, pose, _ground_points,
+		[_query_self_rid()], _query_collision_mask(), step_height, ground_snap_distance, ground_max_slope_degrees)
+
+
+func create_ground_motion_query(snapshot: Dictionary) -> RefCounted:
+	var query := preload("res://src/actors/tank/geometry/tank_ground_motion.gd").new()
+	query.setup(self, snapshot)
+	return query
+
+
+## 僅排除履帶／車身淺接地；任一側牆、橋底或深穿透仍為障礙。
+func shape_has_only_ground_contacts(shape: Shape3D, pose: Transform3D, excluded: Array[RID]) -> bool:
+	var hull_shape := false
+	for part in part_geometry.parts:
+		if part.anchor == "hull" and part.convex_shapes.has(shape):
+			hull_shape = true
+	if not hull_shape:
+		return false
+	var query := PhysicsShapeQueryParameters3D.new()
+	query.shape = shape
+	query.transform = pose
+	query.margin = 0.002
+	query.collision_mask = collision_mask
+	query.exclude = excluded
+	var pairs := get_world_3d().direct_space_state.collide_shape(query, 128)
+	if pairs.is_empty() or pairs.size() >= 256 or pairs.size() % 2 != 0:
+		return false
+	for index in range(0, pairs.size(), 2):
+		var separation := pairs[index + 1] - pairs[index]
+		if separation.length() > 0.015 or separation.length() < 0.000001 \
+				or separation.normalized().dot(Vector3.UP) < cos(deg_to_rad(ground_max_slope_degrees)):
+			return false
+	return true
+
+
+## 唯讀候選姿態；不修改真實車身與接地狀態。
+func predict_ground_pose(pose: Transform3D, delta: float, vertical_speed: float) -> Dictionary:
+	var support := ground_support_at(pose, ground_step_height)
+	if bool(support.get("too_steep", false)):
+		return {"safe": false, "root": pose, "vertical_speed": vertical_speed}
+	if bool(support.get("supported", false)):
+		pose.basis = Grounding.aligned_basis(pose.basis, support.normal, delta, ground_alignment_rate)
+		support = ground_support_at(pose, ground_step_height)
+		pose.origin.y += float(support.get("height_delta", 0.0)) + 0.004
+		return {"safe": true, "root": pose, "vertical_speed": 0.0}
+	vertical_speed -= ground_gravity * delta
+	pose.origin.y += vertical_speed * delta
+	return {"safe": true, "root": pose, "vertical_speed": vertical_speed}
+
+
+func _move_on_ground(delta: float, requested_velocity: Vector3) -> void:
+	_ground_motion_accepted = false
+	_ground_native_moved = false
+	_ground_support = ground_support_at(global_transform)
+	var was_supported := is_on_floor() or (bool(_ground_support.get("supported", false)) \
+		and float(_ground_support.get("height_delta", -INF)) >= -0.01)
+	if was_supported:
+		_ground_vertical_speed = 0.0
+	else:
+		_ground_vertical_speed -= ground_gravity * delta
+	velocity.y += _ground_vertical_speed - 0.1 if was_supported else _ground_vertical_speed
+	var start := global_transform
+	var intended := Vector3(requested_velocity.x, 0.0, requested_velocity.z) * delta
+	var resolved_velocity := requested_velocity
+	if _contact_reason == "sliding-contact":
+		resolved_velocity.x = velocity.x
+		resolved_velocity.z = velocity.z
+	# 已承托且無水平運動時不以虛構的向下速度反覆做 recovery，避免另一輛
+	# 接近中的 CharacterBody 透過安全皮層，把停車中的坦克推出毫米級位移。
+	var resting := bool(_ground_support.get("supported", false)) \
+		and absf(float(_ground_support.get("height_delta", INF))) < 0.01 \
+		and intended.length_squared() < 0.0000000001 \
+		and Vector2(velocity.x, velocity.z).length_squared() < 0.0000000001
+	if not resting:
+		move_and_slide()
+		_ground_native_moved = true
+	else:
+		velocity.y = 0.0
+	if is_on_floor() or is_on_ceiling():
+		_ground_vertical_speed = 0.0
+	if was_supported and intended.length() > 0.0001:
+		var solver := create_ground_motion_query(predictive_driving_snapshot())
+		# 履帶鼻端爬上路肩的斜切面後，水平小步可能已 clear，但舊接觸仍在。
+		# 死區此時仍須實際驗證完整跨階，不可只因 advance 沒再主動跨階便永遠停住。
+		var candidate: Dictionary = solver.advance(start, resolved_velocity * delta, delta, 0.0, was_supported, _contact_reason == "dead-zone-blocked")
+		# 只有已驗證的跨階路徑可解除路肩正面接觸；一般平移不能覆寫貼牆死區停車。
+		var respects_contact := _contact_reason != "dead-zone-blocked" or (candidate.get("path", []) as Array).size() > 2
+		if bool(candidate.get("safe", false)) and respects_contact:
+			global_transform = candidate.root
+			_ground_vertical_speed = float(candidate.vertical_speed)
+			_ground_motion_accepted = true
+			_sync_part_collision_shapes()
+	_ground_support = ground_support_at(global_transform)
+	if not _ground_motion_accepted and bool(_ground_support.get("supported", false)) and not bool(_ground_support.get("too_steep", false)):
+		_align_to_ground(delta)
+
+
+func _try_ground_step(start: Transform3D, horizontal_motion: Vector3) -> void:
+	var candidate := ground_step_candidate(start, horizontal_motion)
+	if not bool(candidate.get("safe", false)):
+		return
+	global_transform = candidate.root
+	_ground_vertical_speed = 0.0
+	_contact_records.clear()
+	_contact_frames_since_contact = 2
+
+
+## 真實跨階與候選預測共用完整車體的上／前／下掃掠，僅回傳資料。
+func ground_step_candidate(start: Transform3D, horizontal_motion: Vector3) -> Dictionary:
+	var lift := Vector3.UP * ground_step_height
+	if test_move(start, lift):
+		return {"safe": false}
+	var raised := start.translated(lift)
+	if test_move(raised, horizontal_motion):
+		return {"safe": false}
+	var across := raised.translated(horizontal_motion)
+	var landing := KinematicCollision3D.new()
+	if not test_move(across, Vector3.DOWN * (ground_step_height + ground_snap_distance), landing):
+		return {"safe": false}
+	# 車身斜切凸形碰到台階邊時，解碰撞法線不等於路面的坡度。
+	# 坡度由下方支撐面射線確認；完整車體仍經上述三段 test_move 掃掠。
+	var candidate := across.translated(landing.get_travel())
+	var support := ground_support_at(candidate)
+	if not bool(support.get("supported", false)) or bool(support.get("too_steep", false)):
+		return {"safe": false}
+	return {"safe": true, "root": candidate, "path": [raised, across, candidate]}
+
+
+func _align_to_ground(delta: float) -> void:
+	# 停車／位移被擋後也走同一個完整車體接地解算，不能留一條只在
+	# pitch/roll 有變化時才修正高度的舊路徑，否則水平車身會反覆沉入地板皮層。
+	var solver := create_ground_motion_query(predictive_driving_snapshot())
+	var target: Transform3D = solver.align_pose(global_transform, delta)
+	if solver.at_cap: return
+	if not target.is_equal_approx(global_transform): _ground_motion_accepted = true
+	global_transform = target
+	_sync_part_collision_shapes()
 
 
 ## 回傳與舊單一碰撞盒相同語意的固定車體中心，不從任一部位 shape 推導。
@@ -329,14 +524,18 @@ func predictive_driving_snapshot() -> Dictionary:
 		"turret_yaw": turret_pivot.rotation.y,
 		"gun_pitch": -gun_pitch_pivot.rotation.z,
 		"shapes": shapes,
+		"shape_vertices": _part_shape_vertices,
 		"transforms": transforms,
 		## 預測 root 後只以此快照重建，不能重讀未來砲塔／砲管 live pose。
 		"root_local_transforms": local_transforms,
 		"part_ranges": part_ranges,
 		"forward_speed": forward_speed,
 		"angular_speed": actual_angular_speed,
-		"collision_mask": collision_mask,
-		"self_rid": get_rid(),
+		"vertical_speed": _ground_vertical_speed,
+		"ground_points": _ground_points,
+		"grounded": is_on_floor() or (bool(_ground_support.get("supported", false)) and float(_ground_support.get("height_delta", -INF)) >= -0.01),
+		"collision_mask": _query_collision_mask(),
+		"self_rid": _query_self_rid(),
 		"contacts": get_recovery_contacts(),
 	}
 
@@ -466,6 +665,7 @@ func _attempt_rotation_guard(
 	var start_transforms := part_shape_world_transforms()
 	var shapes: Array[Dictionary] = []
 	var shape_index := 0
+	var ground_query: RefCounted = create_ground_motion_query(predictive_driving_snapshot()) if &"hull" in affected_anchors else null
 	for part in part_geometry.parts:
 		for convex_index in part.convex_shapes.size():
 			if part.anchor in affected_anchors:
@@ -479,12 +679,13 @@ func _attempt_rotation_guard(
 					"shape": part.convex_shapes[convex_index],
 					"start_transform": start_transforms[shape_index],
 					"radius": radius,
+					"ground_filter": ground_query.guard_ground_contact.bind(shape_index) if part.anchor == "hull" and ground_query != null else Callable(),
 				})
 			shape_index += 1
 	if shapes.is_empty() or get_world_3d() == null:
 		_motion_guard_attempt_stats[kind] = _empty_motion_guard_stats("no-affected-shapes")
 		return 0.0
-	_motion_guard.configure(get_world_3d().direct_space_state, get_rid(), collision_mask, get_tree().get_node_count())
+	_motion_guard.configure(get_world_3d().direct_space_state, _query_self_rid(), _query_collision_mask(), get_tree().get_node_count())
 	var result := _motion_guard.attempt(angle_delta, shapes, candidate_transforms_at_fraction)
 	_motion_guard_attempt_stats[kind] = (result.stats as Dictionary).duplicate(true)
 	return float(result.actual_angle)
@@ -559,6 +760,12 @@ func _has_valid_variant_interface() -> bool:
 
 
 func _physics_process(delta: float) -> void:
+	if is_instance_valid(_external_physics_body):
+		_fire_cooldown_remaining = maxf(0.0, _fire_cooldown_remaining - delta)
+		actual_linear_speed = _external_physics_body.linear_velocity.dot(-_external_physics_body.global_basis.x.normalized())
+		actual_angular_speed = _external_physics_body.angular_velocity.dot(_external_physics_body.global_basis.y.normalized())
+		update_aim_spread(delta, actual_linear_speed, actual_angular_speed, actual_turret_angular_speed)
+		return # 不寫速度／位姿、不跑舊接地、不更新舊履帶播放器。
 	_trace_physics_frame = Engine.get_physics_frames()
 	_trace_applied_input = {"movement": movement_command, "turn": turn_command, "hull_aim_turn": hull_aim_turn_input}
 	_fire_cooldown_remaining = maxf(0.0, _fire_cooldown_remaining - delta)
@@ -596,7 +803,7 @@ func _physics_process(delta: float) -> void:
 	var requested_root_angle := base_requested_root_angle + _contact_auto_yaw_requested
 	var root_candidate := func(fraction: float) -> Array[Transform3D]:
 		return _candidate_transforms_for_anchors(
-			global_transform.rotated_local(Vector3.UP, requested_root_angle * fraction),
+			Transform3D(Basis(Vector3.UP, requested_root_angle * fraction) * global_basis, global_position),
 			turret_pivot.rotation.y,
 			-gun_pitch_pivot.rotation.z,
 			[&"hull", &"turret", &"gun"],
@@ -608,7 +815,7 @@ func _physics_process(delta: float) -> void:
 		global_position,
 		root_candidate,
 	)
-	rotate_y(actual_root_angle)
+	global_basis = Basis(Vector3.UP, actual_root_angle) * global_basis
 	_contact_auto_yaw_applied = _contact_auto_yaw_requested * (actual_root_angle / requested_root_angle) if not is_zero_approx(requested_root_angle) else 0.0
 	## 持續角速度排除本幀 guard 成功套用的接觸 auto-yaw；真實角速度仍保留完整總旋轉。
 	angular_speed = (actual_root_angle - _contact_auto_yaw_applied) / delta if delta > 0.0 else 0.0
@@ -644,8 +851,10 @@ func _physics_process(delta: float) -> void:
 			_contact_reason = "dead-zone-blocked"
 		else:
 			_contact_reason = "dead-zone-or-outward"
-	move_and_slide()
-	var actual_forward_speed := get_real_velocity().dot(forward_direction)
+	var motion_start := global_position
+	_move_on_ground(delta, forward_direction * forward_speed)
+	# 跨階包含完整掃掠後的姿態套用，原生 real_velocity 不包含這段位移。
+	var actual_forward_speed := ((global_position - motion_start) / delta).dot(forward_direction) if delta > 0.0 else 0.0
 	_capture_contact_records()
 	if get_slide_collision_count() > 0 or _contact_frames_since_contact <= 1:
 		forward_speed = actual_forward_speed
@@ -940,7 +1149,10 @@ func _contact_conservative_radius() -> float:
 
 func _capture_contact_records() -> void:
 	var captured: Array[Dictionary] = []
-	for collision_index in get_slide_collision_count():
+	var needs_confirmation: Array[Dictionary] = _contact_records.duplicate()
+	# 共用解算可能改走跨階路徑，但也可能停在相同牆面安全皮層。
+	# 原生接觸需以最後姿態重查，不能全信，也不能整批丟棄新接觸。
+	for collision_index in (get_slide_collision_count() if _ground_native_moved else 0):
 		var collision := get_slide_collision(collision_index)
 		if collision == null:
 			continue
@@ -951,13 +1163,44 @@ func _capture_contact_records() -> void:
 		var local_shape := collision.get_local_shape() as CollisionShape3D
 		var local_shape_index := _driving_trace_local_shape_index(local_shape)
 		var shape_metadata := _driving_trace_part_metadata_from_local_shape(local_shape)
-		captured.append({"position": collision.get_position(), "normal": normal, "rid": collision.get_collider_rid(),
+		if String(shape_metadata.get("anchor", "")) == "hull" \
+				and collision.get_normal().dot(Vector3.UP) >= cos(deg_to_rad(ground_max_slope_degrees)):
+			continue
+		var record := {"position": collision.get_position(), "normal": normal, "rid": collision.get_collider_rid(),
 			"collider_id": collision.get_collider_id(),
 			"collider_path": str(collider.get_path()) if is_instance_valid(collider) and collider.is_inside_tree() else "",
 			"local_shape_index": local_shape_index,
 			"collider_shape_index": collision.get_collider_shape_index(),
 			"shape_index": shape_metadata["shape_index"],
-			"part_id": shape_metadata["part_id"], "anchor": shape_metadata["anchor"]})
+			"part_id": shape_metadata["part_id"], "anchor": shape_metadata["anchor"]}
+		if _ground_motion_accepted:
+			needs_confirmation.append(record)
+		else:
+			captured.append(record)
+	# 重力令本幀可能只有 floor slide；零水平速度不代表原本牆接觸已解除。
+	# 用目前完整部位形狀重新確認，不能只靠時間延長舊接觸或忽略地板 RID。
+	for record in needs_confirmation:
+		var already_captured := false
+		for current in captured:
+			if current.rid == record.rid and current.shape_index == record.shape_index:
+				already_captured = true
+				break
+		if already_captured: continue
+		var index := int(record.get("shape_index", -1))
+		if index < 0 or index >= _part_collision_shapes.size(): continue
+		var shape_node := _part_collision_shapes[index]
+		var query := PhysicsShapeQueryParameters3D.new()
+		query.shape = shape_node.shape
+		query.transform = shape_node.global_transform
+		# 原生運動解算會在接觸前保留毫米級分離；確認範圍須涵蓋該安全皮層。
+		# 只用於已回報過的同一部位／同一 collider，不擴張實際運動碰撞。
+		query.margin = maxf(0.004, safe_margin * 2.0)
+		query.collision_mask = _query_collision_mask()
+		query.exclude = [_query_self_rid()]
+		for hit in get_world_3d().direct_space_state.intersect_shape(query, 32):
+			if hit.rid == record.rid:
+				captured.append(record)
+				break
 	if captured.is_empty():
 		_contact_frames_since_contact += 1
 		if _contact_frames_since_contact > 1:
@@ -1166,7 +1409,6 @@ func aim_turret_at(target_position: Vector3, delta: float) -> void:
 		_record_motion_guard_noop(&"turret")
 		return
 	var target_direction := target_position - turret_pivot.global_position
-	target_direction.y = 0.0
 	if target_direction.length_squared() <= MIN_AIM_DISTANCE_SQUARED:
 		hull_aim_turn_input = 0.0
 		_record_motion_guard_noop(&"turret")
@@ -1202,10 +1444,10 @@ func aim_turret_at(target_position: Vector3, delta: float) -> void:
 		return
 
 	hull_aim_turn_input = 0.0
-	var target_yaw := atan2(target_direction.z, -target_direction.x)
-	var previous_world_yaw := turret_pivot.global_rotation.y
-	var requested_world_yaw := rotate_toward(previous_world_yaw, target_yaw, turret_turn_speed * delta)
-	var requested_turret_angle := angle_difference(previous_world_yaw, requested_world_yaw)
+	var local_direction := global_basis.orthonormalized().inverse() * target_direction
+	var target_yaw := atan2(local_direction.z, -local_direction.x)
+	var requested_yaw := rotate_toward(previous_local_yaw, target_yaw, turret_turn_speed * delta)
+	var requested_turret_angle := angle_difference(previous_local_yaw, requested_yaw)
 	var world_turret_candidate := func(fraction: float) -> Array[Transform3D]:
 		return _candidate_transforms_for_anchors(
 			global_transform,
@@ -1220,7 +1462,7 @@ func aim_turret_at(target_position: Vector3, delta: float) -> void:
 		turret_pivot.global_position,
 		world_turret_candidate,
 	)
-	turret_pivot.global_rotation.y = previous_world_yaw + actual_turret_angle
+	turret_pivot.rotation.y = previous_local_yaw + actual_turret_angle
 	_record_actual_turret_angular_speed(previous_local_yaw, delta)
 	_sync_part_collision_shapes()
 
@@ -1257,7 +1499,7 @@ func _target_gun_pitch_for_world_target(target_position: Vector3) -> float:
 	## 以砲口到目標的水平距離和高度差求仰角，再限制在製作時設定的俯仰範圍。
 	if _is_target_inside_turret_dead_zone(target_position):
 		return -gun_pitch_pivot.rotation.z
-	var target_direction := target_position - muzzle_global_position()
+	var target_direction := turret_pivot.global_basis.orthonormalized().inverse() * (target_position - muzzle_global_position())
 	var horizontal_distance := Vector2(target_direction.x, target_direction.z).length()
 	if horizontal_distance * horizontal_distance + target_direction.y * target_direction.y <= MIN_AIM_DISTANCE_SQUARED:
 		return -gun_pitch_pivot.rotation.z
@@ -1325,11 +1567,12 @@ func request_fire() -> void:
 		return
 
 	_fire_cooldown_remaining = maxf(0.01, fire_interval_seconds)
-	_apply_firing_movement_speed_loss()
+	if not is_instance_valid(_external_physics_body):
+		_apply_firing_movement_speed_loss()
 	_spawn_muzzle_flash(muzzle_position, muzzle_direction)
 	var shot_muzzle_transform := muzzle_point.global_transform
 	var shot_direction := sample_shot_direction(muzzle_direction)
-	var shot_event := ShotEvent.new(shot_muzzle_transform, shot_direction, get_rid(), shell_damage)
+	var shot_event := ShotEvent.new(shot_muzzle_transform, shot_direction, _query_self_rid(), shell_damage)
 	shot_event_fired.emit(shot_event)
 	shot_fired.emit(shot_event.to_legacy_dictionary())
 	var cap := maxf(aim_spread_cap_degrees, 0.0)
@@ -1337,7 +1580,8 @@ func request_fire() -> void:
 	var new_total := clampf(old_total + maxf(aim_spread_fire_add_degrees, 0.0), 0.0, cap)
 	_fire_spread_degrees = clampf(_fire_spread_degrees, 0.0, old_total) + maxf(new_total - old_total, 0.0)
 	current_spread_degrees = new_total
-	_play_visual_recoil(muzzle_direction)
+	if not is_instance_valid(_external_physics_body):
+		_play_visual_recoil(muzzle_direction)
 
 
 func _play_visual_recoil(muzzle_direction: Vector3) -> void:

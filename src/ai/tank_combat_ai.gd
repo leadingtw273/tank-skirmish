@@ -185,7 +185,7 @@ func _aim_at_position(position: Vector3, delta: float) -> void:
 
 ## travel 僅水平回正；不寫 rotation，也不觸碰砲管 pitch。
 func _aim_travel_turret(delta: float) -> void:
-	var turret := controlled_tank.get_node_or_null("VisualRecoilPivot/TurretPivot") as Node3D
+	var turret := controlled_tank.get("turret_pivot") as Node3D
 	if turret == null:
 		return
 	var forward := controlled_tank.global_basis * Vector3.LEFT
@@ -297,7 +297,7 @@ func _horizontal_distance(a: Vector3, b: Vector3) -> float:
 
 
 func _turn_to_inspection(delta: float) -> void:
-	var turret := controlled_tank.get_node_or_null("VisualRecoilPivot/TurretPivot") as Node3D
+	var turret := controlled_tank.get("turret_pivot") as Node3D
 	if turret == null:
 		_inspection_direction = Vector3.ZERO
 		_cancel_aim()
@@ -316,7 +316,7 @@ func _turn_to_inspection(delta: float) -> void:
 
 
 func _turret_forward() -> Vector3:
-	var turret := controlled_tank.get_node_or_null("VisualRecoilPivot/TurretPivot") as Node3D
+	var turret := controlled_tank.get("turret_pivot") as Node3D
 	if turret == null:
 		return Vector3.ZERO
 	var forward := -turret.global_basis.x

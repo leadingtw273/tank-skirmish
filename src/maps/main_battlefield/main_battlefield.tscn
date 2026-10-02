@@ -105,7 +105,6 @@ collision_layer = 128
 collision_mask = 0
 
 [node name="Visual" type="MeshInstance3D" parent="Ground" unique_id=1759327700]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 175.64258, -44.90277, 65.22277)
 mesh = SubResource("GroundMesh")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Ground" unique_id=1635041540]
@@ -116,364 +115,364 @@ shape = SubResource("GroundCollisionShape")
 [node name="Junctions" type="Node3D" parent="Roads" unique_id=1154543801]
 
 [node name="UL0__T" type="StaticBody3D" parent="Roads/Junctions" unique_id=1597640300 instance=ExtResource("1_vpaa6")]
-transform = Transform3D(1.1924881e-08, 0, -1, 0, 1, 0, 1, 0, 1.1924881e-08, -132, 0.03, -72)
+transform = Transform3D(1.1924881e-08, 0, -1, 0, 1, 0, 1, 0, 1.1924881e-08, -132, 0.0075, -72)
 metadata/road_module = true
 metadata/road_id = "Road2_T"
 metadata/variant = "Road2_X_B__Road2_X_A"
 metadata/source_pack = "base"
 
 [node name="UL1__Corner90" type="StaticBody3D" parent="Roads/Junctions" unique_id=575318242 instance=ExtResource("2_7jq4q")]
-transform = Transform3D(1.1924881e-08, 0, -1, 0, 1, 0, 1, 0, 1.1924881e-08, -132, 0.03, -132)
+transform = Transform3D(1.1924881e-08, 0, -1, 0, 1, 0, 1, 0, 1.1924881e-08, -132, 0.0075, -132)
 metadata/road_module = true
 metadata/road_id = "Road10_90angle_Corner"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="UL4__Corner90" type="StaticBody3D" parent="Roads/Junctions" unique_id=495361995 instance=ExtResource("2_7jq4q")]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -84, 0.03, -132)
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -84, 0.0075, -132)
 metadata/road_module = true
 metadata/road_id = "Road10_90angle_Corner"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="G0__T" type="StaticBody3D" parent="Roads/Junctions" unique_id=106155405 instance=ExtResource("1_vpaa6")]
-transform = Transform3D(1.1924881e-08, 0, -1, 0, 1, 0, 1, 0, 1.1924881e-08, -84, 0.03, -96)
+transform = Transform3D(1.1924881e-08, 0, -1, 0, 1, 0, 1, 0, 1.1924881e-08, -84, 0.0075, -96)
 metadata/road_module = true
 metadata/road_id = "Road2_T"
 metadata/variant = "Road2_X_B__Road2_X_A"
 metadata/source_pack = "base"
 
 [node name="G1__T" type="StaticBody3D" parent="Roads/Junctions" unique_id=1705391364 instance=ExtResource("1_vpaa6")]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -48, 0.03, -96)
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -48, 0.0075, -96)
 metadata/road_module = true
 metadata/road_id = "Road2_T"
 metadata/variant = "Road2_X_B__Road2_X_A"
 metadata/source_pack = "base"
 
 [node name="G2__T" type="StaticBody3D" parent="Roads/Junctions" unique_id=535743040 instance=ExtResource("1_vpaa6")]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0.03, -96)
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0.0075, -96)
 metadata/road_module = true
 metadata/road_id = "Road2_T"
 metadata/variant = "Road2_X_B__Road2_X_A"
 metadata/source_pack = "base"
 
 [node name="G3__SplitR" type="StaticBody3D" parent="Roads/Junctions" unique_id=541919164 instance=ExtResource("3_41a4l")]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 30.033264, 0.03, -96)
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 30.033264, 0.0075, -96)
 metadata/road_module = true
 metadata/road_id = "Road12_Diagonal_Splitter_R_Custom"
 metadata/variant = "Default"
 metadata/source_pack = "custom"
 
 [node name="G4__Corner90" type="StaticBody3D" parent="Roads/Junctions" unique_id=1012124389 instance=ExtResource("2_7jq4q")]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 84, 0.03, -96)
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 84, 0.0075, -96)
 metadata/road_module = true
 metadata/road_id = "Road10_90angle_Corner"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="R0__T" type="StaticBody3D" parent="Roads/Junctions" unique_id=1839344198 instance=ExtResource("1_vpaa6")]
-transform = Transform3D(1.1924881e-08, 0, -1, 0, 1, 0, 1, 0, 1.1924881e-08, 84, 0.03, -48)
+transform = Transform3D(1.1924881e-08, 0, -1, 0, 1, 0, 1, 0, 1.1924881e-08, 84, 0.0075, -48)
 metadata/road_module = true
 metadata/road_id = "Road2_T"
 metadata/variant = "Road2_X_B__Road2_X_A"
 metadata/source_pack = "base"
 
 [node name="R1__Corner90" type="StaticBody3D" parent="Roads/Junctions" unique_id=1072450687 instance=ExtResource("2_7jq4q")]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 111.92, 0.03, -48)
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 111.92, 0.0075, -48)
 metadata/road_module = true
 metadata/road_id = "Road10_90angle_Corner"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="R2__Road1" type="StaticBody3D" parent="Roads/Junctions" unique_id=475285379 instance=ExtResource("4_st1a5")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 111.92, 0.03, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 111.92, 0.0075, 0)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="RI__T" type="StaticBody3D" parent="Roads/Junctions" unique_id=301856417 instance=ExtResource("1_vpaa6")]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 84, 0.03, -24)
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 84, 0.0075, -24)
 metadata/road_module = true
 metadata/road_id = "Road2_T"
 metadata/variant = "Road2_X_B__Road2_X_A"
 metadata/source_pack = "base"
 
 [node name="RM__T" type="StaticBody3D" parent="Roads/Junctions" unique_id=452371090 instance=ExtResource("1_vpaa6")]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 84, 0.03, 0)
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 84, 0.0075, 0)
 metadata/road_module = true
 metadata/road_id = "Road2_T"
 metadata/variant = "Road2_X_B__Road2_X_A"
 metadata/source_pack = "base"
 
 [node name="D0__Curve45" type="StaticBody3D" parent="Roads/Junctions" unique_id=209811345 instance=ExtResource("5_cont5")]
-transform = Transform3D(0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, 0.70710677, 59.656857, 0.03, -66.34315)
+transform = Transform3D(0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, 0.70710677, 59.656857, 0.0075, -66.34315)
 metadata/road_module = true
 metadata/road_id = "Road1_Curve1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="D1__T" type="StaticBody3D" parent="Roads/Junctions" unique_id=1337336267 instance=ExtResource("1_vpaa6")]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 84, 0.03, -66)
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 84, 0.0075, -66)
 metadata/road_module = true
 metadata/road_id = "Road2_T"
 metadata/variant = "Road2_X_B__Road2_X_A"
 metadata/source_pack = "base"
 
 [node name="H0__Cross" type="StaticBody3D" parent="Roads/Junctions" unique_id=1668225854 instance=ExtResource("6_3tqsm")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -84, 0.03, -72)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -84, 0.0075, -72)
 metadata/road_module = true
 metadata/road_id = "Road2_X"
 metadata/variant = "Road2_X_B__Road2_X_A"
 metadata/source_pack = "base"
 
 [node name="H1__T" type="StaticBody3D" parent="Roads/Junctions" unique_id=928916197 instance=ExtResource("1_vpaa6")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -48, 0.03, -72)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -48, 0.0075, -72)
 metadata/road_module = true
 metadata/road_id = "Road2_T"
 metadata/variant = "Road2_X_B__Road2_X_A"
 metadata/source_pack = "base"
 
 [node name="H2__T" type="StaticBody3D" parent="Roads/Junctions" unique_id=2143986927 instance=ExtResource("1_vpaa6")]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0.03, -72)
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0.0075, -72)
 metadata/road_module = true
 metadata/road_id = "Road2_T"
 metadata/variant = "Road2_X_B__Road2_X_A"
 metadata/source_pack = "base"
 
 [node name="L0__Curve45" type="StaticBody3D" parent="Roads/Junctions" unique_id=178733708 instance=ExtResource("5_cont5")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -132, 0.03, -58.56528)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -132, 0.0075, -58.56528)
 metadata/road_module = true
 metadata/road_id = "Road1_Curve1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="L1__Y" type="StaticBody3D" parent="Roads/Junctions" unique_id=1654879230 instance=ExtResource("7_mqql6")]
-transform = Transform3D(0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, 0.70710677, -118.28396, 0.03, -44.36396)
+transform = Transform3D(0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, 0.70710677, -118.28396, 0.0075, -44.36396)
 metadata/road_module = true
 metadata/road_id = "Road11_Y_Splitter_45_Custom"
 metadata/variant = "Default"
 metadata/source_pack = "custom"
 
 [node name="LJoin__T" type="StaticBody3D" parent="Roads/Junctions" unique_id=646364800 instance=ExtResource("1_vpaa6")]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -84, 0.03, -38)
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -84, 0.0075, -38)
 metadata/road_module = true
 metadata/road_id = "Road2_T"
 metadata/variant = "Road2_X_B__Road2_X_A"
 metadata/source_pack = "base"
 
 [node name="L2__Road1" type="StaticBody3D" parent="Roads/Junctions" unique_id=2129310910 instance=ExtResource("4_st1a5")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -111.92, 0.03, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -111.92, 0.0075, 0)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="LI__T" type="StaticBody3D" parent="Roads/Junctions" unique_id=1878458865 instance=ExtResource("1_vpaa6")]
-transform = Transform3D(1.1924881e-08, 0, -1, 0, 1, 0, 1, 0, 1.1924881e-08, -84, 0.03, -24)
+transform = Transform3D(1.1924881e-08, 0, -1, 0, 1, 0, 1, 0, 1.1924881e-08, -84, 0.0075, -24)
 metadata/road_module = true
 metadata/road_id = "Road2_T"
 metadata/variant = "Road2_X_B__Road2_X_A"
 metadata/source_pack = "base"
 
 [node name="LM__T" type="StaticBody3D" parent="Roads/Junctions" unique_id=1660035819 instance=ExtResource("1_vpaa6")]
-transform = Transform3D(1.1924881e-08, 0, -1, 0, 1, 0, 1, 0, 1.1924881e-08, -84, 0.03, 0)
+transform = Transform3D(1.1924881e-08, 0, -1, 0, 1, 0, 1, 0, 1.1924881e-08, -84, 0.0075, 0)
 metadata/road_module = true
 metadata/road_id = "Road2_T"
 metadata/variant = "Road2_X_B__Road2_X_A"
 metadata/source_pack = "base"
 
 [node name="N__Y" type="StaticBody3D" parent="Roads/Junctions" unique_id=2051287943 instance=ExtResource("7_mqql6")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.03, -57)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0075, -57)
 metadata/road_module = true
 metadata/road_id = "Road11_Y_Splitter_45_Custom"
 metadata/variant = "Default"
 metadata/source_pack = "custom"
 
 [node name="NW__SplitR" type="StaticBody3D" parent="Roads/Junctions" unique_id=1518645054 instance=ExtResource("3_41a4l")]
-transform = Transform3D(0.70710665, 0, -0.7071069, 0, 1, 0, 0.7071069, 0, 0.70710665, -24.023521, 0.03, -23.976479)
+transform = Transform3D(0.70710665, 0, -0.7071069, 0, 1, 0, 0.7071069, 0, 0.70710665, -24.023521, 0.0075, -23.976479)
 metadata/road_module = true
 metadata/road_id = "Road12_Diagonal_Splitter_R_Custom"
 metadata/variant = "Default"
 metadata/source_pack = "custom"
 
 [node name="NE__SplitL" type="StaticBody3D" parent="Roads/Junctions" unique_id=1640956827 instance=ExtResource("8_o34lk")]
-transform = Transform3D(0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, 0.70710677, 24.023521, 0.03, -23.976479)
+transform = Transform3D(0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, 0.70710677, 24.023521, 0.0075, -23.976479)
 metadata/road_module = true
 metadata/road_id = "Road12_Diagonal_Splitter_L_Custom"
 metadata/variant = "Default"
 metadata/source_pack = "custom"
 
 [node name="W__Y" type="StaticBody3D" parent="Roads/Junctions" unique_id=1255395020 instance=ExtResource("7_mqql6")]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -57, 0.03, 3.934025e-07)
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -57, 0.0075, 3.934025e-07)
 metadata/road_module = true
 metadata/road_id = "Road11_Y_Splitter_45_Custom"
 metadata/variant = "Default"
 metadata/source_pack = "custom"
 
 [node name="E__Y" type="StaticBody3D" parent="Roads/Junctions" unique_id=2134988708 instance=ExtResource("7_mqql6")]
-transform = Transform3D(1.1924881e-08, 0, -1, 0, 1, 0, 1, 0, 1.1924881e-08, 57, 0.03, -1.0732393e-07)
+transform = Transform3D(1.1924881e-08, 0, -1, 0, 1, 0, 1, 0, 1.1924881e-08, 57, 0.0075, -1.0732393e-07)
 metadata/road_module = true
 metadata/road_id = "Road11_Y_Splitter_45_Custom"
 metadata/variant = "Default"
 metadata/source_pack = "custom"
 
 [node name="Mirror_UL0__T" type="StaticBody3D" parent="Roads/Junctions" unique_id=2133335060 instance=ExtResource("1_vpaa6")]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 132, 0.03, 72)
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 132, 0.0075, 72)
 metadata/road_module = true
 metadata/road_id = "Road2_T"
 metadata/variant = "Road2_X_B__Road2_X_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_UL1__Corner90" type="StaticBody3D" parent="Roads/Junctions" unique_id=1914767351 instance=ExtResource("2_7jq4q")]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 132, 0.03, 132)
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 132, 0.0075, 132)
 metadata/road_module = true
 metadata/road_id = "Road10_90angle_Corner"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_UL4__Corner90" type="StaticBody3D" parent="Roads/Junctions" unique_id=356949369 instance=ExtResource("2_7jq4q")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 84, 0.03, 132)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 84, 0.0075, 132)
 metadata/road_module = true
 metadata/road_id = "Road10_90angle_Corner"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_G0__T" type="StaticBody3D" parent="Roads/Junctions" unique_id=527236857 instance=ExtResource("1_vpaa6")]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 84, 0.03, 96)
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 84, 0.0075, 96)
 metadata/road_module = true
 metadata/road_id = "Road2_T"
 metadata/variant = "Road2_X_B__Road2_X_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_G1__T" type="StaticBody3D" parent="Roads/Junctions" unique_id=1520274656 instance=ExtResource("1_vpaa6")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 48, 0.03, 96)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 48, 0.0075, 96)
 metadata/road_module = true
 metadata/road_id = "Road2_T"
 metadata/variant = "Road2_X_B__Road2_X_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_G2__T" type="StaticBody3D" parent="Roads/Junctions" unique_id=425925267 instance=ExtResource("1_vpaa6")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.03, 96)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0075, 96)
 metadata/road_module = true
 metadata/road_id = "Road2_T"
 metadata/variant = "Road2_X_B__Road2_X_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_G3__SplitR" type="StaticBody3D" parent="Roads/Junctions" unique_id=1954552104 instance=ExtResource("3_41a4l")]
-transform = Transform3D(1.1924881e-08, 0, -1, 0, 1, 0, 1, 0, 1.1924881e-08, -30.033264, 0.03, 96)
+transform = Transform3D(1.1924881e-08, 0, -1, 0, 1, 0, 1, 0, 1.1924881e-08, -30.033264, 0.0075, 96)
 metadata/road_module = true
 metadata/road_id = "Road12_Diagonal_Splitter_R_Custom"
 metadata/variant = "Default"
 metadata/source_pack = "custom"
 
 [node name="Mirror_G4__Corner90" type="StaticBody3D" parent="Roads/Junctions" unique_id=1531673387 instance=ExtResource("2_7jq4q")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -84, 0.03, 96)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -84, 0.0075, 96)
 metadata/road_module = true
 metadata/road_id = "Road10_90angle_Corner"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_R0__T" type="StaticBody3D" parent="Roads/Junctions" unique_id=1355962759 instance=ExtResource("1_vpaa6")]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -84, 0.03, 48)
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -84, 0.0075, 48)
 metadata/road_module = true
 metadata/road_id = "Road2_T"
 metadata/variant = "Road2_X_B__Road2_X_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_R1__Corner90" type="StaticBody3D" parent="Roads/Junctions" unique_id=1885245527 instance=ExtResource("2_7jq4q")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -111.92, 0.03, 48)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -111.92, 0.0075, 48)
 metadata/road_module = true
 metadata/road_id = "Road10_90angle_Corner"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_RI__T" type="StaticBody3D" parent="Roads/Junctions" unique_id=268365691 instance=ExtResource("1_vpaa6")]
-transform = Transform3D(1.1924881e-08, 0, -1, 0, 1, 0, 1, 0, 1.1924881e-08, -84, 0.03, 24)
+transform = Transform3D(1.1924881e-08, 0, -1, 0, 1, 0, 1, 0, 1.1924881e-08, -84, 0.0075, 24)
 metadata/road_module = true
 metadata/road_id = "Road2_T"
 metadata/variant = "Road2_X_B__Road2_X_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_D0__Curve45" type="StaticBody3D" parent="Roads/Junctions" unique_id=1880124382 instance=ExtResource("5_cont5")]
-transform = Transform3D(-0.7071068, 0, -0.7071067, 0, 1, 0, 0.7071067, 0, -0.7071068, -59.656857, 0.03, 66.34315)
+transform = Transform3D(-0.7071068, 0, -0.7071067, 0, 1, 0, 0.7071067, 0, -0.7071068, -59.656857, 0.0075, 66.34315)
 metadata/road_module = true
 metadata/road_id = "Road1_Curve1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_D1__T" type="StaticBody3D" parent="Roads/Junctions" unique_id=920976484 instance=ExtResource("1_vpaa6")]
-transform = Transform3D(1.1924881e-08, 0, -1, 0, 1, 0, 1, 0, 1.1924881e-08, -84, 0.03, 66)
+transform = Transform3D(1.1924881e-08, 0, -1, 0, 1, 0, 1, 0, 1.1924881e-08, -84, 0.0075, 66)
 metadata/road_module = true
 metadata/road_id = "Road2_T"
 metadata/variant = "Road2_X_B__Road2_X_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_H0__Cross" type="StaticBody3D" parent="Roads/Junctions" unique_id=1312309967 instance=ExtResource("6_3tqsm")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 84, 0.03, 72)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 84, 0.0075, 72)
 metadata/road_module = true
 metadata/road_id = "Road2_X"
 metadata/variant = "Road2_X_B__Road2_X_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_H1__T" type="StaticBody3D" parent="Roads/Junctions" unique_id=1773801889 instance=ExtResource("1_vpaa6")]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 48, 0.03, 72)
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 48, 0.0075, 72)
 metadata/road_module = true
 metadata/road_id = "Road2_T"
 metadata/variant = "Road2_X_B__Road2_X_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_H2__T" type="StaticBody3D" parent="Roads/Junctions" unique_id=1283193305 instance=ExtResource("1_vpaa6")]
-transform = Transform3D(1.1924881e-08, 0, -1, 0, 1, 0, 1, 0, 1.1924881e-08, 0, 0.03, 72)
+transform = Transform3D(1.1924881e-08, 0, -1, 0, 1, 0, 1, 0, 1.1924881e-08, 0, 0.0075, 72)
 metadata/road_module = true
 metadata/road_id = "Road2_T"
 metadata/variant = "Road2_X_B__Road2_X_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_L0__Curve45" type="StaticBody3D" parent="Roads/Junctions" unique_id=899605843 instance=ExtResource("5_cont5")]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 132, 0.03, 58.56528)
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 132, 0.0075, 58.56528)
 metadata/road_module = true
 metadata/road_id = "Road1_Curve1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_L1__Y" type="StaticBody3D" parent="Roads/Junctions" unique_id=729270350 instance=ExtResource("7_mqql6")]
-transform = Transform3D(-0.7071068, 0, -0.7071067, 0, 1, 0, 0.7071067, 0, -0.7071068, 118.28396, 0.03, 44.36396)
+transform = Transform3D(-0.7071068, 0, -0.7071067, 0, 1, 0, 0.7071067, 0, -0.7071068, 118.28396, 0.0075, 44.36396)
 metadata/road_module = true
 metadata/road_id = "Road11_Y_Splitter_45_Custom"
 metadata/variant = "Default"
 metadata/source_pack = "custom"
 
 [node name="Mirror_LJoin__T" type="StaticBody3D" parent="Roads/Junctions" unique_id=216424396 instance=ExtResource("1_vpaa6")]
-transform = Transform3D(1.1924881e-08, 0, -1, 0, 1, 0, 1, 0, 1.1924881e-08, 84, 0.03, 38)
+transform = Transform3D(1.1924881e-08, 0, -1, 0, 1, 0, 1, 0, 1.1924881e-08, 84, 0.0075, 38)
 metadata/road_module = true
 metadata/road_id = "Road2_T"
 metadata/variant = "Road2_X_B__Road2_X_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_LI__T" type="StaticBody3D" parent="Roads/Junctions" unique_id=2050106678 instance=ExtResource("1_vpaa6")]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 84, 0.03, 24)
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 84, 0.0075, 24)
 metadata/road_module = true
 metadata/road_id = "Road2_T"
 metadata/variant = "Road2_X_B__Road2_X_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_N__Y" type="StaticBody3D" parent="Roads/Junctions" unique_id=1029354184 instance=ExtResource("7_mqql6")]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 7.86805e-07, 0.03, 57)
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 7.86805e-07, 0.0075, 57)
 metadata/road_module = true
 metadata/road_id = "Road11_Y_Splitter_45_Custom"
 metadata/variant = "Default"
 metadata/source_pack = "custom"
 
 [node name="Mirror_NW__SplitR" type="StaticBody3D" parent="Roads/Junctions" unique_id=557250072 instance=ExtResource("3_41a4l")]
-transform = Transform3D(-0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, -0.70710677, 24.023521, 0.03, 23.976479)
+transform = Transform3D(-0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, -0.70710677, 24.023521, 0.0075, 23.976479)
 metadata/road_module = true
 metadata/road_id = "Road12_Diagonal_Splitter_R_Custom"
 metadata/variant = "Default"
 metadata/source_pack = "custom"
 
 [node name="Mirror_NE__SplitL" type="StaticBody3D" parent="Roads/Junctions" unique_id=1176251232 instance=ExtResource("8_o34lk")]
-transform = Transform3D(-0.7071068, 0, -0.7071067, 0, 1, 0, 0.7071067, 0, -0.7071068, -24.023521, 0.03, 23.976479)
+transform = Transform3D(-0.7071068, 0, -0.7071067, 0, 1, 0, 0.7071067, 0, -0.7071068, -24.023521, 0.0075, 23.976479)
 metadata/road_module = true
 metadata/road_id = "Road12_Diagonal_Splitter_L_Custom"
 metadata/variant = "Default"
@@ -482,960 +481,960 @@ metadata/source_pack = "custom"
 [node name="Connections" type="Node3D" parent="Roads" unique_id=692565365]
 
 [node name="UL0_to_UL1_00" type="StaticBody3D" parent="Roads/Connections" unique_id=489047442 instance=ExtResource("4_st1a5")]
-transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -132, 0.03, -84)
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -132, 0.0075, -84)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="UL0_to_UL1_01" type="StaticBody3D" parent="Roads/Connections" unique_id=985853064 instance=ExtResource("4_st1a5")]
-transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -132, 0.03, -96)
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -132, 0.0075, -96)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="UL0_to_UL1_02" type="StaticBody3D" parent="Roads/Connections" unique_id=1887511090 instance=ExtResource("4_st1a5")]
-transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -132, 0.03, -108)
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -132, 0.0075, -108)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="UL0_to_UL1_03" type="StaticBody3D" parent="Roads/Connections" unique_id=876648905 instance=ExtResource("4_st1a5")]
-transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -132, 0.03, -120)
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -132, 0.0075, -120)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_UL0_to_Mirror_UL1_00" type="StaticBody3D" parent="Roads/Connections" unique_id=901215133 instance=ExtResource("4_st1a5")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 132, 0.03, 84)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 132, 0.0075, 84)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_UL0_to_Mirror_UL1_01" type="StaticBody3D" parent="Roads/Connections" unique_id=871594466 instance=ExtResource("4_st1a5")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 132, 0.03, 96)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 132, 0.0075, 96)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_UL0_to_Mirror_UL1_02" type="StaticBody3D" parent="Roads/Connections" unique_id=457284269 instance=ExtResource("4_st1a5")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 132, 0.03, 108)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 132, 0.0075, 108)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_UL0_to_Mirror_UL1_03" type="StaticBody3D" parent="Roads/Connections" unique_id=1324143939 instance=ExtResource("4_st1a5")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 132, 0.03, 120)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 132, 0.0075, 120)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="UL1_to_UL4_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1071351315 instance=ExtResource("4_st1a5")]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -120, 0.03, -132)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -120, 0.0075, -132)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="UL1_to_UL4_01" type="StaticBody3D" parent="Roads/Connections" unique_id=1247305952 instance=ExtResource("4_st1a5")]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -108, 0.03, -132)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -108, 0.0075, -132)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="UL1_to_UL4_02" type="StaticBody3D" parent="Roads/Connections" unique_id=1126590688 instance=ExtResource("4_st1a5")]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -96, 0.03, -132)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -96, 0.0075, -132)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_UL1_to_Mirror_UL4_00" type="StaticBody3D" parent="Roads/Connections" unique_id=43498374 instance=ExtResource("4_st1a5")]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 120, 0.03, 132)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 120, 0.0075, 132)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_UL1_to_Mirror_UL4_01" type="StaticBody3D" parent="Roads/Connections" unique_id=331964732 instance=ExtResource("4_st1a5")]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 108, 0.03, 132)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 108, 0.0075, 132)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_UL1_to_Mirror_UL4_02" type="StaticBody3D" parent="Roads/Connections" unique_id=1834090638 instance=ExtResource("4_st1a5")]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 96, 0.03, 132)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 96, 0.0075, 132)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="UL4_to_G0_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1609604580 instance=ExtResource("4_st1a5")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -84, 0.03, -120)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -84, 0.0075, -120)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="UL4_to_G0_01" type="StaticBody3D" parent="Roads/Connections" unique_id=446020931 instance=ExtResource("4_st1a5")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -84, 0.03, -108)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -84, 0.0075, -108)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_UL4_to_Mirror_G0_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1113265640 instance=ExtResource("4_st1a5")]
-transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 84, 0.03, 120)
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 84, 0.0075, 120)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_UL4_to_Mirror_G0_01" type="StaticBody3D" parent="Roads/Connections" unique_id=1007706801 instance=ExtResource("4_st1a5")]
-transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 84, 0.03, 108)
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 84, 0.0075, 108)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="G0_to_G1_00" type="StaticBody3D" parent="Roads/Connections" unique_id=2060308860 instance=ExtResource("4_st1a5")]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -72, 0.03, -96)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -72, 0.0075, -96)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="G0_to_G1_01" type="StaticBody3D" parent="Roads/Connections" unique_id=1879546677 instance=ExtResource("4_st1a5")]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -60, 0.03, -96)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -60, 0.0075, -96)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_G0_to_Mirror_G1_00" type="StaticBody3D" parent="Roads/Connections" unique_id=804085807 instance=ExtResource("4_st1a5")]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 72, 0.03, 96)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 72, 0.0075, 96)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_G0_to_Mirror_G1_01" type="StaticBody3D" parent="Roads/Connections" unique_id=1432280527 instance=ExtResource("4_st1a5")]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 60, 0.03, 96)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 60, 0.0075, 96)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="G1_to_G2_00" type="StaticBody3D" parent="Roads/Connections" unique_id=356382964 instance=ExtResource("4_st1a5")]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -36, 0.03, -96)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -36, 0.0075, -96)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="G1_to_G2_01" type="StaticBody3D" parent="Roads/Connections" unique_id=1241431183 instance=ExtResource("4_st1a5")]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -24, 0.03, -96)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -24, 0.0075, -96)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="G1_to_G2_02" type="StaticBody3D" parent="Roads/Connections" unique_id=225188099 instance=ExtResource("4_st1a5")]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -12, 0.03, -96)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -12, 0.0075, -96)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_G1_to_Mirror_G2_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1616729983 instance=ExtResource("4_st1a5")]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 36, 0.03, 96)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 36, 0.0075, 96)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_G1_to_Mirror_G2_01" type="StaticBody3D" parent="Roads/Connections" unique_id=367847814 instance=ExtResource("4_st1a5")]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 24, 0.03, 96)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 24, 0.0075, 96)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_G1_to_Mirror_G2_02" type="StaticBody3D" parent="Roads/Connections" unique_id=975668583 instance=ExtResource("4_st1a5")]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 12, 0.03, 96)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 12, 0.0075, 96)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="G2_to_G3_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1938065516 instance=ExtResource("4_st1a5")]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 12, 0.03, -96)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 12, 0.0075, -96)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="G2_to_G3_01" type="StaticBody3D" parent="Roads/Connections" unique_id=730912458 instance=ExtResource("9_xe4od")]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 21.016632, 0.03, -96)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 21.016632, 0.0075, -96)
 metadata/road_module = true
 metadata/fit_length_m = 6.033264
 
 [node name="Mirror_G2_to_Mirror_G3_00" type="StaticBody3D" parent="Roads/Connections" unique_id=705722415 instance=ExtResource("4_st1a5")]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -12, 0.03, 96)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -12, 0.0075, 96)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_G2_to_Mirror_G3_01" type="StaticBody3D" parent="Roads/Connections" unique_id=698712086 instance=ExtResource("9_xe4od")]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -21.016632, 0.03, 96)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -21.016632, 0.0075, 96)
 metadata/road_module = true
 metadata/fit_length_m = 6.033264
 
 [node name="G3_to_G4_00" type="StaticBody3D" parent="Roads/Connections" unique_id=2006924062 instance=ExtResource("4_st1a5")]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 50.518547, 0.03, -96)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 50.518547, 0.0075, -96)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="G3_to_G4_01" type="StaticBody3D" parent="Roads/Connections" unique_id=1662706113 instance=ExtResource("4_st1a5")]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 62.518547, 0.03, -96)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 62.518547, 0.0075, -96)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="G3_to_G4_02" type="StaticBody3D" parent="Roads/Connections" unique_id=105412675 instance=ExtResource("10_hnbb5")]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 73.25928, 0.03, -96)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 73.25928, 0.0075, -96)
 metadata/road_module = true
 metadata/fit_length_m = 9.481453
 
 [node name="Mirror_G3_to_Mirror_G4_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1253120439 instance=ExtResource("4_st1a5")]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -50.518547, 0.03, 96)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -50.518547, 0.0075, 96)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_G3_to_Mirror_G4_01" type="StaticBody3D" parent="Roads/Connections" unique_id=1843934595 instance=ExtResource("4_st1a5")]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -62.518547, 0.03, 96)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -62.518547, 0.0075, 96)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_G3_to_Mirror_G4_02" type="StaticBody3D" parent="Roads/Connections" unique_id=1273302672 instance=ExtResource("10_hnbb5")]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -73.25928, 0.03, 96)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -73.25928, 0.0075, 96)
 metadata/road_module = true
 metadata/fit_length_m = 9.481453
 
 [node name="G4_to_D1_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1754917584 instance=ExtResource("4_st1a5")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 84, 0.03, -84)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 84, 0.0075, -84)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="G4_to_D1_01" type="StaticBody3D" parent="Roads/Connections" unique_id=672688752 instance=ExtResource("11_f6ppi")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 84, 0.03, -75)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 84, 0.0075, -75)
 metadata/road_module = true
 metadata/fit_length_m = 6.0
 
 [node name="Mirror_G4_to_Mirror_D1_00" type="StaticBody3D" parent="Roads/Connections" unique_id=918771729 instance=ExtResource("4_st1a5")]
-transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -84, 0.03, 84)
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -84, 0.0075, 84)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_G4_to_Mirror_D1_01" type="StaticBody3D" parent="Roads/Connections" unique_id=144576419 instance=ExtResource("11_f6ppi")]
-transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -84, 0.03, 75)
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -84, 0.0075, 75)
 metadata/road_module = true
 metadata/fit_length_m = 6.0
 
 [node name="G3_to_D0_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1865775352 instance=ExtResource("4_st1a5")]
-transform = Transform3D(0.7071068, 0, 0.7071068, 0, 1.0000001, 0, -0.7071068, 0, 0.7071068, 44.501915, 0.03, -81.49809)
+transform = Transform3D(0.7071068, 0, 0.7071068, 0, 1.0000001, 0, -0.7071068, 0, 0.7071068, 44.501915, 0.0075, -81.49809)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="G3_to_D0_01" type="StaticBody3D" parent="Roads/Connections" unique_id=348982783 instance=ExtResource("12_ca43t")]
-transform = Transform3D(0.7071068, 0, 0.7071068, 0, 1.0000001, 0, -0.7071068, 0, 0.7071068, 52.079384, 0.03, -73.920616)
+transform = Transform3D(0.7071068, 0, 0.7071068, 0, 1.0000001, 0, -0.7071068, 0, 0.7071068, 52.079384, 0.0075, -73.920616)
 metadata/road_module = true
 metadata/fit_length_m = 9.432327
 
 [node name="Mirror_G3_to_Mirror_D0_00" type="StaticBody3D" parent="Roads/Connections" unique_id=661480745 instance=ExtResource("4_st1a5")]
-transform = Transform3D(-0.7071068, 0, -0.7071068, 0, 1.0000001, 0, 0.7071068, 0, -0.7071068, -44.501915, 0.03, 81.49809)
+transform = Transform3D(-0.7071068, 0, -0.7071068, 0, 1.0000001, 0, 0.7071068, 0, -0.7071068, -44.501915, 0.0075, 81.49809)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_G3_to_Mirror_D0_01" type="StaticBody3D" parent="Roads/Connections" unique_id=830229287 instance=ExtResource("12_ca43t")]
-transform = Transform3D(-0.7071068, 0, -0.7071068, 0, 1.0000001, 0, 0.7071068, 0, -0.7071068, -52.079384, 0.03, 73.920616)
+transform = Transform3D(-0.7071068, 0, -0.7071068, 0, 1.0000001, 0, 0.7071068, 0, -0.7071068, -52.079384, 0.0075, 73.920616)
 metadata/road_module = true
 metadata/fit_length_m = 9.432327
 
 [node name="D0_to_D1_00" type="StaticBody3D" parent="Roads/Connections" unique_id=489153158 instance=ExtResource("13_dlm8o")]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 73.07107, 0.03, -66)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 73.07107, 0.0075, -66)
 metadata/road_module = true
 metadata/fit_length_m = 9.857864
 
 [node name="Mirror_D0_to_Mirror_D1_00" type="StaticBody3D" parent="Roads/Connections" unique_id=2023736262 instance=ExtResource("13_dlm8o")]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -73.07107, 0.03, 66)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -73.07107, 0.0075, 66)
 metadata/road_module = true
 metadata/fit_length_m = 9.857864
 
 [node name="D1_to_R0_00" type="StaticBody3D" parent="Roads/Connections" unique_id=791260279 instance=ExtResource("11_f6ppi")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 84, 0.03, -57)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 84, 0.0075, -57)
 metadata/road_module = true
 metadata/fit_length_m = 6.0
 
 [node name="Mirror_D1_to_Mirror_R0_00" type="StaticBody3D" parent="Roads/Connections" unique_id=314336954 instance=ExtResource("11_f6ppi")]
-transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -84, 0.03, 57)
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -84, 0.0075, 57)
 metadata/road_module = true
 metadata/fit_length_m = 6.0
 
 [node name="R0_to_R1_00" type="StaticBody3D" parent="Roads/Connections" unique_id=887831306 instance=ExtResource("4_st1a5")]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 96, 0.03, -48)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 96, 0.0075, -48)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="R0_to_R1_01" type="StaticBody3D" parent="Roads/Connections" unique_id=2032096320 instance=ExtResource("14_nqrmu")]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 103.96, 0.03, -48)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 103.96, 0.0075, -48)
 metadata/road_module = true
 metadata/fit_length_m = 3.9199982
 
 [node name="Mirror_R0_to_Mirror_R1_00" type="StaticBody3D" parent="Roads/Connections" unique_id=590979847 instance=ExtResource("4_st1a5")]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -96, 0.03, 48)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -96, 0.0075, 48)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_R0_to_Mirror_R1_01" type="StaticBody3D" parent="Roads/Connections" unique_id=2058651710 instance=ExtResource("14_nqrmu")]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -103.96, 0.03, 48)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -103.96, 0.0075, 48)
 metadata/road_module = true
 metadata/fit_length_m = 3.9199982
 
 [node name="R1_to_R2_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1586473802 instance=ExtResource("4_st1a5")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 111.92, 0.03, -36)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 111.92, 0.0075, -36)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="R1_to_R2_01" type="StaticBody3D" parent="Roads/Connections" unique_id=149400320 instance=ExtResource("4_st1a5")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 111.92, 0.03, -24)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 111.92, 0.0075, -24)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="R1_to_R2_02" type="StaticBody3D" parent="Roads/Connections" unique_id=1556675619 instance=ExtResource("4_st1a5")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 111.92, 0.03, -12)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 111.92, 0.0075, -12)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_R1_to_L2_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1318920204 instance=ExtResource("4_st1a5")]
-transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -111.92, 0.03, 36)
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -111.92, 0.0075, 36)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_R1_to_L2_01" type="StaticBody3D" parent="Roads/Connections" unique_id=94787371 instance=ExtResource("4_st1a5")]
-transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -111.92, 0.03, 24)
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -111.92, 0.0075, 24)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_R1_to_L2_02" type="StaticBody3D" parent="Roads/Connections" unique_id=1215618435 instance=ExtResource("4_st1a5")]
-transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -111.92, 0.03, 12)
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -111.92, 0.0075, 12)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="R0_to_RI_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1228377103 instance=ExtResource("4_st1a5")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 84, 0.03, -36)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 84, 0.0075, -36)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_R0_to_Mirror_RI_00" type="StaticBody3D" parent="Roads/Connections" unique_id=67363747 instance=ExtResource("4_st1a5")]
-transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -84, 0.03, 36)
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -84, 0.0075, 36)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="RI_to_RM_00" type="StaticBody3D" parent="Roads/Connections" unique_id=632611951 instance=ExtResource("4_st1a5")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 84, 0.03, -12)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 84, 0.0075, -12)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_RI_to_LM_00" type="StaticBody3D" parent="Roads/Connections" unique_id=875190733 instance=ExtResource("4_st1a5")]
-transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -84, 0.03, 12)
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -84, 0.0075, 12)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="UL0_to_H0_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1179083578 instance=ExtResource("4_st1a5")]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -120, 0.03, -72)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -120, 0.0075, -72)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="UL0_to_H0_01" type="StaticBody3D" parent="Roads/Connections" unique_id=1468155886 instance=ExtResource("4_st1a5")]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -108, 0.03, -72)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -108, 0.0075, -72)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="UL0_to_H0_02" type="StaticBody3D" parent="Roads/Connections" unique_id=866065128 instance=ExtResource("4_st1a5")]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -96, 0.03, -72)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -96, 0.0075, -72)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_UL0_to_Mirror_H0_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1281421365 instance=ExtResource("4_st1a5")]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 120, 0.03, 72)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 120, 0.0075, 72)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_UL0_to_Mirror_H0_01" type="StaticBody3D" parent="Roads/Connections" unique_id=172363939 instance=ExtResource("4_st1a5")]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 108, 0.03, 72)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 108, 0.0075, 72)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_UL0_to_Mirror_H0_02" type="StaticBody3D" parent="Roads/Connections" unique_id=2023068542 instance=ExtResource("4_st1a5")]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 96, 0.03, 72)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 96, 0.0075, 72)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="H0_to_H1_00" type="StaticBody3D" parent="Roads/Connections" unique_id=876272312 instance=ExtResource("4_st1a5")]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -72, 0.03, -72)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -72, 0.0075, -72)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="H0_to_H1_01" type="StaticBody3D" parent="Roads/Connections" unique_id=160557863 instance=ExtResource("4_st1a5")]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -60, 0.03, -72)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -60, 0.0075, -72)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_H0_to_Mirror_H1_00" type="StaticBody3D" parent="Roads/Connections" unique_id=900926306 instance=ExtResource("4_st1a5")]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 72, 0.03, 72)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 72, 0.0075, 72)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_H0_to_Mirror_H1_01" type="StaticBody3D" parent="Roads/Connections" unique_id=809906672 instance=ExtResource("4_st1a5")]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 60, 0.03, 72)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 60, 0.0075, 72)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="H1_to_H2_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1264214554 instance=ExtResource("4_st1a5")]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -36, 0.03, -72)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -36, 0.0075, -72)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="H1_to_H2_01" type="StaticBody3D" parent="Roads/Connections" unique_id=1015879422 instance=ExtResource("4_st1a5")]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -24, 0.03, -72)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -24, 0.0075, -72)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="H1_to_H2_02" type="StaticBody3D" parent="Roads/Connections" unique_id=640718437 instance=ExtResource("4_st1a5")]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -12, 0.03, -72)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -12, 0.0075, -72)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_H1_to_Mirror_H2_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1538101698 instance=ExtResource("4_st1a5")]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 36, 0.03, 72)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 36, 0.0075, 72)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_H1_to_Mirror_H2_01" type="StaticBody3D" parent="Roads/Connections" unique_id=134042579 instance=ExtResource("4_st1a5")]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 24, 0.03, 72)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 24, 0.0075, 72)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_H1_to_Mirror_H2_02" type="StaticBody3D" parent="Roads/Connections" unique_id=680730398 instance=ExtResource("4_st1a5")]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 12, 0.03, 72)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 12, 0.0075, 72)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="G0_to_H0_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1379154297 instance=ExtResource("4_st1a5")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -84, 0.03, -84)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -84, 0.0075, -84)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_G0_to_Mirror_H0_00" type="StaticBody3D" parent="Roads/Connections" unique_id=778435249 instance=ExtResource("4_st1a5")]
-transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 84, 0.03, 84)
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 84, 0.0075, 84)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="G1_to_H1_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1802203021 instance=ExtResource("4_st1a5")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -48, 0.03, -84)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -48, 0.0075, -84)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_G1_to_Mirror_H1_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1810446034 instance=ExtResource("4_st1a5")]
-transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 48, 0.03, 84)
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 48, 0.0075, 84)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="G2_to_H2_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1135722041 instance=ExtResource("4_st1a5")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.2453663e-07, 0.03, -84)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.2453663e-07, 0.0075, -84)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_G2_to_Mirror_H2_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1520220763 instance=ExtResource("4_st1a5")]
-transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0.03, 84)
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0.0075, 84)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="H2_to_N_00" type="StaticBody3D" parent="Roads/Connections" unique_id=800604677 instance=ExtResource("4_st1a5")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.6226832e-07, 0.03, -60)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.6226832e-07, 0.0075, -60)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_H2_to_Mirror_N_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1914227849 instance=ExtResource("4_st1a5")]
-transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -7.154928e-08, 0.03, 60)
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -7.154928e-08, 0.0075, 60)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="UL0_to_L0_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1176669858 instance=ExtResource("15_b7pwo")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -132, 0.03, -65.28264)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -132, 0.0075, -65.28264)
 metadata/road_module = true
 metadata/fit_length_m = 1.4347153
 
 [node name="Mirror_UL0_to_Mirror_L0_00" type="StaticBody3D" parent="Roads/Connections" unique_id=284318011 instance=ExtResource("15_b7pwo")]
-transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 132, 0.03, 65.28264)
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 132, 0.0075, 65.28264)
 metadata/road_module = true
 metadata/fit_length_m = 1.4347153
 
 [node name="L0_to_L1_00" type="StaticBody3D" parent="Roads/Connections" unique_id=438268794 instance=ExtResource("4_st1a5")]
-transform = Transform3D(0.7071068, 0, 0.7071068, 0, 1.0000001, 0, -0.7071068, 0, 0.7071068, -122, 0.03, -48.08)
+transform = Transform3D(0.7071068, 0, 0.7071068, 0, 1.0000001, 0, -0.7071068, 0, 0.7071068, -122, 0.0075, -48.08)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="L0_to_L1_01" type="StaticBody3D" parent="Roads/Connections" unique_id=1389764695 instance=ExtResource("16_l2hta")]
-transform = Transform3D(0.7071068, 0, 0.7071068, 0, 1.0000001, 0, -0.7071068, 0, 0.7071068, -116.96, 0.03, -43.04)
+transform = Transform3D(0.7071068, 0, 0.7071068, 0, 1.0000001, 0, -0.7071068, 0, 0.7071068, -116.96, 0.0075, -43.04)
 metadata/road_module = true
 metadata/fit_length_m = 2.2552748
 
 [node name="Mirror_L0_to_Mirror_L1_00" type="StaticBody3D" parent="Roads/Connections" unique_id=608684310 instance=ExtResource("4_st1a5")]
-transform = Transform3D(-0.7071068, 0, -0.7071068, 0, 1.0000001, 0, 0.7071068, 0, -0.7071068, 122, 0.03, 48.08)
+transform = Transform3D(-0.7071068, 0, -0.7071068, 0, 1.0000001, 0, 0.7071068, 0, -0.7071068, 122, 0.0075, 48.08)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_L0_to_Mirror_L1_01" type="StaticBody3D" parent="Roads/Connections" unique_id=1562218539 instance=ExtResource("16_l2hta")]
-transform = Transform3D(-0.7071068, 0, -0.7071068, 0, 1.0000001, 0, 0.7071068, 0, -0.7071068, 116.96, 0.03, 43.04)
+transform = Transform3D(-0.7071068, 0, -0.7071068, 0, 1.0000001, 0, 0.7071068, 0, -0.7071068, 116.96, 0.0075, 43.04)
 metadata/road_module = true
 metadata/fit_length_m = 2.2552748
 
 [node name="L1_to_L2_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1737187624 instance=ExtResource("4_st1a5")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -111.92, 0.03, -25.506525)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -111.92, 0.0075, -25.506525)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="L1_to_L2_01" type="StaticBody3D" parent="Roads/Connections" unique_id=913615232 instance=ExtResource("4_st1a5")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -111.92, 0.03, -13.506525)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -111.92, 0.0075, -13.506525)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="L1_to_L2_02" type="StaticBody3D" parent="Roads/Connections" unique_id=61321197 instance=ExtResource("17_eeapr")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -111.92, 0.03, -6.7532635)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -111.92, 0.0075, -6.7532635)
 metadata/road_module = true
 metadata/fit_length_m = 1.506525
 
 [node name="Mirror_L1_to_R2_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1897071734 instance=ExtResource("4_st1a5")]
-transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 111.92, 0.03, 25.506525)
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 111.92, 0.0075, 25.506525)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_L1_to_R2_01" type="StaticBody3D" parent="Roads/Connections" unique_id=1756076556 instance=ExtResource("4_st1a5")]
-transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 111.92, 0.03, 13.506525)
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 111.92, 0.0075, 13.506525)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_L1_to_R2_02" type="StaticBody3D" parent="Roads/Connections" unique_id=1176685557 instance=ExtResource("17_eeapr")]
-transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 111.92, 0.03, 6.7532635)
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 111.92, 0.0075, 6.7532635)
 metadata/road_module = true
 metadata/fit_length_m = 1.506525
 
 [node name="H0_to_LJoin_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1581077358 instance=ExtResource("4_st1a5")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -84, 0.03, -60)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -84, 0.0075, -60)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="H0_to_LJoin_01" type="StaticBody3D" parent="Roads/Connections" unique_id=1665589682 instance=ExtResource("18_131lt")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -84, 0.03, -49)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -84, 0.0075, -49)
 metadata/road_module = true
 metadata/fit_length_m = 10.0
 
 [node name="Mirror_H0_to_Mirror_LJoin_00" type="StaticBody3D" parent="Roads/Connections" unique_id=911727362 instance=ExtResource("4_st1a5")]
-transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 84, 0.03, 60)
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 84, 0.0075, 60)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_H0_to_Mirror_LJoin_01" type="StaticBody3D" parent="Roads/Connections" unique_id=1136191442 instance=ExtResource("18_131lt")]
-transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 84, 0.03, 49)
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 84, 0.0075, 49)
 metadata/road_module = true
 metadata/fit_length_m = 10.0
 
 [node name="LJoin_to_LI_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1096785026 instance=ExtResource("19_05alk")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -84, 0.03, -31)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -84, 0.0075, -31)
 metadata/road_module = true
 metadata/fit_length_m = 2.0
 
 [node name="Mirror_LJoin_to_Mirror_LI_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1281796239 instance=ExtResource("19_05alk")]
-transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 84, 0.03, 31)
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 84, 0.0075, 31)
 metadata/road_module = true
 metadata/fit_length_m = 2.0
 
 [node name="L1_to_LJoin_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1135090333 instance=ExtResource("4_st1a5")]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -99.42652, 0.03, -38)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -99.42652, 0.0075, -38)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="L1_to_LJoin_01" type="StaticBody3D" parent="Roads/Connections" unique_id=1548953591 instance=ExtResource("20_efu1n")]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -91.71326, 0.03, -38)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -91.71326, 0.0075, -38)
 metadata/road_module = true
 metadata/fit_length_m = 3.4265213
 
 [node name="Mirror_L1_to_Mirror_LJoin_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1498631751 instance=ExtResource("4_st1a5")]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 99.42652, 0.03, 38)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 99.42652, 0.0075, 38)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_L1_to_Mirror_LJoin_01" type="StaticBody3D" parent="Roads/Connections" unique_id=1969511192 instance=ExtResource("20_efu1n")]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 91.71326, 0.03, 38)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 91.71326, 0.0075, 38)
 metadata/road_module = true
 metadata/fit_length_m = 3.4265213
 
 [node name="LI_to_LM_00" type="StaticBody3D" parent="Roads/Connections" unique_id=786395835 instance=ExtResource("4_st1a5")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -84, 0.03, -12)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -84, 0.0075, -12)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_LI_to_RM_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1143868749 instance=ExtResource("4_st1a5")]
-transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 84, 0.03, 12)
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 84, 0.0075, 12)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="LI_to_NW_00" type="StaticBody3D" parent="Roads/Connections" unique_id=295531479 instance=ExtResource("4_st1a5")]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -72, 0.03, -24)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -72, 0.0075, -24)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="LI_to_NW_01" type="StaticBody3D" parent="Roads/Connections" unique_id=1557374368 instance=ExtResource("4_st1a5")]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -60, 0.03, -24)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -60, 0.0075, -24)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="LI_to_NW_02" type="StaticBody3D" parent="Roads/Connections" unique_id=1909619278 instance=ExtResource("4_st1a5")]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -48, 0.03, -24)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -48, 0.0075, -24)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="LI_to_NW_03" type="StaticBody3D" parent="Roads/Connections" unique_id=755384113 instance=ExtResource("21_1vc0p")]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -40.254402, 0.03, -24)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -40.254402, 0.0075, -24)
 metadata/road_module = true
 metadata/fit_length_m = 3.4911957
 
 [node name="Mirror_LI_to_Mirror_NW_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1032747510 instance=ExtResource("4_st1a5")]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 72, 0.03, 24)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 72, 0.0075, 24)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_LI_to_Mirror_NW_01" type="StaticBody3D" parent="Roads/Connections" unique_id=1419503776 instance=ExtResource("4_st1a5")]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 60, 0.03, 24)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 60, 0.0075, 24)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_LI_to_Mirror_NW_02" type="StaticBody3D" parent="Roads/Connections" unique_id=1226558980 instance=ExtResource("4_st1a5")]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 48, 0.03, 24)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 48, 0.0075, 24)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_LI_to_Mirror_NW_03" type="StaticBody3D" parent="Roads/Connections" unique_id=1243135946 instance=ExtResource("21_1vc0p")]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 40.254402, 0.03, 24)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 40.254402, 0.0075, 24)
 metadata/road_module = true
 metadata/fit_length_m = 3.4911957
 
 [node name="RI_to_NE_00" type="StaticBody3D" parent="Roads/Connections" unique_id=164889654 instance=ExtResource("4_st1a5")]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 72, 0.03, -24)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 72, 0.0075, -24)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="RI_to_NE_01" type="StaticBody3D" parent="Roads/Connections" unique_id=560065106 instance=ExtResource("4_st1a5")]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 60, 0.03, -24)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 60, 0.0075, -24)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="RI_to_NE_02" type="StaticBody3D" parent="Roads/Connections" unique_id=1088997040 instance=ExtResource("4_st1a5")]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 48, 0.03, -24)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 48, 0.0075, -24)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="RI_to_NE_03" type="StaticBody3D" parent="Roads/Connections" unique_id=1970046589 instance=ExtResource("21_1vc0p")]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 40.254402, 0.03, -24)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 40.254402, 0.0075, -24)
 metadata/road_module = true
 metadata/fit_length_m = 3.4911957
 
 [node name="Mirror_RI_to_Mirror_NE_00" type="StaticBody3D" parent="Roads/Connections" unique_id=918362213 instance=ExtResource("4_st1a5")]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -72, 0.03, 24)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -72, 0.0075, 24)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_RI_to_Mirror_NE_01" type="StaticBody3D" parent="Roads/Connections" unique_id=263978008 instance=ExtResource("4_st1a5")]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -60, 0.03, 24)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -60, 0.0075, 24)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_RI_to_Mirror_NE_02" type="StaticBody3D" parent="Roads/Connections" unique_id=235661700 instance=ExtResource("4_st1a5")]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -48, 0.03, 24)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -48, 0.0075, 24)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_RI_to_Mirror_NE_03" type="StaticBody3D" parent="Roads/Connections" unique_id=400892464 instance=ExtResource("21_1vc0p")]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -40.254402, 0.03, 24)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -40.254402, 0.0075, 24)
 metadata/road_module = true
 metadata/fit_length_m = 3.4911957
 
 [node name="N_to_NW_00" type="StaticBody3D" parent="Roads/Connections" unique_id=751087245 instance=ExtResource("4_st1a5")]
-transform = Transform3D(0.7071068, 0, -0.7071068, 0, 1.0000001, 0, 0.7071068, 0, 0.7071068, -8.834221, 0.03, -39.16578)
+transform = Transform3D(0.7071068, 0, -0.7071068, 0, 1.0000001, 0, 0.7071068, 0, 0.7071068, -8.834221, 0.0075, -39.16578)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="N_to_NW_01" type="StaticBody3D" parent="Roads/Connections" unique_id=1829387452 instance=ExtResource("22_sncri")]
-transform = Transform3D(0.7071068, 0, -0.7071068, 0, 1.0000001, 0, 0.7071068, 0, 0.7071068, -16.428873, 0.03, -31.571127)
+transform = Transform3D(0.7071068, 0, -0.7071068, 0, 1.0000001, 0, 0.7071068, 0, 0.7071068, -16.428873, 0.0075, -31.571127)
 metadata/road_module = true
 metadata/fit_length_m = 9.480919
 
 [node name="Mirror_N_to_Mirror_NW_00" type="StaticBody3D" parent="Roads/Connections" unique_id=231590190 instance=ExtResource("4_st1a5")]
-transform = Transform3D(-0.7071068, 0, 0.7071068, 0, 1.0000001, 0, -0.7071068, 0, -0.7071068, 8.834221, 0.03, 39.16578)
+transform = Transform3D(-0.7071068, 0, 0.7071068, 0, 1.0000001, 0, -0.7071068, 0, -0.7071068, 8.834221, 0.0075, 39.16578)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_N_to_Mirror_NW_01" type="StaticBody3D" parent="Roads/Connections" unique_id=1164136623 instance=ExtResource("22_sncri")]
-transform = Transform3D(-0.7071068, 0, 0.7071068, 0, 1.0000001, 0, -0.7071068, 0, -0.7071068, 16.428873, 0.03, 31.571127)
+transform = Transform3D(-0.7071068, 0, 0.7071068, 0, 1.0000001, 0, -0.7071068, 0, -0.7071068, 16.428873, 0.0075, 31.571127)
 metadata/road_module = true
 metadata/fit_length_m = 9.480919
 
 [node name="N_to_NE_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1365036850 instance=ExtResource("4_st1a5")]
-transform = Transform3D(0.7071068, 0, 0.7071068, 0, 1.0000001, 0, -0.7071068, 0, 0.7071068, 8.834221, 0.03, -39.16578)
+transform = Transform3D(0.7071068, 0, 0.7071068, 0, 1.0000001, 0, -0.7071068, 0, 0.7071068, 8.834221, 0.0075, -39.16578)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="N_to_NE_01" type="StaticBody3D" parent="Roads/Connections" unique_id=63012872 instance=ExtResource("22_sncri")]
-transform = Transform3D(0.7071068, 0, 0.7071068, 0, 1.0000001, 0, -0.7071068, 0, 0.7071068, 16.428873, 0.03, -31.571127)
+transform = Transform3D(0.7071068, 0, 0.7071068, 0, 1.0000001, 0, -0.7071068, 0, 0.7071068, 16.428873, 0.0075, -31.571127)
 metadata/road_module = true
 metadata/fit_length_m = 9.480919
 
 [node name="Mirror_N_to_Mirror_NE_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1435157483 instance=ExtResource("4_st1a5")]
-transform = Transform3D(-0.7071068, 0, -0.7071068, 0, 1.0000001, 0, 0.7071068, 0, -0.7071068, -8.834221, 0.03, 39.16578)
+transform = Transform3D(-0.7071068, 0, -0.7071068, 0, 1.0000001, 0, 0.7071068, 0, -0.7071068, -8.834221, 0.0075, 39.16578)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_N_to_Mirror_NE_01" type="StaticBody3D" parent="Roads/Connections" unique_id=701536811 instance=ExtResource("22_sncri")]
-transform = Transform3D(-0.7071068, 0, -0.7071068, 0, 1.0000001, 0, 0.7071068, 0, -0.7071068, -16.428871, 0.03, 31.571129)
+transform = Transform3D(-0.7071068, 0, -0.7071068, 0, 1.0000001, 0, 0.7071068, 0, -0.7071068, -16.428871, 0.0075, 31.571129)
 metadata/road_module = true
 metadata/fit_length_m = 9.480919
 
 [node name="NW_to_W_00" type="StaticBody3D" parent="Roads/Connections" unique_id=149737724 instance=ExtResource("4_st1a5")]
-transform = Transform3D(0.7071068, 0, -0.7071068, 0, 1.0000001, 0, 0.7071068, 0, 0.7071068, -38.508804, 0.03, -9.4911995)
+transform = Transform3D(0.7071068, 0, -0.7071068, 0, 1.0000001, 0, 0.7071068, 0, 0.7071068, -38.508804, 0.0075, -9.4911995)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="NW_to_W_01" type="StaticBody3D" parent="Roads/Connections" unique_id=2094141188 instance=ExtResource("23_dk3rx")]
-transform = Transform3D(0.7071068, 0, -0.7071068, 0, 1.0000001, 0, 0.7071068, 0, 0.7071068, -43.079933, 0.03, -4.9200687)
+transform = Transform3D(0.7071068, 0, -0.7071068, 0, 1.0000001, 0, 0.7071068, 0, 0.7071068, -43.079933, 0.0075, -4.9200687)
 metadata/road_module = true
 metadata/fit_length_m = 0.92910767
 
 [node name="Mirror_NW_to_E_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1176459866 instance=ExtResource("4_st1a5")]
-transform = Transform3D(-0.7071068, 0, 0.7071068, 0, 1.0000001, 0, -0.7071068, 0, -0.7071068, 38.508804, 0.03, 9.491198)
+transform = Transform3D(-0.7071068, 0, 0.7071068, 0, 1.0000001, 0, -0.7071068, 0, -0.7071068, 38.508804, 0.0075, 9.491198)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_NW_to_E_01" type="StaticBody3D" parent="Roads/Connections" unique_id=1113273532 instance=ExtResource("23_dk3rx")]
-transform = Transform3D(-0.7071068, 0, 0.7071068, 0, 1.0000001, 0, -0.7071068, 0, -0.7071068, 43.079933, 0.03, 4.920068)
+transform = Transform3D(-0.7071068, 0, 0.7071068, 0, 1.0000001, 0, -0.7071068, 0, -0.7071068, 43.079933, 0.0075, 4.920068)
 metadata/road_module = true
 metadata/fit_length_m = 0.92910767
 
 [node name="NE_to_E_00" type="StaticBody3D" parent="Roads/Connections" unique_id=393109908 instance=ExtResource("4_st1a5")]
-transform = Transform3D(0.7071068, 0, 0.7071068, 0, 1.0000001, 0, -0.7071068, 0, 0.7071068, 38.508804, 0.03, -9.491198)
+transform = Transform3D(0.7071068, 0, 0.7071068, 0, 1.0000001, 0, -0.7071068, 0, 0.7071068, 38.508804, 0.0075, -9.491198)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="NE_to_E_01" type="StaticBody3D" parent="Roads/Connections" unique_id=703291733 instance=ExtResource("23_dk3rx")]
-transform = Transform3D(0.7071068, 0, 0.7071068, 0, 1.0000001, 0, -0.7071068, 0, 0.7071068, 43.079933, 0.03, -4.920068)
+transform = Transform3D(0.7071068, 0, 0.7071068, 0, 1.0000001, 0, -0.7071068, 0, 0.7071068, 43.079933, 0.0075, -4.920068)
 metadata/road_module = true
 metadata/fit_length_m = 0.92910767
 
 [node name="Mirror_NE_to_W_00" type="StaticBody3D" parent="Roads/Connections" unique_id=828453358 instance=ExtResource("4_st1a5")]
-transform = Transform3D(-0.7071068, 0, -0.7071068, 0, 1.0000001, 0, 0.7071068, 0, -0.7071068, -38.5088, 0.03, 9.491196)
+transform = Transform3D(-0.7071068, 0, -0.7071068, 0, 1.0000001, 0, 0.7071068, 0, -0.7071068, -38.5088, 0.0075, 9.491196)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="Mirror_NE_to_W_01" type="StaticBody3D" parent="Roads/Connections" unique_id=945955037 instance=ExtResource("23_dk3rx")]
-transform = Transform3D(-0.7071068, 0, -0.7071068, 0, 1.0000001, 0, 0.7071068, 0, -0.7071068, -43.07993, 0.03, 4.920066)
+transform = Transform3D(-0.7071068, 0, -0.7071068, 0, 1.0000001, 0, 0.7071068, 0, -0.7071068, -43.07993, 0.0075, 4.920066)
 metadata/road_module = true
 metadata/fit_length_m = 0.92910767
 
 [node name="W_to_LM_00" type="StaticBody3D" parent="Roads/Connections" unique_id=1088505484 instance=ExtResource("4_st1a5")]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -60, 0.03, 2.6226832e-07)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -60, 0.0075, 2.6226832e-07)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="W_to_LM_01" type="StaticBody3D" parent="Roads/Connections" unique_id=262975773 instance=ExtResource("4_st1a5")]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -72, 0.03, 2.6226832e-07)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -72, 0.0075, 2.6226832e-07)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="E_to_RM_00" type="StaticBody3D" parent="Roads/Connections" unique_id=2006167919 instance=ExtResource("4_st1a5")]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 60, 0.03, -7.154928e-08)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 60, 0.0075, -7.154928e-08)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"
 metadata/source_pack = "base"
 
 [node name="E_to_RM_01" type="StaticBody3D" parent="Roads/Connections" unique_id=941512753 instance=ExtResource("4_st1a5")]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 72, 0.03, -7.154928e-08)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 72, 0.0075, -7.154928e-08)
 metadata/road_module = true
 metadata/road_id = "Road1"
 metadata/variant = "Road1_B__Road1_A"

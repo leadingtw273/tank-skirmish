@@ -1,5 +1,7 @@
 extends SceneTree
 
+const FixtureHelpers = preload("res://tests/support/tank_fixture_helpers.gd")
+
 const PLAYTEST_SCENE := "res://src/maps/training_ground/training_ground_playtest.tscn"
 const TANK1_SCENE := "res://src/actors/tank/variants/tank1/tank1.tscn"
 const TANK2_SCENE := "res://src/actors/tank/variants/tank2/tank2.tscn"
@@ -68,8 +70,8 @@ func _validate(playtest: Node3D) -> void:
 	if not _configure_vision_geometry_fixture(playtest, enemy, vision):
 		return
 	ai.call("set_combat_enabled", false)
-	var enemy_geometry_state := _freeze_geometry_body(enemy as RigidBody3D)
-	var player_geometry_state := _freeze_geometry_body(player as RigidBody3D)
+	var enemy_geometry_state := FixtureHelpers.freeze_geometry_body(enemy as RigidBody3D)
+	var player_geometry_state := FixtureHelpers.freeze_geometry_body(player as RigidBody3D)
 	## 幾何用例使用固定測試姿態，不要求使用者的實際場景保持原始擺放。
 	enemy.global_transform = Transform3D(Basis.IDENTITY, Vector3(60, 0, 8))
 	player.global_position = Vector3(0, 0, 8)
@@ -84,8 +86,8 @@ func _validate(playtest: Node3D) -> void:
 		return
 	if not await _validate_vision_geometry(playtest, enemy, player, vision):
 		return
-	_restore_geometry_body(enemy as RigidBody3D, enemy_geometry_state)
-	_restore_geometry_body(player as RigidBody3D, player_geometry_state)
+	FixtureHelpers.restore_geometry_body(enemy as RigidBody3D, enemy_geometry_state)
+	FixtureHelpers.restore_geometry_body(player as RigidBody3D, player_geometry_state)
 	if not await _validate_ai_hull_aim(playtest):
 		return
 	if not await _validate_hit_inspection_contract(playtest, ai):
@@ -738,18 +740,6 @@ func _make_fixture_floor(hull_bottom: float) -> StaticBody3D:
 	return floor
 
 
-func _freeze_geometry_body(body: RigidBody3D) -> Dictionary:
-	var state := {"freeze": body.freeze, "linear_velocity": body.linear_velocity, "angular_velocity": body.angular_velocity}
-	body.freeze = true
-	return state
-
-
-func _restore_geometry_body(body: RigidBody3D, state: Dictionary) -> void:
-	body.linear_velocity = state.linear_velocity
-	body.angular_velocity = state.angular_velocity
-	body.freeze = state.freeze
-
-
 func _wait_for_hull_rotation(observer: Node3D, initial_yaw: float, maximum_frames: int) -> bool:
 	for _frame in maximum_frames:
 		await physics_frame
@@ -818,7 +808,7 @@ func _validate_combat_and_recovery(playtest: Node3D, main: Node3D, encounter: No
 	ai.call("set_combat_enabled", false)
 	await _wait_for_frames(60)
 	## 此案例隔離射擊資格，固定車身但保留物理更新與真實射擊冷卻。
-	var muzzle_body_state := _freeze_geometry_body(enemy as RigidBody3D)
+	var muzzle_body_state := FixtureHelpers.freeze_geometry_body(enemy as RigidBody3D)
 	var settled_target := vision.call("target_world_position", player) as Vector3
 	enemy.call("aim_turret_at", settled_target, 10.0)
 	enemy.call("aim_gun_pitch_at_target", settled_target, 10.0)
@@ -897,7 +887,7 @@ func _validate_combat_and_recovery(playtest: Node3D, main: Node3D, encounter: No
 		_finish(playtest, "Reacquiring an unobstructed target must resume enemy fire.")
 		return false
 	ai.call("set_combat_enabled", false)
-	_restore_geometry_body(enemy as RigidBody3D, muzzle_body_state)
+	FixtureHelpers.restore_geometry_body(enemy as RigidBody3D, muzzle_body_state)
 	## R1-R5：死亡車留下，新實例於可編輯出生標記重生；鏡頭、無敵和操作都恢復。
 	## 移出視野，避免重生時被下一發擊中而誤判；瞬移後至少讓物理世界同步一次。
 	player.global_position = enemy.global_position + Vector3(150, 0, 0)

@@ -9,6 +9,7 @@ const STEPS := 120
 const START_YAW := deg_to_rad(6.0)
 var failures: Array[String] = []
 var evidence: Array[String] = []
+var fixture_grounds: Dictionary = {}
 
 func _init() -> void:
 	call_deferred("_run")
@@ -268,7 +269,7 @@ func _candidate_hits_external(tank: CharacterBody3D, transforms: Array[Transform
 			query.shape = shape
 			query.transform = transforms[shape_index]
 			query.collision_mask = tank.collision_mask
-			query.exclude = [tank.get_rid()]
+			query.exclude = [tank.get_rid(), (fixture_grounds[tank.get_instance_id()] as StaticBody3D).get_rid()]
 			query.collide_with_bodies = true
 			if not state.intersect_shape(query, 1).is_empty(): return true
 			shape_index += 1
@@ -306,8 +307,21 @@ func _spawn(index: int) -> CharacterBody3D:
 		_fail_case(index, "spawn", "instantiate failed")
 		return null
 	root.add_child(tank)
+	tank.set_physics_process(false)
 	tank.global_position = Vector3.ZERO
 	tank.global_rotation = Vector3.ZERO
+	var ground := _fixture_ground_for(tank, 80.0)
+	root.add_child(ground)
+	fixture_grounds[tank.get_instance_id()] = ground
+	tank.tree_exited.connect(ground.queue_free)
+	await physics_frame
+	await physics_frame
+	if not _supported_fixture(tank):
+		_fail_case(index, "spawn", "true hull support absent before baseline")
+		tank.queue_free()
+		await physics_frame
+		return null
+	tank.set_physics_process(true)
 	await physics_frame
 	await physics_frame
 	return tank
@@ -320,7 +334,7 @@ func _overlap(tank: CharacterBody3D) -> bool:
 			query.shape = child.shape
 			query.transform = child.global_transform
 			query.collision_mask = tank.collision_mask
-			query.exclude = [tank.get_rid()]
+			query.exclude = [tank.get_rid(), (fixture_grounds[tank.get_instance_id()] as StaticBody3D).get_rid()]
 			query.collide_with_bodies = true
 			if not state.intersect_shape(query, 1).is_empty(): return true
 	return false
@@ -335,3 +349,29 @@ func _record(index: int, action: String, message: String) -> void:
 
 func _fail_case(index: int, action: String, message: String) -> void:
 	failures.append("C2_MATRIX Tank%d/%s FAIL %s" % [index + 1, action, message])
+
+
+## 真地板頂面採正式 snapshot 的 hull 接地點；不以砲管等部位的 bounds 推測。
+func _fixture_ground_for(tank: CharacterBody3D, size: float) -> StaticBody3D:
+	var snapshot: Dictionary = tank.predictive_driving_snapshot()
+	var top_y := INF
+	for point in snapshot.ground_points:
+		top_y = minf(top_y, (tank.global_transform * (point as Vector3)).y)
+	var ground := StaticBody3D.new()
+	ground.name = "HullSupportFixtureGround"
+	ground.collision_layer = 128
+	ground.collision_mask = 0
+	ground.position = Vector3(tank.global_position.x, top_y - 0.1, tank.global_position.z)
+	var collision := CollisionShape3D.new()
+	var box := BoxShape3D.new()
+	box.size = Vector3(size, 0.2, size)
+	collision.shape = box
+	ground.add_child(collision)
+	return ground
+
+
+func _supported_fixture(tank: CharacterBody3D) -> bool:
+	var support: Dictionary = tank.ground_support_at(tank.global_transform)
+	var supported := bool(support.get("supported", false)) and absf(float(support.get("height_delta", INF))) < 0.001
+	print("HULL_SUPPORT_FIXTURE %s supported=%s height_delta=%.6f position=%s" % [tank.scene_file_path, supported, float(support.get("height_delta", INF)), tank.global_position])
+	return supported

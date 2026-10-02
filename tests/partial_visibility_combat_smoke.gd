@@ -41,15 +41,22 @@ func _run(scene: Node3D) -> void:
 	## Manual scheduling prevents an automatic second AI tick; combat itself remains enabled.
 	ai.set_physics_process(false)
 	ai.call("set_combat_enabled", false)
+	var enemy_body := enemy as RigidBody3D
+	var player_body := player as RigidBody3D
+	if enemy_body == null or player_body == null:
+		_fail("A1/A2 requires native rigid tank bodies")
+		return
+	var enemy_state := _freeze_geometry_body(enemy_body)
+	var player_state := _freeze_geometry_body(player_body)
 	enemy.global_transform = Transform3D(Basis.IDENTITY, Vector3(0, 30, 0))
 	player.global_position = enemy.global_position + Vector3.FORWARD * 12.0
 	player.set_physics_process(false)
 	var player_aim := player_runtime.get_node_or_null("PlayerAimController") as Node if player_runtime != null else null
 	if player_aim != null:
 		player_aim.set_process(false)
-	enemy.set("aim_spread_base_degrees", 0.0)
-	enemy.set("aim_spread_cap_degrees", 0.0)
-	enemy.set("current_spread_degrees", 0.0)
+	(enemy.get("combat_tank") as CharacterBody3D).set("aim_spread_base_degrees", 0.0)
+	(enemy.get("combat_tank") as CharacterBody3D).set("aim_spread_cap_degrees", 0.0)
+	(enemy.get("combat_tank") as CharacterBody3D).set("current_spread_degrees", 0.0)
 	await physics_frame
 	await physics_frame
 	var vision := CountingVision.new()
@@ -77,7 +84,7 @@ func _run(scene: Node3D) -> void:
 		return
 
 	## A1.2: center view ray is blocked while a real sample stays visible and fireable.
-	var view_origin := (enemy.get_node("VisualRecoilPivot/TurretPivot") as Node3D).global_position
+	var view_origin := (enemy.get("turret_pivot") as Node3D).global_position
 	var center_screen := _blocker(view_origin.lerp(center, 0.55), 0.12)
 	scene.add_child(center_screen)
 	await physics_frame
@@ -224,9 +231,21 @@ func _run(scene: Node3D) -> void:
 					and not shot_gate_results.is_empty() and shot_gate_results[0] \
 					and health.current_health < health_before:
 				print("PASS A1/A2 true alternate pipeline shots=", shots.size(), " impact=", impact.position)
+				_restore_geometry_body(enemy_body, enemy_state)
+				_restore_geometry_body(player_body, player_state)
 				quit(0)
 				return
 	_fail("A2 requires true AI -> ShotEvent -> Projectile -> target ImpactEvent -> Health loss")
+
+func _freeze_geometry_body(body: RigidBody3D) -> Dictionary:
+	var state := {"freeze": body.freeze, "linear_velocity": body.linear_velocity, "angular_velocity": body.angular_velocity}
+	body.freeze = true
+	return state
+
+func _restore_geometry_body(body: RigidBody3D, state: Dictionary) -> void:
+	body.linear_velocity = state.linear_velocity
+	body.angular_velocity = state.angular_velocity
+	body.freeze = state.freeze
 
 func _one_tick(ai: Node, vision: CountingVision) -> bool:
 	var before := vision.visible_calls

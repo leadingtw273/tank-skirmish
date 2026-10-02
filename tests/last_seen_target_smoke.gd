@@ -152,12 +152,16 @@ func _l1_disabled_combat_does_not_restore_last_seen_aim() -> bool:
 	await physics_frame
 	blocker = _make_full_screen(observer, target)
 	fixture.root.add_child(blocker)
+	## 觀察車與目標遵循相同重力；讓真屏隨觀察車位移，保留失視前提。
+	blocker.reparent(observer, true)
 	await physics_frame
 	var turret := observer.get_node("VisualRecoilPivot/TurretPivot") as Node3D
 	var yaw_before := turret.global_rotation.y
 	for _frame in 30:
 		if not await _manual_tick(ai):
 			return false
+		if not (vision.call("visible_target_points", target) as PackedVector3Array).is_empty():
+			return _fail("L1 setup must keep every target sample physically hidden throughout the observation window.")
 	if absf(angle_difference(yaw_before, turret.global_rotation.y)) > deg_to_rad(1.0):
 		return _fail("L1 combat disable/restore must not revive hidden last-seen aim.")
 	fixture.root.queue_free()
@@ -431,9 +435,7 @@ func _make_fixture(observer_position: Vector3, target_position: Vector3, model :
 	if observer == null or target == null:
 		return {}
 	observer.position = observer_position
-	observer.set_physics_process(false)
 	target.position = target_position
-	target.set_physics_process(false)
 	vision.observer = observer
 	ai.controlled_tank = observer
 	ai.vision = vision
@@ -442,6 +444,8 @@ func _make_fixture(observer_position: Vector3, target_position: Vector3, model :
 	fixture.add_child(vision)
 	fixture.add_child(ai)
 	root.add_child(fixture)
+	observer.set_physics_process(false)
+	target.set_physics_process(false)
 	ai.set_physics_process(false)
 	ai.set_target(target)
 	ai.set_combat_enabled(true)

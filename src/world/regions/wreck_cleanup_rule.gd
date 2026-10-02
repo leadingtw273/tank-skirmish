@@ -1,7 +1,8 @@
-## 在指定區域內持續移除已死亡的真 TankController；不參與重生或其他遊戲流程。
+## 在指定區域內持續移除已死亡的坦克載具；不參與重生或其他遊戲流程。
 extends Node
 
 const TankController := preload("res://src/actors/tank/tank_controller.gd")
+const RigidTank := preload("res://src/actors/rigid_tank/player_rigid_tank.gd")
 const HealthComponent := preload("res://src/combat/damage/health_component.gd")
 
 @export var area: Area3D
@@ -18,7 +19,7 @@ func _physics_process(_delta: float) -> void:
 			continue
 		if not scene_root.is_ancestor_of(body):
 			continue
-		if not (body is TankController):
+		if not (body is TankController or body is RigidTank):
 			continue
 		var health := body.get_node_or_null("HealthComponent") as HealthComponent
 		if health == null or health.current_health > 0.0:

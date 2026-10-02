@@ -5,10 +5,15 @@ extends CharacterBody3D
 const Grounding = preload("res://src/actors/tank/geometry/tank_grounding.gd")
 
 @export_category("地形接地")
+## 允許車身跨越的最大地形高度，單位為公尺；用於接地取樣與跨階候選。
 @export_range(0.0, 2.0, 0.01) var ground_step_height := 0.5
+## 可承托車身的最大地面坡度，單位為度；超過時拒絕接地候選。
 @export_range(0.0, 60.0, 0.5) var ground_max_slope_degrees := 35.0
+## 履帶接觸點向下尋找支撐面的最大距離，單位為公尺。
 @export_range(0.01, 1.0, 0.01) var ground_snap_distance := 0.3
+## 車身朝支撐面法線對齊的每秒插值速率。
 @export_range(0.1, 30.0, 0.1) var ground_alignment_rate := 8.0
+## 未獲地面支撐時施加的向下加速度，單位為公尺／秒平方。
 @export var ground_gravity := 9.8
 var _ground_points: Array[Vector3] = []
 var _ground_vertical_speed := 0.0

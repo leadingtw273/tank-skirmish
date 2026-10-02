@@ -37,7 +37,13 @@ AI 已由使用者人工接受，原四角加 NE／SW repeat 矩陣已補齊 6/6
 
 本次 Git 收尾沿用 `feat/lea-177-main-world-rebuild`：初始提交 `1a943b25bda7a6d86176438d4fa3092c7eec353b` 封存 142 個必要來源，含已接受的 LEA-176 runtime／支撐依賴、TurnSpace v6、25% 道路生成規則、有限回歸與交接文件；主地圖保留先前 Ground 修正。收尾再納入 4 個已獨立驗收的 CI／入口測試合約與 19 個對應正式來源的 Godot UID，合計 165 個唯一來源路徑。其餘 110 個原有修改及 16 個診斷 UID 保留，不覆蓋主 checkout。來源逐檔清單見 `/home/markchou/project/agent-team/tmp/lea178-git-finish-20261002/final-source-manifest.json`；實際提交、PR、CI、審查及合併讀回以同目錄 `git-closeout-result.json` 為準。
 
-目前新增 19 個正式回歸案例全部通過，4 個 CI／入口合約修正通過 fresh-context 驗收；完整本機 CI 仍在既有 `enemy_combat_smoke.gd` 的舊場景合約失敗。該測試的第 5 檔隔離修正提案未通過，沒有套用正式來源，不宣稱完整 CI 通過。正式 AI／25% 道路來源與原六案證據保持不變。商用來源與 525 個 generated 道路資源依既有政策留在本機，Git 保存永久生成配方；本機重建需 586 檔必要資源 overlay。現有 GitHub workflow 未還原這些忽略素材，乾淨 checkout 尚不自含必要資源，見 `github-ci-assets-preflight.json`。推送曾遭自動核准拒絕；尚未外送來源、建立 PR、發布審查通過狀態或合併。待具體外送核准及既有 CI／素材缺口處理後續接，先前 patch／snapshot 版本材料保留為歷史。
+新增 19 個正式回歸案例及原六案 AI 驗收維持有效。先前隔離測試提案未通過、沒有套用，屬歷史紀錄。GitHub 推送與 Claude 審查已取得 leadi 具體核准，PR 為 https://github.com/leadingtw273/tank-skirmish/pull/123。PR 首次 CI 在 Godot 匯入缺少素材時停止，尚未執行 enemy_combat_smoke；本機完整 CI 的舊測試合約失敗是另一份結果，不能據此撤銷已接受的 AI 尋路。
+
+商用素材與 525 個 generated 道路資源依既有政策留在本機；Git 保存永久生成配方與 `docs/assets/local-ci-assets-lock.json` 的 586 檔路徑、大小、SHA。`scripts/restore-local-ci-assets.py` 先完整驗證固定 archive 與每檔，再還原忽略素材，拒絕不符清單、雜湊錯誤、非一般檔案、越界路徑與 tracked source 覆寫。乾淨 checkout 已完成實際 586 檔還原及 Godot 匯入（exit 0、零錯誤）。同一 `quality` job 改由受控本機隔離 runner 執行，所有既有 `scripts/ci.sh` 測試與錯誤掃描保留；私有素材不得上傳到 GitHub、審查服務或 artifacts。
+
+本次 runner 為一次性官方映像的非特權 Docker 容器，沒有主機 home 或 Docker socket。啟動時只掛空的唯讀素材目錄；主機核對 GitHub 實際 run、attempt、source HEAD、quality job 與指定 runner 身分後才提供固定 tar。未核對的工作無法取得素材。完成後停止並移除本次精確容器與 runner，不建立常駐 runner 或新 Agent Job。未來 CI 執行仍需相同可信本機素材與受控 runner，沒有宣稱公開 fork 可存取這批素材。
+
+既有測試只對齊正式 Rigid 載具根節點／donor 的責任與真實地板、遮擋、初始化取樣；原斷言與門檻保留。原 R8 殘骸清理區額外辨識正式剛體坦克，死亡、區域、場景祖先與 queue_free 條件維持。全部 smoke、正式 CI、精確 HEAD 的跨模型審查與正常合併結果，以 `/home/markchou/project/agent-team/tmp/lea178-merge-resume-20261002` 證據及原 `git-closeout-result.json` 的後續讀回為準；文件本身不代替實際檢查狀態。
 
 ## 證據範圍
 

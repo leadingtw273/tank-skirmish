@@ -1,0 +1,2938 @@
+{
+  "schemaVersion": 1,
+  "policy": "本機CI素材庫；禁止將archive/payload提交Git或上傳驗收artifacts",
+  "archiveSha256": "7490a4277e526600951c0ea7a6e32027825c3c51e6c81bba83761944167a3847",
+  "fileCount": 586,
+  "files": [
+    {
+      "path": "assets/AtomicRealmModularRoads/base/PLUS/Road1_A.png",
+      "sha256": "21bb6ded9bea5112d8893e02f7d0e9e3fe53cc74321c5f5e998abd73b5f629a2",
+      "bytes": 65525
+    },
+    {
+      "path": "assets/AtomicRealmModularRoads/base/PLUS/Road2_X_A.png",
+      "sha256": "af27a8b6a24d5e1e953a608c150d7c51a6e6a0a89b25c36c8e4b922bf57af7bf",
+      "bytes": 77843
+    },
+    {
+      "path": "assets/AtomicRealmModularRoads/base/PLUS/gltf/Road10_90angle_Corner_Road1_B.png",
+      "sha256": "c958edf518fd062cea61d1175379f6447986f7822df900dad1b2815135391b8c",
+      "bytes": 66649
+    },
+    {
+      "path": "assets/AtomicRealmModularRoads/base/PLUS/gltf/Road11_Y_Splitter_45_Road6_A.png",
+      "sha256": "1170f4b7940f10a00b1418147331161a74ac6ffa0db6e2580a9497fb3c5a4823",
+      "bytes": 64863
+    },
+    {
+      "path": "assets/AtomicRealmModularRoads/base/PLUS/gltf/Road12_Diagonal_Splitter_L_Road6_A.png",
+      "sha256": "1170f4b7940f10a00b1418147331161a74ac6ffa0db6e2580a9497fb3c5a4823",
+      "bytes": 64863
+    },
+    {
+      "path": "assets/AtomicRealmModularRoads/base/PLUS/gltf/Road12_Diagonal_Splitter_R_Road6_A.png",
+      "sha256": "1170f4b7940f10a00b1418147331161a74ac6ffa0db6e2580a9497fb3c5a4823",
+      "bytes": 64863
+    },
+    {
+      "path": "assets/AtomicRealmModularRoads/base/PLUS/gltf/Road1_Curve1_Road1_B.png",
+      "sha256": "cca16cb3f58d5b8b1cb2ec8e6074129d52e325783ed744bbcb0b084ebf00b9d2",
+      "bytes": 72405
+    },
+    {
+      "path": "assets/AtomicRealmModularRoads/base/PLUS/gltf/Road1_Road1_B.png",
+      "sha256": "cca16cb3f58d5b8b1cb2ec8e6074129d52e325783ed744bbcb0b084ebf00b9d2",
+      "bytes": 72405
+    },
+    {
+      "path": "assets/AtomicRealmModularRoads/base/PLUS/gltf/Road2_T_Road2_X_B.png",
+      "sha256": "c06b574db23bdac339a4ee69ecaea664bb6fa73d24dcce400df36a75594855ea",
+      "bytes": 79584
+    },
+    {
+      "path": "assets/AtomicRealmModularRoads/base/PLUS/gltf/Road2_X_Road2_X_B.png",
+      "sha256": "c06b574db23bdac339a4ee69ecaea664bb6fa73d24dcce400df36a75594855ea",
+      "bytes": 79584
+    },
+    {
+      "path": "src/world/buildings/quaternius/collisions/materials/default/2Story_2_Mat_0.res",
+      "sha256": "5dd05e0b6a229e8c18654a7ac76a92ac040006b7fbb47691b63c39d2361a89c7",
+      "bytes": 148167
+    },
+    {
+      "path": "src/world/buildings/quaternius/collisions/materials/default/2Story_Balcony_Mat_0.res",
+      "sha256": "1113cf20a720f2849882d316df1542c8ae48b0d13ca58658e13507ff850594dc",
+      "bytes": 151911
+    },
+    {
+      "path": "src/world/buildings/quaternius/collisions/materials/default/2Story_Center_Mat_0.res",
+      "sha256": "b70b3c2b134337b11f7e11096843c100ae87f8b00f610af9b2480f0336b983a1",
+      "bytes": 118503
+    },
+    {
+      "path": "src/world/buildings/quaternius/collisions/materials/default/2Story_Columns_Mat_0.res",
+      "sha256": "aa39ea95542a8bc847e1f615c00cc7c7075bcab30c4d97fabe95ceb6fda19e13",
+      "bytes": 130671
+    },
+    {
+      "path": "src/world/buildings/quaternius/collisions/materials/default/2Story_Double_Mat_0.res",
+      "sha256": "2fd20ea0cc8ccca1a06e04a45c538e13a64b8e1d970be4575046eb95ca327590",
+      "bytes": 146583
+    },
+    {
+      "path": "src/world/buildings/quaternius/collisions/materials/default/2Story_Sidehouse_Mat_0.res",
+      "sha256": "180718952e428729da3201c2053e1a8cc5a140a8c20a8c0cbb41915c4e4f7a0c",
+      "bytes": 203607
+    },
+    {
+      "path": "src/world/buildings/quaternius/collisions/materials/default/2Story_Slim_Mat_0.res",
+      "sha256": "a79dad97554c52ba4119b7a9a139d3745e0bb29398005f2bebb63847452648aa",
+      "bytes": 104175
+    },
+    {
+      "path": "src/world/buildings/quaternius/collisions/materials/default/2Story_Wide_2Doors_Mat_0.res",
+      "sha256": "fc2b1e45582828c6d97677d2327620ce0722499d27c2fd03e01f2cb4969fdc68",
+      "bytes": 282519
+    },
+    {
+      "path": "src/world/buildings/quaternius/collisions/materials/default/2Story_Wide_Mat_0.res",
+      "sha256": "6e766be5651cb3da9e48b08ea6a2391bbdd93b77704ed88148cc32438bba897e",
+      "bytes": 181935
+    },
+    {
+      "path": "src/world/buildings/quaternius/collisions/materials/default/3Story_Balcony_Mat_0.res",
+      "sha256": "4a7af61ea4b2e63e672e203ff5d382a3de4822f1b8f7629b3f877ce7374b0ead",
+      "bytes": 187695
+    },
+    {
+      "path": "src/world/buildings/quaternius/collisions/materials/default/3Story_Slim_Mat_0.res",
+      "sha256": "5006643e225b0bf86669bb96dd260a181c87a10e7b386fe5f21066c1984b1fbd",
+      "bytes": 134127
+    },
+    {
+      "path": "src/world/buildings/quaternius/collisions/materials/default/3Story_Small_Mat_0.res",
+      "sha256": "aaceb00cb297da9ce92f7fcd94302a11823a1d29396936461480550294ac431b",
+      "bytes": 121023
+    },
+    {
+      "path": "src/world/buildings/quaternius/collisions/materials/default/4Story_Center_Mat_0.res",
+      "sha256": "5afc0526ee27fb9099157d4220f3d61ffa21efbade2d244a3ed32caae95675d5",
+      "bytes": 227655
+    },
+    {
+      "path": "src/world/buildings/quaternius/collisions/materials/default/4Story_Mat_0.res",
+      "sha256": "81acee091ff77d896d4842eded4a6782fd4751ce0db49934040c9d3c60ab1417",
+      "bytes": 247383
+    },
+    {
+      "path": "src/world/buildings/quaternius/collisions/materials/default/4Story_Wide_2Doors_Mat_0.res",
+      "sha256": "5a125a5524a8dc0d638c661b50e2cc085e811d4061ce35f508aa0646ced814ae",
+      "bytes": 488655
+    },
+    {
+      "path": "src/world/buildings/quaternius/collisions/materials/default/4Story_Wide_2Doors_Roof_Mat_0.res",
+      "sha256": "432956302259cebeec1f4734011fb4fbf8aa50e0a46f6aa6fd51b3c319cfdc5d",
+      "bytes": 455319
+    },
+    {
+      "path": "src/world/buildings/quaternius/collisions/materials/default/6Story_Stack_Mat_0.res",
+      "sha256": "3e69223163754481b7c279cafd714b19d2a02e607a3e2f4ffa7d77379cd02218",
+      "bytes": 220599
+    },
+    {
+      "path": "src/world/buildings/quaternius/items/materials/default/2Story_2_Mat.tscn",
+      "sha256": "4aa5e31784104429ae4c39897b0e5859b1af4a4b40f9177d5b3c6eccff3c9401",
+      "bytes": 264641
+    },
+    {
+      "path": "src/world/buildings/quaternius/items/materials/default/2Story_Balcony_Mat.tscn",
+      "sha256": "024119de704a5921622681601213bf19b846057ec87290695cdcf17741ca1e31",
+      "bytes": 276016
+    },
+    {
+      "path": "src/world/buildings/quaternius/items/materials/default/2Story_Center_Mat.tscn",
+      "sha256": "5e167f3a25ed66742dd1f59f3d74917eff42df6c8488832192b63711fc8dc912",
+      "bytes": 218915
+    },
+    {
+      "path": "src/world/buildings/quaternius/items/materials/default/2Story_Columns_Mat.tscn",
+      "sha256": "a97e23d3a5fbbcdcd5306572e0e6563706d4028a36f231a868c381c77708354e",
+      "bytes": 240280
+    },
+    {
+      "path": "src/world/buildings/quaternius/items/materials/default/2Story_Double_Mat.tscn",
+      "sha256": "89f0fb9513b4d89a3b3ff38611427d3b805d7c0711562c15229c646aa84800b7",
+      "bytes": 273989
+    },
+    {
+      "path": "src/world/buildings/quaternius/items/materials/default/2Story_Sidehouse_Mat.tscn",
+      "sha256": "3c9ba97149fbe8607b8a9bab51122af5fca4b1124d6ec05a0d6f4146668ba75a",
+      "bytes": 370885
+    },
+    {
+      "path": "src/world/buildings/quaternius/items/materials/default/2Story_Slim_Mat.tscn",
+      "sha256": "209b9293a8772fb1d7602bf05c0a12a533070611d4833b065437faaf75f51927",
+      "bytes": 188875
+    },
+    {
+      "path": "src/world/buildings/quaternius/items/materials/default/2Story_Wide_2Doors_Mat.tscn",
+      "sha256": "74bec5d53e90d0d8cf82b986657a940f64310b9ae31ebad66cedcf6ed742af87",
+      "bytes": 527979
+    },
+    {
+      "path": "src/world/buildings/quaternius/items/materials/default/2Story_Wide_Mat.tscn",
+      "sha256": "81d45647989a0b7c4b31ed75ba64b051924982a229a359e131b3808fa3392b2c",
+      "bytes": 336543
+    },
+    {
+      "path": "src/world/buildings/quaternius/items/materials/default/3Story_Balcony_Mat.tscn",
+      "sha256": "2897654cf03ff47b6cc361c7a1ecb961af2f31e8d9c29a6b524036bfd59ba782",
+      "bytes": 339891
+    },
+    {
+      "path": "src/world/buildings/quaternius/items/materials/default/3Story_Slim_Mat.tscn",
+      "sha256": "e3f807b5ecc355c81b3778d199503dec5f6e6856d100db927144d8e6822ad73d",
+      "bytes": 238765
+    },
+    {
+      "path": "src/world/buildings/quaternius/items/materials/default/3Story_Small_Mat.tscn",
+      "sha256": "700598e1ca99bc64c4b752916b9fb37d10cd5fcf82fb88e8ddfaeab7e0a9c7a9",
+      "bytes": 225520
+    },
+    {
+      "path": "src/world/buildings/quaternius/items/materials/default/4Story_Center_Mat.tscn",
+      "sha256": "e80640378e4c767b7a8365cb95c1e8a6935438633cd953f6d3443009b7a893a0",
+      "bytes": 425440
+    },
+    {
+      "path": "src/world/buildings/quaternius/items/materials/default/4Story_Mat.tscn",
+      "sha256": "c048de7257ad73e8938be5437fc0b24fadfe5420643c8037de3f5a5f5fc803a6",
+      "bytes": 463455
+    },
+    {
+      "path": "src/world/buildings/quaternius/items/materials/default/4Story_Wide_2Doors_Mat.tscn",
+      "sha256": "b54ef54316bb8fac2ff5a24e208281014989c0ce9fff0f93cc986c572d62fef8",
+      "bytes": 865845
+    },
+    {
+      "path": "src/world/buildings/quaternius/items/materials/default/4Story_Wide_2Doors_Roof_Mat.tscn",
+      "sha256": "33a418637c09ca4804881dd721da281907f3bae699a993d90c70a5f97a3f33fd",
+      "bytes": 795249
+    },
+    {
+      "path": "src/world/buildings/quaternius/items/materials/default/6Story_Stack_Mat.tscn",
+      "sha256": "398dd33dc5c8648edb59d506c48d85c1594c25916971ad8f46e0be289de8842a",
+      "bytes": 393719
+    },
+    {
+      "path": "src/world/buildings/quaternius/meshes/materials/2Story_2_Mat.glb",
+      "sha256": "9cea786d26163cf72c3223c1dfc20766c3b172ceb43878d93af3d085b5eef5c8",
+      "bytes": 253912
+    },
+    {
+      "path": "src/world/buildings/quaternius/meshes/materials/2Story_Balcony_Mat.glb",
+      "sha256": "8dddf2a406f42e268ee75a2054ff6fd0a963b2afcdbbc5c0a3dfb55eeb00323d",
+      "bytes": 262820
+    },
+    {
+      "path": "src/world/buildings/quaternius/meshes/materials/2Story_Center_Mat.glb",
+      "sha256": "552112c52b500cfbfcd5e35b4161b828905bab5d4030099732efb816df82c74b",
+      "bytes": 201944
+    },
+    {
+      "path": "src/world/buildings/quaternius/meshes/materials/2Story_Columns_Mat.glb",
+      "sha256": "2e6266fd91b3cdf0ef822ff0ca592a3a3a950600b68e11eb646be379b0ab35dd",
+      "bytes": 231632
+    },
+    {
+      "path": "src/world/buildings/quaternius/meshes/materials/2Story_Double_Mat.glb",
+      "sha256": "e02a48b30b66cd0cb2b38142bebfc5f8f3f06487007eeee891e70a495f7d18fe",
+      "bytes": 252580
+    },
+    {
+      "path": "src/world/buildings/quaternius/meshes/materials/2Story_Sidehouse_Mat.glb",
+      "sha256": "7043157c9dc2e2897721741b6fc67568019d1cac311ec20e139e531446779920",
+      "bytes": 349984
+    },
+    {
+      "path": "src/world/buildings/quaternius/meshes/materials/2Story_Slim_Mat.glb",
+      "sha256": "5c26d689bfbe3925619786f1a55cf1f98797206b2ea83bf1d675e8dc0317cbf7",
+      "bytes": 183528
+    },
+    {
+      "path": "src/world/buildings/quaternius/meshes/materials/2Story_Wide_2Doors_Mat.glb",
+      "sha256": "b234d6a1726f90c5065dfd8377e0274820336719e531bde8bb29326773dfe42b",
+      "bytes": 460584
+    },
+    {
+      "path": "src/world/buildings/quaternius/meshes/materials/2Story_Wide_Mat.glb",
+      "sha256": "d8747b17976a521a86a99e1feb885b67c88f294fb7acb867f8cefaca27d564c3",
+      "bytes": 297356
+    },
+    {
+      "path": "src/world/buildings/quaternius/meshes/materials/3Story_Balcony_Mat.glb",
+      "sha256": "8daa655e51e06aab757f5a4f0f856deff368776436568c2e6ee27a0294e317d9",
+      "bytes": 312728
+    },
+    {
+      "path": "src/world/buildings/quaternius/meshes/materials/3Story_Slim_Mat.glb",
+      "sha256": "a4cefae3dd439193b7c4c027abcedf586e5e36194a892ad66c50599090b0efb9",
+      "bytes": 231924
+    },
+    {
+      "path": "src/world/buildings/quaternius/meshes/materials/3Story_Small_Mat.glb",
+      "sha256": "1cd72ac28163b25daa7c48cb209b1fa9830fa372f3a1094100a31eca47379108",
+      "bytes": 201896
+    },
+    {
+      "path": "src/world/buildings/quaternius/meshes/materials/4Story_Center_Mat.glb",
+      "sha256": "4efa71252c614a4a1da793cfb89762d924d09efd9d300a0b7c1b9ead2b685cc3",
+      "bytes": 382848
+    },
+    {
+      "path": "src/world/buildings/quaternius/meshes/materials/4Story_Mat.glb",
+      "sha256": "69690f4cb7b178e9ea16a39f6594a25565aad9f99c40875e682ec5813128a979",
+      "bytes": 413328
+    },
+    {
+      "path": "src/world/buildings/quaternius/meshes/materials/4Story_Wide_2Doors_Mat.glb",
+      "sha256": "006763c2b3ab1bad98eae3cc6b7ff67626c1efbf83a087d9c78dc1ed3a7a986b",
+      "bytes": 780224
+    },
+    {
+      "path": "src/world/buildings/quaternius/meshes/materials/4Story_Wide_2Doors_Roof_Mat.glb",
+      "sha256": "208975eb0e1c852420696537e724cc07c1636a697d351c134e83f100fe171246",
+      "bytes": 716824
+    },
+    {
+      "path": "src/world/buildings/quaternius/meshes/materials/6Story_Stack_Mat.glb",
+      "sha256": "c620bff7311df925afd99d8a98deac7cd0a2645ba85c30e97eca1ebdddcf86ac",
+      "bytes": 363996
+    },
+    {
+      "path": "src/world/roads/generated/collisions/base/Road10_90angle_Corner_0.res",
+      "sha256": "41de378e7b924d757e850a33ed8e196178b809bf9b60ee216fb3b22641981cea",
+      "bytes": 11655
+    },
+    {
+      "path": "src/world/roads/generated/collisions/base/Road11_Y_Splitter_0.res",
+      "sha256": "82cf3156b59f0158b660c8c39aa04c69f13e7623c413dcb89e879c55fadead9a",
+      "bytes": 26703
+    },
+    {
+      "path": "src/world/roads/generated/collisions/base/Road11_Y_Splitter_45_0.res",
+      "sha256": "880b641bf7509fb352a025d65f2af17c88f90efc7aa58bd9adbd065eb020cd8c",
+      "bytes": 17631
+    },
+    {
+      "path": "src/world/roads/generated/collisions/base/Road12_Diagonal_Splitter_L_0.res",
+      "sha256": "23dbae52b38909ecaada62b3445012b04d6a31c5610f47cc64a7bad17dd1da28",
+      "bytes": 19071
+    },
+    {
+      "path": "src/world/roads/generated/collisions/base/Road12_Diagonal_Splitter_R_0.res",
+      "sha256": "0aad354ddf4ac98698f78fe5a16ba5da17135f78ef13ede82af9ac3590d1bf23",
+      "bytes": 19071
+    },
+    {
+      "path": "src/world/roads/generated/collisions/base/Road1_0.res",
+      "sha256": "ad389e8be714c8b2bc3c70ad690c88d43df2c49962392ce5f8420867c295ae7e",
+      "bytes": 3375
+    },
+    {
+      "path": "src/world/roads/generated/collisions/base/Road1_Curve1_0.res",
+      "sha256": "951cdd3d28da3fa92ddffa2291d1fb00afcf825e7de71fb60f90220972e3a8b8",
+      "bytes": 6255
+    },
+    {
+      "path": "src/world/roads/generated/collisions/base/Road1_Curve2_0.res",
+      "sha256": "84ee5315b582fdd4f8ee3c8edcc3a6de884e8add66d210bfc219a0a008c9d7d8",
+      "bytes": 11367
+    },
+    {
+      "path": "src/world/roads/generated/collisions/base/Road1_Curve3_0.res",
+      "sha256": "ba8bcd4bca12ba9bec19201f9e01ab5da9cc1f70082f68a1e783344d590e25b9",
+      "bytes": 10575
+    },
+    {
+      "path": "src/world/roads/generated/collisions/base/Road1_Curve4_0.res",
+      "sha256": "91bfde6d76823bdedd2565779ee9f10b7453ad2a5635de3c4e33d1b17dda1bb2",
+      "bytes": 20655
+    },
+    {
+      "path": "src/world/roads/generated/collisions/base/Road2_T_0.res",
+      "sha256": "ed59a834687d31c2b5ee3b335f2ec574fe23414260344a5f2b522e333106ef54",
+      "bytes": 9567
+    },
+    {
+      "path": "src/world/roads/generated/collisions/base/Road2_X_0.res",
+      "sha256": "bf0a05288a3d71f85b80828b0ecb0aa6700d9edd7dbca635bdf1c9db8eb42154",
+      "bytes": 9999
+    },
+    {
+      "path": "src/world/roads/generated/collisions/base/Road6_End_0.res",
+      "sha256": "dad45aba620a00eba9a88c01586fa52a611dcbc37fb985ca25eaba692ffb3582",
+      "bytes": 11295
+    },
+    {
+      "path": "src/world/roads/generated/collisions/bridges/Bridge1Ramp1_0.res",
+      "sha256": "929869cb3592a1e78e0272647dc694f4b752a54d64a07d3d9aaf9b3061be405a",
+      "bytes": 8703
+    },
+    {
+      "path": "src/world/roads/generated/collisions/bridges/Bridge1Ramp2_0.res",
+      "sha256": "f1e8213a58c951889d1412fbcb9f0862a1ffa9572553495ecffd93ee8fab7910",
+      "bytes": 19791
+    },
+    {
+      "path": "src/world/roads/generated/collisions/bridges/Bridge1_0.res",
+      "sha256": "d89f085b7c4bcaffbd00afd15bcd26a77a4cab79e0260fc093b184610b08be14",
+      "bytes": 2223
+    },
+    {
+      "path": "src/world/roads/generated/collisions/bridges/Bridge3Start_0.res",
+      "sha256": "7e3307fc9df5970ddd1a58027451f5b2eec8e81701c64e2c23af6186dfa411d8",
+      "bytes": 10575
+    },
+    {
+      "path": "src/world/roads/generated/collisions/bridges/Bridge3_0.res",
+      "sha256": "4f4ea5f728d51511f5328735c4e3b8bb256bb286ad19218cf7cc9836350da3ed",
+      "bytes": 12015
+    },
+    {
+      "path": "src/world/roads/generated/collisions/bridges/Bridge4_0.res",
+      "sha256": "f1eb0308c819d77e78a828946d8be2991904c94273f8ef90246942f18e974831",
+      "bytes": 2511
+    },
+    {
+      "path": "src/world/roads/generated/collisions/bridges/Bridge6_0.res",
+      "sha256": "7843b34a1c89f9118e8e3f790443def45dd0669de77a9c469a49f6cd267d9e49",
+      "bytes": 6471
+    },
+    {
+      "path": "src/world/roads/generated/collisions/bridges/Road1Ramp1_0.res",
+      "sha256": "aa6dea736376e55c6b8022b4d149a6e6e108662df1960afd36eb8db9216b6eea",
+      "bytes": 13455
+    },
+    {
+      "path": "src/world/roads/generated/collisions/bridges/Road1Ramp2_0.res",
+      "sha256": "f92b7a512981989a8122ae7968ef4d72cc3786ce468c9ef9fe474d808531058c",
+      "bytes": 13455
+    },
+    {
+      "path": "src/world/roads/generated/collisions/custom/Road11_Y_Splitter_45_Custom_0.res",
+      "sha256": "a91bc8cd8016816fd397f8acad138e249ab00fb2a3f4e43512ac1f8b6954ee88",
+      "bytes": 17559
+    },
+    {
+      "path": "src/world/roads/generated/collisions/custom/Road11_Y_Splitter_45_Custom_1.res",
+      "sha256": "99421c7c0821d11689f24a0d400059cb9bed72daa670184574a3854c896bad8b",
+      "bytes": 423
+    },
+    {
+      "path": "src/world/roads/generated/collisions/custom/Road12_Diagonal_Splitter_L_Custom_0.res",
+      "sha256": "91547c38a01afab2d792ff844bb3fec3aae9e03db18310999fc1d170bd407967",
+      "bytes": 16047
+    },
+    {
+      "path": "src/world/roads/generated/collisions/custom/Road12_Diagonal_Splitter_L_Custom_1.res",
+      "sha256": "ec61e13f1ce5b174c5c2dd5bb05b247ac0c064f55817f460b249562181b3f620",
+      "bytes": 423
+    },
+    {
+      "path": "src/world/roads/generated/collisions/custom/Road12_Diagonal_Splitter_L_Custom_2.res",
+      "sha256": "6316fbe5f3bafc00b1b6444fe2562c135dfac84ccfdefe45ded6d133220e8fae",
+      "bytes": 423
+    },
+    {
+      "path": "src/world/roads/generated/collisions/custom/Road12_Diagonal_Splitter_R_Custom_0.res",
+      "sha256": "cde0f7a22026b819ee6aec5ff013b7131b42a2785ae67fa01f2344a67a19d8e1",
+      "bytes": 16047
+    },
+    {
+      "path": "src/world/roads/generated/collisions/custom/Road12_Diagonal_Splitter_R_Custom_1.res",
+      "sha256": "2fe957ba2d008fabc6bc3bf1c9a84e230f2f956ebe73fed87bc2b7d76a08ee31",
+      "bytes": 423
+    },
+    {
+      "path": "src/world/roads/generated/collisions/custom/Road12_Diagonal_Splitter_R_Custom_2.res",
+      "sha256": "92b16b5ef1c9ac7c9a8119a2e6568a996508ccea258b9a4e5bc0cdabb7a227b3",
+      "bytes": 423
+    },
+    {
+      "path": "src/world/roads/generated/collisions/custom/Road1_Curve2_Custom45_0.res",
+      "sha256": "ef7d57ea45c7f3424514f9196a6671efa1f939e7060eddfe5a7eb0096c4e5ebe",
+      "bytes": 147447
+    },
+    {
+      "path": "src/world/roads/generated/collisions/dirt/Dirt_Road_1_6m_0.res",
+      "sha256": "9f692df6c165b6e250a0d87645231cbf26f6a484a398a71cfb65934a7d164e34",
+      "bytes": 3231
+    },
+    {
+      "path": "src/world/roads/generated/collisions/dirt/Dirt_Road_1_Curve_1_0.res",
+      "sha256": "e08cd56d79218ae33cafd25aae48e089e0e5a08fcb254fc6dc520abb307fd9b2",
+      "bytes": 8559
+    },
+    {
+      "path": "src/world/roads/generated/collisions/dirt/Dirt_Road_1_Hill_1_0.res",
+      "sha256": "e4a248f662fd4a428640c5b685568fead40d94af95d9a3f68520f50fa2ad5a11",
+      "bytes": 8415
+    },
+    {
+      "path": "src/world/roads/generated/collisions/highway/Gravel_Segment_1_0.res",
+      "sha256": "724c3ec4faddd48df5b7b90d2def26ac8ef7188900574b8ebd0c4914fb7cc3d0",
+      "bytes": 5103
+    },
+    {
+      "path": "src/world/roads/generated/collisions/highway/Gravel_Segment_2_0.res",
+      "sha256": "c528d75a230fbd827f33a63b226660a33543642c1bfcd21164bcf1ae8a2aca63",
+      "bytes": 7839
+    },
+    {
+      "path": "src/world/roads/generated/collisions/highway/Highway_1_Intersection_Segment_1_A_0.res",
+      "sha256": "8610551c6e52b581bad2c258ae7c5a0564902e5a3724427b14106468d24ab16b",
+      "bytes": 3447
+    },
+    {
+      "path": "src/world/roads/generated/collisions/highway/Highway_1_Intersection_Segment_1_B_0.res",
+      "sha256": "ea204da88a138a4edd0a2611c2aadea38afb43794061f3ffd75eb2b730d9711f",
+      "bytes": 1935
+    },
+    {
+      "path": "src/world/roads/generated/collisions/highway/Highway_1_Intersection_Segment_1_C_0.res",
+      "sha256": "507d18040fbdc6a4ba67e61b051891a70440875ef0d9d6d809539b3231a1ed05",
+      "bytes": 3447
+    },
+    {
+      "path": "src/world/roads/generated/collisions/highway/Highway_1_Intersection_Segment_2_A_0.res",
+      "sha256": "3052a8998a15b07af5e7a15ea18ff4408c4ff6a0512cece8745a88348d2bfdac",
+      "bytes": 3303
+    },
+    {
+      "path": "src/world/roads/generated/collisions/highway/Highway_1_Intersection_Segment_2_B_0.res",
+      "sha256": "e7ec8935b91191325f6d37897d566d0ad124aff3bbf656d736adfbf965e438a5",
+      "bytes": 1359
+    },
+    {
+      "path": "src/world/roads/generated/collisions/highway/Highway_1_Intersection_Segment_2_C_0.res",
+      "sha256": "b10db856053933892bab2dcabc69105104072e9273934c5a1e64b30cc0b04852",
+      "bytes": 3303
+    },
+    {
+      "path": "src/world/roads/generated/collisions/highway/Highway_1_Intersection_Segment_2_D_0.res",
+      "sha256": "3456dde5a44467ec778bfcf478232b5cc41c2103e35b876b982e5622e9c21235",
+      "bytes": 2079
+    },
+    {
+      "path": "src/world/roads/generated/collisions/highway/Highway_1_Intersection_Segment_2_E_0.res",
+      "sha256": "d100f5b7f23a3ee17f6fff8a201c961c4a7174fb0b970bee6b78407b0f516754",
+      "bytes": 783
+    },
+    {
+      "path": "src/world/roads/generated/collisions/highway/Highway_1_Intersection_Segment_2_F_0.res",
+      "sha256": "f055c9bd5cc20b97026448da0350b603ab624d9e55be547c7a7113fd9b701a84",
+      "bytes": 2079
+    },
+    {
+      "path": "src/world/roads/generated/collisions/highway/Highway_1_Intersection_Segment_2_G_0.res",
+      "sha256": "41f3840812b19943ff7ae9cbbe46b0d0f56266fc5c77f1766a13f7b1b0305927",
+      "bytes": 1935
+    },
+    {
+      "path": "src/world/roads/generated/collisions/highway/Highway_1_LaneSplitter_1_Fence_0.res",
+      "sha256": "963edd6e35f27bcf82cc7d55d7f689927d91542cbf5d2708ead20d2283935b38",
+      "bytes": 8703
+    },
+    {
+      "path": "src/world/roads/generated/collisions/highway/Highway_1_LaneSplitter_1_Fenceless_0.res",
+      "sha256": "d176e0a14fc22eb7acbe9d83c60898c8f37a8909ae664d6c8844fb789846b02a",
+      "bytes": 6831
+    },
+    {
+      "path": "src/world/roads/generated/collisions/highway/Highway_1_LaneSplitter_1_Median_Fence_0.res",
+      "sha256": "95650efd1df60a6f66c60db1055b333c85fb8e19d2966d417a1eb7f6eafd5b4f",
+      "bytes": 9135
+    },
+    {
+      "path": "src/world/roads/generated/collisions/highway/Highway_1_LaneSplitter_1_Median_Fenceless_0.res",
+      "sha256": "067deb49cef2657d432fefbbfd0afbbaf362c78291cb33a7da24f59681789443",
+      "bytes": 7407
+    },
+    {
+      "path": "src/world/roads/generated/collisions/highway/Highway_1_LaneSplitter_Offramp_1_Fence_0.res",
+      "sha256": "b6006018f2c4b2d7b105902bcb17cdd1b9e1d4af09223c6ae26da2558103065e",
+      "bytes": 8559
+    },
+    {
+      "path": "src/world/roads/generated/collisions/highway/Highway_1_LaneSplitter_Offramp_1_Fenceless_0.res",
+      "sha256": "cbbc459700fd83f100671b32116ee4559be29a40786d097592ace4076897c70f",
+      "bytes": 7911
+    },
+    {
+      "path": "src/world/roads/generated/collisions/highway/Highway_1_Segment_Half_Shoulder_1_A_R_0.res",
+      "sha256": "c0587f3c6279a606a09cca0651a6754f93e2312076266c0bb02bfe24e88c1c55",
+      "bytes": 2151
+    },
+    {
+      "path": "src/world/roads/generated/collisions/highway/Highway_1_Segment_Half_Shoulder_1_B_R_0.res",
+      "sha256": "25f078e33b9561c62d1bb6f6bb4c82eb16a45b3456e4fe084530ececc3d7ad7b",
+      "bytes": 1647
+    },
+    {
+      "path": "src/world/roads/generated/collisions/highway/Highway_1_Segment_Median_1_0.res",
+      "sha256": "fe71b34c61feb1f04d372660bb1cb2c94f7a83e8997551d06dcf7dbfc60f7cf6",
+      "bytes": 1935
+    },
+    {
+      "path": "src/world/roads/generated/collisions/highway/Highway_1_Segment_Median_1_Ascend_0.res",
+      "sha256": "f8c351a2b181d55169678b86953b784de1c82196fdc1c38af3573ed954a6aa9b",
+      "bytes": 4095
+    },
+    {
+      "path": "src/world/roads/generated/collisions/highway/Highway_1_Segment_Median_1_Ascend_Fence_0.res",
+      "sha256": "7e37654f5f7bbaace80911284cd4f2d57a5ca7df7b8da73ee0b6ad147162ad19",
+      "bytes": 4815
+    },
+    {
+      "path": "src/world/roads/generated/collisions/highway/Highway_1_Segment_Median_1_Descend_0.res",
+      "sha256": "5b56f69c60a8075130ed015089eaac8aeeb59f4f3a11779439b3c20277b221c7",
+      "bytes": 4095
+    },
+    {
+      "path": "src/world/roads/generated/collisions/highway/Highway_1_Segment_Median_1_Descend_Fence_0.res",
+      "sha256": "5f3394f88b0244b7ed8893e2afd65544c75cde9e827ff4339276f3a0c06f8d69",
+      "bytes": 4815
+    },
+    {
+      "path": "src/world/roads/generated/collisions/highway/Highway_1_Segment_Median_1_Elevation_0.res",
+      "sha256": "14006c8365cd07f9e80aebfc3ef063f2a2054919792f7ce4d19a3938647368ae",
+      "bytes": 1935
+    },
+    {
+      "path": "src/world/roads/generated/collisions/highway/Highway_1_Segment_Median_1_Elevation_Fence_0.res",
+      "sha256": "562e934d2e73d7bdf04cece09144a0049e6dad8ff1d918e7221b7fe1336e5a21",
+      "bytes": 2223
+    },
+    {
+      "path": "src/world/roads/generated/collisions/highway/Highway_1_Segment_Median_1_R_0.res",
+      "sha256": "9929c198d5f77f860366a70e29849232dfb0a7a99bcfbb560b6b54f4547138d0",
+      "bytes": 2727
+    },
+    {
+      "path": "src/world/roads/generated/collisions/highway/Highway_1_Segment_Middle_Half_L_0.res",
+      "sha256": "c51fd0746b3c51aae4b02e16e05ee73e31e237d5df9092b2312578e8fb301b82",
+      "bytes": 1575
+    },
+    {
+      "path": "src/world/roads/generated/collisions/highway/Highway_1_Segment_Middle_Half_R_0.res",
+      "sha256": "87d51a83b2da056c312819cce76c07eee4fffcd845be285438adfc01d8e5237e",
+      "bytes": 1575
+    },
+    {
+      "path": "src/world/roads/generated/collisions/highway/Highway_1_Segment_Middle_Half_Zebra_1_0.res",
+      "sha256": "3d5520ba00c7f521f38dd0ffa4cd3125db86bc36910f4ace2407c996ad9a37d7",
+      "bytes": 2223
+    },
+    {
+      "path": "src/world/roads/generated/collisions/highway/Highway_1_Segment_Middle_L_0.res",
+      "sha256": "7d8e66b048c826068366835756d06ed28bf268f09bddc0c11129cd2e35d4c1a9",
+      "bytes": 2367
+    },
+    {
+      "path": "src/world/roads/generated/collisions/highway/Highway_1_Segment_Middle_L_Blank_0.res",
+      "sha256": "35a12cbf599a81bfb9ecebb734ae9d26b14d0c5cc4ffd15ae3fa1a02c91677e7",
+      "bytes": 1647
+    },
+    {
+      "path": "src/world/roads/generated/collisions/highway/Highway_1_Segment_Middle_L_Blank_Full_Line_White_Mid_0.res",
+      "sha256": "026540a66d717de39de0f75c576ac7b45cd7e9445f57f5e5a6427671ad76575e",
+      "bytes": 1359
+    },
+    {
+      "path": "src/world/roads/generated/collisions/highway/Highway_1_Segment_Middle_L_Full_Line_White_Side_0.res",
+      "sha256": "fd01202e1074249aec8c74434fedcd8f10ee48dc65fd35659f13a9d6c48f5d69",
+      "bytes": 1935
+    },
+    {
+      "path": "src/world/roads/generated/collisions/highway/Highway_1_Segment_Middle_R_0.res",
+      "sha256": "b7183cfcc2d3dcdfc26532d1191f17d45a05be9dd1e199aa991652e772175cb0",
+      "bytes": 2367
+    },
+    {
+      "path": "src/world/roads/generated/collisions/highway/Highway_1_Segment_Middle_R_Ascend_0.res",
+      "sha256": "3d48cb95da74ae2e366ee50fe913f674adbbc15eccc68f03ffce3a2ca30faee7",
+      "bytes": 2727
+    },
+    {
+      "path": "src/world/roads/generated/collisions/highway/Highway_1_Segment_Middle_R_Blank_0.res",
+      "sha256": "a8b8d32a448ff46ed18e0f32fb6cedec39c1a616cef0996b3bbfd05b41a8511f",
+      "bytes": 1647
+    },
+    {
+      "path": "src/world/roads/generated/collisions/highway/Highway_1_Segment_Middle_R_Descend_0.res",
+      "sha256": "d2bed492828c4649bd4ff1e6ab02751d90b51ce41e7170679b996bbd5ffa3390",
+      "bytes": 2727
+    },
+    {
+      "path": "src/world/roads/generated/collisions/highway/Highway_1_Segment_Middle_R_Elevation_0.res",
+      "sha256": "759cd9951a85e4d5b76fc8732a88306102f903490eed470ee351db14af56d454",
+      "bytes": 2295
+    },
+    {
+      "path": "src/world/roads/generated/collisions/highway/Highway_1_Segment_Middle_R_Full_Line_White_0.res",
+      "sha256": "5dcb29dcacd68779b2be736d2672cb5eff0304197bd352d5064509938d1324d5",
+      "bytes": 1935
+    },
+    {
+      "path": "src/world/roads/generated/collisions/highway/Highway_1_Segment_Shoulder_1_L_0.res",
+      "sha256": "c9e8bdf1985100c3ad60ac100e7d7fde7eb12a8774a814ac4965cc1ce17d8f08",
+      "bytes": 2583
+    },
+    {
+      "path": "src/world/roads/generated/collisions/highway/Highway_1_Segment_Shoulder_1_R_0.res",
+      "sha256": "313ebdcf2b244b340c93b2e6564c2b41444db54640855abc94bfb1529957f1b4",
+      "bytes": 2583
+    },
+    {
+      "path": "src/world/roads/generated/collisions/highway/Highway_1_Segment_Shoulder_1_R_Ascend_0.res",
+      "sha256": "3d170bc527c01465c9d882e249a7be48e0a47a7d3c42986e7e29365b9a33e22f",
+      "bytes": 4095
+    },
+    {
+      "path": "src/world/roads/generated/collisions/highway/Highway_1_Segment_Shoulder_1_R_Ascend_Fence_0.res",
+      "sha256": "0a112352f44bddfb352fa3ed2da015a9ad72e0d97a8fa21165f262f0f01b7e18",
+      "bytes": 4815
+    },
+    {
+      "path": "src/world/roads/generated/collisions/highway/Highway_1_Segment_Shoulder_1_R_Descend_0.res",
+      "sha256": "4d8590a056de20c554cc0db2038c3e6fbb4f0253182b44bafdff1c0d9b31f301",
+      "bytes": 4095
+    },
+    {
+      "path": "src/world/roads/generated/collisions/highway/Highway_1_Segment_Shoulder_1_R_Descend_Fence_0.res",
+      "sha256": "b135d79b4b7da4a2e2dc44c7a9558f1b7b9089601e4d54d57d94e3d5bd9dad75",
+      "bytes": 4815
+    },
+    {
+      "path": "src/world/roads/generated/collisions/highway/Highway_1_Segment_Shoulder_1_R_Elevation_0.res",
+      "sha256": "bc9973222930045bb0199c5ecb00499b6828e13f057ecd078c37d764c0c7c19b",
+      "bytes": 2655
+    },
+    {
+      "path": "src/world/roads/generated/collisions/highway/Highway_1_Segment_Shoulder_1_R_Elevation_Fence_0.res",
+      "sha256": "90fc7790011f2601a73e309b14bcd51ce3795bedda33c5969fd22377f5ea2170",
+      "bytes": 2655
+    },
+    {
+      "path": "src/world/roads/generated/collisions/highway/Highway_1_Segment_SmallShoulder_1_0.res",
+      "sha256": "baead1770645b2b115970c5ba885b9927d229cedb9db6bf75d0e91fa2ac31578",
+      "bytes": 1791
+    },
+    {
+      "path": "src/world/roads/generated/collisions/highway/Highway_1_Segment_SmallShoulder_1_Ascend_0.res",
+      "sha256": "b406ed87916ed58c0968f06860e2a1cdc004c9f0e6719683dc641f9bd2b0ff27",
+      "bytes": 3735
+    },
+    {
+      "path": "src/world/roads/generated/collisions/highway/Highway_1_Segment_SmallShoulder_1_Ascend_Fence_0.res",
+      "sha256": "bbdd6dfd01a29adcf1624bb2fe04f81501a35b9e6a913691a91acb581b50f798",
+      "bytes": 4455
+    },
+    {
+      "path": "src/world/roads/generated/collisions/highway/Highway_1_Segment_SmallShoulder_1_Descend_0.res",
+      "sha256": "7fa0501ea9939420db275f89f188a14c34da2c8f8910a526e8e9e59c0561460d",
+      "bytes": 3735
+    },
+    {
+      "path": "src/world/roads/generated/collisions/highway/Highway_1_Segment_SmallShoulder_1_Descend_Fence_0.res",
+      "sha256": "48fdf75a6fc326336f4a891aa79db0e87426a2bd3cf3a395e75b86f23216ba0c",
+      "bytes": 4455
+    },
+    {
+      "path": "src/world/roads/generated/collisions/highway/Highway_1_Segment_SmallShoulder_1_Elevation_0.res",
+      "sha256": "1be700576a1ee99190d9056931df43a91aa750f1ed2881c01a7871669e39491c",
+      "bytes": 1791
+    },
+    {
+      "path": "src/world/roads/generated/collisions/highway/Highway_1_Segment_SmallShoulder_1_Elevation_Fence_0.res",
+      "sha256": "70707f08e2e5f10090e34db8e812110ca724dd16419c4b11d23f745aafe503d5",
+      "bytes": 2079
+    },
+    {
+      "path": "src/world/roads/generated/collisions/highway/Highway_1_TwoLane_Curve_Big_Inner_L_0.res",
+      "sha256": "0f72d7befbf5aae2d29dbe1f83d897192189584160ab7e2146baadf6723d17de",
+      "bytes": 55215
+    },
+    {
+      "path": "src/world/roads/generated/collisions/highway/Highway_1_TwoLane_Curve_Big_Inner_L_Fence_0.res",
+      "sha256": "d6eab79a71b2c32cd2631ba4a45a94b5fb58b29b1bbabc32077bcc5c8722a302",
+      "bytes": 60543
+    },
+    {
+      "path": "src/world/roads/generated/collisions/highway/Highway_1_TwoLane_Curve_Big_Inner_R_0.res",
+      "sha256": "a41db3f205fdef1701702e95186e77ce595167ca54d39b83a4b0b12199625e5a",
+      "bytes": 56655
+    },
+    {
+      "path": "src/world/roads/generated/collisions/highway/Highway_1_TwoLane_Curve_Big_Inner_R_Fence_0.res",
+      "sha256": "606438bbcb423858e0c77e68e6511518620ccfcbe5b5057cd1497db5baf02486",
+      "bytes": 61983
+    },
+    {
+      "path": "src/world/roads/generated/collisions/highway/Highway_1_TwoLane_Curve_Big_Outer_L_0.res",
+      "sha256": "5ddac9ff35b8232c7a364f96456d8f0e256a835e7f11c76a6f03a5b12e9cdfe5",
+      "bytes": 60543
+    },
+    {
+      "path": "src/world/roads/generated/collisions/highway/Highway_1_TwoLane_Curve_Big_Outer_L_Fence_0.res",
+      "sha256": "c3f230d7434d54b4ab367a565c2beb6dc826c24e207ea2048cec93c69b4aea97",
+      "bytes": 65655
+    },
+    {
+      "path": "src/world/roads/generated/collisions/highway/Highway_1_TwoLane_Curve_Big_Outer_R_0.res",
+      "sha256": "4176040f97a0f74c9b17412b4bc8d938ed308634aa24ac8f6d3d2f81866d5f2e",
+      "bytes": 60759
+    },
+    {
+      "path": "src/world/roads/generated/collisions/highway/Highway_1_TwoLane_Curve_Big_Outer_R_Fence_0.res",
+      "sha256": "f9a7fc941c933212432a2cd642fcd728ffece8a7078efacbe827c270534e74ba",
+      "bytes": 66159
+    },
+    {
+      "path": "src/world/roads/generated/collisions/ovaltrack/Track_1_Corner_L_0.res",
+      "sha256": "c39b8461f0c57c7ca5400dde6fdd8fd4029dc97d2750b39376dccc85f58c660f",
+      "bytes": 2034495
+    },
+    {
+      "path": "src/world/roads/generated/collisions/ovaltrack/Track_1_Corner_R_0.res",
+      "sha256": "eda2ef3eec0a77f7a1853f078f3a47835466660d1bad0da4512ed48befdf3291",
+      "bytes": 2034495
+    },
+    {
+      "path": "src/world/roads/generated/collisions/ovaltrack/Track_1_StraightSegment_1_L_0.res",
+      "sha256": "5a08534ba8633f9250e63c0a92dd82d52163b2c99d86dc3bbc7f27bf1203fc3d",
+      "bytes": 386559
+    },
+    {
+      "path": "src/world/roads/generated/collisions/ovaltrack/Track_1_StraightSegment_2_L_0.res",
+      "sha256": "7b9ef3f896d8b28beb0edf9dcfd905e9eb4ab3d07dbb56463b210a1e952e92f8",
+      "bytes": 386559
+    },
+    {
+      "path": "src/world/roads/generated/collisions/ovaltrack/Track_1_StraightSegment_3_Door_L_0.res",
+      "sha256": "c3b5042e10235d621d22325e99fbffc8cf87942dfc4d1107cce5cbb7ce3cdf0e",
+      "bytes": 229887
+    },
+    {
+      "path": "src/world/roads/generated/collisions/ovaltrack/Track_1_StraightSegment_Angeled_1_L_0.res",
+      "sha256": "ce53f3be88680e573e99c83037f8ff70b61798fe2443dbc904deced2c62f4921",
+      "bytes": 386559
+    },
+    {
+      "path": "src/world/roads/generated/collisions/ovaltrack/Track_1_StraightSegment_Angeled_2_L_0.res",
+      "sha256": "f7c8bfc7520874eebff5e82557354e25c32263beb3c656b2580547e7161f17b5",
+      "bytes": 386559
+    },
+    {
+      "path": "src/world/roads/generated/collisions/parking/Road10_90angle_Corner_0.res",
+      "sha256": "14e1e41876bbb74116265855c2236c8c6b4e931f7f49b1a90bd41c88968a51ec",
+      "bytes": 11655
+    },
+    {
+      "path": "src/world/roads/generated/collisions/parking/Road1_0.res",
+      "sha256": "12d3e7964ccf1991c28d27e799d2e19043be9bdfb5af1ae582d5ff144e400de2",
+      "bytes": 3375
+    },
+    {
+      "path": "src/world/roads/generated/collisions/parking/Road1_Curve1_0.res",
+      "sha256": "dc8946e5a3edfd33599ed724dfbadb498a107ee29bf4db2a87f4f4583a99b73b",
+      "bytes": 6255
+    },
+    {
+      "path": "src/world/roads/generated/collisions/parking/Road1_Curve2_0.res",
+      "sha256": "1df43961d5b31c593a2630788b8a380f0162ccb3fc7976457dc6e6765230c752",
+      "bytes": 11367
+    },
+    {
+      "path": "src/world/roads/generated/collisions/parking/Road1_Curve3_0.res",
+      "sha256": "c0fecff44fd6c3aa0be5deaf0ba0cd0e18ed3c110b8a9a3e6bbc548f6db1bca8",
+      "bytes": 10575
+    },
+    {
+      "path": "src/world/roads/generated/collisions/parking/Road1_Curve4_0.res",
+      "sha256": "2e311613f3406d31c64d103db21db13ce829f8b722677be3b4a7a84aa6af1efa",
+      "bytes": 20655
+    },
+    {
+      "path": "src/world/roads/generated/collisions/parking/Road1_Parking1_0.res",
+      "sha256": "70e04823f1af06e70fca66a1f308ebce62944490cbbb581bd84c5b1ce3ff12bb",
+      "bytes": 3375
+    },
+    {
+      "path": "src/world/roads/generated/collisions/parking/Road1_Parking1_Open_0.res",
+      "sha256": "0c327bd9b83b1d7c87ff93a43c0a576d724af066786dce8b37360661df4da397",
+      "bytes": 2655
+    },
+    {
+      "path": "src/world/roads/generated/collisions/parking/Road1_Parking2_0.res",
+      "sha256": "1842a360765eade1123016c9c6ea03763ec68086f6ee28aac15966e98e9a2f36",
+      "bytes": 3375
+    },
+    {
+      "path": "src/world/roads/generated/collisions/parking/Road2_T_0.res",
+      "sha256": "9fe10138d61993fc15b54aa7b11cc6a68e0d3e98b158e1b90480ff2fa41417be",
+      "bytes": 9567
+    },
+    {
+      "path": "src/world/roads/generated/collisions/parking/Road2_T_Parking_Entrance_0.res",
+      "sha256": "ae7cecef48df42a673223ba0fbbd2ae38aea823abdceec49e42cd97aba53ded7",
+      "bytes": 9567
+    },
+    {
+      "path": "src/world/roads/generated/collisions/parking/Road2_T_Parking_Entrance_Open_0.res",
+      "sha256": "33dad939dbe6f4371d602d194caf2acc387e8dbb5068cfa7d6b93364422072f6",
+      "bytes": 7695
+    },
+    {
+      "path": "src/world/roads/generated/collisions/parking/Road2_X_0.res",
+      "sha256": "60d8f25f974507404a6323235f428c0075f3227baece76ec2084f1c25177a4c7",
+      "bytes": 9999
+    },
+    {
+      "path": "src/world/roads/generated/collisions/parking/Road3_Crossing_0.res",
+      "sha256": "8fe0eda7ce0c71bedbb41385d7e1a5bf685925aca593689acc6705866b169ad3",
+      "bytes": 5967
+    },
+    {
+      "path": "src/world/roads/generated/collisions/parking/Road4_Shoulder_Extender_0.res",
+      "sha256": "cbdeb3a139fc6bb35956d1b550e7b70c129e33b38da21168f3e56bbbdb6f42ee",
+      "bytes": 6687
+    },
+    {
+      "path": "src/world/roads/generated/collisions/parking/Road4_Shoulder_Narrower_0.res",
+      "sha256": "6250e324f78c2120714b339d94f680170c5819dc3bcc2b2c27d7a5023ff8b67a",
+      "bytes": 6687
+    },
+    {
+      "path": "src/world/roads/generated/collisions/parking/Road5_Shoulder1_0.res",
+      "sha256": "fd369df8353ad8a009e5336519fd9cd5a5eb6a1c9926aa9b19264e378fc79583",
+      "bytes": 3663
+    },
+    {
+      "path": "src/world/roads/generated/collisions/parking/Road5_Shoulder2_0.res",
+      "sha256": "e71e8284dd541c70e739e0355d03e236021b5c3d43205f1f9843025619491fe7",
+      "bytes": 3663
+    },
+    {
+      "path": "src/world/roads/generated/collisions/parking/Road5_Shoulder3_0.res",
+      "sha256": "bf7de289139d858d599d9fc1bfb5392f0c242f32cb26c534433fa7135d0a2ff5",
+      "bytes": 3663
+    },
+    {
+      "path": "src/world/roads/generated/collisions/parking/Road6_CornerL_0.res",
+      "sha256": "7fbe96922e8a41892386b35d2922b42e49ec46ea110af584e9e3c6cdc55ee817",
+      "bytes": 10863
+    },
+    {
+      "path": "src/world/roads/generated/collisions/parking/Road6_CornerR_0.res",
+      "sha256": "5494845f19eb54cc9759e9dac551366252e89fa9f2085f6854745f3db9d61322",
+      "bytes": 10863
+    },
+    {
+      "path": "src/world/roads/generated/collisions/parking/Road6_End_0.res",
+      "sha256": "23a2bf9845b9820f792e545fb882d00fa13477752a83637a909c95dc7e3f00de",
+      "bytes": 11295
+    },
+    {
+      "path": "src/world/roads/generated/collisions/parking/Road7_0.res",
+      "sha256": "c022302d0577abda09f3cb881938eed444bb6769791090ea22a5030755ab017b",
+      "bytes": 1935
+    },
+    {
+      "path": "src/world/roads/generated/collisions/parking/Road8_0.res",
+      "sha256": "f1a37bb72897a1e9fc579469725d144ff88007122ccfdee543ce3cf37478047f",
+      "bytes": 1935
+    },
+    {
+      "path": "src/world/roads/generated/collisions/parking/Road9_0.res",
+      "sha256": "40dfb6a7881cfc8a2947fe2390a445cf659b45aeb543017b652a33a71127cdb9",
+      "bytes": 7263
+    },
+    {
+      "path": "src/world/roads/generated/collisions/parking/ramp1_0.res",
+      "sha256": "e6008a403374bdf81782924d24a33d2d023f6bd483f9561672c537b5f3b4cb9d",
+      "bytes": 13023
+    },
+    {
+      "path": "src/world/roads/generated/collisions/racetrack/Racetrack1_Blue_Default_0.res",
+      "sha256": "6921d76ec5f2e9b87e70b4daa17c73ea48f6ff9284ed4082333add6b6f624223",
+      "bytes": 3663
+    },
+    {
+      "path": "src/world/roads/generated/collisions/racetrack/Racetrack1_Blue_Default_FinishLine1_0.res",
+      "sha256": "3776b071f88ba9c45169395061ce8b0ab2f6d07397c5cd3ccc2bc23bbb1db3d1",
+      "bytes": 33471
+    },
+    {
+      "path": "src/world/roads/generated/collisions/racetrack/Racetrack1_Blue_Default_FinishLine2_0.res",
+      "sha256": "455b17771099363d5c4dde0f07efde5fd61ec200505a72b37388660eb43b9759",
+      "bytes": 17343
+    },
+    {
+      "path": "src/world/roads/generated/collisions/racetrack/Racetrack1_Blue_Default_Fork_Curb_Left_0.res",
+      "sha256": "42a29728d3bae4521e5acd7c34f8913fbe18d1d89a76c9bf0ee9071477b84594",
+      "bytes": 92655
+    },
+    {
+      "path": "src/world/roads/generated/collisions/racetrack/Racetrack1_Blue_Default_Fork_Curb_Right_0.res",
+      "sha256": "ffe08e50e590bc07fb2b30bd984f8c44d36479fe67bdd0c2ebe85965b5ff1b47",
+      "bytes": 92655
+    },
+    {
+      "path": "src/world/roads/generated/collisions/racetrack/Racetrack1_Blue_Default_Fork_Left_0.res",
+      "sha256": "e84033bb15fe6f8433ab6bec9e0bf0be367c17f77e3fa719875f072631958e5e",
+      "bytes": 21735
+    },
+    {
+      "path": "src/world/roads/generated/collisions/racetrack/Racetrack1_Blue_Default_Fork_Right_0.res",
+      "sha256": "ce2e65dfd4ec69a9090faea6cedceef2f9c97a9cfabb3d395dc333870c5c6394",
+      "bytes": 21735
+    },
+    {
+      "path": "src/world/roads/generated/collisions/racetrack/Racetrack1_Blue_Poistions_0.res",
+      "sha256": "44a642993bbd32d428d03dc31674471cc893b647ac8a51f3d9b5401672ac307e",
+      "bytes": 5823
+    },
+    {
+      "path": "src/world/roads/generated/collisions/racetrack/Racetrack1_Default_0.res",
+      "sha256": "0d996b50eb30ee4a672583fc7fb9772f24a00a7c5a46918e1028a99c9ea2dc4a",
+      "bytes": 3663
+    },
+    {
+      "path": "src/world/roads/generated/collisions/racetrack/Racetrack1_Default_FinishLine1_0.res",
+      "sha256": "05e7aa734aadb8dc4bbc8e4f7583a84b706885d9318337488ab4dacded65b508",
+      "bytes": 33471
+    },
+    {
+      "path": "src/world/roads/generated/collisions/racetrack/Racetrack1_Default_FinishLine2_0.res",
+      "sha256": "b402f97fa656ee459c5bbd901d3bc89b530e9459d80eb6d8f54da6dc07ac10ba",
+      "bytes": 17343
+    },
+    {
+      "path": "src/world/roads/generated/collisions/racetrack/Racetrack1_Default_Fork_Curb_Left_0.res",
+      "sha256": "3ded4e12dc4970fed1e7d1ed85bc44aaa8e921868668204a8e0c78b931096141",
+      "bytes": 92655
+    },
+    {
+      "path": "src/world/roads/generated/collisions/racetrack/Racetrack1_Default_Fork_Curb_Right_0.res",
+      "sha256": "a75aab85150e20ddda1489c381a4aae83ac892abc9dfb23bf1437e935ee1bb22",
+      "bytes": 92655
+    },
+    {
+      "path": "src/world/roads/generated/collisions/racetrack/Racetrack1_Default_Fork_Left_0.res",
+      "sha256": "acea26091421a4df6df94830adf592e84d448ea18fdf95f0eadc612ae79aceaf",
+      "bytes": 21735
+    },
+    {
+      "path": "src/world/roads/generated/collisions/racetrack/Racetrack1_Default_Fork_Right_0.res",
+      "sha256": "5ea971742772b7aed4dfb436f9345a7a959326adab7ccebd959f82d41e310d34",
+      "bytes": 21735
+    },
+    {
+      "path": "src/world/roads/generated/collisions/racetrack/Racetrack1_Gray_Default_0.res",
+      "sha256": "5411a889c71040a3635d005c2ff95f1d71bd0d7ab2faadceefab5aa05e3e7672",
+      "bytes": 3663
+    },
+    {
+      "path": "src/world/roads/generated/collisions/racetrack/Racetrack1_Jump_0.res",
+      "sha256": "60dd6717e9b7b7499627b7032514d61273fee95acc4bc238bdb83d8e766a46dd",
+      "bytes": 128079
+    },
+    {
+      "path": "src/world/roads/generated/collisions/racetrack/Racetrack1_Poistions_0.res",
+      "sha256": "ca49f4b5f28e1033db6b1002ba4de8a45857a6bb6ebca553224c1f7276eb5f2f",
+      "bytes": 5679
+    },
+    {
+      "path": "src/world/roads/generated/collisions/racetrack/Racetrack1_RedGray_Default_0.res",
+      "sha256": "6903e0fd3f91fab5408ca78ae8f481b752bcfd02152fa2c63652d6b2a8a8ecc3",
+      "bytes": 3663
+    },
+    {
+      "path": "src/world/roads/generated/collisions/racetrack/Racetrack1_RedGray_PitLane_Boxes_0.res",
+      "sha256": "b3c3d99907bacaf106a07a63970b5cb2e96ba7a4b9ebff726efab62230713520",
+      "bytes": 5103
+    },
+    {
+      "path": "src/world/roads/generated/collisions/racetrack/Racetrack1_RedWhiteBlue_CurbLeft_0.res",
+      "sha256": "125d945479b882da2bf1de5f0fd9baa2a267cf0e58eb494125bc300a8371fa2a",
+      "bytes": 16911
+    },
+    {
+      "path": "src/world/roads/generated/collisions/racetrack/Racetrack1_RedWhiteBlue_CurbRight_0.res",
+      "sha256": "4ee0d4372178cc59ca86bc09c11d8cefc74cb794e7b5e8dea87784ca4932e9e2",
+      "bytes": 16911
+    },
+    {
+      "path": "src/world/roads/generated/collisions/racetrack/Racetrack1_RedWhiteBlue_Curbs_0.res",
+      "sha256": "0ddba68226f51ea81cafeea36480abe3b2f1c40ec1943a66e88096755c03caf9",
+      "bytes": 21519
+    },
+    {
+      "path": "src/world/roads/generated/collisions/racetrack/Racetrack1_RedWhiteBlue_Curbs_Curve_45_Long_Left_0.res",
+      "sha256": "564d80b446685eb6e9e0563e7fb484fc5bc0775d08b363a31428ca9cfbc9f726",
+      "bytes": 61839
+    },
+    {
+      "path": "src/world/roads/generated/collisions/racetrack/Racetrack1_RedWhiteBlue_Curbs_Curve_45_Long_Right_0.res",
+      "sha256": "b254e87a27f102a8054663469173d5e139c97b271a17f000f6a06e051a8b78f9",
+      "bytes": 61839
+    },
+    {
+      "path": "src/world/roads/generated/collisions/racetrack/Racetrack1_RedWhiteBlue_Curbs_Curve_90_Big_Left_0.res",
+      "sha256": "69ceb2a8efc69f24edd140caff1d37acb8e6aa3e2c22bb312a1d40c50a3edc5e",
+      "bytes": 125199
+    },
+    {
+      "path": "src/world/roads/generated/collisions/racetrack/Racetrack1_RedWhiteBlue_Curbs_Curve_90_Big_Right_0.res",
+      "sha256": "93d8691d6b74693c5ef64af586e2762bf82e0200d9b503c4430da005bbadf186",
+      "bytes": 125199
+    },
+    {
+      "path": "src/world/roads/generated/collisions/racetrack/Racetrack1_RedWhiteBlue_Curbs_Curve_90_Small_Left_0.res",
+      "sha256": "466d2984250dcd46c31277d203a0296f1767e65d019a6bdba1b998cbedfd43da",
+      "bytes": 27279
+    },
+    {
+      "path": "src/world/roads/generated/collisions/racetrack/Racetrack1_RedWhiteBlue_Curbs_Curve_90_Small_Right_0.res",
+      "sha256": "35d960c5a394d02083bccf772344a330e51c825310d5c7bf7df85979aa507f31",
+      "bytes": 27279
+    },
+    {
+      "path": "src/world/roads/generated/collisions/racetrack/Racetrack1_RedWhiteBlue_RoadAdapter_0.res",
+      "sha256": "171c01d4018fe8cadef73c552ff997dd7e0c03de7c8a80f0eb2bab89a71c7f8a",
+      "bytes": 16623
+    },
+    {
+      "path": "src/world/roads/generated/collisions/racetrack/Racetrack1_RedWhite_CurbLeft_0.res",
+      "sha256": "7d61be329b07bfb729f276276649c988e07e3fb5870d97f06b422f22a95b3c08",
+      "bytes": 16911
+    },
+    {
+      "path": "src/world/roads/generated/collisions/racetrack/Racetrack1_RedWhite_CurbRight_0.res",
+      "sha256": "9c95ea0c44bc73b196c4ce47663d80d0a5ea485f94a5852bca56e3350cd77f8a",
+      "bytes": 16911
+    },
+    {
+      "path": "src/world/roads/generated/collisions/racetrack/Racetrack1_RedWhite_Curbs_0.res",
+      "sha256": "bc7998812b233b076a50e59ed8934e3c101abf21d7904bfb1f6c50aa090e92ad",
+      "bytes": 21519
+    },
+    {
+      "path": "src/world/roads/generated/collisions/racetrack/Racetrack1_RedWhite_Curbs_Curve_45_Long_Left_0.res",
+      "sha256": "a42f97bf8716ab918053515e132350dff440a1c6a18b5a7b663f9736d2dcaa8f",
+      "bytes": 61839
+    },
+    {
+      "path": "src/world/roads/generated/collisions/racetrack/Racetrack1_RedWhite_Curbs_Curve_45_Long_Right_0.res",
+      "sha256": "4c2eb14025dd31f4cf44308fcb30945b70e330f1f3c261cefd5bcfbb0a4ca213",
+      "bytes": 61839
+    },
+    {
+      "path": "src/world/roads/generated/collisions/racetrack/Racetrack1_RedWhite_Curbs_Curve_90_Big_Left_0.res",
+      "sha256": "4c89a921f0f7d8a11ca05e682eeedd01674019dcc9b789d8d16d1fcf837d83c8",
+      "bytes": 125199
+    },
+    {
+      "path": "src/world/roads/generated/collisions/racetrack/Racetrack1_RedWhite_Curbs_Curve_90_Big_Right_0.res",
+      "sha256": "74d180000eeb5111849dc31dd0ba80f880a91989f857c4aa9db031fd40544397",
+      "bytes": 125199
+    },
+    {
+      "path": "src/world/roads/generated/collisions/racetrack/Racetrack1_RedWhite_Curbs_Curve_90_Small_Left_0.res",
+      "sha256": "0120e75ff8d3b5e1afdc3c48b09ff77376cb475d9f6fbd1e577c95c668b96f69",
+      "bytes": 27279
+    },
+    {
+      "path": "src/world/roads/generated/collisions/racetrack/Racetrack1_RedWhite_Curbs_Curve_90_Small_Right_0.res",
+      "sha256": "9eff0014a41a3a096825861a063a7096175ed13cd880c98928abdd3b73520633",
+      "bytes": 27279
+    },
+    {
+      "path": "src/world/roads/generated/collisions/racetrack/Racetrack1_RedWhite_Curbs_Overpass_0.res",
+      "sha256": "5031a7e553b2c818fe9394a37b38541c88a6abb7b6393c01ddc797ba42b75aab",
+      "bytes": 332703
+    },
+    {
+      "path": "src/world/roads/generated/collisions/racetrack/Racetrack1_RedWhite_RoadAdapter_0.res",
+      "sha256": "a793d1570ce60dfc3a1b8aed0914677228e4f377cb05b40df919963e55575468",
+      "bytes": 16623
+    },
+    {
+      "path": "src/world/roads/generated/collisions/racetrack/Racetrack1_YellowBlue_CurbLeft_0.res",
+      "sha256": "1d4a66e5440e04eb64e36fc99e19d3a33bb5fa45054345c1db84c148c8705dbd",
+      "bytes": 16911
+    },
+    {
+      "path": "src/world/roads/generated/collisions/racetrack/Racetrack1_YellowBlue_CurbRight_0.res",
+      "sha256": "86b98eeb94727fd8ff9567aae80cb70537badaaa5ac792fb1e7a6c981571f6e1",
+      "bytes": 16911
+    },
+    {
+      "path": "src/world/roads/generated/collisions/racetrack/Racetrack1_YellowBlue_Curbs_Curve_45_Long_Left_0.res",
+      "sha256": "1d85b7032cbae45f8d52849989815197a675756973de545bbd6b288299aa04e1",
+      "bytes": 61839
+    },
+    {
+      "path": "src/world/roads/generated/collisions/racetrack/Racetrack1_YellowBlue_Curbs_Curve_45_Long_Right_0.res",
+      "sha256": "71c24de19eae81d04a19375b2d5b1f85c00be3a3f5514c2369eac91ba6e4b32c",
+      "bytes": 61839
+    },
+    {
+      "path": "src/world/roads/generated/collisions/racetrack/Racetrack1_YellowBlue_Curbs_Curve_90_Big_Left_0.res",
+      "sha256": "8490572b0984fdeb967fcf673ae1c1d227831885b92804eae988731f280ca53b",
+      "bytes": 125199
+    },
+    {
+      "path": "src/world/roads/generated/collisions/racetrack/Racetrack1_YellowBlue_Curbs_Curve_90_Big_Right_0.res",
+      "sha256": "974c2d7ff0c857be49aace030870aa786824f7c159fdb0708a25eb913182a24d",
+      "bytes": 125199
+    },
+    {
+      "path": "src/world/roads/generated/collisions/racetrack/Racetrack1_YellowBlue_Curbs_Curve_90_Small_Left_0.res",
+      "sha256": "cc76ee81c56313a66dad117927c31be8e3b3598d1616b8d739f86cd97a743bc6",
+      "bytes": 27279
+    },
+    {
+      "path": "src/world/roads/generated/collisions/racetrack/Racetrack1_YellowBlue_Curbs_Curve_90_Small_Right_0.res",
+      "sha256": "028ca9acd4d1b1fdd38b447685ea6d077a03a32109b91d28c4256c881c20a114",
+      "bytes": 27279
+    },
+    {
+      "path": "src/world/roads/generated/collisions/racetrack/Racetrack1_YellowBlue_Default_Fork_Curb_Left_0.res",
+      "sha256": "59a629cf296db6fdcce2c689c4dcc0365bc0c561d7c9702630d9f7dbf18c19a4",
+      "bytes": 92655
+    },
+    {
+      "path": "src/world/roads/generated/collisions/racetrack/Racetrack1_YellowBlue_RoadAdapter_0.res",
+      "sha256": "87b0f4335dfaaa917dd8981c914cd9a1571198b09020a81fdb69c61197200115",
+      "bytes": 16623
+    },
+    {
+      "path": "src/world/roads/generated/collisions/racetrack/Racetrack1_Yellowblue_Default_Fork_Curb_Right_0.res",
+      "sha256": "2e92890610732c9f7cab931379c48df0911546ef35f247eeb765cd32b7b5eb3c",
+      "bytes": 92655
+    },
+    {
+      "path": "src/world/roads/generated/collisions/racetrack/Racetrack1_YelowBlue_Curbs_0.res",
+      "sha256": "3d564accbd1eedc98f854a686417b98118bbf4d064ebe07961dcb924ba7cc1bd",
+      "bytes": 21519
+    },
+    {
+      "path": "src/world/roads/generated/custom/road11_y_splitter_45.tscn",
+      "sha256": "74a1703910edc224d52973e6a053071cf195e7d8acc25e9a1a9b73e5bc5981d6",
+      "bytes": 55417
+    },
+    {
+      "path": "src/world/roads/generated/custom/road12_diagonal_splitter_l.tscn",
+      "sha256": "6a4360fc8641bbc0427fe7e76a11e7e8cf959616005dbe19deb0c8525ed121c3",
+      "bytes": 51454
+    },
+    {
+      "path": "src/world/roads/generated/custom/road12_diagonal_splitter_r.tscn",
+      "sha256": "fb02d5ec29262d52ce15378bb2ff03b30d8d6fd7deabe2e476250de8784cb2b1",
+      "bytes": 51464
+    },
+    {
+      "path": "src/world/roads/generated/custom/road1_curve2_45.tscn",
+      "sha256": "8e456f21b7d9420ddc469423bc4368d28fdc0654aab0bc5573799882ed7accb1",
+      "bytes": 458713
+    },
+    {
+      "path": "src/world/roads/generated/fit/road1_0_03326.tscn",
+      "sha256": "72f411d64b22092580cc8d7437f60598cc76ed6725e66050df512d15cde49b7c",
+      "bytes": 17195
+    },
+    {
+      "path": "src/world/roads/generated/fit/road1_0_11314.tscn",
+      "sha256": "3aaacef55a3586a52b263e4211706ef149a3749a8df7499bb8d68b44cebe56c4",
+      "bytes": 18450
+    },
+    {
+      "path": "src/world/roads/generated/fit/road1_0_92911.tscn",
+      "sha256": "1d15c8452b6950867bcda8bbe63f84614cbc3a982bb0cb52491e116985918e83",
+      "bytes": 17195
+    },
+    {
+      "path": "src/world/roads/generated/fit/road1_0_94705.tscn",
+      "sha256": "4c9c15ad341cd3c6d437faf00022d662ba85ae171ec97602e6635f8c84f2cbf4",
+      "bytes": 18209
+    },
+    {
+      "path": "src/world/roads/generated/fit/road1_10_00000.tscn",
+      "sha256": "1d19e9508b9007a365f2c85db3e91aed3c0573177cdaf5baf57f94fb0aeda76c",
+      "bytes": 15973
+    },
+    {
+      "path": "src/world/roads/generated/fit/road1_10_54403.tscn",
+      "sha256": "96bc7e32333ca8f14885b8f76d649ff3265926f84c68d3ab8a6b3cf471a6d5c7",
+      "bytes": 16959
+    },
+    {
+      "path": "src/world/roads/generated/fit/road1_10_82842.tscn",
+      "sha256": "3a60ea5002b59710c377c3ab57088ba45720c1e5695c4258d5c5f60edc406aa7",
+      "bytes": 17211
+    },
+    {
+      "path": "src/world/roads/generated/fit/road1_11_51472.tscn",
+      "sha256": "6ea70739014c9ad04b91cc4e7d642849e855ad18369e84afaf90a3e6a639ddf2",
+      "bytes": 17209
+    },
+    {
+      "path": "src/world/roads/generated/fit/road1_1_43472.tscn",
+      "sha256": "547dffc04be8bb0cd0888936aab5db1a8bf54112489c85a3f93bd53d5d7e8052",
+      "bytes": 18186
+    },
+    {
+      "path": "src/world/roads/generated/fit/road1_1_50653.tscn",
+      "sha256": "7dda993aacfa7c7d7c7611f0f40dd0aeee75897e00e3170d0c3f9906912811aa",
+      "bytes": 18244
+    },
+    {
+      "path": "src/world/roads/generated/fit/road1_2_00000.tscn",
+      "sha256": "76f62ff8716df26afc2758ea891d2b4ee755d31d224af836be1ebaa42ede8388",
+      "bytes": 15968
+    },
+    {
+      "path": "src/world/roads/generated/fit/road1_2_25527.tscn",
+      "sha256": "f01f429c7d6c3eb30433d1fc565b4ee9db3fc69dece0d2d2b51bcaee50c57f1f",
+      "bytes": 17222
+    },
+    {
+      "path": "src/world/roads/generated/fit/road1_2_34314.tscn",
+      "sha256": "95b20dc82a05438f77a18c2cd90d383f8584e14f50dc6c72407fba5176d1009e",
+      "bytes": 17238
+    },
+    {
+      "path": "src/world/roads/generated/fit/road1_3_00000.tscn",
+      "sha256": "c3430aee3ed52c1adf36151597d7f81fff732c4cfd7f82f0eab8e93a655ba75d",
+      "bytes": 16473
+    },
+    {
+      "path": "src/world/roads/generated/fit/road1_3_37258.tscn",
+      "sha256": "40c44fca09191a9169a1439a9cb39b5cecad638161429838b6b2911b4fa28428",
+      "bytes": 17936
+    },
+    {
+      "path": "src/world/roads/generated/fit/road1_3_42652.tscn",
+      "sha256": "5ff94c0fca33c8c1215b4ea9a50e59c4c61c5223fd7b35f3923ab9f0b57c6497",
+      "bytes": 17252
+    },
+    {
+      "path": "src/world/roads/generated/fit/road1_3_48145.tscn",
+      "sha256": "55d9ab626121755583520fad69684b36cc61f8d8570730e12c3ad1973e3f2258",
+      "bytes": 17225
+    },
+    {
+      "path": "src/world/roads/generated/fit/road1_3_49120.tscn",
+      "sha256": "55c6b07d8505d0276198405029794922ec2c49e827c4fb6dde411d93347eced9",
+      "bytes": 17213
+    },
+    {
+      "path": "src/world/roads/generated/fit/road1_3_85786.tscn",
+      "sha256": "b7b1cb147c9be4560be426d84573fa3b63a1c8fab851b86fe426f7b13f38a8bd",
+      "bytes": 17208
+    },
+    {
+      "path": "src/world/roads/generated/fit/road1_3_92000.tscn",
+      "sha256": "8ea98af4f830cd8559349ed1f45c7b4d3106a3af71de0dc130dbd5326e4b448e",
+      "bytes": 17953
+    },
+    {
+      "path": "src/world/roads/generated/fit/road1_5_51472.tscn",
+      "sha256": "fad9c6dd869a437e0fc120320cb0891df54a2f200a2b07a3f68ac43c005e5e0c",
+      "bytes": 17217
+    },
+    {
+      "path": "src/world/roads/generated/fit/road1_6_00000.tscn",
+      "sha256": "1d3adc1d3f018b7dc68a0d778ddb0e8ba0f4c9e6ddba31fa70d01d5660c0a4f5",
+      "bytes": 15933
+    },
+    {
+      "path": "src/world/roads/generated/fit/road1_6_03326.tscn",
+      "sha256": "91fed0ecf3fff536f94f3b0339aed717a4c9d235998c1bd9f8bef0d447c5b394",
+      "bytes": 17248
+    },
+    {
+      "path": "src/world/roads/generated/fit/road1_7_99988.tscn",
+      "sha256": "d5b362c5a92da756baa2f9f8604cc4c7455929c1a918fb5567e4e12af12475b1",
+      "bytes": 18004
+    },
+    {
+      "path": "src/world/roads/generated/fit/road1_9_43233.tscn",
+      "sha256": "d14293e92fe67ff29ab9f130a77a91d45eeb6af633978e3cf13933268b72c93f",
+      "bytes": 17217
+    },
+    {
+      "path": "src/world/roads/generated/fit/road1_9_43472.tscn",
+      "sha256": "fc04961579b0cd25ee684ef8534dc58ca31cc6cdb037f0bd22ca8e8083734f52",
+      "bytes": 17230
+    },
+    {
+      "path": "src/world/roads/generated/fit/road1_9_44765.tscn",
+      "sha256": "8582d7deef370acd89dc244e9a512bf56116d6bad17fdcf324d9861e934faacb",
+      "bytes": 17957
+    },
+    {
+      "path": "src/world/roads/generated/fit/road1_9_48092.tscn",
+      "sha256": "ac131e521dd1a62f27b7686cfbfda07873a6e59ff07cc1f47ddcfb5cd8ccea45",
+      "bytes": 17205
+    },
+    {
+      "path": "src/world/roads/generated/fit/road1_9_48145.tscn",
+      "sha256": "ea0f8cfd3c4604c24ab2127094ee647d638d52b883b0b2804a155c933b72ce51",
+      "bytes": 17209
+    },
+    {
+      "path": "src/world/roads/generated/fit/road1_9_85786.tscn",
+      "sha256": "5a2f8c31be3ce01edfadd0c2a5c7d3da3d38ea0e56eefd20d83456fa462df41c",
+      "bytes": 17202
+    },
+    {
+      "path": "src/world/roads/items/base/Road1/Default.tscn",
+      "sha256": "eaef14dd298b30b948a793f3201f994de98f7bf5b114f2bf4e326770f92235d8",
+      "bytes": 10338
+    },
+    {
+      "path": "src/world/roads/items/base/Road1/Road1_B__Road1_A.tscn",
+      "sha256": "6597cd506c441348ae29644329d3b4f4f88e8c0a2f4efe8ad644fc03cec01498",
+      "bytes": 10667
+    },
+    {
+      "path": "src/world/roads/items/base/Road1/Road1_B__Road1_A_full.tscn",
+      "sha256": "5f6a56321cd5e8a821f0a113798e6dc663d35b761cbf55ba1c0c4ecff6541b8a",
+      "bytes": 10683
+    },
+    {
+      "path": "src/world/roads/items/base/Road1/Road1_B__Road1_B_dotted_full_white.tscn",
+      "sha256": "41efc9dbb27fa5d332861010065cf8fab147588437b269f4f120a712c2d17647",
+      "bytes": 10706
+    },
+    {
+      "path": "src/world/roads/items/base/Road1/Road1_B__Road1_B_dotted_full_yellow.tscn",
+      "sha256": "e47b30c55676a3341834ca810023ede0d89f08337fef078de909ff2ec4a85a70",
+      "bytes": 10711
+    },
+    {
+      "path": "src/world/roads/items/base/Road1/Road1_B__Road1_B_dotted_white.tscn",
+      "sha256": "d3c7b139659e084d115a8161c86c8ff4739fffb1218a7f8125c874b8c5b3e75d",
+      "bytes": 10697
+    },
+    {
+      "path": "src/world/roads/items/base/Road1/Road1_B__Road1_B_dotted_yellow.tscn",
+      "sha256": "fa6ec41d9bc3e4f85408d8654f887f153ebf94eea1b2e62eac711108da4587a0",
+      "bytes": 10701
+    },
+    {
+      "path": "src/world/roads/items/base/Road1/Road1_B__Road1_B_full_white.tscn",
+      "sha256": "dfaf338aa7b3994bc43f6dba2a618cf3090f0bbb80681aa23b8578aa40903e12",
+      "bytes": 10691
+    },
+    {
+      "path": "src/world/roads/items/base/Road1/Road1_B__Road1_B_white.tscn",
+      "sha256": "fd6e5831724ed5858ad93d619f798a0ca1f986f069cf4710e56d59164420ccfc",
+      "bytes": 10683
+    },
+    {
+      "path": "src/world/roads/items/base/Road1/Road1_B__Road1_B_yellow.tscn",
+      "sha256": "4f3d67e5f27362319904d6e9fbcb13ad86b8d73c5f6a8a02ca6d794b1b2d217e",
+      "bytes": 10687
+    },
+    {
+      "path": "src/world/roads/items/base/Road10_90angle_Corner/Default.tscn",
+      "sha256": "6774344d799d515a972a485b31c1432c99146037171df2686fc70a4fbaeca6d4",
+      "bytes": 30993
+    },
+    {
+      "path": "src/world/roads/items/base/Road10_90angle_Corner/Road1_B__Road1_A.tscn",
+      "sha256": "374efc24c29ba1c5ec8a65b8dd30eaadf3d4d7da9aba262b8fb24b8f02148d48",
+      "bytes": 31328
+    },
+    {
+      "path": "src/world/roads/items/base/Road10_90angle_Corner/Road1_B__Road1_A_full.tscn",
+      "sha256": "35e4fa7c5d646966b8fecdd72c587d5d9642fa4b7b7d7683412a6b0d335d557c",
+      "bytes": 31339
+    },
+    {
+      "path": "src/world/roads/items/base/Road10_90angle_Corner/Road1_B__Road1_B_dotted_full_white.tscn",
+      "sha256": "eb0b3b3fd3fa3491790cbf5249e2b92a7595d565bfaa0c24b6f4b3ee3a5b158d",
+      "bytes": 31365
+    },
+    {
+      "path": "src/world/roads/items/base/Road10_90angle_Corner/Road1_B__Road1_B_dotted_full_yellow.tscn",
+      "sha256": "442be07c488b10aa894840cd536bb2d2591fd20019723ea36508f6ee1cf21c2c",
+      "bytes": 31368
+    },
+    {
+      "path": "src/world/roads/items/base/Road10_90angle_Corner/Road1_B__Road1_B_dotted_white.tscn",
+      "sha256": "cbdb0bec19b6a9a1d5e2e289a3828e6eedb28507725b6cd0ef6fe7e2074924f1",
+      "bytes": 31354
+    },
+    {
+      "path": "src/world/roads/items/base/Road10_90angle_Corner/Road1_B__Road1_B_dotted_yellow.tscn",
+      "sha256": "384280b8eace412540a3fd24218c21e21371ba1fe71ea3574ba66f6cf6f0c386",
+      "bytes": 31356
+    },
+    {
+      "path": "src/world/roads/items/base/Road10_90angle_Corner/Road1_B__Road1_B_full_white.tscn",
+      "sha256": "5dbb9f21c35b4a8f673a93160915b68bdda383d6eba78447392e464df65697d3",
+      "bytes": 31349
+    },
+    {
+      "path": "src/world/roads/items/base/Road10_90angle_Corner/Road1_B__Road1_B_white.tscn",
+      "sha256": "fd96fc9c7f669c276442a50746920949ac9921e9b23d228fc2b125615f5ef3df",
+      "bytes": 31339
+    },
+    {
+      "path": "src/world/roads/items/base/Road10_90angle_Corner/Road1_B__Road1_B_yellow.tscn",
+      "sha256": "405c36580b5428ac907b8fd356418a18328817894beb12e0f4c7a105afef9180",
+      "bytes": 31341
+    },
+    {
+      "path": "src/world/roads/items/base/Road11_Y_Splitter/Default.tscn",
+      "sha256": "917b91dd5171ad551f8215410c1bee283d62d20c999d239b40a76c4b15f0dc6d",
+      "bytes": 62162
+    },
+    {
+      "path": "src/world/roads/items/base/Road11_Y_Splitter/Road6_A__Road6_B.tscn",
+      "sha256": "64abe72d66b90b2c51a7307ee86ab0a993ef1f3cdd88a6fbfb351e514e1d907a",
+      "bytes": 62496
+    },
+    {
+      "path": "src/world/roads/items/base/Road11_Y_Splitter_45/Default.tscn",
+      "sha256": "e2a0beb27f11399165217a6958d14724dbf9b1badc1698d5fbe9ca7fef38e717",
+      "bytes": 41697
+    },
+    {
+      "path": "src/world/roads/items/base/Road11_Y_Splitter_45/Road6_A__Road6_B.tscn",
+      "sha256": "4f9a60e24d0e2295d07ef531cf92c18e7ab8a08170f456d29dcaa483dc70d97a",
+      "bytes": 42028
+    },
+    {
+      "path": "src/world/roads/items/base/Road12_Diagonal_Splitter_L/Default.tscn",
+      "sha256": "ecf5f2ce51689f3187f7245af17e3198a357cbe836088fe611ffcb4d9456111d",
+      "bytes": 30374
+    },
+    {
+      "path": "src/world/roads/items/base/Road12_Diagonal_Splitter_L/Road6_A__Road6_B.tscn",
+      "sha256": "4900239bfa7f4f4908e71c540510e1b075aeaa60093445b58e051b7e30383f9e",
+      "bytes": 30711
+    },
+    {
+      "path": "src/world/roads/items/base/Road12_Diagonal_Splitter_R/Default.tscn",
+      "sha256": "01ca3320859ba895701acea02972a323608e6cb9553e21b6d0db4da292a66c5d",
+      "bytes": 43497
+    },
+    {
+      "path": "src/world/roads/items/base/Road12_Diagonal_Splitter_R/Road6_A__Road6_B.tscn",
+      "sha256": "93428229d63123d1668c832af45eae3f90a62f25afaf00b50656fb2e3c4e194c",
+      "bytes": 43831
+    },
+    {
+      "path": "src/world/roads/items/base/Road1_Curve1/Default.tscn",
+      "sha256": "40a61ab9b9b6f64b496bb8b6fe35d333250f8ede170fd4458c23862c2ecadb31",
+      "bytes": 16784
+    },
+    {
+      "path": "src/world/roads/items/base/Road1_Curve1/Road1_B__Road1_A.tscn",
+      "sha256": "f955018e21850da106a98689d9387cd759c06ee3f4bd608b8a66e90ec325c919",
+      "bytes": 17120
+    },
+    {
+      "path": "src/world/roads/items/base/Road1_Curve1/Road1_B__Road1_A_full.tscn",
+      "sha256": "960b8e718c8e95683a678ce86f7b4e48fdd8acf8e3fff1d3677e14e6fcd7b7f6",
+      "bytes": 17130
+    },
+    {
+      "path": "src/world/roads/items/base/Road1_Curve1/Road1_B__Road1_B_dotted_full_white.tscn",
+      "sha256": "3356e448f95d5b32a6b8d03de206e9c2461dfc4f85115600a369ee1ceee08089",
+      "bytes": 17155
+    },
+    {
+      "path": "src/world/roads/items/base/Road1_Curve1/Road1_B__Road1_B_dotted_full_yellow.tscn",
+      "sha256": "981fe1b3176cb121c72011d4080145e9e01254185b51a17083c247874a34fecf",
+      "bytes": 17157
+    },
+    {
+      "path": "src/world/roads/items/base/Road1_Curve1/Road1_B__Road1_B_dotted_white.tscn",
+      "sha256": "03bece984baecbeb71ef3d406336ecf05cb2d3d5973674edd609861159afe4e9",
+      "bytes": 17145
+    },
+    {
+      "path": "src/world/roads/items/base/Road1_Curve1/Road1_B__Road1_B_dotted_yellow.tscn",
+      "sha256": "7286cb129df6546c228ada38bf814d0644493b03d666a41144f694e72c111b74",
+      "bytes": 17147
+    },
+    {
+      "path": "src/world/roads/items/base/Road1_Curve1/Road1_B__Road1_B_full_white.tscn",
+      "sha256": "68a3b80cd31f4c783f763b25f6c8ed8b35ec6880ac281118a54f357a910f246d",
+      "bytes": 17139
+    },
+    {
+      "path": "src/world/roads/items/base/Road1_Curve1/Road1_B__Road1_B_white.tscn",
+      "sha256": "0af0f8584da533533ab15f4b2bd585ea3f09630f2c453e24dd81706575f20e72",
+      "bytes": 17133
+    },
+    {
+      "path": "src/world/roads/items/base/Road1_Curve1/Road1_B__Road1_B_yellow.tscn",
+      "sha256": "15b98826f8a04b7a20404612d10f70e565c891f26c3375ceafbd65c31a90c3d0",
+      "bytes": 17135
+    },
+    {
+      "path": "src/world/roads/items/base/Road1_Curve2/Default.tscn",
+      "sha256": "63c2c7b98c823eda9c835dc6772bcc9299618310ae9e34062d62a5ec6b02ff40",
+      "bytes": 28775
+    },
+    {
+      "path": "src/world/roads/items/base/Road1_Curve2/Road1_B__Road1_A.tscn",
+      "sha256": "174d291ce38e7c40bbe0405cfae1e3324b53e1139e60d6cdbe21ad0c7db0fa79",
+      "bytes": 29107
+    },
+    {
+      "path": "src/world/roads/items/base/Road1_Curve2/Road1_B__Road1_A_full.tscn",
+      "sha256": "b8411949d4a0674bb5cdac844c858024507581e6a61cc7a371b2060fb8fecfc9",
+      "bytes": 29117
+    },
+    {
+      "path": "src/world/roads/items/base/Road1_Curve2/Road1_B__Road1_B_dotted_full_white.tscn",
+      "sha256": "2cacb22fdf909cb60a147ac25351ebd71d2cdf999d1106aacc8e954b41ceacd3",
+      "bytes": 29144
+    },
+    {
+      "path": "src/world/roads/items/base/Road1_Curve2/Road1_B__Road1_B_dotted_full_yellow.tscn",
+      "sha256": "ebc53eb08884741a64f6e85c9e9f71e12aa4d81d2da62e4a8786886c56a1b784",
+      "bytes": 29146
+    },
+    {
+      "path": "src/world/roads/items/base/Road1_Curve2/Road1_B__Road1_B_dotted_white.tscn",
+      "sha256": "70a1b2c1b6feb9a199e9878037edcd69aefafd66806c77f35bf07d1f515d6ac7",
+      "bytes": 29132
+    },
+    {
+      "path": "src/world/roads/items/base/Road1_Curve2/Road1_B__Road1_B_dotted_yellow.tscn",
+      "sha256": "fdd7e9c0929fad0a10be1332d508fd546dc3338179479f63daee9ae9347956db",
+      "bytes": 29136
+    },
+    {
+      "path": "src/world/roads/items/base/Road1_Curve2/Road1_B__Road1_B_full_white.tscn",
+      "sha256": "128d18174c1de20d0539ac04b1631354984139dc481ca4c036eedc5508446224",
+      "bytes": 29128
+    },
+    {
+      "path": "src/world/roads/items/base/Road1_Curve2/Road1_B__Road1_B_white.tscn",
+      "sha256": "19e459fc6f0116b7b15e3699fe9cca0a2de4cf4adaa3b358c43cf8595cdadf5d",
+      "bytes": 29118
+    },
+    {
+      "path": "src/world/roads/items/base/Road1_Curve2/Road1_B__Road1_B_yellow.tscn",
+      "sha256": "ed3c9b13313e6120c41a26dafa5b44611ea99307387be805b0ea711f6d4ae926",
+      "bytes": 29123
+    },
+    {
+      "path": "src/world/roads/items/base/Road1_Curve3/Default.tscn",
+      "sha256": "c8b7ca1f31ff64f0c53f8a2c218d317b78da1c1e10f7f5f4032fe131b6e4c066",
+      "bytes": 26330
+    },
+    {
+      "path": "src/world/roads/items/base/Road1_Curve3/Road1_B__Road1_A.tscn",
+      "sha256": "66f3fbbe0f0fe45ce072b58ff85d9cf96ff87aa9c676fcc5f676aeab4cc0cf64",
+      "bytes": 26662
+    },
+    {
+      "path": "src/world/roads/items/base/Road1_Curve3/Road1_B__Road1_A_full.tscn",
+      "sha256": "8c33c64f5c3878c8cee0776e16d1bc2bccecd8aa4cdc99f53610efebd109377e",
+      "bytes": 26672
+    },
+    {
+      "path": "src/world/roads/items/base/Road1_Curve3/Road1_B__Road1_B_dotted_full_white.tscn",
+      "sha256": "8f7769f95fef418c31510950948fac1591cc6e0d0d64d59fd571ce0467f97adb",
+      "bytes": 26700
+    },
+    {
+      "path": "src/world/roads/items/base/Road1_Curve3/Road1_B__Road1_B_dotted_full_yellow.tscn",
+      "sha256": "b8025a4ad77a28397ad2365fd16b482836984ff7a4c17aad27012bd24cf7fcfe",
+      "bytes": 26701
+    },
+    {
+      "path": "src/world/roads/items/base/Road1_Curve3/Road1_B__Road1_B_dotted_white.tscn",
+      "sha256": "775bef51b77b2257d8277f533594bed7f9a7ee8c8e2683f590a965070633f2e0",
+      "bytes": 26687
+    },
+    {
+      "path": "src/world/roads/items/base/Road1_Curve3/Road1_B__Road1_B_dotted_yellow.tscn",
+      "sha256": "49fea0704e8a88f4280133b7b714f52208e97d8c8a4b6e894134ae46b644fce2",
+      "bytes": 26692
+    },
+    {
+      "path": "src/world/roads/items/base/Road1_Curve3/Road1_B__Road1_B_full_white.tscn",
+      "sha256": "52c3a1a19a5f38ceafe58ef4a9951ffe7e2cf554133d4586571c1f81a6c87b42",
+      "bytes": 26684
+    },
+    {
+      "path": "src/world/roads/items/base/Road1_Curve3/Road1_B__Road1_B_white.tscn",
+      "sha256": "1acb69cdbbf2685f85553a2b50956af388d46688f80f47f6f52c9b6e19bada93",
+      "bytes": 26676
+    },
+    {
+      "path": "src/world/roads/items/base/Road1_Curve3/Road1_B__Road1_B_yellow.tscn",
+      "sha256": "1c7fc010222aebfefeff8d5c60ca9bd8b53df4b5a9aab94c75a5f707dcef9de7",
+      "bytes": 26677
+    },
+    {
+      "path": "src/world/roads/items/base/Road1_Curve4/Default.tscn",
+      "sha256": "d9339f6b8a6e2e142d7a44702dda3df826743cd6ec7182ac6c1de3ac174e52eb",
+      "bytes": 51015
+    },
+    {
+      "path": "src/world/roads/items/base/Road1_Curve4/Road1_B__Road1_A.tscn",
+      "sha256": "6f5f1179c78b81cd2bbe652bc488d33db0f3e92aba285db51d3cc71c24ee567b",
+      "bytes": 51349
+    },
+    {
+      "path": "src/world/roads/items/base/Road1_Curve4/Road1_B__Road1_A_full.tscn",
+      "sha256": "9eaf5e03e08dd25b06c55e688b4a2f631fd0e7635f0aa50cfd07e9e98eb1a2f7",
+      "bytes": 51356
+    },
+    {
+      "path": "src/world/roads/items/base/Road1_Curve4/Road1_B__Road1_B_dotted_full_white.tscn",
+      "sha256": "88c34fb294bc0f8320c0af54ad0d2860aa7229b79eb5e5a5ac57fa08354f0c6b",
+      "bytes": 51386
+    },
+    {
+      "path": "src/world/roads/items/base/Road1_Curve4/Road1_B__Road1_B_dotted_full_yellow.tscn",
+      "sha256": "b7bbbf8393d2c13f16f6944c1bb164f5ba77af57cd371a4f734a13c6d4eb0f2d",
+      "bytes": 51388
+    },
+    {
+      "path": "src/world/roads/items/base/Road1_Curve4/Road1_B__Road1_B_dotted_white.tscn",
+      "sha256": "f59d03512687f3426beef4db435766bc24d95a48e4742b04069ee8b81bf267b2",
+      "bytes": 51376
+    },
+    {
+      "path": "src/world/roads/items/base/Road1_Curve4/Road1_B__Road1_B_dotted_yellow.tscn",
+      "sha256": "424d62932f02a10803c9090ec8e1646ffb04c2a20c25beb165f5f041c16315e7",
+      "bytes": 51377
+    },
+    {
+      "path": "src/world/roads/items/base/Road1_Curve4/Road1_B__Road1_B_full_white.tscn",
+      "sha256": "8e4483685c738802b1472334300b3c17a510e719cb70083853262630a60b1441",
+      "bytes": 51369
+    },
+    {
+      "path": "src/world/roads/items/base/Road1_Curve4/Road1_B__Road1_B_white.tscn",
+      "sha256": "6c1940ba3707acdfa0ca9b71a506eea33f924c83d33a9f067e4cb1a0702f8bf4",
+      "bytes": 51356
+    },
+    {
+      "path": "src/world/roads/items/base/Road1_Curve4/Road1_B__Road1_B_yellow.tscn",
+      "sha256": "304d0ea843f20f299ecd809cb58fa9d27515d23e70814a8f2163deee5290924d",
+      "bytes": 51361
+    },
+    {
+      "path": "src/world/roads/items/base/Road2_T/Default.tscn",
+      "sha256": "7755f1d55719992b27eb151167a1a33190f6d60b6dc1d99e0b0f5fbd93f3b10a",
+      "bytes": 25643
+    },
+    {
+      "path": "src/world/roads/items/base/Road2_T/Road2_X_B__Road2_X_A.tscn",
+      "sha256": "547018c28471e31c944b20f0e2872617040731587951f244178a8b94800e129e",
+      "bytes": 25980
+    },
+    {
+      "path": "src/world/roads/items/base/Road2_X/Default.tscn",
+      "sha256": "870106bf8d6e92bab018573b2ef72f30317b549adba4fd3ea183f9b5ded375c2",
+      "bytes": 25967
+    },
+    {
+      "path": "src/world/roads/items/base/Road2_X/Road2_X_B__Road2_X_A.tscn",
+      "sha256": "0c2c188413de1292750dd169a9edb7a7cb374e617dfe5afd9965aa8351b1ddbb",
+      "bytes": 26308
+    },
+    {
+      "path": "src/world/roads/items/base/Road6_End/Default.tscn",
+      "sha256": "fd2bc925bfeb76a65251f8bae3221e54c9c5d18c359b4fb28413d80004d1791e",
+      "bytes": 26811
+    },
+    {
+      "path": "src/world/roads/items/base/Road6_End/Road6_B__Road6_A.tscn",
+      "sha256": "4c2418c7f8b46a7612333ceb721f8006729dca59cd3f4b7fcbe5e82e8a41daf8",
+      "bytes": 27149
+    },
+    {
+      "path": "src/world/roads/items/bridges/Bridge1/Default.tscn",
+      "sha256": "8b6450c9f299d665c217173f305e16074679adcd8919ec3a616b2e283f2f21ff",
+      "bytes": 6527
+    },
+    {
+      "path": "src/world/roads/items/bridges/Bridge1Ramp1/Default.tscn",
+      "sha256": "317c89dc01ae699a37dd1d1adc092db8db22f7509170e33c76869378192f4942",
+      "bytes": 20420
+    },
+    {
+      "path": "src/world/roads/items/bridges/Bridge1Ramp2/Default.tscn",
+      "sha256": "aab22b30e6779e3ea6b3e7340185003769ac280a4989e437b52d4f3e4ea9414e",
+      "bytes": 44330
+    },
+    {
+      "path": "src/world/roads/items/bridges/Bridge3/Default.tscn",
+      "sha256": "9f3f141d8cf5a9628f2f21672ccd2a9ae56625edf0179c3769a864c11f7735a1",
+      "bytes": 29376
+    },
+    {
+      "path": "src/world/roads/items/bridges/Bridge3Start/Default.tscn",
+      "sha256": "6fc765475d523aa9424f9d00814142a7e55400671d128aced8fc1625bf50ea99",
+      "bytes": 26672
+    },
+    {
+      "path": "src/world/roads/items/bridges/Bridge4/Default.tscn",
+      "sha256": "3bc4c92ad1ad69051162eb32402fc153e6c83f302693b0ed7ed76298458e0909",
+      "bytes": 7512
+    },
+    {
+      "path": "src/world/roads/items/bridges/Bridge6/Default.tscn",
+      "sha256": "f96348505e666b6eb675a844101d41244ab5226b94e9d43ee4f483af05a305e1",
+      "bytes": 15358
+    },
+    {
+      "path": "src/world/roads/items/bridges/Road1Ramp1/Default.tscn",
+      "sha256": "d0b70d229d344df24e41bd62c6e42e24f70ac5312701840fd56c4a106d4a11eb",
+      "bytes": 30707
+    },
+    {
+      "path": "src/world/roads/items/bridges/Road1Ramp2/Default.tscn",
+      "sha256": "3b59d3dfa6186662c7d9318843ad24566575f7d9c598d4f075f47526f685363c",
+      "bytes": 30731
+    },
+    {
+      "path": "src/world/roads/items/custom/Road11_Y_Splitter_45_Custom/Default.tscn",
+      "sha256": "afa4e7336ab83b7e22b5cc2ee442380db7e686ab0b7b158e4604b091bd5dae2f",
+      "bytes": 56470
+    },
+    {
+      "path": "src/world/roads/items/custom/Road11_Y_Splitter_45_Custom/Road6_A__Road6_B.tscn",
+      "sha256": "df96a194b94b59b1e75f8a76fee57af90cd8f7aaaa2ea9f59c8c2004c9f0584f",
+      "bytes": 56665
+    },
+    {
+      "path": "src/world/roads/items/custom/Road12_Diagonal_Splitter_L_Custom/Default.tscn",
+      "sha256": "519134b425e0f5b7452ab81936cbcdeb75ec5d61c9439943ba0082598a98ed3d",
+      "bytes": 53090
+    },
+    {
+      "path": "src/world/roads/items/custom/Road12_Diagonal_Splitter_L_Custom/Road6_A__Road6_B.tscn",
+      "sha256": "f2ee26b73da6569ef43ca6283efbbb891b60722f8dc5094942759713852cce37",
+      "bytes": 53496
+    },
+    {
+      "path": "src/world/roads/items/custom/Road12_Diagonal_Splitter_R_Custom/Default.tscn",
+      "sha256": "d928caac843450acaef6869b45b841ffb34e00126aa49b113cbc4fb42c943b47",
+      "bytes": 53101
+    },
+    {
+      "path": "src/world/roads/items/custom/Road12_Diagonal_Splitter_R_Custom/Road6_A__Road6_B.tscn",
+      "sha256": "2cb83b467cb1ad0db619d3c04908e16d59d729a5dbaa948aaeea0ec3a9861632",
+      "bytes": 53508
+    },
+    {
+      "path": "src/world/roads/items/custom/Road1_Curve2_Custom45/Default.tscn",
+      "sha256": "985049aef826f79c3f2c816907f005f749614c9c6cec0a4a66b19974c14aa9f4",
+      "bytes": 459373
+    },
+    {
+      "path": "src/world/roads/items/custom/Road1_Curve2_Custom45/Road1_B__Road1_A.tscn",
+      "sha256": "77d774bc696c3c7c9ab788d126da33d9534ec1d9b5ed6dc51eebf118c4558620",
+      "bytes": 459369
+    },
+    {
+      "path": "src/world/roads/items/custom/Road1_Curve2_Custom45/Road1_B__Road1_A_full.tscn",
+      "sha256": "2a62707fb3eca1164776cebac2e5b1fd984b2b9951104c17e19703366fd3364c",
+      "bytes": 459380
+    },
+    {
+      "path": "src/world/roads/items/custom/Road1_Curve2_Custom45/Road1_B__Road1_B_dotted_full_white.tscn",
+      "sha256": "e132b3ccf8e0c25ec5848bced27814e1d65adc9e45760b30463a179e00a0b3be",
+      "bytes": 459406
+    },
+    {
+      "path": "src/world/roads/items/custom/Road1_Curve2_Custom45/Road1_B__Road1_B_dotted_full_yellow.tscn",
+      "sha256": "9053de7dee6a5797463fb467759383d4c9190e33dec4ed50ed90f07baf6a5a7c",
+      "bytes": 459408
+    },
+    {
+      "path": "src/world/roads/items/custom/Road1_Curve2_Custom45/Road1_B__Road1_B_dotted_white.tscn",
+      "sha256": "2c86cbc56037abb01d132de897efe3d11c8a2c936cdf3467af4e62a40a3a4c94",
+      "bytes": 459394
+    },
+    {
+      "path": "src/world/roads/items/custom/Road1_Curve2_Custom45/Road1_B__Road1_B_dotted_yellow.tscn",
+      "sha256": "26348a089416290492d36adb52ded8c09afadf685b8daeaf65fa434646364805",
+      "bytes": 459400
+    },
+    {
+      "path": "src/world/roads/items/custom/Road1_Curve2_Custom45/Road1_B__Road1_B_full_white.tscn",
+      "sha256": "a4e23065a2f4a75643d9fd400c6e59f4b4bf6b996723de44eb32293385b5f3e3",
+      "bytes": 459390
+    },
+    {
+      "path": "src/world/roads/items/custom/Road1_Curve2_Custom45/Road1_B__Road1_B_white.tscn",
+      "sha256": "1d1725993fd40e753dcf8911721fe2c7d950df3ded9e9824d2969c9f968c2d86",
+      "bytes": 459385
+    },
+    {
+      "path": "src/world/roads/items/custom/Road1_Curve2_Custom45/Road1_B__Road1_B_yellow.tscn",
+      "sha256": "7ec89aca0fcf58cdd6a9447bb72b79b2cf7e1a06f207bfb30424e3e71ec19d27",
+      "bytes": 459387
+    },
+    {
+      "path": "src/world/roads/items/dirt/Dirt_Road_1_6m/Default.tscn",
+      "sha256": "cbd80f5b94b7a09a0043d85368ede00f8a166ed8e8b2989ee191ceb100c88c1b",
+      "bytes": 8206
+    },
+    {
+      "path": "src/world/roads/items/dirt/Dirt_Road_1_Curve_1/Default.tscn",
+      "sha256": "f06ebe7b787866093797ec6d7fec2244d5d83a4dfbede11dafa18f1db1b1423b",
+      "bytes": 18627
+    },
+    {
+      "path": "src/world/roads/items/dirt/Dirt_Road_1_Hill_1/Default.tscn",
+      "sha256": "640137002a717720e578924b38fb4d7b5e3bde6655c0971766b34401b83a20ff",
+      "bytes": 18208
+    },
+    {
+      "path": "src/world/roads/items/highway/Gravel_Segment_1/Default.tscn",
+      "sha256": "7f8c40e59805b3ecb01fd28f924e7aea88dfcc9b77add0184d5d8a76ba1fa560",
+      "bytes": 20017
+    },
+    {
+      "path": "src/world/roads/items/highway/Gravel_Segment_2/Default.tscn",
+      "sha256": "4a1e37324a95adbbaefc636a23b643e55c9e4a0e73ff2af516c5211d5008d974",
+      "bytes": 29566
+    },
+    {
+      "path": "src/world/roads/items/highway/Highway_1_Intersection_Segment_1_A/Default.tscn",
+      "sha256": "021df91033990ad29069a6d18f59d326b7fdcc1070c543ae4f9fc388b9fa30c2",
+      "bytes": 10402
+    },
+    {
+      "path": "src/world/roads/items/highway/Highway_1_Intersection_Segment_1_B/Default.tscn",
+      "sha256": "4747048b0955d98acfed9f6dcf3285895bde12a61976927400e9d8fb93ef971b",
+      "bytes": 6193
+    },
+    {
+      "path": "src/world/roads/items/highway/Highway_1_Intersection_Segment_1_C/Default.tscn",
+      "sha256": "f910799f29579d16752078927f5b8ec61157fd5e28ec7bde64bcddd11706fb88",
+      "bytes": 10406
+    },
+    {
+      "path": "src/world/roads/items/highway/Highway_1_Intersection_Segment_2_A/Default.tscn",
+      "sha256": "18db1d5872cb003681af188c88abdac9498ed1efe6d0fc41d2a9475fc9b52b0e",
+      "bytes": 9046
+    },
+    {
+      "path": "src/world/roads/items/highway/Highway_1_Intersection_Segment_2_B/Default.tscn",
+      "sha256": "d10b0e66c2629104d44b5af65682f63f0fe66ed9e6926f903ee69f48eaba8911",
+      "bytes": 4793
+    },
+    {
+      "path": "src/world/roads/items/highway/Highway_1_Intersection_Segment_2_C/Default.tscn",
+      "sha256": "a7f8917312941aa471d01027a513d9d98572f55898c36ca8f7a9788d6b05dfda",
+      "bytes": 9050
+    },
+    {
+      "path": "src/world/roads/items/highway/Highway_1_Intersection_Segment_2_D/Default.tscn",
+      "sha256": "8c1c0b5390d9eae4bb220e4cd8cb9a4d23c6c05aec997dc89e78baf7e873b1f4",
+      "bytes": 6441
+    },
+    {
+      "path": "src/world/roads/items/highway/Highway_1_Intersection_Segment_2_E/Default.tscn",
+      "sha256": "0a1f1d22523b052e81c244fb985a01f243ed826ac3753993983ec247f50571ed",
+      "bytes": 3336
+    },
+    {
+      "path": "src/world/roads/items/highway/Highway_1_Intersection_Segment_2_F/Default.tscn",
+      "sha256": "ea4c606bb372a1c68213aa23665c1c410ae81632470df1bea0343e02e64fefc3",
+      "bytes": 6466
+    },
+    {
+      "path": "src/world/roads/items/highway/Highway_1_Intersection_Segment_2_G/Default.tscn",
+      "sha256": "d03b18e1c046b223519cf241a853994c4f6f07f749e3a95d70ffc1d7572a00bc",
+      "bytes": 6201
+    },
+    {
+      "path": "src/world/roads/items/highway/Highway_1_LaneSplitter_1_Fence/Default.tscn",
+      "sha256": "f30e6700a45eadd2ce55d5149ca5d783e505bfb9e2755a59ddf09c1313e1b687",
+      "bytes": 20990
+    },
+    {
+      "path": "src/world/roads/items/highway/Highway_1_LaneSplitter_1_Fenceless/Default.tscn",
+      "sha256": "ac3e6e4896cd92acef37ae55e1582f3f35743b6f7f0a3496260f28369740c1a8",
+      "bytes": 16817
+    },
+    {
+      "path": "src/world/roads/items/highway/Highway_1_LaneSplitter_1_Median_Fence/Default.tscn",
+      "sha256": "1dd052d5268c52bdf766381b798f6674c5dbff0b5c5d045a61e3daa74595c3da",
+      "bytes": 21522
+    },
+    {
+      "path": "src/world/roads/items/highway/Highway_1_LaneSplitter_1_Median_Fenceless/Default.tscn",
+      "sha256": "e8b0adfc7629d06223aaab2c10b176fb4d1bb484b3650284812f98e63bddd619",
+      "bytes": 17552
+    },
+    {
+      "path": "src/world/roads/items/highway/Highway_1_LaneSplitter_Offramp_1_Fence/Default.tscn",
+      "sha256": "bf7a036617d9da866d45eaceacd83474d22fb8d09758bc74cac098e6f461e56d",
+      "bytes": 20372
+    },
+    {
+      "path": "src/world/roads/items/highway/Highway_1_LaneSplitter_Offramp_1_Fenceless/Default.tscn",
+      "sha256": "0f1e36d4c0a29178b822a3f3b4913934cbdde1d57e9725a524d84879c6a874f6",
+      "bytes": 21250
+    },
+    {
+      "path": "src/world/roads/items/highway/Highway_1_Segment_Half_Shoulder_1_A_R/Default.tscn",
+      "sha256": "640b6f0735de978d111419d38a931e9f9a2cd4feefec2d6899ec94d763cb8eb8",
+      "bytes": 6753
+    },
+    {
+      "path": "src/world/roads/items/highway/Highway_1_Segment_Half_Shoulder_1_B_R/Default.tscn",
+      "sha256": "9a83db4503d0cead4def31f08b4ab266f4f14cdc859b4815c9c2603c57185743",
+      "bytes": 5498
+    },
+    {
+      "path": "src/world/roads/items/highway/Highway_1_Segment_Median_1/Default.tscn",
+      "sha256": "634fc5f651bdf0655a1b2a3863809a06cc5253590b4a429c4878f4a30b2e62f2",
+      "bytes": 6175
+    },
+    {
+      "path": "src/world/roads/items/highway/Highway_1_Segment_Median_1_Ascend/Default.tscn",
+      "sha256": "25668b54eec4719e2e415cfa090650d48755821622cf72ac75cb3f3280e83500",
+      "bytes": 10876
+    },
+    {
+      "path": "src/world/roads/items/highway/Highway_1_Segment_Median_1_Ascend_Fence/Default.tscn",
+      "sha256": "188f5e555f9ddd8c09a0ca5a40002f94cde3c9ad758f5b5679f8baf6049dd26d",
+      "bytes": 12254
+    },
+    {
+      "path": "src/world/roads/items/highway/Highway_1_Segment_Median_1_Descend/Default.tscn",
+      "sha256": "664bb7953467e9fd61fa80302234ed42fce8f253712f23b3fadcfb4133ff6ea0",
+      "bytes": 10881
+    },
+    {
+      "path": "src/world/roads/items/highway/Highway_1_Segment_Median_1_Descend_Fence/Default.tscn",
+      "sha256": "714d32933368de4e0716650ac943adbc1c0b4b6203000997602ab448686f4bd1",
+      "bytes": 12258
+    },
+    {
+      "path": "src/world/roads/items/highway/Highway_1_Segment_Median_1_Elevation/Default.tscn",
+      "sha256": "a1068d22b258d702dfd0affd06012313ba80ce9289ebe4a9c2eedbb46b4d1d9f",
+      "bytes": 6186
+    },
+    {
+      "path": "src/world/roads/items/highway/Highway_1_Segment_Median_1_Elevation_Fence/Default.tscn",
+      "sha256": "353a1d2f05a732580c058b64972bbe23a7ab7f9d617fba59096b1d34b47b1f2f",
+      "bytes": 6783
+    },
+    {
+      "path": "src/world/roads/items/highway/Highway_1_Segment_Median_1_R/Default.tscn",
+      "sha256": "8bf1aefffab71af3d9c58d9b4a4c87e774465565a2c3ab2833e415a63be55ebf",
+      "bytes": 7958
+    },
+    {
+      "path": "src/world/roads/items/highway/Highway_1_Segment_Middle_Half_L/Default.tscn",
+      "sha256": "d16a72d75edc9f2da8106e3f0812f6884ef99f653b5e332eb13f0d8a2b80034f",
+      "bytes": 5097
+    },
+    {
+      "path": "src/world/roads/items/highway/Highway_1_Segment_Middle_Half_R/Default.tscn",
+      "sha256": "a9cbe8c0efe30ad4c55bd0a66f7ef5cf04fd072f0ad5bcf251368e361ee87f89",
+      "bytes": 5115
+    },
+    {
+      "path": "src/world/roads/items/highway/Highway_1_Segment_Middle_Half_Zebra_1/Default.tscn",
+      "sha256": "515a564b003bdfbf36c2ea0828fd6514f0c5c1fead3be87c43a00e6fd3d0ef43",
+      "bytes": 6939
+    },
+    {
+      "path": "src/world/roads/items/highway/Highway_1_Segment_Middle_L/Default.tscn",
+      "sha256": "47f1680cc169fe47f1cc8957fe54964fe87d98a0825c454077b375f4922be243",
+      "bytes": 7362
+    },
+    {
+      "path": "src/world/roads/items/highway/Highway_1_Segment_Middle_L_Blank/Default.tscn",
+      "sha256": "c09bcb2b1ab689c89a82ffc2fb58a658455f4b356ff3b45f42c219247c3b9168",
+      "bytes": 5459
+    },
+    {
+      "path": "src/world/roads/items/highway/Highway_1_Segment_Middle_L_Blank_Full_Line_White_Mid/Default.tscn",
+      "sha256": "f5a26c50fb030399a0eb831482b20be00d424cf8f134b6fa87dc8790491cf9ba",
+      "bytes": 4876
+    },
+    {
+      "path": "src/world/roads/items/highway/Highway_1_Segment_Middle_L_Full_Line_White_Side/Default.tscn",
+      "sha256": "f9db3f910dd8b7cb0b3a8c24e31ea967f972711e1a7e70832e756e57040e7f8a",
+      "bytes": 6400
+    },
+    {
+      "path": "src/world/roads/items/highway/Highway_1_Segment_Middle_R/Default.tscn",
+      "sha256": "950d176f992ce50454d948a8b86c78ca7e70bf52530ff618e3f1ef1cbf633418",
+      "bytes": 7361
+    },
+    {
+      "path": "src/world/roads/items/highway/Highway_1_Segment_Middle_R_Ascend/Default.tscn",
+      "sha256": "125f563d1fdf7f9f3b2394709d17dc84fc16a0d6fb631aa18fe13406f0b25e10",
+      "bytes": 7980
+    },
+    {
+      "path": "src/world/roads/items/highway/Highway_1_Segment_Middle_R_Blank/Default.tscn",
+      "sha256": "6274b6375d4d2a278505cfada7d254e46aff0b2b15a994fb0fe8816872d87928",
+      "bytes": 5460
+    },
+    {
+      "path": "src/world/roads/items/highway/Highway_1_Segment_Middle_R_Descend/Default.tscn",
+      "sha256": "eaa768c24b106234f41e9bda5b35fe8a35d9b95d3a3513e00b0223878541352a",
+      "bytes": 7987
+    },
+    {
+      "path": "src/world/roads/items/highway/Highway_1_Segment_Middle_R_Elevation/Default.tscn",
+      "sha256": "b819923bc51d7e00d6ebee41012cb8163f269b4f3a10d30611bff57cf42b25de",
+      "bytes": 7262
+    },
+    {
+      "path": "src/world/roads/items/highway/Highway_1_Segment_Middle_R_Full_Line_White/Default.tscn",
+      "sha256": "1457658b7115836b83968f22570de3fae2f01662cc9701eac1480e781d59690a",
+      "bytes": 6367
+    },
+    {
+      "path": "src/world/roads/items/highway/Highway_1_Segment_Shoulder_1_L/Default.tscn",
+      "sha256": "1008f6835dc12775a1f1cb5795ecbc05a2cf438629ab19a754ecb8b7c19b32d0",
+      "bytes": 7673
+    },
+    {
+      "path": "src/world/roads/items/highway/Highway_1_Segment_Shoulder_1_R/Default.tscn",
+      "sha256": "f95f435618df0451852ab6cb76141e119848dd48ee49493ee3cbdad822e8d989",
+      "bytes": 7623
+    },
+    {
+      "path": "src/world/roads/items/highway/Highway_1_Segment_Shoulder_1_R_Ascend/Default.tscn",
+      "sha256": "9d1ced1f930fac598b559962c7f162b186b9e45ae36c5c457509e3b2d91cd2a5",
+      "bytes": 11221
+    },
+    {
+      "path": "src/world/roads/items/highway/Highway_1_Segment_Shoulder_1_R_Ascend_Fence/Default.tscn",
+      "sha256": "6ebdc7cbd447885f81e66312c27cfbad9df982d8e028049a106d8bb5262fb8dc",
+      "bytes": 12542
+    },
+    {
+      "path": "src/world/roads/items/highway/Highway_1_Segment_Shoulder_1_R_Descend/Default.tscn",
+      "sha256": "5a3604739f6cf7312ad3009c5464027c3f3a216553b0b3822c71a0e14fe6daf8",
+      "bytes": 11262
+    },
+    {
+      "path": "src/world/roads/items/highway/Highway_1_Segment_Shoulder_1_R_Descend_Fence/Default.tscn",
+      "sha256": "390f2b53bb698b838e1fe8dde106093da466a6c10571560a030f08bfe2daa7e2",
+      "bytes": 12549
+    },
+    {
+      "path": "src/world/roads/items/highway/Highway_1_Segment_Shoulder_1_R_Elevation/Default.tscn",
+      "sha256": "83e7a69c37ce09de7a2255954934378121835e939fd9b40bca1796867bc627ea",
+      "bytes": 7606
+    },
+    {
+      "path": "src/world/roads/items/highway/Highway_1_Segment_Shoulder_1_R_Elevation_Fence/Default.tscn",
+      "sha256": "10d709879eb875d0d886f1b514687a78f937772694f67fb4069aa51080965b54",
+      "bytes": 7648
+    },
+    {
+      "path": "src/world/roads/items/highway/Highway_1_Segment_SmallShoulder_1/Default.tscn",
+      "sha256": "e3e5276f2583e0db84fa3d32720fcff628341b19b33b12cc4b0fc5e865748c01",
+      "bytes": 5905
+    },
+    {
+      "path": "src/world/roads/items/highway/Highway_1_Segment_SmallShoulder_1_Ascend/Default.tscn",
+      "sha256": "89db28c72914fc23ab502572bf0359013aed21c942dc7c39795ddebe1539e18a",
+      "bytes": 10060
+    },
+    {
+      "path": "src/world/roads/items/highway/Highway_1_Segment_SmallShoulder_1_Ascend_Fence/Default.tscn",
+      "sha256": "92e4b4d0d3283c964117bc0f799aa2248ef77294645a35fd5dc0d456ca038403",
+      "bytes": 11441
+    },
+    {
+      "path": "src/world/roads/items/highway/Highway_1_Segment_SmallShoulder_1_Descend/Default.tscn",
+      "sha256": "5805a367d16bc48353c50589d35671498d10b5f14c1937dc18533b55107d0699",
+      "bytes": 10049
+    },
+    {
+      "path": "src/world/roads/items/highway/Highway_1_Segment_SmallShoulder_1_Descend_Fence/Default.tscn",
+      "sha256": "69066ee7a85a60ab427bbd0151a61de9b24a7ac9ab237c0d6c74903c941b8360",
+      "bytes": 11428
+    },
+    {
+      "path": "src/world/roads/items/highway/Highway_1_Segment_SmallShoulder_1_Elevation/Default.tscn",
+      "sha256": "e9ea83ad295c9afa69104e0a2f034baccc05a1438236a76a2868cbd691f0c383",
+      "bytes": 5868
+    },
+    {
+      "path": "src/world/roads/items/highway/Highway_1_Segment_SmallShoulder_1_Elevation_Fence/Default.tscn",
+      "sha256": "f5ee9c564373ea8c1920026a452d5fdbecf78394b364cddc9060131a711ab6c2",
+      "bytes": 6624
+    },
+    {
+      "path": "src/world/roads/items/highway/Highway_1_TwoLane_Curve_Big_Inner_L/Default.tscn",
+      "sha256": "ccde4dc4405313607afef0d706bbe7fabcc5ccdb0aacc4db9fff71a08a81bb77",
+      "bytes": 124980
+    },
+    {
+      "path": "src/world/roads/items/highway/Highway_1_TwoLane_Curve_Big_Inner_L_Fence/Default.tscn",
+      "sha256": "ec967188b751a8f22a633dc0f9be9aab154b2b68df21f1866b8a219d7b6e8f2e",
+      "bytes": 146353
+    },
+    {
+      "path": "src/world/roads/items/highway/Highway_1_TwoLane_Curve_Big_Inner_R/Default.tscn",
+      "sha256": "85b984ab2cec0a4844307f8080fc1680a8f77fc00c0ed72fb55e3aab151f33f8",
+      "bytes": 128249
+    },
+    {
+      "path": "src/world/roads/items/highway/Highway_1_TwoLane_Curve_Big_Inner_R_Fence/Default.tscn",
+      "sha256": "826e666a78cc188dc42492d66f351dfc6fee5d63e447f59aac9eb48685dadcbd",
+      "bytes": 148585
+    },
+    {
+      "path": "src/world/roads/items/highway/Highway_1_TwoLane_Curve_Big_Outer_L/Default.tscn",
+      "sha256": "539a78defd45cd9107604350d484d1455fd250ec45280e4ff36d8964f1587e9e",
+      "bytes": 141143
+    },
+    {
+      "path": "src/world/roads/items/highway/Highway_1_TwoLane_Curve_Big_Outer_L_Fence/Default.tscn",
+      "sha256": "a7aeef5f130d66324ed9a21a8781e380a728d98569cd2dbbd10a7a8e74006dd9",
+      "bytes": 156410
+    },
+    {
+      "path": "src/world/roads/items/highway/Highway_1_TwoLane_Curve_Big_Outer_R/Default.tscn",
+      "sha256": "d6261356a237ad3636022518a3e342e35d670f651163a5adc89ab28341004bb2",
+      "bytes": 141504
+    },
+    {
+      "path": "src/world/roads/items/highway/Highway_1_TwoLane_Curve_Big_Outer_R_Fence/Default.tscn",
+      "sha256": "6c95468ee2a2f7caa62fe913de07069b25048c6ee94dab56c73885d270911a31",
+      "bytes": 158005
+    },
+    {
+      "path": "src/world/roads/items/ovaltrack/Track_1_Corner_L/Default.tscn",
+      "sha256": "b6a37e34376868ba3bab142859c5394f579c18283e9be5c3e6375eef650d129d",
+      "bytes": 5163114
+    },
+    {
+      "path": "src/world/roads/items/ovaltrack/Track_1_Corner_R/Default.tscn",
+      "sha256": "ade9d2b4bcdb7dc573139b86ca970f51269f0e4db4107f99c933a59b56aaf6c5",
+      "bytes": 5410236
+    },
+    {
+      "path": "src/world/roads/items/ovaltrack/Track_1_StraightSegment_1_L/Default.tscn",
+      "sha256": "9e423cd97a6407bd330e5a2b5f8cf8fc7973fb66f4673e1ce324529ce39b19a8",
+      "bytes": 817004
+    },
+    {
+      "path": "src/world/roads/items/ovaltrack/Track_1_StraightSegment_2_L/Default.tscn",
+      "sha256": "5796632a1113a495936ffd9384066c4adbf44b8f87c6e9c04b9c5b80f6c37b22",
+      "bytes": 816955
+    },
+    {
+      "path": "src/world/roads/items/ovaltrack/Track_1_StraightSegment_3_Door_L/Default.tscn",
+      "sha256": "6d75fc9c3769e214f05dae8a7b00a9bf5179c05adde16af89524cd072f4b7b35",
+      "bytes": 490737
+    },
+    {
+      "path": "src/world/roads/items/ovaltrack/Track_1_StraightSegment_Angeled_1_L/Default.tscn",
+      "sha256": "bbe7e5ea7abbbf084a97a10cc7aabc7c6ed5c44544156c8a6606b08a7cf1b577",
+      "bytes": 816934
+    },
+    {
+      "path": "src/world/roads/items/ovaltrack/Track_1_StraightSegment_Angeled_2_L/Default.tscn",
+      "sha256": "7fdb3e81e64e82fb6c0cf0a659d5dac27cec07b160dedbe1a79fd73ff825375f",
+      "bytes": 816936
+    },
+    {
+      "path": "src/world/roads/items/parking/Road1/Default.tscn",
+      "sha256": "c4ad1cd630f64c04c19dbde595f48ecf5cc615f0e1efc2016b3ac0cb15c99f86",
+      "bytes": 10347
+    },
+    {
+      "path": "src/world/roads/items/parking/Road1/Road1_B__Road1_A.tscn",
+      "sha256": "a3464ca0cb3c2ce444376542f445750e43cf0ba7a3a68e59e2eae1904a4be2e6",
+      "bytes": 10678
+    },
+    {
+      "path": "src/world/roads/items/parking/Road1/Road1_B__Road1_Parking1_A.tscn",
+      "sha256": "51c46b159132bc2ebd906216d60e275666296ef3cd829cac66a5a80a71ea63a4",
+      "bytes": 10701
+    },
+    {
+      "path": "src/world/roads/items/parking/Road1/Road1_B__Road1_Parking1_B.tscn",
+      "sha256": "7deaa43c6014eb66d3197d7091b51d1d0d51075ad02e8c37284d7a59b4a3b6cd",
+      "bytes": 10704
+    },
+    {
+      "path": "src/world/roads/items/parking/Road1/Road1_B__Road1_Parking2_A.tscn",
+      "sha256": "af472c3267add92bccee79e2a0f183715f2ccd669956771195625953f9be7270",
+      "bytes": 10702
+    },
+    {
+      "path": "src/world/roads/items/parking/Road1/Road1_B__Road1_Parking2_B.tscn",
+      "sha256": "79995587ee83f36693b71b914d57cf4ba2abb3f868bf3074d2d017e4a9dbddcf",
+      "bytes": 10705
+    },
+    {
+      "path": "src/world/roads/items/parking/Road10_90angle_Corner/Default.tscn",
+      "sha256": "f5985c85344bfc5c0c53b17305bf1f6e6f16618ac4f2c871c3b789fb478a5b54",
+      "bytes": 31001
+    },
+    {
+      "path": "src/world/roads/items/parking/Road10_90angle_Corner/Road1_B__Road1_A.tscn",
+      "sha256": "2e9e05abfb9475b32bbf56fea76daf4662c08d981b8f68f30a14fadee92f3c51",
+      "bytes": 31341
+    },
+    {
+      "path": "src/world/roads/items/parking/Road10_90angle_Corner/Road1_B__Road1_Parking1_A.tscn",
+      "sha256": "1a0c47176ed6b37f7f63402fd1d41c22d07dc5275406cc6779583f0410ff155f",
+      "bytes": 31359
+    },
+    {
+      "path": "src/world/roads/items/parking/Road10_90angle_Corner/Road1_B__Road1_Parking1_B.tscn",
+      "sha256": "bc04a24eddffd5c88ba29d4786ee25dd75236de32b41644c54f4a16c73950208",
+      "bytes": 31363
+    },
+    {
+      "path": "src/world/roads/items/parking/Road10_90angle_Corner/Road1_B__Road1_Parking2_A.tscn",
+      "sha256": "2e8e817cdebdeaf4050464079348bb92610c0abbc8f6a913d88a830dbaf2c045",
+      "bytes": 31357
+    },
+    {
+      "path": "src/world/roads/items/parking/Road10_90angle_Corner/Road1_B__Road1_Parking2_B.tscn",
+      "sha256": "2d630080232310d09510786eb98fe2f598d0f8d75805480d52ecc8933060cea2",
+      "bytes": 31360
+    },
+    {
+      "path": "src/world/roads/items/parking/Road1_Curve1/Default.tscn",
+      "sha256": "d8292743c4fc9152dbd9168913420878da4e433aa46d18787d4f153548f43605",
+      "bytes": 16796
+    },
+    {
+      "path": "src/world/roads/items/parking/Road1_Curve1/Road1_B__Road1_A.tscn",
+      "sha256": "e4d57e4be72bdefc32c14380dbd3d3381e0c89f730fc31b12b0c2cca2dd30e9d",
+      "bytes": 17133
+    },
+    {
+      "path": "src/world/roads/items/parking/Road1_Curve1/Road1_B__Road1_Parking1_A.tscn",
+      "sha256": "4e9a1efe03c29b2be2e336f8cd5a1b74bd1e6ccf8e6ad13f5532a425238c8bea",
+      "bytes": 17150
+    },
+    {
+      "path": "src/world/roads/items/parking/Road1_Curve1/Road1_B__Road1_Parking1_B.tscn",
+      "sha256": "ca706a14767aeb46e4ada2fd347ecf5597e7ab8e2d123856e1a969663b430aed",
+      "bytes": 17156
+    },
+    {
+      "path": "src/world/roads/items/parking/Road1_Curve1/Road1_B__Road1_Parking2_A.tscn",
+      "sha256": "996dd4dc349601080b64678cd2e3327347bb00142aa71dde1e39a414eccd37ed",
+      "bytes": 17150
+    },
+    {
+      "path": "src/world/roads/items/parking/Road1_Curve1/Road1_B__Road1_Parking2_B.tscn",
+      "sha256": "8b7d7ff554675d924ba762d61bc0ba8999d2c6a7d86c8e4ad68cba06da0767c2",
+      "bytes": 17153
+    },
+    {
+      "path": "src/world/roads/items/parking/Road1_Curve2/Default.tscn",
+      "sha256": "1a35d5355844ca2354a02f3c62464a73d0eaf6b131a037a4b68c1df22a5f4be1",
+      "bytes": 28786
+    },
+    {
+      "path": "src/world/roads/items/parking/Road1_Curve2/Road1_B__Road1_A.tscn",
+      "sha256": "7b07c0aa478948939cc83c34e53c1d7bfe3ba4eaa2ebcb79a23935c96350732c",
+      "bytes": 29117
+    },
+    {
+      "path": "src/world/roads/items/parking/Road1_Curve2/Road1_B__Road1_Parking1_A.tscn",
+      "sha256": "39b261b79e3eb1e21ff03d411506b89e05ec46fbc9a34d64932cec0ed2aeb6a1",
+      "bytes": 29139
+    },
+    {
+      "path": "src/world/roads/items/parking/Road1_Curve2/Road1_B__Road1_Parking1_B.tscn",
+      "sha256": "38f3a36fd9baf7b5e8a632e88b8f24048b1aee33c72e5d2c9f797da4fd335cbe",
+      "bytes": 29138
+    },
+    {
+      "path": "src/world/roads/items/parking/Road1_Curve2/Road1_B__Road1_Parking2_A.tscn",
+      "sha256": "f1e29bc90173d41e36bf29a2fb54afff77b2bf8718bcbfe629f687097f854ffd",
+      "bytes": 29138
+    },
+    {
+      "path": "src/world/roads/items/parking/Road1_Curve2/Road1_B__Road1_Parking2_B.tscn",
+      "sha256": "819eefc80c29624c435c9d23fc25df38479808728600558882e84cf207af3dea",
+      "bytes": 29143
+    },
+    {
+      "path": "src/world/roads/items/parking/Road1_Curve3/Default.tscn",
+      "sha256": "d27640f624ef7279dca104f8e2616974181c4e77abde51fb7d2993a8eb85e571",
+      "bytes": 26337
+    },
+    {
+      "path": "src/world/roads/items/parking/Road1_Curve3/Road1_B__Road1_A.tscn",
+      "sha256": "580f5ee42318dd7c2c77393280cc613ff1d4247a2db718f4f7141de79fc48928",
+      "bytes": 26674
+    },
+    {
+      "path": "src/world/roads/items/parking/Road1_Curve3/Road1_B__Road1_Parking1_A.tscn",
+      "sha256": "9e7f5b4698a2a19d5466a53a823d9ceed824a18199bd1cb1c898cf0a9df2bf24",
+      "bytes": 26692
+    },
+    {
+      "path": "src/world/roads/items/parking/Road1_Curve3/Road1_B__Road1_Parking1_B.tscn",
+      "sha256": "f06b9da27d95eb19d600683f4ef89a19a07033bec56e19842866c7e522bc063e",
+      "bytes": 26698
+    },
+    {
+      "path": "src/world/roads/items/parking/Road1_Curve3/Road1_B__Road1_Parking2_A.tscn",
+      "sha256": "174915327458ea8c80658142a9b0f14a397444faef8a8af9c66c9f8dbdac3db0",
+      "bytes": 26694
+    },
+    {
+      "path": "src/world/roads/items/parking/Road1_Curve3/Road1_B__Road1_Parking2_B.tscn",
+      "sha256": "521eb511a34ff373e11d6f266070a7078e598b13b2e71f641fbee37d2025d2ec",
+      "bytes": 26696
+    },
+    {
+      "path": "src/world/roads/items/parking/Road1_Curve4/Default.tscn",
+      "sha256": "5f1c00efd327f05327467bc66a20007eaea356ffedee614d61caa2df71d43f3d",
+      "bytes": 51026
+    },
+    {
+      "path": "src/world/roads/items/parking/Road1_Curve4/Road1_B__Road1_A.tscn",
+      "sha256": "99f7423dec931b2200111689415542fc7045b49202147d60682f52f597aada48",
+      "bytes": 51362
+    },
+    {
+      "path": "src/world/roads/items/parking/Road1_Curve4/Road1_B__Road1_Parking1_A.tscn",
+      "sha256": "ffae5cf38d48168450e1fec6e6ec7c5a1dd6af3d48cef6d0264b791d8ccd40b9",
+      "bytes": 51374
+    },
+    {
+      "path": "src/world/roads/items/parking/Road1_Curve4/Road1_B__Road1_Parking1_B.tscn",
+      "sha256": "e631350d6b0a71c6ea2f4009fa15e95b3ce7cfcf2e3e184e6c30392736d9b025",
+      "bytes": 51381
+    },
+    {
+      "path": "src/world/roads/items/parking/Road1_Curve4/Road1_B__Road1_Parking2_A.tscn",
+      "sha256": "dd22c9c3f2a2bfaf613484d3f9b0f0a682e7cca4db908b9d6c63a39fe240331b",
+      "bytes": 51380
+    },
+    {
+      "path": "src/world/roads/items/parking/Road1_Curve4/Road1_B__Road1_Parking2_B.tscn",
+      "sha256": "2d710eea74e25e4c6b978b10a2750875fef0859abea26a47e5f1099693414bb7",
+      "bytes": 51383
+    },
+    {
+      "path": "src/world/roads/items/parking/Road1_Parking1/Default.tscn",
+      "sha256": "e6d1c19dd5e2bdd40632d59164cba2ab0b33a0895cf1a7e25e557ad7cf0089d9",
+      "bytes": 10157
+    },
+    {
+      "path": "src/world/roads/items/parking/Road1_Parking1/Road1_Parking1_B__Road1_A.tscn",
+      "sha256": "c400d084ac5f9fe893dfc28a837beffda778d157a2de20cbc5185cb2debc74f2",
+      "bytes": 10513
+    },
+    {
+      "path": "src/world/roads/items/parking/Road1_Parking1/Road1_Parking1_B__Road1_B.tscn",
+      "sha256": "32cb22b105f46bacc139626ddc6029a853b9c33a84ddc832f839ac40231d88fb",
+      "bytes": 10519
+    },
+    {
+      "path": "src/world/roads/items/parking/Road1_Parking1/Road1_Parking1_B__Road1_Parking1_A.tscn",
+      "sha256": "2b152ef2ee396c21515eb2149826dde57d9183da827ebb63f09c2fa9ff83659d",
+      "bytes": 10532
+    },
+    {
+      "path": "src/world/roads/items/parking/Road1_Parking1/Road1_Parking1_B__Road1_Parking2_A.tscn",
+      "sha256": "37f7f469498cd0ff54023e4de9a2e61514d5a8295825d7717a1b93c4497ebd7f",
+      "bytes": 10529
+    },
+    {
+      "path": "src/world/roads/items/parking/Road1_Parking1/Road1_Parking1_B__Road1_Parking2_B.tscn",
+      "sha256": "8f13acca8a5f6a24655025dadc69ad10c3ee412551fc877f3ff30a94b03a5af4",
+      "bytes": 10535
+    },
+    {
+      "path": "src/world/roads/items/parking/Road1_Parking1_Open/Default.tscn",
+      "sha256": "37aecc178d8439be59ef4bfd3db784b149dd5e2b4a1bc0942f104ddc23801b97",
+      "bytes": 7806
+    },
+    {
+      "path": "src/world/roads/items/parking/Road1_Parking1_Open/Road1_Parking1_B__Road1_A.tscn",
+      "sha256": "fd6a8c285db239fe4a0b98e78144d4ce5430544e7b6cabffd73eb7bc82d9c9e4",
+      "bytes": 8161
+    },
+    {
+      "path": "src/world/roads/items/parking/Road1_Parking1_Open/Road1_Parking1_B__Road1_B.tscn",
+      "sha256": "044b58ef9c9961cd63f7ec79dbb1eeaac44fb8dcb738e5b3faa7a5adabc3d141",
+      "bytes": 8165
+    },
+    {
+      "path": "src/world/roads/items/parking/Road1_Parking1_Open/Road1_Parking1_B__Road1_Parking1_A.tscn",
+      "sha256": "fe96c36eea71048e6d0eeebbc8378fc9ca1f23f3a01cb3825ed97090f05ae9f4",
+      "bytes": 8178
+    },
+    {
+      "path": "src/world/roads/items/parking/Road1_Parking1_Open/Road1_Parking1_B__Road1_Parking2_A.tscn",
+      "sha256": "fb574fc71ef46bec0d4d352c199768226ae24ca7e9b710c69c4b64cbb7e0b87d",
+      "bytes": 8180
+    },
+    {
+      "path": "src/world/roads/items/parking/Road1_Parking1_Open/Road1_Parking1_B__Road1_Parking2_B.tscn",
+      "sha256": "9a6bbb09d812405d47e04ef5277e16181fe6938efbed8c6a6632872b8b1c358b",
+      "bytes": 8182
+    },
+    {
+      "path": "src/world/roads/items/parking/Road1_Parking2/Default.tscn",
+      "sha256": "72ca66f6ae47bb2303a77874dfa6cfb4ec2aa28e8a288d99ea5df7c67e681d25",
+      "bytes": 10161
+    },
+    {
+      "path": "src/world/roads/items/parking/Road1_Parking2/Road1_Parking2_B__Road1_A.tscn",
+      "sha256": "0a7ecab3f0b82b861c66bf01653f805b344c1dd7ccbb82b9fe7a199e6ff01964",
+      "bytes": 10516
+    },
+    {
+      "path": "src/world/roads/items/parking/Road1_Parking2/Road1_Parking2_B__Road1_B.tscn",
+      "sha256": "040a12664dc9c6893545e53047048292c02f4f330561c2920e4409453ba75685",
+      "bytes": 10520
+    },
+    {
+      "path": "src/world/roads/items/parking/Road1_Parking2/Road1_Parking2_B__Road1_Parking1_A.tscn",
+      "sha256": "9e168c55cbf8132dfe2864b1dd8bd1c374bba5e6ac3bb444b7f82f8cd935b495",
+      "bytes": 10533
+    },
+    {
+      "path": "src/world/roads/items/parking/Road1_Parking2/Road1_Parking2_B__Road1_Parking1_B.tscn",
+      "sha256": "f8f24fa3f9e1eb4783a54b0e33423a13ef0256ab75e08c1a7b2a4fadd0bc2766",
+      "bytes": 10538
+    },
+    {
+      "path": "src/world/roads/items/parking/Road1_Parking2/Road1_Parking2_B__Road1_Parking2_A.tscn",
+      "sha256": "d60e59a6942335f34ecb72ac4b8441f1ec284adc7eb8f8f16322e2608cc5eebe",
+      "bytes": 10535
+    },
+    {
+      "path": "src/world/roads/items/parking/Road2_T/Default.tscn",
+      "sha256": "ded4bd8f7caee5fc432d72cfd8969a287294e63965cb95651fa7d6982816b881",
+      "bytes": 25649
+    },
+    {
+      "path": "src/world/roads/items/parking/Road2_T/Road2_X_B__Road2_X_A.tscn",
+      "sha256": "26174379b0c012f2f335a4ce2ba39fc3996f070ba1c088cc5b02b63e29e2f7c1",
+      "bytes": 25991
+    },
+    {
+      "path": "src/world/roads/items/parking/Road2_T_Parking_Entrance/Default.tscn",
+      "sha256": "c7206f9bc6ee33553cbe594e0b7e0557779ef769d08d697a463306d721f44084",
+      "bytes": 25379
+    },
+    {
+      "path": "src/world/roads/items/parking/Road2_T_Parking_Entrance_Open/Default.tscn",
+      "sha256": "2997cce34f89cfb78c4014c5973b4d2b3054ea16f75c845177aa48efe5558fc6",
+      "bytes": 20763
+    },
+    {
+      "path": "src/world/roads/items/parking/Road2_X/Default.tscn",
+      "sha256": "62b4826318f4ec74796587665246e1ad5731a7d15edeef004d9380d245a87409",
+      "bytes": 25977
+    },
+    {
+      "path": "src/world/roads/items/parking/Road2_X/Road2_X_B__Road2_X_A.tscn",
+      "sha256": "584204733e825f3ac03bc2a8c66ddf41b67f8d13a5a25b5fca8fbcfd46cbbd27",
+      "bytes": 26317
+    },
+    {
+      "path": "src/world/roads/items/parking/Road3_Crossing/Default.tscn",
+      "sha256": "65ea58659d88806cc4498932d1daed8dd1af2465dde9a08d4953ca9520d26f5d",
+      "bytes": 15558
+    },
+    {
+      "path": "src/world/roads/items/parking/Road4_Shoulder_Extender/Default.tscn",
+      "sha256": "26436d2d2c042ef11bfff1f669494f7b57f419ae1d7c7e39fe7c2c48de2a0ec6",
+      "bytes": 16580
+    },
+    {
+      "path": "src/world/roads/items/parking/Road4_Shoulder_Narrower/Default.tscn",
+      "sha256": "13635f4986bc43d42833f981df1e5b1b7761910a7893e35874fec0892569d654",
+      "bytes": 16579
+    },
+    {
+      "path": "src/world/roads/items/parking/Road5_Shoulder1/Default.tscn",
+      "sha256": "11dbc4d8a53c142a5cd9d10cd5a94afef52c89aab784cf325f971faa0cb3f134",
+      "bytes": 10813
+    },
+    {
+      "path": "src/world/roads/items/parking/Road5_Shoulder2/Default.tscn",
+      "sha256": "562e9e7a3e5fdd4a838ff2aacab9b2ff6ec16fe6e6cf2108e59f411291a97c86",
+      "bytes": 10796
+    },
+    {
+      "path": "src/world/roads/items/parking/Road5_Shoulder3/Default.tscn",
+      "sha256": "6e0009ac699f40b8ca13d78579d69d01f1ff67579303f37fcf49f40d95bb85b6",
+      "bytes": 10787
+    },
+    {
+      "path": "src/world/roads/items/parking/Road6_CornerL/Default.tscn",
+      "sha256": "a95bbe5dd821e3fcc771d3ebaea4c283f71e261953edeac2f295b130c60857f7",
+      "bytes": 25683
+    },
+    {
+      "path": "src/world/roads/items/parking/Road6_CornerL/Road6_B__Road6_A.tscn",
+      "sha256": "6463317598a274f8caa00eb7e8b7d8c3fde833d959a91bfcd2589d08efe877ff",
+      "bytes": 26024
+    },
+    {
+      "path": "src/world/roads/items/parking/Road6_CornerR/Default.tscn",
+      "sha256": "8dab845c8eefe04d35feaa80e00d4537f2a4d3c09a60f06bc350a14a8817d7db",
+      "bytes": 25684
+    },
+    {
+      "path": "src/world/roads/items/parking/Road6_CornerR/Road6_B__Road6_A.tscn",
+      "sha256": "77b1738fc96286dee564847749fde1b27b63922992ffb5712424246f4c77dd35",
+      "bytes": 26027
+    },
+    {
+      "path": "src/world/roads/items/parking/Road6_End/Default.tscn",
+      "sha256": "ad75751691d0c45035fa1d8cfd904a3a9a74da51d16cfae820833b6b6c849778",
+      "bytes": 26822
+    },
+    {
+      "path": "src/world/roads/items/parking/Road6_End/Road6_B__Road6_A.tscn",
+      "sha256": "66ead3b4cff286f80c564a9e3f38a3ce61bac214e8420ac6876ab21bfe0d1f45",
+      "bytes": 27161
+    },
+    {
+      "path": "src/world/roads/items/parking/Road7/Default.tscn",
+      "sha256": "e02d29a224d9665e5426d673157b099d36df87003cfb66822137f3cdd7d67e4b",
+      "bytes": 6269
+    },
+    {
+      "path": "src/world/roads/items/parking/Road8/Default.tscn",
+      "sha256": "1b6793727bf9c728cd91299b5995365aed8338c421ebb65cd2b7d124dcd133e5",
+      "bytes": 6287
+    },
+    {
+      "path": "src/world/roads/items/parking/Road9/Default.tscn",
+      "sha256": "a1a3098621522d5ea2f2c02cf7d106643b53f4710ba9a620c12265a3da44d2b9",
+      "bytes": 19524
+    },
+    {
+      "path": "src/world/roads/items/parking/ramp1/Default.tscn",
+      "sha256": "ebd2a16f9cca8cf8309331a57120505428649d6e87842f3c8c5eb1e7c7f05ac1",
+      "bytes": 31983
+    },
+    {
+      "path": "src/world/roads/items/parking/ramp1/Road1_B__Road1_A.tscn",
+      "sha256": "7054a0c81e3da17ef2093d32595ab620b3e0c373b6480592c9c520de70aa10a2",
+      "bytes": 32317
+    },
+    {
+      "path": "src/world/roads/items/parking/ramp1/Road1_B__Road1_Parking1_A.tscn",
+      "sha256": "c6f0d16185fe876ec84ca6e8e8b3d1dcebd6375f67816f1b7547ee1b0d2be46b",
+      "bytes": 32338
+    },
+    {
+      "path": "src/world/roads/items/parking/ramp1/Road1_B__Road1_Parking1_B.tscn",
+      "sha256": "864e75ab81cb579a77a6d42385a9937183d6c332aafd1b6f56d3408890050246",
+      "bytes": 32342
+    },
+    {
+      "path": "src/world/roads/items/parking/ramp1/Road1_B__Road1_Parking2_A.tscn",
+      "sha256": "311296be2659eb724477ea2bac4a4b81418b473257abe4042415c90a6fdc6069",
+      "bytes": 32336
+    },
+    {
+      "path": "src/world/roads/items/parking/ramp1/Road1_B__Road1_Parking2_B.tscn",
+      "sha256": "bc01641c66a83889e8e7ad68465affa4e551826ac7650519ac42327c3e96903e",
+      "bytes": 32342
+    },
+    {
+      "path": "src/world/roads/items/racetrack/Racetrack1_Blue_Default/Default.tscn",
+      "sha256": "46ef089ecc8540a8b67e7453e2ec2d1ad29aac8da0af7dd26991d0ff3d4d4bb4",
+      "bytes": 10844
+    },
+    {
+      "path": "src/world/roads/items/racetrack/Racetrack1_Blue_Default_FinishLine1/Default.tscn",
+      "sha256": "b4f9eb8033ca761addc4858ba4d3ee1e028b8009b6f62e10d3bf3299bdcae108",
+      "bytes": 68105
+    },
+    {
+      "path": "src/world/roads/items/racetrack/Racetrack1_Blue_Default_FinishLine2/Default.tscn",
+      "sha256": "5540e7cb7e10a9bcfe9aeba52eb31bfba7feef825d4740bac0ce563546420291",
+      "bytes": 36748
+    },
+    {
+      "path": "src/world/roads/items/racetrack/Racetrack1_Blue_Default_Fork_Curb_Left/Default.tscn",
+      "sha256": "83410ebe1b2f28e36dc191afd2910f94e37d3cb3e07c7d2aaf324215bdef9b3f",
+      "bytes": 189126
+    },
+    {
+      "path": "src/world/roads/items/racetrack/Racetrack1_Blue_Default_Fork_Curb_Right/Default.tscn",
+      "sha256": "12cba9667e3d11a9f30c7a2bb5cce0886ff81ca9c051fb6c090a261f4b5f18f6",
+      "bytes": 189133
+    },
+    {
+      "path": "src/world/roads/items/racetrack/Racetrack1_Blue_Default_Fork_Left/Default.tscn",
+      "sha256": "740694ff0d26456c4682beaca43d611d6d65ac74751d3b978f8e5013f6ca5f03",
+      "bytes": 47589
+    },
+    {
+      "path": "src/world/roads/items/racetrack/Racetrack1_Blue_Default_Fork_Right/Default.tscn",
+      "sha256": "1f661b650d88d72bb5e1fb9e29d017fc791e8eef33f98f1e366c93cca7f1f950",
+      "bytes": 47594
+    },
+    {
+      "path": "src/world/roads/items/racetrack/Racetrack1_Blue_Poistions/Default.tscn",
+      "sha256": "ca715a2d6e8455efba307a0cad6bbf4afe54ddd34f43ac22dedd003efc82e07e",
+      "bytes": 16305
+    },
+    {
+      "path": "src/world/roads/items/racetrack/Racetrack1_Default/Default.tscn",
+      "sha256": "fe9e8530ab69f8902b2de42d5a2403ad0954581a07e4de7828bcf5b6bb34a214",
+      "bytes": 10814
+    },
+    {
+      "path": "src/world/roads/items/racetrack/Racetrack1_Default_FinishLine1/Default.tscn",
+      "sha256": "112bca9af4a51ab200d0a653131d0b9b390748637990b2524416992f42efa23e",
+      "bytes": 68076
+    },
+    {
+      "path": "src/world/roads/items/racetrack/Racetrack1_Default_FinishLine2/Default.tscn",
+      "sha256": "918ed8cb94caf9c7e448a7867c797632bc3c06cebfe2dec1a9377d66801dc0d4",
+      "bytes": 36719
+    },
+    {
+      "path": "src/world/roads/items/racetrack/Racetrack1_Default_Fork_Curb_Left/Default.tscn",
+      "sha256": "069505126d798fb6211256314a1bdc5736b3338ec10c3a29de171b228c843f86",
+      "bytes": 189287
+    },
+    {
+      "path": "src/world/roads/items/racetrack/Racetrack1_Default_Fork_Curb_Right/Default.tscn",
+      "sha256": "a3c8d6700044ebe30212411f0e95c436128f59db4cb9d15d479cbe5e20479d61",
+      "bytes": 189299
+    },
+    {
+      "path": "src/world/roads/items/racetrack/Racetrack1_Default_Fork_Left/Default.tscn",
+      "sha256": "8b0452845f24d5a8d5d01797df690b623523a8a8bc28e3900eed5441e3b2b6c6",
+      "bytes": 47561
+    },
+    {
+      "path": "src/world/roads/items/racetrack/Racetrack1_Default_Fork_Right/Default.tscn",
+      "sha256": "0f353fa5c985985234351c3fa75131a412dbcaaebf7356136af1c6e43a4d490d",
+      "bytes": 47571
+    },
+    {
+      "path": "src/world/roads/items/racetrack/Racetrack1_Gray_Default/Default.tscn",
+      "sha256": "fb4b87662a1725cf7e43ed8b9d55c01e9f1fd7d7776349fb439220711f363b20",
+      "bytes": 10844
+    },
+    {
+      "path": "src/world/roads/items/racetrack/Racetrack1_Jump/Default.tscn",
+      "sha256": "da801620bce6b609af58bf9769cc2dae63b548dd2fbf40c670b22f76d7be8205",
+      "bytes": 292490
+    },
+    {
+      "path": "src/world/roads/items/racetrack/Racetrack1_Poistions/Default.tscn",
+      "sha256": "a0cb2c5f4615ad73724e2c84759b1b60be7a82570c3bfaa16f9dfbfae5ce54dd",
+      "bytes": 15957
+    },
+    {
+      "path": "src/world/roads/items/racetrack/Racetrack1_RedGray_Default/Default.tscn",
+      "sha256": "1ec8764f409b4b91b85f47fdf5670298c2ca8a17fdf87e341e80dbe55b50a82e",
+      "bytes": 10863
+    },
+    {
+      "path": "src/world/roads/items/racetrack/Racetrack1_RedGray_PitLane_Boxes/Default.tscn",
+      "sha256": "bf788f46b6e2cb56f896563c3d55f1c9f2a1bdb113855d8d43ca1b67b6d7ecb8",
+      "bytes": 13405
+    },
+    {
+      "path": "src/world/roads/items/racetrack/Racetrack1_RedWhiteBlue_CurbLeft/Default.tscn",
+      "sha256": "62707240b52acdd6ec3554272e2609da888ad8f76e50c0353dab08be103fbf79",
+      "bytes": 38644
+    },
+    {
+      "path": "src/world/roads/items/racetrack/Racetrack1_RedWhiteBlue_CurbRight/Default.tscn",
+      "sha256": "a51c81f3a2c8524250c9ce99ba86fa35efc1c3e334321ed8b31f448d18c2e4ca",
+      "bytes": 38449
+    },
+    {
+      "path": "src/world/roads/items/racetrack/Racetrack1_RedWhiteBlue_Curbs/Default.tscn",
+      "sha256": "fa83a82c42edd8d02db8802b6da1cccda6ca96b67c45c90bd1a625939dc13009",
+      "bytes": 49710
+    },
+    {
+      "path": "src/world/roads/items/racetrack/Racetrack1_RedWhiteBlue_Curbs_Curve_45_Long_Left/Default.tscn",
+      "sha256": "353e5a9192782eb9ce618323ad6bd0824aa49dc6d0e4a449300278ab7d223d57",
+      "bytes": 139669
+    },
+    {
+      "path": "src/world/roads/items/racetrack/Racetrack1_RedWhiteBlue_Curbs_Curve_45_Long_Right/Default.tscn",
+      "sha256": "14972f302e2119f699ef3d4e848e5f4627d46ecb75189613e1d12e16aa04da00",
+      "bytes": 139582
+    },
+    {
+      "path": "src/world/roads/items/racetrack/Racetrack1_RedWhiteBlue_Curbs_Curve_90_Big_Left/Default.tscn",
+      "sha256": "0820c1c93af25ad17be7849bd32d55e0ca792e6e103272d50f1817abfc7ded54",
+      "bytes": 276385
+    },
+    {
+      "path": "src/world/roads/items/racetrack/Racetrack1_RedWhiteBlue_Curbs_Curve_90_Big_Right/Default.tscn",
+      "sha256": "fa934abec0f8f733428794911f95cf0560ef249d6a4937a592010a8632b66755",
+      "bytes": 276349
+    },
+    {
+      "path": "src/world/roads/items/racetrack/Racetrack1_RedWhiteBlue_Curbs_Curve_90_Small_Left/Default.tscn",
+      "sha256": "60df71cfebeb1e1988e810a94c2176d1f9e68b05335cad102c4e0e1223501a7d",
+      "bytes": 63563
+    },
+    {
+      "path": "src/world/roads/items/racetrack/Racetrack1_RedWhiteBlue_Curbs_Curve_90_Small_Right/Default.tscn",
+      "sha256": "34c58d922ff493a58f9498c88bbc05997cefc040ca5a2c9643aa917efa5e40a1",
+      "bytes": 63564
+    },
+    {
+      "path": "src/world/roads/items/racetrack/Racetrack1_RedWhiteBlue_RoadAdapter/Default.tscn",
+      "sha256": "c7e87ad9b6d0363f3c8dcf29b6664956187f16dfe659338560ad0614121754ee",
+      "bytes": 41889
+    },
+    {
+      "path": "src/world/roads/items/racetrack/Racetrack1_RedWhite_CurbLeft/Default.tscn",
+      "sha256": "bef0a120fd99ac595ce22f626c4d0f14e271eac8cc1140fe92f5a6c51ad3d40b",
+      "bytes": 38623
+    },
+    {
+      "path": "src/world/roads/items/racetrack/Racetrack1_RedWhite_CurbRight/Default.tscn",
+      "sha256": "45412e6bd8fbdacd1aa4882355f902f0de20f9a0d4670aa42c6e8597834afd71",
+      "bytes": 38425
+    },
+    {
+      "path": "src/world/roads/items/racetrack/Racetrack1_RedWhite_Curbs/Default.tscn",
+      "sha256": "cbd7c7eb453b9d73aac650dc6d1fe919a3ebe1d324cd8ba8ebc042b8b8b0f4c5",
+      "bytes": 49685
+    },
+    {
+      "path": "src/world/roads/items/racetrack/Racetrack1_RedWhite_Curbs_Curve_45_Long_Left/Default.tscn",
+      "sha256": "ed8d7aba5292df5b7f45abfed86ff8a42a0b10b13dbedd20b58b881191e3dd91",
+      "bytes": 139757
+    },
+    {
+      "path": "src/world/roads/items/racetrack/Racetrack1_RedWhite_Curbs_Curve_45_Long_Right/Default.tscn",
+      "sha256": "9f00cbf242d0463ddad1b55058ba132a7c20b3e8689e5c382f98cafd563da378",
+      "bytes": 139671
+    },
+    {
+      "path": "src/world/roads/items/racetrack/Racetrack1_RedWhite_Curbs_Curve_90_Big_Left/Default.tscn",
+      "sha256": "109c4d11acdb35934815d1c48e94a1511c1bffbdd81f6a3aee7073c0630c8637",
+      "bytes": 276619
+    },
+    {
+      "path": "src/world/roads/items/racetrack/Racetrack1_RedWhite_Curbs_Curve_90_Big_Right/Default.tscn",
+      "sha256": "88004d95bef0e97ee130b17775e31209bf59a1d9e326945183158145a0614d50",
+      "bytes": 276549
+    },
+    {
+      "path": "src/world/roads/items/racetrack/Racetrack1_RedWhite_Curbs_Curve_90_Small_Left/Default.tscn",
+      "sha256": "f938c276cb8b03987ae3477585dd7572a47929a841530bb8a79d086864cae0fd",
+      "bytes": 63763
+    },
+    {
+      "path": "src/world/roads/items/racetrack/Racetrack1_RedWhite_Curbs_Curve_90_Small_Right/Default.tscn",
+      "sha256": "948b08a6ae619dd3a6b96919f4ce73973b88e65b63e65c6b742e157fc18047d1",
+      "bytes": 63767
+    },
+    {
+      "path": "src/world/roads/items/racetrack/Racetrack1_RedWhite_Curbs_Overpass/Default.tscn",
+      "sha256": "b2bfdcc4cb28c837c1b8aa08eec431072408061685b85314e6499218698930dc",
+      "bytes": 798899
+    },
+    {
+      "path": "src/world/roads/items/racetrack/Racetrack1_RedWhite_RoadAdapter/Default.tscn",
+      "sha256": "a8ace47ad3d5b583980f27f9c78ec46b75e394a83e1026a5f293a45b789057e2",
+      "bytes": 43204
+    },
+    {
+      "path": "src/world/roads/items/racetrack/Racetrack1_YellowBlue_CurbLeft/Default.tscn",
+      "sha256": "9a268d02ab73976f14e764d0bf898ec0cf8a7712efc372b01a5c481af558b3dc",
+      "bytes": 38631
+    },
+    {
+      "path": "src/world/roads/items/racetrack/Racetrack1_YellowBlue_CurbRight/Default.tscn",
+      "sha256": "c3e0e282dbb76ea2b952a1109464ef0b3cbdf556239f80cfcfb415bcadcd6640",
+      "bytes": 38440
+    },
+    {
+      "path": "src/world/roads/items/racetrack/Racetrack1_YellowBlue_Curbs_Curve_45_Long_Left/Default.tscn",
+      "sha256": "413929442e69ca277892f9af1039bb9a04d38bdbd3fa0d9d00d9360f5bbe394d",
+      "bytes": 139563
+    },
+    {
+      "path": "src/world/roads/items/racetrack/Racetrack1_YellowBlue_Curbs_Curve_45_Long_Right/Default.tscn",
+      "sha256": "70a448cfe4ef1e752f8c1546c15f1ed56ff4bab4585898b240f4345e46fc4497",
+      "bytes": 139335
+    },
+    {
+      "path": "src/world/roads/items/racetrack/Racetrack1_YellowBlue_Curbs_Curve_90_Big_Left/Default.tscn",
+      "sha256": "be42c82d3a277cc8e16026a536204e06352e303d55833de02981928203071d2a",
+      "bytes": 276373
+    },
+    {
+      "path": "src/world/roads/items/racetrack/Racetrack1_YellowBlue_Curbs_Curve_90_Big_Right/Default.tscn",
+      "sha256": "6cc41450b3559b586eab9ad2e8c38cd2bcbc44847bc61a465b7ee3e0d64e21f4",
+      "bytes": 276473
+    },
+    {
+      "path": "src/world/roads/items/racetrack/Racetrack1_YellowBlue_Curbs_Curve_90_Small_Left/Default.tscn",
+      "sha256": "4cfa73196cc6f27339d7efec01e5a8e8115d84bae5610e467d862af192175a84",
+      "bytes": 63553
+    },
+    {
+      "path": "src/world/roads/items/racetrack/Racetrack1_YellowBlue_Curbs_Curve_90_Small_Right/Default.tscn",
+      "sha256": "b8df54236812ed985380c84a02c64826895ff30277365c0815bf5f1da6924a61",
+      "bytes": 63553
+    },
+    {
+      "path": "src/world/roads/items/racetrack/Racetrack1_YellowBlue_Default_Fork_Curb_Left/Default.tscn",
+      "sha256": "0c105adb1e69bfd2c4eb5b875a48788950e1a7b4363842343bfa4764ac3445ce",
+      "bytes": 189163
+    },
+    {
+      "path": "src/world/roads/items/racetrack/Racetrack1_YellowBlue_RoadAdapter/Default.tscn",
+      "sha256": "e6c09f1d3dd07418e5472e9d157ec629134595ee38ede015cb8ea1ac5fabdcfe",
+      "bytes": 41876
+    },
+    {
+      "path": "src/world/roads/items/racetrack/Racetrack1_Yellowblue_Default_Fork_Curb_Right/Default.tscn",
+      "sha256": "9932dc4e256c8f8a174bf06640b0f83fb226b6e2d62bf73e9bd038432b55bb56",
+      "bytes": 189171
+    },
+    {
+      "path": "src/world/roads/items/racetrack/Racetrack1_YelowBlue_Curbs/Default.tscn",
+      "sha256": "892cd7f71f7571501ab77a4198f8af8fb5356059735917e9dfaa161a8960d089",
+      "bytes": 49688
+    }
+  ]
+}

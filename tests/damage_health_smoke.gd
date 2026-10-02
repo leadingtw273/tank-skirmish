@@ -66,14 +66,15 @@ func _validate_training_target() -> bool:
 	root.add_child(target)
 	await process_frame
 	await process_frame
-	var tank := target.get_node_or_null("SubjectSlot/Tank") as CharacterBody3D
+	var tank := target.get_node_or_null("SubjectSlot/Tank") as RigidBody3D
 	var health := target.get_node_or_null("SubjectSlot/Tank/HealthComponent") as HealthComponent
 	var receiver := target.get_node_or_null("SubjectSlot/Tank/DamageReceiver") as DamageReceiver
 	var label := target.get_node_or_null("HealthLabel3D") as Label3D
 	var controller := target.get_node_or_null("TrainingTargetController")
-	var damage_visuals := target.get_node_or_null("SubjectSlot/Tank/Tank2DamageVisuals")
-	var hull_vfx_anchor := target.get_node_or_null("SubjectSlot/Tank/VisualRecoilPivot/HullDamageVFXAnchor") as Node3D
-	var turret_vfx_anchor := target.get_node_or_null("SubjectSlot/Tank/VisualRecoilPivot/TurretPivot/TurretDamageVFXAnchor") as Node3D
+	var combat_tank := tank.get("combat_tank") as CharacterBody3D if tank != null else null
+	var damage_visuals := combat_tank.get_node_or_null("Tank2DamageVisuals") if combat_tank != null else null
+	var hull_vfx_anchor := combat_tank.get_node_or_null("VisualRecoilPivot/HullDamageVFXAnchor") if combat_tank != null else null as Node3D
+	var turret_vfx_anchor := combat_tank.get_node_or_null("VisualRecoilPivot/TurretPivot/TurretDamageVFXAnchor") if combat_tank != null else null as Node3D
 	if tank == null or health == null or receiver == null or label == null or controller == null \
 			or damage_visuals == null or hull_vfx_anchor == null or turret_vfx_anchor == null \
 			or target.get_node_or_null("PlayerRuntime") != null:
@@ -136,7 +137,7 @@ func _validate_training_target() -> bool:
 	if int(damage_visuals.active_damage_stage) != 25:
 		target.queue_free()
 		return _fail("Tank2 damage visuals must switch from 50 to 25 percent health.")
-	var turret_pivot := tank.get_node("VisualRecoilPivot/TurretPivot") as Node3D
+	var turret_pivot := tank.get("turret_pivot") as Node3D
 	var gun_pitch_pivot := turret_pivot.get_node("GunPitchPivot") as Node3D
 	var turret_yaw_before_depletion := 0.73
 	var gun_pitch_before_depletion := -0.04

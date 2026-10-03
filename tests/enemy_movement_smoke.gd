@@ -4,6 +4,8 @@
 ## 並在案例名稱明確標記為「命令注入」，不把它當成四車可駕駛的證據。
 extends SceneTree
 
+const FixtureHelpers = preload("res://tests/support/tank_fixture_helpers.gd")
+
 const TankCombatAI := preload("res://src/ai/tank_combat_ai.gd")
 const TankVision := preload("res://src/actors/tank/perception/tank_vision.gd")
 const TankNavigation := preload("res://src/ai/tank_navigation.gd")
@@ -385,11 +387,11 @@ func _make_fixture(model: int, target_position: Vector3) -> Dictionary:
 	root.add_child(fixture)
 	tank.set_physics_process(false)
 	ai.set_physics_process(false)
-	var ground := _fixture_ground_for(tank, 400.0)
+	var ground := FixtureHelpers.fixture_ground_for(tank, 400.0)
 	fixture.add_child(ground)
 	await physics_frame
 	await physics_frame
-	if not _supported_fixture(tank):
+	if not FixtureHelpers.supported_fixture(tank):
 		fixture.queue_free()
 		await physics_frame
 		return {}
@@ -463,26 +465,3 @@ func _fail(message: String) -> bool:
 
 
 ## 真地板頂面採正式 snapshot 的 hull 接地點；不以砲管等部位的 bounds 推測。
-func _fixture_ground_for(tank: CharacterBody3D, size: float) -> StaticBody3D:
-	var snapshot: Dictionary = tank.predictive_driving_snapshot()
-	var top_y := INF
-	for point in snapshot.ground_points:
-		top_y = minf(top_y, (tank.global_transform * (point as Vector3)).y)
-	var ground := StaticBody3D.new()
-	ground.name = "HullSupportFixtureGround"
-	ground.collision_layer = 128
-	ground.collision_mask = 0
-	ground.position = Vector3(tank.global_position.x, top_y - 0.1, tank.global_position.z)
-	var collision := CollisionShape3D.new()
-	var box := BoxShape3D.new()
-	box.size = Vector3(size, 0.2, size)
-	collision.shape = box
-	ground.add_child(collision)
-	return ground
-
-
-func _supported_fixture(tank: CharacterBody3D) -> bool:
-	var support: Dictionary = tank.ground_support_at(tank.global_transform)
-	var supported := bool(support.get("supported", false)) and absf(float(support.get("height_delta", INF))) < 0.001
-	print("HULL_SUPPORT_FIXTURE %s supported=%s height_delta=%.6f position=%s" % [tank.scene_file_path, supported, float(support.get("height_delta", INF)), tank.global_position])
-	return supported

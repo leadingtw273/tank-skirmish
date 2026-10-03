@@ -1,6 +1,8 @@
 ## Task 1：四車離線部位 geometry、穩定中心、機械姿態與視覺後座隔離的有限 smoke。
 extends SceneTree
 
+const FixtureHelpers = preload("res://tests/support/tank_fixture_helpers.gd")
+
 const VARIANTS := [
 	{"id": "tank1", "scene": "res://src/actors/tank/variants/tank1/tank1.tscn", "parts": ["hull", "left_track", "right_track", "gun"], "center": Vector3(0, 1.519596, 0)},
 	{"id": "tank2", "scene": "res://src/actors/tank/variants/tank2/tank2.tscn", "parts": ["hull", "left_track", "right_track", "gun", "turret"], "center": Vector3(0, 1.039605154183, 0)},
@@ -51,12 +53,12 @@ func _validate_variant(contract: Dictionary) -> bool:
 	## 先完成 ready 的 hull 接地點，再同步真地板；純幾何案例不積分車身運動。
 	root.add_child(tank)
 	tank.set_physics_process(false)
-	var ground := _fixture_ground_for(tank, 40.0)
+	var ground := FixtureHelpers.fixture_ground_for(tank, 40.0)
 	root.add_child(ground)
 	tank.tree_exited.connect(ground.queue_free)
 	await physics_frame
 	await physics_frame
-	if not _supported_fixture(tank):
+	if not FixtureHelpers.supported_fixture(tank):
 		tank.queue_free()
 		return _fail("%s geometry fixture must have true hull support before baseline." % contract.id)
 	var geometry := tank.part_geometry as TankPartGeometry
@@ -146,26 +148,3 @@ func _fail(message: String) -> bool:
 
 
 ## 真地板頂面採正式 snapshot 的 hull 接地點；不以砲管等部位的 bounds 推測。
-func _fixture_ground_for(tank: CharacterBody3D, size: float) -> StaticBody3D:
-	var snapshot: Dictionary = tank.predictive_driving_snapshot()
-	var top_y := INF
-	for point in snapshot.ground_points:
-		top_y = minf(top_y, (tank.global_transform * (point as Vector3)).y)
-	var ground := StaticBody3D.new()
-	ground.name = "HullSupportFixtureGround"
-	ground.collision_layer = 128
-	ground.collision_mask = 0
-	ground.position = Vector3(tank.global_position.x, top_y - 0.1, tank.global_position.z)
-	var collision := CollisionShape3D.new()
-	var box := BoxShape3D.new()
-	box.size = Vector3(size, 0.2, size)
-	collision.shape = box
-	ground.add_child(collision)
-	return ground
-
-
-func _supported_fixture(tank: CharacterBody3D) -> bool:
-	var support: Dictionary = tank.ground_support_at(tank.global_transform)
-	var supported := bool(support.get("supported", false)) and absf(float(support.get("height_delta", INF))) < 0.001
-	print("HULL_SUPPORT_FIXTURE %s supported=%s height_delta=%.6f position=%s" % [tank.scene_file_path, supported, float(support.get("height_delta", INF)), tank.global_position])
-	return supported

@@ -93,6 +93,7 @@ function assertGodotVersionContract(output, tool) {
 run("toolchain-lock-validation", process.execPath, ["scripts/validate-toolchain-lock.mjs", "--check"]);
 run("toolchain-lock-tests", process.execPath, ["--test", "tests/toolchain-lock.test.mjs"]);
 run("toolchain-archive-tests", "python3", ["tests/toolchain_archive_test.py"]);
+run("local-ci-asset-tests", "python3", ["tests/local_ci_assets_test.py"]);
 run("toolchain-bootstrap-tests", process.execPath, ["--test", "tests/toolchain-bootstrap.test.mjs"]);
 run("asset-lock-validation", process.execPath, ["scripts/validate-assets-lock.mjs", "--check"]);
 run("asset-lock-tests", process.execPath, ["--test", "tests/assets-lock.test.mjs"]);

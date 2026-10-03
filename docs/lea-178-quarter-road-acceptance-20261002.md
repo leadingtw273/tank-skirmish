@@ -4,7 +4,7 @@
 
 ## 範圍與正式成果
 
-本單涵蓋主地圖 AI 路線選擇、轉角調整、路肩通行與移動效率。沿用 TurnSpace v6、原 Tank2 物理及完整車體碰撞，正式來源位於 `/home/markchou/project/tank-skirmish-worktrees/lea-177-main-world`。後續坡橋候選、關節懸吊、實體履帶與相關隔離 demo 已取消；四車路面／橋面接地及控制回歸屬 LEA-176，主地圖布局及素材擺放工具屬 LEA-177。
+本單涵蓋主地圖 AI 路線選擇、轉角調整、路肩通行與移動效率。沿用 TurnSpace v6、原 Tank2 物理及完整車體碰撞。PR #123 已正常合併至 main，本機正式開發入口為 `/home/markchou/project/tank-skirmish`；原 `/home/markchou/project/tank-skirmish-worktrees/lea-177-main-world` 保留既有未提交修改與驗收來源。後續坡橋候選、關節懸吊、實體履帶與相關隔離 demo 已取消；四車路面／橋面接地及控制回歸屬 LEA-176，主地圖布局及素材擺放工具屬 LEA-177。
 
 道路高度剩原來的 25%，正式主地圖 200 個道路實例、341 個 reusable 道路場景、184 個共用碰撞資源同步調整，共 531 個來源路徑。`src/world/roads` 中這些道路場景可直接放置，無需 runtime 高度 wrapper。生成器保存 25% 配方並識別已縮放來源，重新生成及重複 bake 不會縮成 6.25%。XZ、材質／UV、原 node basis／scale、indices 與 LOD 維持。
 
@@ -44,6 +44,10 @@ AI 已由使用者人工接受，原四角加 NE／SW repeat 矩陣已補齊 6/6
 本次 runner 為一次性官方映像的非特權 Docker 容器，沒有主機 home 或 Docker socket。啟動時只掛空的唯讀素材目錄；主機核對 GitHub 實際 run、attempt、source HEAD、quality job 與指定 runner 身分後才提供固定 tar。未核對的工作無法取得素材。完成後停止並移除本次精確容器與 runner，不建立常駐 runner 或新 Agent Job。未來 CI 執行仍需相同可信本機素材與受控 runner，沒有宣稱公開 fork 可存取這批素材。
 
 既有測試只對齊正式 Rigid 載具根節點／donor 的責任與真實地板、遮擋、初始化取樣；原斷言與門檻保留。原 R8 殘骸清理區額外辨識正式剛體坦克，死亡、區域、場景祖先與 queue_free 條件維持。全部 smoke、正式 CI、精確 HEAD 的跨模型審查與正常合併結果，以 `/home/markchou/project/agent-team/tmp/lea178-merge-resume-20261002` 證據及原 `git-closeout-result.json` 的後續讀回為準；文件本身不代替實際檢查狀態。
+
+PR #123 的實際合併 commit 為 `68c066660e50bae3959adace47a4320d6070b275`，tree 與已審查的 `90837eff` 完全一致。[PR quality](https://github.com/leadingtw273/tank-skirmish/actions/runs/36992544836) attempt 2 與[合併後 main quality](https://github.com/leadingtw273/tank-skirmish/actions/runs/36997191644) 均成功；[真實跨模型審查](https://github.com/leadingtw273/tank-skirmish/pull/123#issuecomment-5950639794) 通過，使用正常 merge gate，沒有假 Job 或 bypass。
+
+本機主 checkout 已安全同步這個版本並補齊 586 檔素材，531 道路來源與已驗收版本全相符。原 project.godot 本機意圖完整包含於 main，原 Python 快取保持；全部原 cache／測試紀錄先逐檔驗證並完整備份，必要 Godot 匯入只重建可再生 cache。126 個無關 feature worktree 修改保持。CI 啟動器、Dockerfile、素材驗證與審查建議的日常操作交接見 [本機素材 CI 操作交接](local-private-ci.md)，不再只依賴 tmp 內未版控的腳本。
 
 ## 證據範圍
 

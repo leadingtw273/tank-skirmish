@@ -1,5 +1,7 @@
 extends SceneTree
 
+const FixtureHelpers = preload("res://tests/support/tank_fixture_helpers.gd")
+
 const PLAYTEST_SCENE := "res://src/maps/training_ground/training_ground_playtest.tscn"
 const HealthComponent := preload("res://src/combat/damage/health_component.gd")
 const TankVision := preload("res://src/actors/tank/perception/tank_vision.gd")
@@ -46,8 +48,8 @@ func _run(scene: Node3D) -> void:
 	if enemy_body == null or player_body == null:
 		_fail("A1/A2 requires native rigid tank bodies")
 		return
-	var enemy_state := _freeze_geometry_body(enemy_body)
-	var player_state := _freeze_geometry_body(player_body)
+	var enemy_state := FixtureHelpers.freeze_geometry_body(enemy_body)
+	var player_state := FixtureHelpers.freeze_geometry_body(player_body)
 	enemy.global_transform = Transform3D(Basis.IDENTITY, Vector3(0, 30, 0))
 	player.global_position = enemy.global_position + Vector3.FORWARD * 12.0
 	player.set_physics_process(false)
@@ -231,21 +233,11 @@ func _run(scene: Node3D) -> void:
 					and not shot_gate_results.is_empty() and shot_gate_results[0] \
 					and health.current_health < health_before:
 				print("PASS A1/A2 true alternate pipeline shots=", shots.size(), " impact=", impact.position)
-				_restore_geometry_body(enemy_body, enemy_state)
-				_restore_geometry_body(player_body, player_state)
+				FixtureHelpers.restore_geometry_body(enemy_body, enemy_state)
+				FixtureHelpers.restore_geometry_body(player_body, player_state)
 				quit(0)
 				return
 	_fail("A2 requires true AI -> ShotEvent -> Projectile -> target ImpactEvent -> Health loss")
-
-func _freeze_geometry_body(body: RigidBody3D) -> Dictionary:
-	var state := {"freeze": body.freeze, "linear_velocity": body.linear_velocity, "angular_velocity": body.angular_velocity}
-	body.freeze = true
-	return state
-
-func _restore_geometry_body(body: RigidBody3D, state: Dictionary) -> void:
-	body.linear_velocity = state.linear_velocity
-	body.angular_velocity = state.angular_velocity
-	body.freeze = state.freeze
 
 func _one_tick(ai: Node, vision: CountingVision) -> bool:
 	var before := vision.visible_calls

@@ -73,8 +73,8 @@ func _validate_training_target() -> bool:
 	var controller := target.get_node_or_null("TrainingTargetController")
 	var combat_tank := tank.get("combat_tank") as CharacterBody3D if tank != null else null
 	var damage_visuals := combat_tank.get_node_or_null("Tank2DamageVisuals") if combat_tank != null else null
-	var hull_vfx_anchor := combat_tank.get_node_or_null("VisualRecoilPivot/HullDamageVFXAnchor") if combat_tank != null else null as Node3D
-	var turret_vfx_anchor := combat_tank.get_node_or_null("VisualRecoilPivot/TurretPivot/TurretDamageVFXAnchor") if combat_tank != null else null as Node3D
+	var hull_vfx_anchor := (combat_tank.get_node_or_null("VisualRecoilPivot/HullDamageVFXAnchor") if combat_tank != null else null) as Node3D
+	var turret_vfx_anchor := (combat_tank.get_node_or_null("VisualRecoilPivot/TurretPivot/TurretDamageVFXAnchor") if combat_tank != null else null) as Node3D
 	if tank == null or health == null or receiver == null or label == null or controller == null \
 			or damage_visuals == null or hull_vfx_anchor == null or turret_vfx_anchor == null \
 			or target.get_node_or_null("PlayerRuntime") != null:

@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3]
+[gd_scene load_steps=11 format=3]
 
 [ext_resource type="Script" path="res://src/main.gd" id="2_main"]
 [ext_resource type="Script" uid="uid://bca1mijc0u46r" path="res://src/camera/camera_controller.gd" id="2_camera_controller"]
@@ -9,6 +9,7 @@
 [ext_resource type="Script" uid="uid://d0ynxpa1wrjft" path="res://src/player/aim_presentation.gd" id="7_aim_presentation"]
 [ext_resource type="Script" uid="uid://df8n8yyxgp1cq" path="res://src/combat/combat_runtime.gd" id="8_combat_runtime"]
 [ext_resource type="PackedScene" path="res://src/vfx/surface_effects/surface_effects.tscn" id="10_surface_effects"]
+[ext_resource type="Script" path="res://src/visibility/tank_occlusion.gd" id="11_occlusion"]
 
 [node name="TankSkirmish" type="Node3D" unique_id=312571395]
 script = ExtResource("2_main")
@@ -48,6 +49,10 @@ aim_presentation = NodePath("../AimPresentation")
 
 [node name="AimPresentation" type="Node" parent="PlayerRuntime" unique_id=184548892]
 script = ExtResource("7_aim_presentation")
+
+[node name="TankOcclusion" type="Node" parent="." node_paths=PackedStringArray("player_runtime")]
+script = ExtResource("11_occlusion")
+player_runtime = NodePath("../PlayerRuntime")
 
 [node name="CombatRuntime" type="Node3D" parent="." unique_id=58904863 node_paths=PackedStringArray("shot_sources", "projectiles", "effects")]
 script = ExtResource("8_combat_runtime")

@@ -172,6 +172,10 @@ for (const testName of ["main_ground_visual_smoke", "player_rigid_integration_sm
     "--script", `res://tests/${testName}.gd`,
   ], { scanGodotErrors: true });
 }
+run("tank-occlusion-smoke", godot, [
+  "--headless", "--audio-driver", "Dummy", "--fixed-fps", "60", "--path", ".",
+  "--script", "res://tests/tank_occlusion_smoke.gd",
+], { scanGodotErrors: true });
 run("training-ground-smoke", godot, [
   "--headless",
   "--audio-driver",

@@ -20,4 +20,4 @@
 GODOT_BIN=/path/to/Godot_v4.7.1-stable_linux.x86_64 bash scripts/ci.sh
 ```
 
-Agent Team 可自動修改 `docs/`、`scripts/`、`src/` 與 `tests/`。Root 設定、`.github/` 與 `.agent-team/` 是 host-managed protected regions；需要變更時必須升級給 host 處理。
+現役開發管理從 [AGENTS.md](AGENTS.md) 與 [AgentCollab 交接](docs/agent-collab/HANDOFF.md) 開始，由互動代理依已核可輪次工作。Root 設定、`.github/` 與 `.agent-team/` 的保護邊界見 [host-managed-settings.md](docs/host-managed-settings.md)；本次例外只涵蓋管理文件導入，不授權其他設定變更。舊 Agent Team registration 保留作歷史證據，不再作現役自動派工入口。

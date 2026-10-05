@@ -1,5 +1,6 @@
 # 一次接手入口
 
+本檔下方的工程待完成欄位為 2026-10-05 導入候選準備時快照。接手時以 [GitHub 實際 PR／合併紀錄](https://github.com/leadingtw273/tank-skirmish/pulls?q=is%3Apr+Agent+Collab) 與 PROJECT 所列 Linear 的最新進度為準；不從這份快照重開已完成工作。
 將下列 prompt 貼給新成員自己的 agent；不需安裝中央 Controller，也不需原實作者對話或相同模型。
 
 ```text
@@ -21,10 +22,10 @@
 
 以 Linear 記錄進度與範圍；工單內容參考 `docs/agent-collab/ISSUE.md`，獨立 review 參考 `docs/agent-collab/REVIEW.md`，PR 參考 `.github/PULL_REQUEST_TEMPLATE.md`。工程交付版本與人員產品驗收分開；交付要有版本取得方式和可重現步驟。
 
-## 本輪現況與下一步
+## 導入候選查核快照與接手步驟
 
 本 repo 管理切換已核可，見 [ITERATION.md](ITERATION.md) 的原句、日期與來源摘要。2026-10-05 唯讀查核：本機 `main`／HEAD `dd6e2fb00b5797363f1378fbcd04d4d26a00118f`／clean，遠端 main 同 SHA；open PR 回應空清單、全部狀態的「Agent Collab」PR 關鍵字搜尋 0 筆。這只證明查核時的已讀共享範圍，不能排除其他人的未提交修改或後來新 PR。Linear 已實讀 [本專案](https://linear.app/leadingtw273/project/tank-skirmish-c9ebe903bf08)；同 team 含封存項目的 `Agent Collab`／`Agent Team`／`管理切換` 搜尋各回 96／97／125 筆、皆 `hasNextPage=false`，去重 161 筆。標題同採用目標的 [LEA-179](https://linear.app/leadingtw273/issue/LEA-179/接入-agent-collab保存-132-成果基線並準備協作文件-pr) 是已完成的 Spellbound 首案；實讀 [LEA-124](https://linear.app/leadingtw273/issue/LEA-124/更新過期的-agent-team-專案規則) 為已完成的 Tank 舊 config 規則更新，[LEA-42](https://linear.app/leadingtw273/issue/LEA-42/tank-skirmish-registration-audit)／[LEA-9](https://linear.app/leadingtw273/issue/LEA-9/agent-team-sandbox-registration-audit) 為 registration 稽核，皆不接管或重開為本次全面切換。上述已讀範圍未發現 Tank／Sandbox 本次管理切換同目標工單；搜尋結果並非 0，也不能排除其他命名、未讀描述、他人未提交內容或查核後的新工作，正式開單前重查。
 
 下一步依序為重新核對 repo／平台 → 查 Linear 與同目標 PR／責任人 → 沿用或建立管理文件工單 → 在隔離文件 branch 提 PR 至 `main` → 最新 Head 獨立 review → 實際必要 CI 與相容 `agent-team/review` status → 核對真實平台條件 → 普通 merge → 回填交付 commit／Linear。Branch 名稱由真實建立結果記錄，目前未建立；不得推定舊 Job 或其他人的工作已被接管。
 
-工程交付目前待 review／CI／merge；沒有正式 PR、review PASS、CI success 或交付 commit。Tank 既有遊戲成果保留，本次未讀私有素材、未跑 Godot、未重測玩法；私有品質驗證另依 [runbook](../local-private-ci.md) 取得本次必要的精確授權。 Spellbound 已採用的入口與既有工作不覆蓋、不重開；其他未具 Team registration 的專案依全域 fallback 讀各自 repo 入口，不因本輪新增輪次。
+候選準備時工程交付待 review／CI／merge；沒有正式 PR、review PASS、CI success 或交付 commit。Tank 既有遊戲成果保留，本次未讀私有素材、未跑 Godot、未重測玩法；私有品質驗證另依 [runbook](../local-private-ci.md) 取得本次必要的精確授權。 Spellbound 已採用的入口與既有工作不覆蓋、不重開；其他未具 Team registration 的專案依全域 fallback 讀各自 repo 入口，不因本輪新增輪次。

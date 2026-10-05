@@ -1,8 +1,10 @@
 # 一次接手入口
 
-目前核可輪次是 2026-10-05 玩家遮蔽淡出與敵車透視輪廓，權威為 [ITERATION.md](ITERATION.md)；自包含產品裁決、ADR、P1–P3／E1–E3、術語與有限測試入口見 [tank-occlusion.md](../features/tank-occlusion.md)。工程狀態：玩家 phase1 實作中；Claude plan review 已執行（提醒已裁決採納）；正式 Forward+ probe／新功能驗收／PR／CI 待完成。 人員產品驗收：`pending`，未宣稱 accepted。
+目前核可輪次是 2026-10-05 玩家遮蔽淡出與敵車透視輪廓，權威為 [ITERATION.md](ITERATION.md)；自包含產品裁決、ADR、P1–P3／E1–E3、術語與有限測試入口見 [tank-occlusion.md](../features/tank-occlusion.md)。工程狀態：候選封存準備快照：玩家 P1–P3 fresh-context 驗收 PASS；敵方候選已實作且本機自驗 PASS；最終 fresh-context 產品整合／完整品質／最新 Head 獨立 source review 待完成；GitHub PR／CI／merge 與人驗 pending。 人員產品驗收：`pending`，未宣稱 accepted。
 
 上一管理輪已由 [PR #125](https://github.com/leadingtw273/tank-skirmish/pull/125) 合併至 `main`，commit `b9fe1f4a93d4e4c2b48a3ed3a866d660980f8aa7`；不要重開舊管理待辦。本輪以此為基線，先 [LEA-194](https://linear.app/leadingtw273/issue/LEA-194) 玩家局部建築淡出、P1–P3 本機驗證與 fresh-context 驗收，再 [LEA-195](https://linear.app/leadingtw273/issue/LEA-195) 敵車紅線輪廓與透視瞄準；後單依賴前單。
+
+本機玩家 phase1 commit 為 `d27deec`，正式 `main` 仍為 `b9fe1f4a93d4e4c2b48a3ed3a866d660980f8aa7`；敵方候選與最終驗證狀態見 [工程快照](ITERATION.md#候選封存前工程快照)。封存後的驗證與交付結果查 [GitHub 最新紀錄](https://github.com/leadingtw273/tank-skirmish/pulls) 及 [Linear 最新共享進度](https://linear.app/leadingtw273/project/tank-skirmish-c9ebe903bf08)，不由本文快照推定 gate 通過。
 
 將下列 prompt 貼給新成員自己的 agent；不需中央 Controller、原實作者對話或個人記憶。
 
@@ -26,9 +28,9 @@
 
 ## 接手順序與保留邊界
 
-Claude review 提醒已裁決採納：保留 `cull_disabled`、敵車專屬拾取略過非目標 RID、4.7 實測前提；輪廓命中包含紅線圍住的實體車體 silhouette 投影形狀與線寬鄰域，不使用 AABB。正式 Forward+ probe 及產品驗收仍待完成，不能把前提查核當功能通過。
+Claude review 提醒已裁決採納：保留 `cull_disabled`、敵車專屬拾取略過非目標 RID、4.7 實測前提；輪廓命中包含紅線圍住的實體車體 silhouette 投影形狀與線寬鄰域，不使用 AABB。敵方四車 Forward+ 與 headless 本機自驗已有結果，最終產品整合、完整品質與 source Head review 仍待完成；不能把自驗當工程交付。
 
-依本輪固定順序完成玩家、再敵方。只有既定 AC 反例、正常路徑實際失敗或具體資安／資料破壞證據列為本單 blocker；其他 advisory 為後續 backlog／忽略，不改寫完成定義。三個產品術語已記入共通術語，產品未實作完成；完整定義在產品文件。
+依本輪固定順序完成玩家、再敵方。只有既定 AC 反例、正常路徑實際失敗或具體資安／資料破壞證據列為本單 blocker；其他 advisory 為後續 backlog／忽略，不改寫完成定義。三個產品術語已記入共通術語，產品候選待最終驗收與交付；完整定義在產品文件。
 
 正式 `main` 主圖沒有敵方 Encounter，本輪不植入敵方戰鬥布局；敵方驗證限現役訓練場與有限測試場景。沿用 `TankVision.can_see` 與實體遮彈，視野外敵車沿用原顯示，不新增迷霧或發現記憶。
 

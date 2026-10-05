@@ -43,9 +43,11 @@ aim_presentation = NodePath("AimPresentation")
 [node name="PlayerController" type="Node" parent="PlayerRuntime" unique_id=838892202]
 script = ExtResource("5_player_controller")
 
-[node name="PlayerAimController" type="Node" parent="PlayerRuntime" unique_id=590491090 node_paths=PackedStringArray("aim_presentation")]
+[node name="PlayerAimController" type="Node" parent="PlayerRuntime" unique_id=590491090 node_paths=PackedStringArray("aim_presentation", "occlusion")]
+process_priority = 20
 script = ExtResource("6_player_aim_controller")
 aim_presentation = NodePath("../AimPresentation")
+occlusion = NodePath("../../TankOcclusion")
 
 [node name="AimPresentation" type="Node" parent="PlayerRuntime" unique_id=184548892]
 script = ExtResource("7_aim_presentation")

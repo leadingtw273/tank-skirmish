@@ -2,6 +2,8 @@
 extends Node
 
 const Fade := preload("res://src/visibility/building_fade.gd")
+const Vision := preload("res://src/actors/tank/perception/tank_vision.gd")
+const Outline := preload("res://src/visibility/enemy_outline.gd")
 
 @export var player_runtime: Node
 ## 玩家與敵方透視窗口共用同一個世界半徑。
@@ -13,6 +15,8 @@ var controlled_tank: Node3D
 var camera: Camera3D
 var _fades: Dictionary = {}
 var _amounts: Dictionary = {}
+var _vision: Node
+var _outlines: Dictionary = {}
 
 
 func _ready() -> void:
@@ -21,24 +25,30 @@ func _ready() -> void:
 		push_error("TankOcclusion requires PlayerRuntime.")
 		set_process(false)
 		return
+	_vision = Vision.new()
+	add_child(_vision)
 	player_runtime.connect("controlled_tank_changed", _bind_tank)
 	_bind_tank(player_runtime.get("controlled_tank") as Node3D)
 
 
 func _bind_tank(tank: Node3D) -> void:
 	_restore_buildings()
+	_clear_enemy_outlines()
 	controlled_tank = tank
+	_vision.set("observer", tank)
 	var rig := player_runtime.get("camera_controller") as Node
 	camera = rig.get("camera") as Camera3D if is_instance_valid(rig) else null
 
 
 func _exit_tree() -> void:
 	_restore_buildings()
+	_clear_enemy_outlines()
 
 
 func _process(delta: float) -> void:
 	if not _alive(controlled_tank) or not is_instance_valid(camera):
 		_restore_buildings()
+		_clear_enemy_outlines()
 		return
 	var window := window_for(controlled_tank)
 	var obscuring: Array[Node3D] = []
@@ -63,6 +73,69 @@ func _process(delta: float) -> void:
 			_amounts.erase(building)
 		else:
 			effect.update_window(window.center, window.radius_pixels, window.viewport_size, amount)
+	_update_enemy_outlines()
+
+
+func _update_enemy_outlines() -> void:
+	var enemies := get_tree().get_nodes_in_group(&"enemy_tank")
+	for candidate in enemies:
+		var enemy := candidate as Node3D
+		if enemy == controlled_tank or not _alive(enemy):
+			continue
+		var window := window_for(enemy)
+		var eligible := not window.is_empty() and bool(_vision.call("can_see", enemy))
+		if eligible:
+			eligible = not building_occluders(enemy).is_empty()
+		if eligible and not _outlines.has(enemy):
+			var outline := Outline.new()
+			add_child(outline)
+			outline.configure(enemy, camera)
+			_outlines[enemy] = outline
+		if _outlines.has(enemy):
+			var outline = _outlines[enemy]
+			if eligible:
+				outline.update_window(camera, window)
+			outline.set_active(eligible)
+	for enemy in _outlines.keys():
+		if not is_instance_valid(enemy) or not enemies.has(enemy) or not _alive(enemy):
+			_outlines[enemy].set_active(false)
+			_outlines[enemy].queue_free()
+			_outlines.erase(enemy)
+
+
+func outlined_enemies() -> Array[Node3D]:
+	var result: Array[Node3D] = []
+	for enemy in _outlines:
+		if is_instance_valid(enemy) and bool(_outlines[enemy].active):
+			result.append(enemy)
+	return result
+
+
+## 只優先處理目前啟用的敵車投影；一般 picking 仍保留原首撞行為。
+func resolve_enemy_target(screen_position: Vector2, collision_mask: int = 129) -> Dictionary:
+	if not _alive(controlled_tank) or not is_instance_valid(camera):
+		return {}
+	var excluded: Array[RID] = []
+	if controlled_tank is CollisionObject3D:
+		excluded.append(controlled_tank.get_rid())
+	var closest := INF
+	var result: Dictionary = {}
+	for enemy in outlined_enemies():
+		var hit: Dictionary = _outlines[enemy].pick(screen_position, excluded, collision_mask)
+		if hit.is_empty():
+			continue
+		var depth := -camera.to_local(hit.position).z
+		if depth < closest:
+			closest = depth
+			result = hit
+	return result
+
+
+func _clear_enemy_outlines() -> void:
+	for outline in _outlines.values():
+		outline.set_active(false)
+		outline.queue_free()
+	_outlines.clear()
 
 
 func window_for(target: Node3D) -> Dictionary:

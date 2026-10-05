@@ -2,7 +2,9 @@
 
 日期：2026-10-05；產品決策／人員產品驗收人：leadi。授權見 [ITERATION.md](../agent-collab/ITERATION.md)，接手見 [HANDOFF.md](../agent-collab/HANDOFF.md)。Base 為 `main` 的 `b9fe1f4a93d4e4c2b48a3ed3a866d660980f8aa7`（[PR #125](https://github.com/leadingtw273/tank-skirmish/pull/125)）。
 
-狀態：產品決策已採用。工程狀態：玩家 phase1 實作中；Claude plan review 已執行（提醒已裁決採納）；正式 Forward+ probe／新功能驗收／PR／CI 待完成。 人員產品驗收：`pending`，未宣稱 accepted。本文保存裁決與有限驗收依據，不是功能交付或測試通過證據。
+狀態：產品決策已採用。工程狀態：候選封存準備快照：玩家 P1–P3 fresh-context 驗收 PASS；敵方候選已實作且本機自驗 PASS；最終 fresh-context 產品整合／完整品質／最新 Head 獨立 source review 待完成；GitHub PR／CI／merge 與人驗 pending。 人員產品驗收：`pending`，未宣稱 accepted。本文保存裁決與有限驗收依據；工程段落是候選封存準備快照，不是正式交付或同 Head 平台 gate 證據。
+
+本機玩家 phase1 commit 為 `d27deec`，正式 `main` 仍為 `b9fe1f4a93d4e4c2b48a3ed3a866d660980f8aa7`。具體本機結果及 pending 項目見 [工程快照](../agent-collab/ITERATION.md#候選封存前工程快照)；後續結果以 [GitHub 最新紀錄](https://github.com/leadingtw273/tank-skirmish/pulls) 與 [Linear 最新共享進度](https://linear.app/leadingtw273/project/tank-skirmish-c9ebe903bf08) 為準，不依這份快照推定最終 PASS 或 accepted。
 
 ## 使用者裁決與產品前提
 
@@ -28,9 +30,11 @@ leadi 於 2026-10-05 指定「先修玩家遮蔽透視在修敵人遮蔽透視�
 
 遮蔽控制器接既有 `PlayerRuntime.controlled_tank_changed` 與 `CameraController.camera`；用 `stable_world_center` 和有限均勻取樣的 `part_world_surface_points` 作相機實體射線。建築識別限 Buildings 容器或既有來源 metadata，不動 collision layer。受控車 null、離開樹、換車、死亡／重生時還原舊呈現並重綁。
 
-玩家淡出用受影響 mesh 各自的 surface override ShaderMaterial 複製原 PBR 屬性與 `cull_disabled`，不改原 shared resource；opaque shader 在窗口內 dither discard，影子 pass 排除淡出，解除遮蔽還原原 override。Claude review 的 culling 提醒與 4.7 實測前提已裁決採納；正式 Forward+ probe 仍待完成。若直接技術前提實測失效，回報證據與有限選項，不默默改寫產品裁決。
+玩家淡出用受影響 mesh 各自的 surface override ShaderMaterial 複製原 PBR 屬性與 `cull_disabled`，不改原 shared resource；opaque shader 在窗口內 dither discard，影子 pass 排除淡出，解除遮蔽還原原 override。Claude review 的 culling 提醒與 4.7 實測前提已裁決採納；四車 Forward+ renderer 本機自驗已有 PASS，最終產品整合及 source Head review 仍待完成。若直接技術前提實測失效，回報證據與有限選項，不默默改寫產品裁決。
 
 現役訓練 Encounter 將實際敵車加入 `enemy_tank` 群組。每個啟用敵車以獨立 SubViewport／World3D 同步主相機與 mesh transform，產生白色 silhouette mask，Canvas shader 用外緣膨脹減內部 mask 畫線與窗口裁切；不使用整片填紅、三角 wireframe 或 experimental stencil。
+
+候選 renderer 僅對原四車既存履帶 Skeleton 作有限唯讀 pose／skin 同步，不修改來源素材或新增動畫框架。正式 renderer 驗證限 Forward+；GL 陰影差異列 scope 外，固定 AC 與跨渲染器排除保持。
 
 拾取檢查 silhouette 車體原像素與約 2 像素線寬鄰域，回傳目標敵車實體交點；線寬邊緣可用鄰域 ray。若對應部位無實體 hit，取該車表面點中投影最接近命中像素者，仍是敵車世界點。回滾移除顯示節點／aim resolver 接線即恢復基線，沒有資料 migration。
 
@@ -49,7 +53,7 @@ leadi 於 2026-10-05 指定「先修玩家遮蔽透視在修敵人遮蔽透視�
 
 ## 有限測試入口
 
-本機具備正版私素材與現役 pinned Godot 後，依 [PROJECT.md](../agent-collab/PROJECT.md) 設定 `GODOT_BIN`，完整入口為 `bash scripts/ci.sh`。下列既有回歸入口目前僅確認檔案存在，本文未執行或宣稱通過。
+本機具備正版私素材與現役 pinned Godot 後，依 [PROJECT.md](../agent-collab/PROJECT.md) 設定 `GODOT_BIN`，完整入口為 `bash scripts/ci.sh`。下列列出有限回歸入口；本文件任務只確認入口存在，實跑結果與最終狀態依工程快照及平台最新紀錄。
 
 | 固定回歸 | 既有檔案 |
 | --- | --- |
@@ -62,11 +66,13 @@ leadi 於 2026-10-05 指定「先修玩家遮蔽透視在修敵人遮蔽透視�
 | 部位可見性戰鬥 | [partial_visibility_combat_smoke.gd](../../tests/partial_visibility_combat_smoke.gd) |
 | 敵方戰鬥 | [enemy_combat_smoke.gd](../../tests/enemy_combat_smoke.gd) |
 
-單一 smoke 範例：`"$GODOT_BIN" --headless --path . --script res://tests/player_spawn_group_smoke.gd`；其餘按上表替換檔名。新功能新增有限 occlusion smoke 與實際渲染截圖，其交付／結果待實跑。Headless shader 建立成功不作視覺驗證；畫面在本機檢查，不外送。正式主圖沒有敵方 Encounter，本輪不植入敵方戰鬥布局，敵方固定案例限現役訓練場與有限測試場景。
+本輪新增 [tank_occlusion_smoke.gd](../../tests/tank_occlusion_smoke.gd) 與 [enemy_occlusion_smoke.gd](../../tests/enemy_occlusion_smoke.gd)。敵方 headless 本機自驗已有 `ENEMY_OCCLUSION PASS failures=0`；玩家 fresh-context 與敵方四車 Forward+ 自驗已保留本機渲染證據，最終整合／完整品質仍待。這些結果不是 GitHub CI success 或人員 accepted。
+
+單一 smoke 範例：`"$GODOT_BIN" --headless --path . --script res://tests/player_spawn_group_smoke.gd`；其餘按上表替換檔名。完整品質與最新 Head 的最終獨立驗證結果查工程快照及平台最新紀錄。Headless shader 建立成功不作視覺驗證；畫面在本機檢查，不外送。正式主圖沒有敵方 Encounter，本輪不植入敵方戰鬥布局，敵方固定案例限現役訓練場與有限測試場景。
 
 ## 術語
 
-三個術語已記入共通術語，產品未實作完成。以下定義可直接供接手，不依賴個人記憶或私有路徑。
+三個術語已記入共通術語，產品候選待最終驗收與交付。以下定義可直接供接手，不依賴個人記憶或私有路徑。
 
 | 術語 | 定義 | 專案／首次確認 |
 | --- | --- | --- |

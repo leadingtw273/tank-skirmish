@@ -1296,9 +1296,9 @@ func _validate_grid_layout(instance: Node) -> bool:
 
 
 func _validate_world_structure(instance: Node) -> bool:
-	var expected_root_children := [&"PlayerSpawnGroup", &"PlayerRuntime", &"CombatRuntime", &"SurfaceEffects", &"World"]
+	var expected_root_children := [&"PlayerSpawnGroup", &"PlayerRuntime", &"TankOcclusion", &"CombatRuntime", &"SurfaceEffects", &"World"]
 	if instance.get_child_count() != expected_root_children.size():
-		push_error("Main scene must contain PlayerSpawnGroup, PlayerRuntime, CombatRuntime, SurfaceEffects, and World")
+		push_error("Main scene must contain PlayerSpawnGroup, PlayerRuntime, TankOcclusion, CombatRuntime, SurfaceEffects, and World")
 		return false
 	for index: int in expected_root_children.size():
 		if instance.get_child(index).name != expected_root_children[index]:

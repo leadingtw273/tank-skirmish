@@ -45,6 +45,7 @@ func _ready() -> void:
 		return
 	## 只記錄場景啟動時的姿態；交戰期間移位或轉向不會改變重置點。
 	_enemy_spawn_transform = enemy.global_transform
+	enemy.add_to_group(&"enemy_tank")
 	for index in TankCatalog.IDS.size():
 		if enemy.get("vehicle_id") == TankCatalog.IDS[index]:
 			_enemy_variant_index = index
@@ -96,6 +97,7 @@ func _cycle_enemy() -> void:
 	replacement.transform = global_transform.affine_inverse() * _enemy_spawn_transform
 	add_child(replacement)
 	enemy = replacement
+	enemy.add_to_group(&"enemy_tank")
 	_enemy_variant_index = next_index
 	combat_ai.set("controlled_tank", enemy)
 	vision.set("observer", enemy)

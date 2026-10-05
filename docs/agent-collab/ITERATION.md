@@ -1,6 +1,6 @@
 # 2026-10-05 玩家遮蔽淡出與敵車透視輪廓
 
-狀態：`approved`（本輪產品範圍已核可）。工程狀態：玩家 phase1 實作中；Claude plan review 已執行（提醒已裁決採納）；正式 Forward+ probe／新功能驗收／PR／CI 待完成。 人員產品驗收：`pending`，未宣稱 accepted。
+狀態：`approved`（本輪產品範圍已核可）。工程狀態：候選封存準備快照：玩家 P1–P3 fresh-context 驗收 PASS；敵方候選已實作且本機自驗 PASS；最終 fresh-context 產品整合／完整品質／最新 Head 獨立 source review 待完成；GitHub PR／CI／merge 與人驗 pending。 人員產品驗收：`pending`，未宣稱 accepted。
 
 自包含產品決策、ADR、術語與有限測試入口見 [tank-occlusion.md](../features/tank-occlusion.md)。專案設定沿用 [PROJECT.md](PROJECT.md)，協作與真實合併條件沿用 [WORKFLOW.md](WORKFLOW.md)；PROJECT 原管理輪分支／基線快照保留為歷史，本輪以本檔為準。
 
@@ -12,7 +12,17 @@
 | Base／交付 | 既有 `main`，基線 `b9fe1f4a93d4e4c2b48a3ed3a866d660980f8aa7`（管理輪 PR #125 合併結果）。隔離開發分支實作，最新 Head 獨立 review、同 Head 必要 CI／status 與平台 read-back 後普通 merge 至 `main`；尚無本輪交付 commit。 |
 | 核可人／日期 | leadi，2026-10-05；下方保存自包含實際裁決摘錄。 |
 | 責任／人驗 | 工單負責人與最新進度以 Linear 為準；建立後 read-back 兩單均為待執行、未指定責任人。leadi 為產品決策與人員產品驗收人，親測結果尚待取得。 |
-| 術語 | 三個產品術語已記入共通術語，產品未實作完成；定義在產品文件，接手不需個人記憶。 |
+| 術語 | 三個產品術語已記入共通術語，產品候選待最終驗收與交付；定義在產品文件，接手不需個人記憶。 |
+
+## 候選封存前工程快照
+
+本節是封存準備時的本機工程快照。後續最終驗證、source Head review、PR／CI／merge 與人驗結果，以 [GitHub 最新紀錄](https://github.com/leadingtw273/tank-skirmish/pulls) 及 [Linear 最新共享進度](https://linear.app/leadingtw273/project/tank-skirmish-c9ebe903bf08) 為準；本文不充當持續更新的 PASS 表，也不代替同 Head 真實 gate。
+
+- 玩家 phase1 本機 commit `d27deec` 已完成實作；P1–P3 fresh-context 驗收 PASS，在正式主圖場景驗四車並保留 16 張本機 PNG。這是候選內容的本機驗證，正式 `main` 仍為 `b9fe1f4a93d4e4c2b48a3ed3a866d660980f8aa7`，尚未覆寫正式 source。
+- 敵方候選已實作，四車 Forward+ renderer 本機自驗 PASS，包含真實 silhouette mask 與敵車世界點拾取；headless 整合記錄 `ENEMY_OCCLUSION PASS failures=0`。這些自驗不代替最終 fresh-context 產品整合驗收或最新 Head 獨立 source review。
+- 原履帶使用既存 Skeleton，候選僅做原四車的有限唯讀 pose／skin 同步，不改來源素材、不新增動畫框架。正式 renderer 驗證限 Forward+；GL 陰影差異列 scope 外，不新增跨渲染器義務。
+- 最終 fresh-context 產品整合與完整 `scripts/ci.sh` 由獨立代理執行中；最終 source Head review 尚待。GitHub PR／CI／merge 與 leadi 人驗皆 pending，尚無正式交付或 accepted。
+- 本機私素材保持 ignored；新網路 CI grant、source 或 PNG 外送邊界未擴。Claude 僅收到已核准 plan，source 獨立 review 由原生不同模型處理；本機 PASS 不授權額外外送。
 
 ## 本輪自包含裁決引用
 

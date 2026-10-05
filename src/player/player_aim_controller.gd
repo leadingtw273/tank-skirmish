@@ -4,6 +4,7 @@ extends Node
 ## 滑鼠未命中任何碰撞時的備用距離；不是砲彈射程或可見地面的偵測上限。
 @export var max_aim_distance := 180.0
 @export var aim_presentation: Node
+@export var occlusion: Node
 
 var controlled_tank: Node3D
 var camera: Camera3D
@@ -49,6 +50,10 @@ func apply_aim(target_position: Vector3, delta: float) -> void:
 
 
 func resolve_mouse_world_target(screen_position: Vector2) -> Vector3:
+	if is_instance_valid(occlusion):
+		var enemy_hit: Dictionary = occlusion.call("resolve_enemy_target", screen_position, aim_collision_mask)
+		if not enemy_hit.is_empty():
+			return enemy_hit.position as Vector3
 	return resolve_world_target_from_ray(
 		camera.project_ray_origin(screen_position),
 		camera.project_ray_normal(screen_position),

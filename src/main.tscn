@@ -8,4 +8,4 @@ startup_player_id = "tank2"
 [node name="PlayerSpawnGroup" parent="." index="0"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -108, 0, -114)
 
-[node name="World" parent="." index="4" unique_id=1726407625 instance=ExtResource("2_world")]
+[node name="World" parent="." index="5" unique_id=1726407625 instance=ExtResource("2_world")]

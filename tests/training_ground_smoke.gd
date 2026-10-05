@@ -178,7 +178,7 @@ func _validate_playtest_composition() -> bool:
 	if combat_ai != null:
 		combat_ai.call("set_combat_enabled", false)
 	var world := gameplay_runtime.get_node_or_null("World") as Node3D if gameplay_runtime != null else null
-	var expected_runtime_nodes := [&"PlayerSpawnGroup", &"PlayerRuntime", &"CombatRuntime", &"SurfaceEffects", &"World"]
+	var expected_runtime_nodes := [&"PlayerSpawnGroup", &"PlayerRuntime", &"TankOcclusion", &"CombatRuntime", &"SurfaceEffects", &"World"]
 	var has_existing_runtime := gameplay_runtime != null and gameplay_runtime.get_child_count() == expected_runtime_nodes.size()
 	if has_existing_runtime:
 		for node_name in expected_runtime_nodes:

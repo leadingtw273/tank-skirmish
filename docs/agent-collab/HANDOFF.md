@@ -1,41 +1,50 @@
 # 一次接手入口
 
-目前核可輪次是 2026-10-05 玩家遮蔽淡出與敵車透視輪廓，權威為 [ITERATION.md](ITERATION.md)；自包含產品裁決、ADR、P1–P3／E1–E3、術語與有限測試入口見 [tank-occlusion.md](../features/tank-occlusion.md)。工程狀態：候選封存準備快照：玩家 P1–P3 fresh-context 驗收 PASS；敵方候選已實作且本機自驗 PASS；最終 fresh-context 產品整合／完整品質／最新 Head 獨立 source review 待完成；GitHub PR／CI／merge 與人驗 pending。 人員產品驗收：`pending`，未宣稱 accepted。
+目前輪次是 2026-10-06 玩家遮蔽淡出與敵車透視輪廓續修，權威為 [ITERATION.md](ITERATION.md)；自包含產品裁決、既有 ADR、P1–P3／E1–E3、術語與有限測試入口見 [tank-occlusion.md](../features/tank-occlusion.md)。leadi 已親測上一版並回報 `needs_changes`；本次候選仍整合／驗證中，不宣稱新版 PASS 或 accepted。
 
-上一管理輪已由 [PR #125](https://github.com/leadingtw273/tank-skirmish/pull/125) 合併至 `main`，commit `b9fe1f4a93d4e4c2b48a3ed3a866d660980f8aa7`；不要重開舊管理待辦。本輪以此為基線，先 [LEA-194](https://linear.app/leadingtw273/issue/LEA-194) 玩家局部建築淡出、P1–P3 本機驗證與 fresh-context 驗收，再 [LEA-195](https://linear.app/leadingtw273/issue/LEA-195) 敵車紅線輪廓與透視瞄準；後單依賴前單。
+工單、負責人、依賴、工作範圍與共享進度查 [LEA-194](https://linear.app/leadingtw273/issue/LEA-194) 與 [LEA-195](https://linear.app/leadingtw273/issue/LEA-195) 的現役紀錄；2026-10-06 讀回兩單進行中，LEA-195 仍依賴 LEA-194。先完成玩家工程驗證，再整合敵方；本入口不另建中央 journal 或進度狀態表。
 
-本機玩家 phase1 commit 為 `d27deec`，正式 `main` 仍為 `b9fe1f4a93d4e4c2b48a3ed3a866d660980f8aa7`；敵方候選與最終驗證狀態見 [工程快照](ITERATION.md#候選封存前工程快照)。封存後的驗證與交付結果查 [GitHub 最新紀錄](https://github.com/leadingtw273/tank-skirmish/pulls) 及 [Linear 最新共享進度](https://linear.app/leadingtw273/project/tank-skirmish-c9ebe903bf08)，不由本文快照推定 gate 通過。
+版本、PR、CI、獨立 review 與 merge 以 GitHub 為準。[PR #126](https://github.com/leadingtw273/tank-skirmish/pull/126) 是已合併的歷史工程交付；本次基線為 [`main f97581214e713627fce93a6a00ad8aae7206c5fc`](https://github.com/leadingtw273/tank-skirmish/commit/f97581214e713627fce93a6a00ad8aae7206c5fc)，來源樹 `2074e262610c426efadd605bd80b17769ca318a3`。2026-10-05 的完整品質、84 項圖形檢查及兩次 CI success 僅覆蓋該版，摘要見 [已交付歷史](ITERATION.md#本次續修與已交付歷史)，不能據此推定本次同 Head gate 通過。
 
-將下列 prompt 貼給新成員自己的 agent；不需中央 Controller、原實作者對話或個人記憶。
+本次需求與精確新計畫文字審查已明確核准；2026-10-06 Claude（`claude-opus-5-5`）單次有效 result 為 approve／0 blocker，只讀該計畫且 SHA／mtime 不變。候選仍整合／驗證中，尚未正式套用 source；作者自檢不代替 fresh-context 驗收、完整品質或 Windows 親測。計畫審查不擴為 code、材質、PNG 或私素材外送授權。
+
+將下列 prompt 貼給接手成員自己的 agent；不需中央 Controller、原實作者對話或個人記憶。
 
 ```text
 請依這個 repo 的真實共享檔案與平台紀錄接手我的工作：
 1. 讀根 AGENTS.md、docs/agent-collab/PROJECT.md、ITERATION.md、WORKFLOW.md，
-   再讀 docs/features/tank-occlusion.md 的產品裁決與有限 AC。
-2. 依 PROJECT 查 Linear、既有 PR、目前 branch／工作樹與版本；
-   本輪 base 與目標分支以 ITERATION 為準，PROJECT 管理輪快照保留為歷史。
-   對帳授權、我的工單、責任人、重複／重疊／依賴與交付現況。
-3. 第一次讀完先回報簡短摘要：授權與範圍、相關工單／PR、
-   衝突或依賴、未知資訊及下一個可執行動作。
-4. 已核可範圍內自主續跑查核、開發、正常修正、驗證、獨立 review、
-   符合真實平台條件的開發分支普通合併、Linear 更新及可重現交付；
-   不為日常動作重複請核可，也不接管其他人的工單。
-5. 只有產品方向、超出授權或無法協調的衝突才找 PROJECT 對應的人。
-   未知資訊只暫停依賴部分，繼續其他已授權且可獨立進行的工作。
+   再讀 docs/features/tank-occlusion.md 的本次親測回饋與有限 AC。
+2. 查 Linear LEA-194／LEA-195、現有 PR、目前 branch／工作樹與版本；
+   本次基線及目標分支以 ITERATION 為準，PROJECT 管理輪快照保留為歷史。
+   PR #126 已合併；兩單原依賴保留，親測狀態 needs_changes。
+   對帳授權、我的工單、責任人、重複／重疊／依賴與真實交付現況。
+3. 第一次讀完先回報授權與範圍、相關工單／PR、依賴、
+   未知資訊與下一個可執行動作，不將歷史 PASS 當新版證據。
+4. 已核可範圍內自主續行正常修正、驗證、獨立 review、
+   符合真實平台條件的開發分支普通合併與可重現交付；
+   不為日常動作重複請核可，不接管他人工單或覆寫未提交內容。
+5. 產品方向、超出授權或無法協調的衝突才找對應的人；
+   未知資訊只暫停依賴部分，繼續其他可獨立進行的核可工作。
 ```
 
-身份／本人負責工單：待設定（由接手成員填入）；未設定時先唯讀對帳，不推定所有權。工單、負責人、依賴與共享進度以 Linear 最新紀錄為準；PR、Head、CI、review 與 merge 以 GitHub 最新紀錄為準。兩單建立後 read-back 為待執行、未指定責任人；接手須重查，不以快照排除後續改動或他人的未提交內容。
+身份／本人負責工單由接手成員設定；未設定時先唯讀對帳，不推定所有權。同步正式 source 前重查正式目錄 dirty 與使用者 Windows 編輯器工作，只精準套用，不 reset／stash；新 Head、PR 與試玩版本須實際讀回才記錄。
 
 ## 接手順序與保留邊界
 
-Claude review 提醒已裁決採納：保留 `cull_disabled`、敵車專屬拾取略過非目標 RID、4.7 實測前提；輪廓命中包含紅線圍住的實體車體 silhouette 投影形狀與線寬鄰域，不使用 AABB。敵方四車 Forward+ 與 headless 本機自驗已有結果，最終產品整合、完整品質與 source Head review 仍待完成；不能把自驗當工程交付。
+本次玩家共同半徑預設 5m，原單一設定與投影函式沿用；8m 為歷史預設，原裁決未將它鎖定。玩家圓窗常駐跟隨受控車，前景 building 投影 bounds 交窗即選取，不等首個車體遮擋 ray。中心連續 alpha 為 0 或近 0、無 noise／hash／dither，外緣平滑過渡；圈外 opaque 外觀與完整陰影保持，透明 next_pass 僅補窗內且不重複投影陰影。
 
-依本輪固定順序完成玩家、再敵方。只有既定 AC 反例、正常路徑實際失敗或具體資安／資料破壞證據列為本單 blocker；其他 advisory 為後續 backlog／忽略，不改寫完成定義。三個產品術語已記入共通術語，產品候選待最終驗收與交付；完整定義在產品文件。
+前景深度以 root 的 `stable_world_center` 加原 `part_surface_points` 包絡決定，取最遠的 camera-local Z 最小值，缺部位時 fallback centre；opaque／透明 shader 使用同一 foreground gate，shadow pass 不 gate。原 shared material 不改，換車／null／死亡／退出還原 instance overrides 與 next_pass。
 
-正式 `main` 主圖沒有敵方 Encounter，本輪不植入敵方戰鬥布局；敵方驗證限現役訓練場與有限測試場景。沿用 `TankVision.can_see` 與實體遮彈，視野外敵車沿用原顯示，不新增迷霧或發現記憶。
+敵方 mask RGB 編碼真實部件類別，alpha silhouette 與既有 picking 保持；只加約 2px 外框與稀疏部件界線，不填紅、不畫三角 wireframe。Tank4 固定上車體照真名 `Tank_Turret` 分類，Tank1 沒有獨立 turret mesh，不虛構砲塔。舊 interior_red==0／外框限定已被本次明示細節線取代。
 
-工單參考 [ISSUE.md](ISSUE.md)，獨立 review 參考 [REVIEW.md](REVIEW.md)，PR 使用 [PR 範本](../../.github/PULL_REQUEST_TEMPLATE.md)。交付須有實際 PR／commit、可重現取得與試玩入口、已驗項目與限制；工程驗證、獨立 review、平台 gate 與 leadi 親測分開記錄，不把準備文件、probe 或 CI 綠燈寫成人員 accepted。
+原 SubViewport／World3D、45 joints 履帶 skin／bone pose 同步、車型 near／far／角度、逐部位 LOS、camera 建築遮擋 gate、真目標世界點拾取與 Aim 接點保持。圈外紅線 0；空白像素不命中；砲口首撞、Projectile 實體遮彈、傷害分類、AI 與物理不改。
 
-保留 [PROJECT.md](PROJECT.md) 的環境／平台設定、[WORKFLOW.md](WORKFLOW.md) 的同 Head 獨立 review／必要 CI／普通 merge 規則、required `quality` 與 `agent-team/review` 及 protected settings。不跳過 gate、不降低 checks、不用 bypass；未知權限只暫停依賴部分。舊 Team registration／Job 只作歷史相容資料，不是派工入口。
+只將既定 AC 反例、正常路徑實際失敗或具體資安／資料破壞證據列本單 blocker；其他 advisory 列後續 backlog／忽略，不改寫完成定義。既有三個產品術語沿用，不新增框架。
 
-安全與 CI 權威仍是 [host-managed-settings.md](../host-managed-settings.md) 及 [local-private-ci.md](../local-private-ci.md)。沒有擴大私素材、憑證、私有路徑或截圖外送權限；新網路私素材 CI 在封存 Head 後列該 PR／Head／run／attempt 的具體授權包，舊 grant 不泛延長。管理切換與本輪開發授權均不等於公開發布、商店發行或破壞性操作授權。
+正式主圖沒有敵方 Encounter，本次不植入敵方戰鬥布局；敵方固定案例限現役訓練場與有限測試場景。Windows 單人 PvE、正交斜俯視、四車與 Forward+ 前提保持，不擴跨渲染器義務。
+
+工單參考 [ISSUE.md](ISSUE.md)，獨立 review 參考 [REVIEW.md](REVIEW.md)，PR 使用 [PR 範本](../../.github/PULL_REQUEST_TEMPLATE.md)。驗收依本次 P1–P3／E1–E3，必跑六個直接 smoke 與完整 `scripts/ci.sh`，新的圖形輸出不覆寫歷史。最新 Head 的 fresh-context 獨立實跑、source review、平台 gate 與 leadi 親測分開記錄；工程作者不可自稱驗收，人驗維持 needs_changes，直到 leadi 真實確認。
+
+保留 [PROJECT.md](PROJECT.md) 環境／平台設定、[WORKFLOW.md](WORKFLOW.md) 的同 Head 獨立 review／必要 CI／普通 merge 規則、required `quality` 與 `agent-team/review` 及 protected settings。不跳過 gate、不降低 checks、不用 bypass；舊 Team registration／Job 只作歷史相容資料，不啟動舊派工。
+
+安全與 CI 權威仍為 [host-managed-settings.md](../host-managed-settings.md) 及 [local-private-ci.md](../local-private-ci.md)。私素材只作本機開發輸入，保持 ignored，不提交或外送。上一版 PR #126 與同版 main 私素材 CI 的兩次 grant 已耗用；本次新 run／attempt 仍須封存後列 exact PR／Head／run／attempt 另取核准。缺權限只暫停該段驗證；本次計畫文字 review 授權不涵蓋 source、PNG、私素材、公開發布、商店發行或破壞性操作。

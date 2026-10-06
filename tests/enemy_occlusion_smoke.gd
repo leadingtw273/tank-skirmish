@@ -123,9 +123,18 @@ func run() -> void:
 	occlusion.call("_process", 0.25)
 	enemy.get_node("HealthComponent").call("apply_damage", 100000.0)
 	occlusion.call("_process", 0.25)
-	expect(occlusion.call("outlined_enemies").is_empty(), "dead enemy leaves no outline")
-	main.queue_free()
+	expect(occlusion.call("outlined_enemies").has(enemy), "eligible wreck keeps its outline")
+	var wreck_outline: Node = occlusion.get("_outlines")[enemy]
+	var line_color: Vector3 = wreck_outline.get("_material").get_shader_parameter(&"line_color")
+	expect(line_color.is_equal_approx(Vector3(0.72, 0.72, 0.72)), "wreck body and smoke share neutral gray")
+	screen = camera.unproject_position(enemy.call("stable_world_center"))
+	expect(wreck_outline.call("pick", screen).is_empty(), "wreck outline cannot become an aim target")
+	expect(occlusion.call("resolve_enemy_target", screen).is_empty(), "resolver rejects wreck outline")
 	enemy.queue_free()
+	await process_frame
+	occlusion.call("_process", 0.25)
+	expect(occlusion.call("outlined_enemies").is_empty(), "removed wreck clears its outline")
+	main.queue_free()
 	camera_wall.queue_free()
 	await process_frame
 	var training := load("res://src/maps/training_ground/training_ground_playtest.tscn").instantiate() as Node3D

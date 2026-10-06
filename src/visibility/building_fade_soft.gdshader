@@ -2,6 +2,8 @@ shader_type spatial;
 render_mode blend_mix, depth_draw_never, cull_disabled, diffuse_burley, specular_schlick_ggx;
 
 uniform vec4 source_albedo : source_color = vec4(1.0);
+uniform bool has_source_texture = false;
+uniform sampler2D source_albedo_texture : source_color, filter_linear_mipmap, repeat_enable;
 uniform float source_roughness = 0.5;
 uniform float source_metallic = 0.0;
 uniform float source_specular = 0.5;
@@ -37,6 +39,9 @@ void fragment() {
 		discard;
 	}
 	ALBEDO = source_albedo.rgb;
+	if (has_source_texture) {
+		ALBEDO *= texture(source_albedo_texture, UV).rgb;
+	}
 	ROUGHNESS = source_roughness;
 	METALLIC = source_metallic;
 	SPECULAR = source_specular;

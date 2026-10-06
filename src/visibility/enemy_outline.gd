@@ -44,9 +44,6 @@ func configure(enemy: Node3D, main_camera: Camera3D) -> void:
 	if is_instance_valid(target):
 		if target.tree_exiting.is_connected(_on_target_exiting):
 			target.tree_exiting.disconnect(_on_target_exiting)
-		var old_health := target.get_node_or_null("HealthComponent")
-		if old_health != null and old_health.depleted.is_connected(_on_target_exiting):
-			old_health.depleted.disconnect(_on_target_exiting)
 	target = enemy
 	_main_camera = main_camera
 	if _viewport == null:
@@ -65,12 +62,10 @@ func configure(enemy: Node3D, main_camera: Camera3D) -> void:
 	if not is_instance_valid(target):
 		return
 	target.tree_exiting.connect(_on_target_exiting)
-	var health := target.get_node_or_null("HealthComponent")
-	if health != null:
-		health.depleted.connect(_on_target_exiting)
 	_collect_meshes(target)
 	_geometry.configure(_sources)
 	_sync_meshes()
+	_update_line_color()
 
 
 func update_window(main_camera: Camera3D, window: Dictionary) -> void:
@@ -97,6 +92,7 @@ func update_window(main_camera: Camera3D, window: Dictionary) -> void:
 	_material.set_shader_parameter("viewport_size", _screen_size)
 	_material.set_shader_parameter("window_center", _center)
 	_material.set_shader_parameter("radius_pixels", _radius)
+	_update_line_color()
 	_sync_meshes()
 	_geometry.sync(main_camera, dimensions, _material)
 	_smoke.sync(main_camera, dimensions)
@@ -126,7 +122,7 @@ func mask_image() -> Image:
 
 
 func pick(screen_position: Vector2, excluded: Array[RID] = [], collision_mask: int = 129) -> Dictionary:
-	if not active or not _target_valid() or not is_instance_valid(_main_camera):
+	if not active or not _target_alive() or not is_instance_valid(_main_camera):
 		return {}
 	if _radius <= 0.0 or screen_position.distance_to(_center) >= _radius:
 		return {}
@@ -321,10 +317,18 @@ func _skeleton_proxy(source: Skeleton3D) -> Skeleton3D:
 
 
 func _target_valid() -> bool:
-	if not is_instance_valid(target) or not target.is_inside_tree() or target.is_queued_for_deletion():
+	return is_instance_valid(target) and target.is_inside_tree() and not target.is_queued_for_deletion()
+
+
+func _target_alive() -> bool:
+	if not _target_valid():
 		return false
 	var health := target.get_node_or_null("HealthComponent")
 	return health == null or float(health.get("current_health")) > 0.0
+
+
+func _update_line_color() -> void:
+	_material.set_shader_parameter(&"line_color", Vector3(1.0, 0.025, 0.045) if _target_alive() else Vector3(0.72, 0.72, 0.72))
 
 
 func _on_target_exiting() -> void:
@@ -334,3 +338,5 @@ func _on_target_exiting() -> void:
 func _process(_delta: float) -> void:
 	if active and not _target_valid():
 		set_active(false)
+	elif active:
+		_update_line_color()

@@ -91,3 +91,10 @@ Windows 單人 PvE、正交斜俯視、四款 catalog 坦克與既有動機不�
 本機基線 `4a49059a279c0786d42a2f286905dd8fa6ac8640`。leadi 已要求增加可辨識車型的真車身／砲塔裝飾線，並選定紅色煙霧線條；沿原 LEA-195／既有視野、瞄準與實體遮彈，本輪精確凍結 spec SHA256 `5f2077632819261d881dac708520513df0c008dd9c466b41ac80311efe9810d6`，一次 `claude-opus-5-5` 計畫審查 approve／0 blocker。僅指定 spec 外送的核准已耗用，沒有來源／PNG／素材外送、新 CI／遠端 push／main 授權。
 
 候選已實作同敵幾何資料與真 Smoke shared-base viewport，原 part／alpha／pick、模型、damage source、玩家淡出與訓練場來源保持。有限真渲染矩陣、RGB 嚴格 1／3／2 像素深度 tie 差異及原 D harness 紀錄詳見 [feature](../features/tank-occlusion.md#2026-10-06-敵車真幾何細節與受損煙候選)。作者證據只在本機 writer artifacts；尚待 root 精確 commit 封存與 fresh-context 最終驗收，未 stage／commit、未更新正式 Windows 預覽，人驗仍 needs_changes。
+
+
+## 2026-10-06 殘骸灰線與訓練場玩家遮蔽修正
+
+leadi 要求死敵保留透視、含真煙改淡灰，並回報訓練場玩家透視缺失；本輪沿既有 LEA-194／195，基線 `7d9b61f3e40ad7933ae6b285d0c384b4845a2b88`，鎖定 plan SHA256 `2807778365f2957ac71812a83c7e28a432912c3ea09a9d4418dcdb66badcbf4a`。指定 plan 單次外送授權 `call_6qkat1kJCLrQK0y28leVGmYG` 的實際 Claude 結果 approve／0 blocker，root 已處理五項 advisory、不新增 AC；外送 grant 已耗用，不涵蓋來源／PNG／素材、新 CI、push／main。
+
+候選只改七個產品檔、既有 enemy_occlusion_smoke 的原死亡語意與三文件。W1–W3／P1–P2／R1 的作者有限證據、原 B／D、真相機尺寸和 PNG 見 [feature](../features/tank-occlusion.md#2026-10-06-殘骸灰色透視與訓練場玩家淡出候選)。最終 code 六直接 smoke exit 0／runtime errors 0，最後限定 W1／P2 GPU exit 0；作者自驗不代替 fresh。235 UID 保持，未改 Windows／main／素材或外送，尚待 root 精確提交與 fresh-context 同版驗收，人驗 needs_changes。

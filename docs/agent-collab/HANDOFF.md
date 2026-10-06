@@ -60,3 +60,10 @@
 最新增強候選沿 LEA-195，權威與固定 G1–G3／S1–S2／L1／R1 見 [本輪紀錄](ITERATION.md#2026-10-06-敵車幾何細節與真受損煙續修) 與 [feature](../features/tank-occlusion.md#2026-10-06-敵車真幾何細節與受損煙候選)。writer 已完成有限 Forward+ 真渲染自驗，含自然訓練場入口 PNG；alpha／pick 保持，首輪嚴格 RGB 少量 body／履帶 depth tie 差異保留待 root 裁定。這不是 fresh-context PASS 或人驗 accepted。
 
 產品可寫位置只在隔離 worktree；正式 Windows 預覽尚維持既有 `4a49059a279c0786d42a2f286905dd8fa6ac8640`。接手先核對 root 封存的新 Head／tree／同版 fresh 驗證，不沿用作者敘事代驗收。指定 spec 外送 grant 已耗用，不含 source／PNG／私素材、新 CI、遠端推送或 main；原素材 ignored 與 UID metadata 必須保持。
+
+
+## 殘骸灰線與訓練場玩家淡出候選（2026-10-06）
+
+本輪產品裁決與授權見 [ITERATION](ITERATION.md#2026-10-06-殘骸灰線與訓練場玩家遮蔽修正)，固定 W1–R1 與作者實跑見 [feature](../features/tank-occlusion.md#2026-10-06-殘骸灰色透視與訓練場玩家淡出候選)。來源候選已完成作者六直接 checks 與有限真渲染；原 B／D 及 corrected log 保留，不是 fresh-context PASS 或 accepted。接手須核對 root 封存的新 Head／同版 fresh，而不是沿作者敘事代驗。
+
+writer 沒有 stage／commit、修改正式 Windows 預覽／235 UID／素材、外送 source／PNG 或推送 main。正式 M 仍維持既有 `7d9b61f3e40ad7933ae6b285d0c384b4845a2b88`，之後只由 root 按已核可 guarded fast-forward 同步。計畫外送 grant 已耗用，無本輪新 CI／素材 runner 授權，人驗仍待 leadi F8→F6 重啟訓練場確認。

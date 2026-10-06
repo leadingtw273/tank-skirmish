@@ -125,3 +125,26 @@ leadi 要求增加真車身／砲塔裝飾線以辨識車型，並選定「紅�
 以上為作者自驗，非 fresh-context 最終驗收或 leadi accepted。來源尚待 root 封存提交及 fresh-context 同版驗證，正式 Windows 預覽未改；人驗維持 needs_changes。未跑全量品質／Windows／跨渲染器效能。
 
 本次七個直接 headless checks（tank_occlusion、enemy_occlusion、aim_cursor、partial_visibility、partial_visibility_combat、enemy_combat、training_ground）皆 exit 0，結果及原 log 見 writer 的 `headless-result.json`。`git diff --check` exit 0；11 檔變更皆在准許範圍，原 232 個 UID 的內容／owner／mode 保持，新增 3 個 UID 唯一、owner 1000／group 1000／0644。尚未 stage／commit，沒有全量品質與 Windows 人驗。
+
+
+## 2026-10-06 殘骸灰色透視與訓練場玩家淡出候選
+
+leadi 要求「摧毀後該敵方坦克透視照常顯示，線條包含煙霧線條都改成淡灰色」，並回報訓練場玩家被建築遮住後缺少透視。本輪基線 `7d9b61f3e40ad7933ae6b285d0c384b4845a2b88`／tree `23e2d04273f8ea6031aefb0db7b39ede37405860`；鎖定 `tank-wreck-player-occlusion-20261006/plan-v1.md` SHA256 `2807778365f2957ac71812a83c7e28a432912c3ea09a9d4418dcdb66badcbf4a`（7650 bytes）。使用者單次指定 plan 外送核准 `call_6qkat1kJCLrQK0y28leVGmYG` 已取得實際 Claude approve／0 blocker，root 將五項 advisory 留在原 W1–R1 範圍；grant 已耗用，不涵蓋來源／PNG／素材外送、新 CI、push 或 main。
+
+敵車呈現資格只要求 target 仍存在，保留原 TankVision／LOS／camera building gate／共用 5m；死亡只讀原 Health，私有 `line_color` 從原紅色改中性 RGB 0.72。車體、裝飾、真 Smoke 共用色，原 detail 0.75／smoke 0.35／mask shape 不動；depleted 不再當成 tree exit。透視 `pick` 與 resolver 分別維持 live gate，殘骸不能成為透視瞄準 target，普通世界物理射線與碰撞沿原行為。真移除仍清理自有 pass，沒有改 Health、AI、damage、geometry／smoke helper 或粒子。
+
+玩家問題的兩個來源是訓練 atlas 被原 untextured adapter 拒絕，以及九棟 SightBlockers 缺少既有建築群組。本次只支援已確認 opaque albedo atlas 的 UV0／Linear Mipmap／repeat／identity UV，放行 `_gltf_primary_texture_coord=0`，未知 metadata／UV2／normal 等額外 feature 仍拒絕。opaque／soft shader 同採 `source_color` texture RGB 乘原 albedo color，不使用 texture alpha；無貼圖公式、nearest raw HDR／foreground／radial alpha／shadow／5m 保持。場景九個 body 只加既有 `occlusion_building`，位置、模型、碰撞與玩家／相機配置不動。
+
+作者證據只留本機 `agent-team/tmp/tank-wreck-player-occlusion-20261006/writer/`；以下不是 fresh-context 最終驗收。
+
+| 有限 AC | 作者實跑／讀回 |
+| --- | --- |
+| W1 | 自然入口敵車真受損為紅，Health 歸零後 body/detail／真煙中性灰；旁邊活敵仍紅；`training-dead-gray-smoke.png` 是灰殘骸＋活敵紅線重疊的混合自然場景，不能當作 solo 灰殘骸圖。分離證據為 `dead-gray-lines.png`／`dead-real-smoke.png`。2287 中性／0 非中性線 pixels，真煙 alpha 2192 pixels；真正離開 body 外框鄰域的 smoke-only 線 601 pixels、最高 alpha 0.349。真 Smoke source 模擬參數與 RID 同值，source null 材質以合法 null 讀回。 |
+| W2／W3 | 同殘骸一次 range off／recover 與 camera building off／recover 正常回灰；dead 自身 pick 空，重疊旁活敵的合法 resolver 命中不算 dead hit。真 remove、effect exit 自有 callback 清理及其他來源粒子存活通過。無新回滿／並發承諾。 |
+| P1 | 原相機 size 100，在入口 (29,0,-12) 與 SouthTwoStory (43,0,-29) 原 ray 命中並識別真建築；surface／nearest proxy 各 1／1、5／5，圈內像素變化 1432／1465。logical viewport 1920×1080、PNG 1280×720，原 camera transform 與世界 5m／logical 54px 保持。PNG 為 `entry-fade.png`、`south-fade.png`。 |
+| P2 | 固定同 enemy-overlay 狀態後，兩 atlas amount 0 對原材質的大差異像素均 0；circle 外 entry 的 311 差異皆為合法新增紅輪廓、source surface 剩餘大差異 0，South 圈外大差異 0。CPU 讀回三 atlas＋main 七材質共 10 表面皆接受，兩 shader 保留同 source texture／color，未知 metadata／UV2／normal 拒絕。main 無貼圖 amount 0 大差異 0；原 nearest 與透明梯度程式保持。 |
+| R1 | 最終 code 的六直接 headless smoke 均 exit 0、runtime errors 0：tank_occlusion、enemy_occlusion、partial_visibility、partial_visibility_combat、aim_cursor、enemy_combat；只取代舊 dead leaves no outline，其他斷言保留。235 UID 內容／owner／mode 保持，素材無來源變更。 |
+
+原錯誤完整保存：新增 W3 測試曾暴露作者省去 valid short-circuit 的 freed-target TypedArray 回歸（B），已恢復 guard，六 checks 以最終 code 重跑成功。首 GPU 的全畫面 atlas 差異混入 839 個合法紅輪廓 pixels、smoke-only 誤含原 2px 外框、resolver 合法命中旁活敵、null snapshot getter 都是 D 測量錯誤；raw exit 2／log 保留，最多一輪限定 W1／P2 修正後 exit 0，沒有重跑已通過 W2／W3／main 或改產品追假紅。
+
+工程來源待 root 提交封存、fresh-context 同版核對及本機預覽同步；正式 Windows 專案尚未由 writer 修改，人驗仍 needs_changes。未 stage／commit、未跑 full quality／Windows、未外送 source／PNG／私素材。

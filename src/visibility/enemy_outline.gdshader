@@ -4,6 +4,7 @@ render_mode unshaded;
 uniform vec2 viewport_size = vec2(1.0);
 uniform vec2 window_center = vec2(0.0);
 uniform float radius_pixels = 0.0;
+uniform vec3 line_color = vec3(1.0, 0.025, 0.045);
 uniform sampler2D geometry_data : filter_nearest, repeat_disable;
 uniform sampler2D smoke_alpha : filter_nearest, repeat_disable;
 uniform float depth_min = 0.0;
@@ -84,5 +85,5 @@ void fragment() {
 	// 本車原 alpha interior 優先；煙不搶幾何內線，更不進 picking mask。
 	float smoke_edge = smoothstep(0.06, 0.18, smoke_delta) * 0.35 * (1.0 - interior);
 	float geometry_edge = max(max(outer_edge, internal_edge), detail_edge * 0.75);
-	COLOR = vec4(1.0, 0.025, 0.045, max(geometry_edge, smoke_edge) * clip);
+	COLOR = vec4(line_color, max(geometry_edge, smoke_edge) * clip);
 }

@@ -3,7 +3,7 @@ extends RefCounted
 
 const FADE_SHADER := preload("res://src/visibility/building_fade.gdshader")
 const SOFT_SHADER := preload("res://src/visibility/building_fade_soft.gdshader")
-const COPIED_PROPERTIES := [&"albedo_color", &"roughness", &"metallic", &"metallic_specular"]
+const COPIED_PROPERTIES := [&"albedo_color", &"albedo_texture", &"roughness", &"metallic", &"metallic_specular"]
 
 class SurfaceState extends RefCounted:
 	var mesh: WeakRef
@@ -107,6 +107,8 @@ func _override_surfaces(instance: MeshInstance3D) -> void:
 		state.replacement.next_pass = soft
 		for material in [state.replacement, soft]:
 			material.set_shader_parameter(&"source_albedo", source.albedo_color)
+			material.set_shader_parameter(&"has_source_texture", source.albedo_texture != null)
+			material.set_shader_parameter(&"source_albedo_texture", source.albedo_texture)
 			material.set_shader_parameter(&"source_roughness", source.roughness)
 			material.set_shader_parameter(&"source_metallic", source.metallic)
 			material.set_shader_parameter(&"source_specular", source.metallic_specular)
@@ -120,12 +122,18 @@ func _override_surfaces(instance: MeshInstance3D) -> void:
 func _supports_source(source: StandardMaterial3D) -> bool:
 	if source == null or source.albedo_color.a != 1.0:
 		return false
-	# This adapter implements only the catalog's opaque, untextured PBR model.
-	# Reject extra material features instead of silently losing their appearance.
+	# 支援既有 opaque 色材質與訓練 atlas UV0；filter/repeat/UV 都須維持原預設。
+	# 只放行已確認的 importer UV0 metadata，未知 metadata／額外 feature 仍拒絕。
 	for property in source.get_property_list():
 		if not (int(property.usage) & PROPERTY_USAGE_STORAGE):
 			continue
 		var property_name := StringName(property.name)
+		if property_name == &"metadata/_gltf_primary_texture_coord":
+			if source.albedo_texture == null or source.get(property_name) != 0:
+				return false
+			continue
+		if String(property_name).begins_with("metadata/"):
+			return false
 		if String(property_name).begins_with("resource_") or property_name in COPIED_PROPERTIES:
 			continue
 		if source.get(property_name) != _defaults.get(property_name):

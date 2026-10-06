@@ -160,7 +160,7 @@ func _update_enemy_outlines() -> void:
 	var enemies := get_tree().get_nodes_in_group(&"enemy_tank")
 	for candidate in enemies:
 		var enemy := candidate as Node3D
-		if enemy == controlled_tank or not _alive(enemy):
+		if enemy == controlled_tank or not _present(enemy):
 			continue
 		var window := window_for(enemy)
 		var eligible := not window.is_empty() and bool(_vision.call("can_see", enemy))
@@ -177,7 +177,7 @@ func _update_enemy_outlines() -> void:
 				outline.update_window(camera, window)
 			outline.set_active(eligible)
 	for enemy in _outlines.keys():
-		if not is_instance_valid(enemy) or not enemies.has(enemy) or not _alive(enemy):
+		if not is_instance_valid(enemy) or not enemies.has(enemy) or not _present(enemy):
 			_outlines[enemy].set_active(false)
 			_outlines[enemy].queue_free()
 			_outlines.erase(enemy)
@@ -201,6 +201,8 @@ func resolve_enemy_target(screen_position: Vector2, collision_mask: int = 129) -
 	var closest := INF
 	var result: Dictionary = {}
 	for enemy in outlined_enemies():
+		if not _alive(enemy):
+			continue
 		var hit: Dictionary = _outlines[enemy].pick(screen_position, excluded, collision_mask)
 		if hit.is_empty():
 			continue
@@ -298,8 +300,12 @@ func _center(target: Node3D) -> Vector3:
 	return target.call("stable_world_center") as Vector3 if target.has_method("stable_world_center") else target.global_position
 
 
+func _present(target: Node3D) -> bool:
+	return is_instance_valid(target) and target.is_inside_tree() and not target.is_queued_for_deletion()
+
+
 func _alive(target: Node3D) -> bool:
-	if not is_instance_valid(target) or not target.is_inside_tree():
+	if not _present(target):
 		return false
 	var health := target.get_node_or_null("HealthComponent")
 	return health == null or float(health.get("current_health")) > 0.0

@@ -158,6 +158,23 @@ collision_mask = 0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.9463, 0)
 shape = SubResource("TwoStoryWideCollisionShape")
 
+[node name="EntryOutlinePreview" type="Node3D" parent="."]
+
+[node name="Enemy" parent="EntryOutlinePreview" groups=["enemy_tank"] instance=ExtResource("4_enemy")]
+position = Vector3(24, 0, -12)
+vehicle_id = &"tank2"
+freeze = true
+
+[node name="Building" type="StaticBody3D" parent="EntryOutlinePreview" groups=["occlusion_building", "training_navigation_source"]]
+position = Vector3(33, 0, -3)
+collision_mask = 0
+
+[node name="Model" parent="EntryOutlinePreview/Building" instance=ExtResource("9_two_story_wide")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="EntryOutlinePreview/Building"]
+position = Vector3(0, 4.9463, 0)
+shape = SubResource("TwoStoryWideCollisionShape")
+
 [node name="TrainingControls" type="Node3D" parent="."]
 
 [node name="PlayerSpawnPoint" type="Marker3D" parent="."]

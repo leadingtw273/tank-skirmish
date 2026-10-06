@@ -53,3 +53,10 @@
 保留 [PROJECT.md](PROJECT.md) 環境／平台設定、[WORKFLOW.md](WORKFLOW.md) 的同 Head 獨立 review／必要 CI／普通 merge 規則、required `quality` 與 `agent-team/review` 及 protected settings。不跳過 gate、不降低 checks、不用 bypass；舊 Team registration／Job 只作歷史相容資料，不啟動舊派工。
 
 安全與 CI 權威仍為 [host-managed-settings.md](../host-managed-settings.md) 及 [local-private-ci.md](../local-private-ci.md)。私素材只作本機開發輸入，保持 ignored，不提交或外送。歷史 PR #126、PR #127 及各自同版 main 私素材 CI 的 grant 均已耗用；本次來源／Claude 外送與新私素材 CI 尚未核准，不能重用舊 grant；本次新 run／attempt 仍須封存後列 exact PR／Head／run／attempt 另取核准。缺權限只暫停該段驗證；本次計畫文字 review 授權不涵蓋 source、PNG、私素材、公開發布、商店發行或破壞性操作。
+
+
+## 本機敵車細節與真煙候選（2026-10-06）
+
+最新增強候選沿 LEA-195，權威與固定 G1–G3／S1–S2／L1／R1 見 [本輪紀錄](ITERATION.md#2026-10-06-敵車幾何細節與真受損煙續修) 與 [feature](../features/tank-occlusion.md#2026-10-06-敵車真幾何細節與受損煙候選)。writer 已完成有限 Forward+ 真渲染自驗，含自然訓練場入口 PNG；alpha／pick 保持，首輪嚴格 RGB 少量 body／履帶 depth tie 差異保留待 root 裁定。這不是 fresh-context PASS 或人驗 accepted。
+
+產品可寫位置只在隔離 worktree；正式 Windows 預覽尚維持既有 `4a49059a279c0786d42a2f286905dd8fa6ac8640`。接手先核對 root 封存的新 Head／tree／同版 fresh 驗證，不沿用作者敘事代驗收。指定 spec 外送 grant 已耗用，不含 source／PNG／私素材、新 CI、遠端推送或 main；原素材 ignored 與 UID metadata 必須保持。

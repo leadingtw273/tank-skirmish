@@ -2,6 +2,8 @@ extends Node
 ## 獨立車體 silhouette；資格、相機建築遮蔽與共同世界半徑由 controller 決定。
 
 const OutlineShader := preload("res://src/visibility/enemy_outline.gdshader")
+const GeometryPass := preload("res://src/visibility/enemy_geometry.gd")
+const SmokePass := preload("res://src/visibility/enemy_smoke.gd")
 const LINE_RADIUS := 2
 const MAX_QUERIES := 64
 # 同一真部件的所有 surfaces 共用色碼；RGB 僅供紅線視覺，拾取仍只讀 alpha。
@@ -33,6 +35,8 @@ var _projected_bounds := Rect2()
 var _has_bounds := false
 var _image: Image
 var _image_frame := -1
+var _geometry: Node
+var _smoke: Node
 
 
 func configure(enemy: Node3D, main_camera: Camera3D) -> void:
@@ -56,6 +60,8 @@ func configure(enemy: Node3D, main_camera: Camera3D) -> void:
 	_skeleton_sources.clear()
 	_skeleton_proxies.clear()
 	_has_skinned_mesh = false
+	_geometry.clear()
+	_smoke.configure(target)
 	if not is_instance_valid(target):
 		return
 	target.tree_exiting.connect(_on_target_exiting)
@@ -63,6 +69,7 @@ func configure(enemy: Node3D, main_camera: Camera3D) -> void:
 	if health != null:
 		health.depleted.connect(_on_target_exiting)
 	_collect_meshes(target)
+	_geometry.configure(_sources)
 	_sync_meshes()
 
 
@@ -91,6 +98,8 @@ func update_window(main_camera: Camera3D, window: Dictionary) -> void:
 	_material.set_shader_parameter("window_center", _center)
 	_material.set_shader_parameter("radius_pixels", _radius)
 	_sync_meshes()
+	_geometry.sync(main_camera, dimensions, _material)
+	_smoke.sync(main_camera, dimensions)
 
 
 func set_active(enabled: bool) -> void:
@@ -101,6 +110,9 @@ func set_active(enabled: bool) -> void:
 		_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS if active else SubViewport.UPDATE_DISABLED
 	if not active:
 		_image = null
+	if _geometry != null:
+		_geometry.set_active(active)
+		_smoke.set_active(active)
 
 
 func mask_image() -> Image:
@@ -210,6 +222,11 @@ func _create_renderer() -> void:
 	_overlay.visible = false
 	_material = ShaderMaterial.new()
 	_material.shader = OutlineShader
+	_geometry = GeometryPass.new()
+	add_child(_geometry)
+	_smoke = SmokePass.new()
+	add_child(_smoke)
+	_material.set_shader_parameter(&"smoke_alpha", _smoke.texture())
 	_overlay.material = _material
 	layer.add_child(_overlay)
 

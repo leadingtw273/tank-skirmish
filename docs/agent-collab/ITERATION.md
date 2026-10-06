@@ -84,3 +84,10 @@ Windows 單人 PvE、正交斜俯視、四款 catalog 坦克與既有動機不�
 ## 上一管理輪的已完成歷史
 
 2026-10-05 管理切換已透過 PR #125 普通合併至 `main`，commit `b9fe1f4a93d4e4c2b48a3ed3a866d660980f8aa7`。目標是「將當前開發管理方式全面導向 Agent Collab 而不是 agent team」，使用者選擇「互動代理主導，退役舊自動派工」，保留 Linear／GitHub 工單、PR 與 CI。該輪待辦已由實際交付取代，不重開；管理合併不代表遊戲 QA 或人員 accepted。
+
+
+## 2026-10-06 敵車幾何細節與真受損煙續修
+
+本機基線 `4a49059a279c0786d42a2f286905dd8fa6ac8640`。leadi 已要求增加可辨識車型的真車身／砲塔裝飾線，並選定紅色煙霧線條；沿原 LEA-195／既有視野、瞄準與實體遮彈，本輪精確凍結 spec SHA256 `5f2077632819261d881dac708520513df0c008dd9c466b41ac80311efe9810d6`，一次 `claude-opus-5-5` 計畫審查 approve／0 blocker。僅指定 spec 外送的核准已耗用，沒有來源／PNG／素材外送、新 CI／遠端 push／main 授權。
+
+候選已實作同敵幾何資料與真 Smoke shared-base viewport，原 part／alpha／pick、模型、damage source、玩家淡出與訓練場來源保持。有限真渲染矩陣、RGB 嚴格 1／3／2 像素深度 tie 差異及原 D harness 紀錄詳見 [feature](../features/tank-occlusion.md#2026-10-06-敵車真幾何細節與受損煙候選)。作者證據只在本機 writer artifacts；尚待 root 精確 commit 封存與 fresh-context 最終驗收，未 stage／commit、未更新正式 Windows 預覽，人驗仍 needs_changes。

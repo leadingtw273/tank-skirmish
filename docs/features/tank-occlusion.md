@@ -103,3 +103,25 @@ leadi 於 2026-10-05 指定「先修玩家遮蔽透視在修敵人遮蔽透視�
 已核可範圍內普通開發、修正、驗證、獨立 review 與真實 gate 後正常 merge 可自主續行；對外發布、產品方向、平台受控設定及素材外送邊界不擴大。`quality`、required `agent-team/review` 與全部平台條件保持，reviewed Head／必要 CI 須對應最新 Head，不能用歷史 PASS 或文件代替。Review advisory 依 [WORKFLOW.md](../agent-collab/WORKFLOW.md) 分本單 blocker／後續 backlog／忽略，不自動擴 AC。
 
 私素材僅供本機開發且保持 ignored，不提交或外送私素材、含素材截圖、憑證或個人私有路徑。歷史 PR #126、PR #127 及各自同版 main 私素材 CI 的 grant 均已耗用，本次新 Head 不能延用；本次來源／Claude 外送與新私素材 CI 尚未核准。新網路私素材 CI 依 [local-private-ci.md](../local-private-ci.md)，封存後另列 exact PR／Head／run／attempt 授權包；缺權限只暫停該段，不跳過完整品質或平台 gate。計畫文字 review 已核准不代表新版工程或人員驗收通過。
+
+
+## 2026-10-06 敵車真幾何細節與受損煙候選
+
+leadi 要求增加真車身／砲塔裝飾線以辨識車型，並選定「紅色煙霧線條輪廓」。本輪沿 LEA-195，精確基線為 `4a49059a279c0786d42a2f286905dd8fa6ac8640`／tree `3dab4c2892039fea754de23b80f0944f6aa7fc57`；凍結規格 `enemy-outline-detail-spec-plan-v1.md` SHA256 `5f2077632819261d881dac708520513df0c008dd9c466b41ac80311efe9810d6`。一次已核准計畫外送由實際 `claude-opus-5-5` 審查 approve／0 blocker；只外送指定 spec 的核准已耗用，不涵蓋來源、PNG、素材、CI、遠端推送或 main。
+
+同一 Outline 附屬幾何 viewport 採線性 HDR oct view-normal RG、有界相對線性 depth B、opaque occupancy；深度 bounds 依來源幾何和相機更新，加 0.5m margin。原 part／alpha viewport、mask_image 與 picking 程式保持。內線比較法線折角或扣除平面斜率的 depth discontinuity，約 1px、alpha 0.75；外框約 2px、alpha 1.0。Tank1 沒有獨立砲塔，Tank4 固定上車體沿真部件名稱，不創配件或三角 wireframe。
+
+每敵獨立煙 viewport 借原可見 Smoke 的 `get_base()`、建立自己的 RenderingServer instance，沿同尺寸／投影／camera transform；含仍可見的 retired stage。來源粒子、材質及 seed 完全只讀，不複製 emitter、不 restart、不釋放來源 base。煙 alpha 差抽線最高 0.35，原 actor alpha interior 優先；煙不進瞄準 mask。沿原整敵 can_see／camera building gate 與各敵 window，不新增全場／屋頂逐 pixel 深度系統。
+
+作者本機 Forward+ Vulkan／llvmpipe 真渲染證據保存於 `agent-team/tmp/tank-enemy-outline-detail-20261006/writer/`，未外送。自然訓練場 `startup-training.png` 沒有移動玩家／相機；其他案例使用隔離 catalog 真車、固定相機／姿態及原 Health／DamageReceiver。
+
+| 有限 AC | 作者證據與限制 |
+| --- | --- |
+| G1／G2 | 四車各兩處真來源 ROI 出現新內線；砲管 CPU ray／triangle 對照共 706 samples，max normal 0.252°、depth 0.00555m。四車可見平面 ROI 新紅 0；Tank1 真 posed body surface 1 triangle 174 的 5×5 ROI 共 25 可見 pixels、新紅 0。原選面 harness 過嚴 normal 篩選未找到 Tank1 的紀錄保留，補正只讀回既有真渲染資料，沒有改 shader。 |
+| G3 | 四車 aiming alpha 逐像素相同、所有可見五部件（Tank1 無 upper）／空白有限 pick 結果相同。首輪完整 RGBA 嚴格比對仍記 FAIL：Tank1／3／4 各 1／3／2 個 body／left_track 交界 RGB 差，alpha 同 1；CPU 真 posed 深度差 0.000002–0.000267m。額外一輪原 mask 重複及三實例配置無差量；未改原材料／排序或弱化 raw 比較，root 已依 alpha／pick 產品義務暫列 renderer advisory，仍由 fresh 獨立核對。 |
+| S1／S2 | 未受損煙 0；真 75／50／25% 煙 alpha 非方框、source 參數同值。雙敵來源與各自窗口保持；2781 smoke-only pixels 中有限 12 picks 為 0 命中，最大煙線 alpha 0.349；原 actor interior 的新增煙線 0。原資格 gate 由相關既有 smoke 覆蓋，沒有逐像素屋頂義務。 |
+| L1／R1 | 真 retired stage 2／2 可見煙代理、換車／姿態／resize／active death／敵移除／場景退出有限案例通過，自有 RID 清理後來源存活。原玩家淡出、AI／LOS／物理、模型、道路與訓練場配置無來源變更。退出 Texture RID／RenderingServer 噪音保留原始 log，未宣稱根因已修復。 |
+
+以上為作者自驗，非 fresh-context 最終驗收或 leadi accepted。來源尚待 root 封存提交及 fresh-context 同版驗證，正式 Windows 預覽未改；人驗維持 needs_changes。未跑全量品質／Windows／跨渲染器效能。
+
+本次七個直接 headless checks（tank_occlusion、enemy_occlusion、aim_cursor、partial_visibility、partial_visibility_combat、enemy_combat、training_ground）皆 exit 0，結果及原 log 見 writer 的 `headless-result.json`。`git diff --check` exit 0；11 檔變更皆在准許範圍，原 232 個 UID 的內容／owner／mode 保持，新增 3 個 UID 唯一、owner 1000／group 1000／0644。尚未 stage／commit，沒有全量品質與 Windows 人驗。

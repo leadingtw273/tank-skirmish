@@ -2,6 +2,7 @@ class_name BuildingFade
 extends RefCounted
 
 const FADE_SHADER := preload("res://src/visibility/building_fade.gdshader")
+const SOFT_SHADER := preload("res://src/visibility/building_fade_soft.gdshader")
 const COPIED_PROPERTIES := [&"albedo_color", &"roughness", &"metallic", &"metallic_specular"]
 
 class SurfaceState extends RefCounted:
@@ -24,14 +25,17 @@ func _init(building: Node3D) -> void:
 	_collect(building)
 
 
-func update_window(center_pixels: Vector2, radius_pixels: float, viewport_size: Vector2, amount: float) -> void:
+func update_window(center_pixels: Vector2, radius_pixels: float, viewport_size: Vector2, amount: float, foreground_depth: float = -INF) -> void:
 	if not is_valid():
 		return
 	for state in _surfaces:
-		state.replacement.set_shader_parameter(&"window_center_pixels", center_pixels)
-		state.replacement.set_shader_parameter(&"window_radius_pixels", maxf(radius_pixels, 0.0))
-		state.replacement.set_shader_parameter(&"viewport_size", viewport_size.max(Vector2.ONE))
-		state.replacement.set_shader_parameter(&"window_amount", clampf(amount, 0.0, 1.0))
+		for material in [state.replacement, state.replacement.next_pass]:
+			material.set_shader_parameter(&"window_center_pixels", center_pixels)
+			material.set_shader_parameter(&"window_radius_pixels", maxf(radius_pixels, 0.0))
+			material.set_shader_parameter(&"viewport_size", viewport_size.max(Vector2.ONE))
+			material.set_shader_parameter(&"window_amount", clampf(amount, 0.0, 1.0))
+			material.set_shader_parameter(&"foreground_enabled", is_finite(foreground_depth))
+			material.set_shader_parameter(&"foreground_depth", foreground_depth if is_finite(foreground_depth) else 0.0)
 
 
 func restore() -> void:
@@ -78,10 +82,14 @@ func _override_surfaces(instance: MeshInstance3D) -> void:
 		state.original = instance.get_surface_override_material(surface)
 		state.replacement = ShaderMaterial.new()
 		state.replacement.shader = FADE_SHADER
-		state.replacement.set_shader_parameter(&"source_albedo", source.albedo_color)
-		state.replacement.set_shader_parameter(&"source_roughness", source.roughness)
-		state.replacement.set_shader_parameter(&"source_metallic", source.metallic)
-		state.replacement.set_shader_parameter(&"source_specular", source.metallic_specular)
+		var soft := ShaderMaterial.new()
+		soft.shader = SOFT_SHADER
+		state.replacement.next_pass = soft
+		for material in [state.replacement, soft]:
+			material.set_shader_parameter(&"source_albedo", source.albedo_color)
+			material.set_shader_parameter(&"source_roughness", source.roughness)
+			material.set_shader_parameter(&"source_metallic", source.metallic)
+			material.set_shader_parameter(&"source_specular", source.metallic_specular)
 		instance.set_surface_override_material(surface, state.replacement)
 		_surfaces.append(state)
 		affected = true

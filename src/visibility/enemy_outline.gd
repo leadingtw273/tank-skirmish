@@ -4,6 +4,14 @@ extends Node
 const OutlineShader := preload("res://src/visibility/enemy_outline.gdshader")
 const LINE_RADIUS := 2
 const MAX_QUERIES := 64
+# 同一真部件的所有 surfaces 共用色碼；RGB 僅供紅線視覺，拾取仍只讀 alpha。
+const PART_COLORS := {
+	&"hull": Color(1.0, 0.0, 0.0),
+	&"upper": Color(0.0, 1.0, 0.0),
+	&"gun": Color(0.0, 0.0, 1.0),
+	&"left_track": Color(1.0, 1.0, 0.0),
+	&"right_track": Color(0.0, 1.0, 1.0),
+}
 
 var target: Node3D
 var active := false
@@ -12,7 +20,7 @@ var _viewport: SubViewport
 var _camera: Camera3D
 var _overlay: TextureRect
 var _material: ShaderMaterial
-var _white: StandardMaterial3D
+var _part_materials: Dictionary = {}
 var _sources: Array[MeshInstance3D] = []
 var _proxies: Array[MeshInstance3D] = []
 var _skeleton_sources: Array[Skeleton3D] = []
@@ -184,9 +192,11 @@ func _create_renderer() -> void:
 	_camera = Camera3D.new()
 	_viewport.add_child(_camera)
 	_camera.current = true
-	_white = StandardMaterial3D.new()
-	_white.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	_white.albedo_color = Color.WHITE
+	for part in PART_COLORS:
+		var material := StandardMaterial3D.new()
+		material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		material.albedo_color = PART_COLORS[part]
+		_part_materials[part] = material
 	var layer := CanvasLayer.new()
 	layer.name = "EnemyOutlineLayer"
 	layer.layer = 1
@@ -208,7 +218,7 @@ func _collect_meshes(node: Node) -> void:
 	if node is MeshInstance3D and node.mesh != null:
 		var proxy := MeshInstance3D.new()
 		proxy.mesh = node.mesh
-		proxy.material_override = _white
+		proxy.material_override = _part_materials[_mesh_part(node.name)]
 		proxy.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		_viewport.add_child(proxy)
 		# 僅同步現役 catalog 車身／履帶已有骨架；不複製動畫腳本或碰撞。
@@ -223,6 +233,17 @@ func _collect_meshes(node: Node) -> void:
 		_proxies.append(proxy)
 	for child in node.get_children():
 		_collect_meshes(child)
+
+
+func _mesh_part(mesh_name: StringName) -> StringName:
+	# 現役四車的匯入名稱。tank4 固定上車體仍名為 Tank_Turret，
+	# tank1 無獨立砲塔；不能僅按 visual ancestry 虛構或合併部件。
+	match mesh_name:
+		&"TrackMesh_L": return &"left_track"
+		&"TrackMesh_R": return &"right_track"
+		&"Tank_Gun": return &"gun"
+		&"Tank_Turret": return &"upper"
+		_: return &"hull"
 
 
 func _sync_meshes() -> void:

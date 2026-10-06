@@ -1,0 +1,38 @@
+shader_type spatial;
+render_mode blend_mix, depth_draw_never, cull_disabled, diffuse_burley, specular_schlick_ggx;
+
+uniform vec4 source_albedo : source_color = vec4(1.0);
+uniform float source_roughness = 0.5;
+uniform float source_metallic = 0.0;
+uniform float source_specular = 0.5;
+uniform vec2 window_center_pixels = vec2(0.0);
+uniform float window_radius_pixels = 0.0;
+uniform vec2 viewport_size = vec2(1.0);
+uniform float window_amount : hint_range(0.0, 1.0) = 0.0;
+uniform bool foreground_enabled = false;
+uniform float foreground_depth = 0.0;
+
+void fragment() {
+	// Match the opaque cut using one render pixel in logical screen units.
+	// Derivatives must be evaluated before any conditional discard.
+	vec2 screen_pixels = SCREEN_UV * viewport_size;
+	vec2 pixel_footprint = fwidth(screen_pixels);
+	float aperture_radius = max(window_radius_pixels - max(pixel_footprint.x, pixel_footprint.y), 0.0);
+	if (IN_SHADOW_PASS || window_amount <= 0.0 || window_radius_pixels <= 0.0
+			|| (foreground_enabled && VERTEX.z <= foreground_depth)) {
+		discard;
+	}
+	// Match the opaque cut exactly; the window's final inner pixel is opaque.
+	float radius = length(screen_pixels - window_center_pixels) / max(aperture_radius, 0.001);
+	if (aperture_radius <= 0.0 || radius >= 1.0) {
+		discard;
+	}
+	ALBEDO = source_albedo.rgb;
+	ROUGHNESS = source_roughness;
+	METALLIC = source_metallic;
+	SPECULAR = source_specular;
+	// Continuous alpha: clear at the center, almost clear across the inner
+	// region, then a smooth outer transition to the untouched opaque pass.
+	float radial_alpha = 0.06 * smoothstep(0.0, 0.70, radius) + 0.94 * smoothstep(0.70, 1.0, radius);
+	ALPHA = mix(1.0, radial_alpha, clamp(window_amount, 0.0, 1.0));
+}

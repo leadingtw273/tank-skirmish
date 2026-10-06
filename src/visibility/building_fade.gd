@@ -38,6 +38,26 @@ func update_window(center_pixels: Vector2, radius_pixels: float, viewport_size: 
 			material.set_shader_parameter(&"foreground_depth", foreground_depth if is_finite(foreground_depth) else 0.0)
 
 
+func set_nearest_depth(depth_texture: Texture2D) -> void:
+	for state in _surfaces:
+		state.replacement.next_pass.set_shader_parameter(&"nearest_surface_depth", depth_texture)
+
+
+func depth_sources() -> Array[Dictionary]:
+	var sources: Dictionary = {}
+	for state in _surfaces:
+		var instance := state.mesh.get_ref() as MeshInstance3D
+		if not is_instance_valid(instance):
+			continue
+		if not sources.has(instance):
+			sources[instance] = []
+		sources[instance].append(state.surface)
+	var result: Array[Dictionary] = []
+	for instance in sources:
+		result.append({"mesh": instance, "surfaces": sources[instance]})
+	return result
+
+
 func restore() -> void:
 	for state in _surfaces:
 		var instance := state.mesh.get_ref() as MeshInstance3D

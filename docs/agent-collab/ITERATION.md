@@ -1,15 +1,15 @@
 # 2026-10-06 玩家遮蔽淡出與敵車透視輪廓續修
 
-狀態：`approved`（原核可產品範圍內，依本次親測回饋續修）。人員產品驗收：`needs_changes`。2026-10-05 的 PR #126 已工程交付；本輪是其視覺調整，本次候選仍整合／驗證中，沒有新版 PASS、交付 commit 或 accepted。
+狀態：`approved`（原核可產品範圍內，依本次親測回饋續修）。人員產品驗收：`needs_changes`。PR #126 與 2026-10-06 的 PR #127 已工程交付；本次沿用原核可範圍修正玩家透視邊緣與角度閃爍，LEA-194 進行中、LEA-195 已完成。本機修正待驗，沒有本次新 Head 的 PASS、交付 commit 或 accepted。
 
 自包含產品決策、既有 ADR、術語與有限測試入口見 [tank-occlusion.md](../features/tank-occlusion.md)。專案設定沿用 [PROJECT.md](PROJECT.md)，協作與真實合併條件沿用 [WORKFLOW.md](WORKFLOW.md)；PROJECT 原管理輪分支／基線快照保留為歷史，本輪以本檔為準。
 
 | 本輪定義 | 內容 |
 | --- | --- |
 | 目標／動機 | 玩家中心透明且無顆粒、邊緣平滑、小範圍常駐跟隨；敵車紅線包含真實車體／砲塔／砲管／履帶部件界線，方便部位瞄準。 |
-| 執行順序／工單 | 沿用 [LEA-194：玩家局部建築淡出](https://linear.app/leadingtw273/issue/LEA-194) 與 [LEA-195：敵車紅線輪廓與透視瞄準](https://linear.app/leadingtw273/issue/LEA-195)。2026-10-06 兩單已讀回為進行中，原依賴保留：先玩家工程驗證，再整合敵方；不把兩單互相擴 scope。 |
+| 執行順序／工單 | 沿用 [LEA-194：玩家局部建築淡出](https://linear.app/leadingtw273/issue/LEA-194) 與 [LEA-195：敵車紅線輪廓與透視瞄準](https://linear.app/leadingtw273/issue/LEA-195)。2026-10-06 本次讀回 LEA-194 已重開進行中、LEA-195 已完成；195 依賴 194 的原關係保留，本次只續修玩家，不把兩單互相擴 scope。 |
 | 範圍 | 玩家前景建築局部透明窗、同一世界半徑設定、視野內被相機建築遮住的敵車稀疏紅色外框與部件界線、既有真目標世界點瞄準接點。 |
-| Base／交付 | 既有 `main`，本次基線 [`f97581214e713627fce93a6a00ad8aae7206c5fc`](https://github.com/leadingtw273/tank-skirmish/commit/f97581214e713627fce93a6a00ad8aae7206c5fc)，來源樹 `2074e262610c426efadd605bd80b17769ca318a3`（已合併 [PR #126](https://github.com/leadingtw273/tank-skirmish/pull/126)）。新版在隔離工作樹準備；尚未正式套用 source 或宣稱新版已在 main。 |
+| Base／交付 | 既有 `main`，本次基線 [`dc8858991316fa3207e9b6d5765e1e8cc3df89e1`](https://github.com/leadingtw273/tank-skirmish/commit/dc8858991316fa3207e9b6d5765e1e8cc3df89e1)，來源樹 `f0b14b98396f87bfbe71513252dbbdda2c830336`（已合併 [PR #127](https://github.com/leadingtw273/tank-skirmish/pull/127)）。新修正在隔離分支 `fix/lea194-player-fade-boundary` 待驗；main 尚無本次修正。原視覺調整基線 f975812／PR #126 保留為歷史。 |
 | 核可人／日期 | leadi，原輪 2026-10-05；2026-10-06 親測回饋決定本次視覺 AC，見下方摘要。 |
 | 責任／人驗 | 工單負責人與共享進度以 Linear 實際紀錄為準；leadi 為產品決策及人員產品驗收人，本次結果為 needs_changes。 |
 | 術語 | 沿用既有三個產品術語；定義在產品文件，接手不需個人記憶。 |
@@ -21,6 +21,7 @@
 - **2026-10-05 歷史工程交付**：[PR #126](https://github.com/leadingtw273/tank-skirmish/pull/126) 已正常合併至 `main` 的 `f97581214e713627fce93a6a00ad8aae7206c5fc`。同版本機完整品質 73／73 命令、136 個 unit／contract 測試及四車主圖／訓練場 84 項圖形工程檢查通過；同 Head source review PASS／0 blocker。PR CI `37293523655`／attempt 1 與同版 main CI `37299277721`／attempt 1 均實際 success，兩次一次性 runner、container 與素材 gate 已清理。這些結果僅涵蓋已交付版本，當時人驗 pending。
 - **2026-10-06 人員親測**：leadi 回報 needs_changes，沿用兩單續修，不撤銷歷史工程證據，也不將它們當作新版 PASS。
 - **本次計畫與候選**：精確新計畫文字外送已明確核准；2026-10-06 Claude（`claude-opus-5-5`）單次有效 result 為 approve／0 blocker，只讀核准計畫且 SHA／mtime 不變。六項 advisory 按原有限 AC 觀察，不新增 scope。候選仍整合／驗證中，作者自檢不代替 fresh-context 驗收、完整品質或 Windows 親測。核准不包含 code、材質、PNG 或私素材外送。
+- **2026-10-06 PR #127 工程交付後續修**：正式 main 已為 `dc8858991316fa3207e9b6d5765e1e8cc3df89e1`；交付與 CI／review 證據查 GitHub 與 Linear 原紀錄。leadi 新回報主場景玩家雙層透明邊緣與角度閃爍，沿原 LEA-194／P1–P3 續修，未撤銷歷史工程結果，也未代填人驗 accepted。
 - 新版須對最新候選 Head 留下固定矩陣、完整品質及獨立 review 證據後，才處理符合真實平台條件的交付；正式 source 同步前仍須重查工作樹並保留使用者未提交內容。
 
 ## 本輪自包含裁決引用
@@ -42,6 +43,14 @@
 同次裁決另確認滑鼠指向透視輪廓可以瞄準敵車。
 
 2026-10-06 親測回饋摘要：玩家中心越靠近車體越透明、沒有顆粒，僅邊緣可有霧狀平滑過渡；範圍縮小且常駐，使進入掩體自然。敵車紅線除外框亦需真實車體細節，以便瞄準砲塔或履帶。本次共同世界半徑預設為 5m；8m 是上一版預設，原裁決只要求共同設定，未鎖成不可調數值。常駐指窗持續跟隨受控車，前景建築投影交窗即處理，不等車體遮擋 ray 首次命中；沒有建築不畫額外 UI 圈。
+
+本次主場景親測完整原文（保留原字）：
+
+> 1. 玩家坦克的視角透視邊緣過度效果很奇怪，甚至在不同角度下其還有閃爍狀況發生，請你觀察檢修一下，我這邊形容一下很像是有兩層透視，一層最外圈直接把玩家視角街出的第一個障礙變透明，像是建築屋頂然後第二圈是比較近的的內圈透明漸層，讓牆面有淡出的效果，兩者疊加在一起變得很奇怪，半徑不一致的樣子
+
+本次「請你觀察檢修一下」授權原 LEA-194／P1–P3 範圍內缺陷修正，沿用原核可目標與產品定位，不另填新的 approved 時間。本次玩家視覺觀察與驗收優先使用主場景 `res://src/main.tscn`；leadi 確認問題發生於主場景，訓練場不是本次新增的玩家視覺 AC。原 P1–P3／E1–E3 與既有回歸入口保留，敵方範圍不擴張。
+
+本次玩家邊緣續修待驗：既有 opaque／soft 雙 pass 使用同一半徑，但透明 pass 的前後多個表面可能疊加混色；只關閉背面或 foreground gate 的對照不足以排除此問題。修正正針對當下淡出的建築建立同相機的原始最近表面深度資料，讓 soft pass 僅混合最近表面。保留共同 5m、1 個 render pixel 的 opaque 外緣、圈外原 PBR／深度與完整陰影，以及後方建築／Tank4 包絡判斷；敵方、碰撞與實體遮彈不改。此處記錄修正方向，不代表實作、圖形驗收或 source review 已通過。
 
 原「僅外框／interior_red==0」視覺判準由本次明示部件細節線取代；仍禁止實心填紅及三角 wireframe。授權沒有擴為穿牆傷害、對外發布或私素材外送。
 
@@ -70,7 +79,7 @@ Windows 單人 PvE、正交斜俯視、四款 catalog 坦克與既有動機不�
 
 已核可範圍內普通開發、修正、驗證、獨立 review 與滿足真實 gate 後正常 merge 可自主續行。保留 `quality`、required `agent-team/review`、protected settings 及全部平台條件；最新 Head 改動後重審，不以歷史 PASS、文件或評論代替必要 status，不用 bypass。
 
-素材僅供既有本機開發輸入，保持 ignored，不提交或外送私素材、含素材截圖、憑證或個人私有路徑。上一版 PR #126 與同來源樹 main CI 的兩次私素材讀取 grant 已耗用，本輪不能沿用。新網路私素材 CI 依 [既有 runbook](../local-private-ci.md)，在封存 Head 後另列 exact PR／Head／run／attempt 授權包；缺權限只暫停該段，不跳過必要 CI。
+素材僅供既有本機開發輸入，保持 ignored，不提交或外送私素材、含素材截圖、憑證或個人私有路徑。歷史 PR #126、PR #127 及各自同來源樹 main CI 的私素材讀取 grant 均已耗用，本次新 Head 不能沿用。此次來源／Claude 外送與新私素材 CI 尚未核准，舊計畫文字核准不涵蓋本次修正來源。新網路私素材 CI 依 [既有 runbook](../local-private-ci.md)，在封存 Head 後另列 exact PR／Head／run／attempt 授權包；缺權限只暫停該段，不跳過必要 CI。
 
 ## 上一管理輪的已完成歷史
 

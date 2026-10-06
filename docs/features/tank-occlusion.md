@@ -1,10 +1,14 @@
 # 玩家建築遮蔽淡出與敵車視野內透視輪廓
 
-日期：2026-10-06（原輪 2026-10-05 的親測續修）；產品決策／人員產品驗收人：leadi。授權見 [ITERATION.md](../agent-collab/ITERATION.md)，接手見 [HANDOFF.md](../agent-collab/HANDOFF.md)。本次 Base 為 [`main f97581214e713627fce93a6a00ad8aae7206c5fc`](https://github.com/leadingtw273/tank-skirmish/commit/f97581214e713627fce93a6a00ad8aae7206c5fc)（已合併 [PR #126](https://github.com/leadingtw273/tank-skirmish/pull/126)），來源樹 `2074e262610c426efadd605bd80b17769ca318a3`。
+日期：2026-10-06（原輪 2026-10-05 的親測續修）；產品決策／人員產品驗收人：leadi。授權見 [ITERATION.md](../agent-collab/ITERATION.md)，接手見 [HANDOFF.md](../agent-collab/HANDOFF.md)。本次 Base 為 [`main dc8858991316fa3207e9b6d5765e1e8cc3df89e1`](https://github.com/leadingtw273/tank-skirmish/commit/dc8858991316fa3207e9b6d5765e1e8cc3df89e1)（已合併 [PR #127](https://github.com/leadingtw273/tank-skirmish/pull/127)），來源樹 `f0b14b98396f87bfbe71513252dbbdda2c830336`。
 
-狀態：本次視覺 AC 已裁決，人員產品驗收 `needs_changes`。上一版工程交付與本次候選分開：2026-10-05 已交付版有完整品質 73／73 命令、136 測試、84 項圖形工程檢查與兩次 CI success；本次候選仍整合／驗證中，不能套用歷史 PASS。細節見 [已交付歷史](../agent-collab/ITERATION.md#本次續修與已交付歷史)。本文不宣稱新版 source 已正式套用、source review 成功或 leadi 已 accepted。
+狀態：PR #127 已工程交付；LEA-194 因玩家透視邊緣與角度閃爍回饋重開續修，LEA-195 已完成、原依賴保留，人員產品驗收 `needs_changes`。上一版工程交付與本次候選分開：2026-10-05 已交付版有完整品質 73／73 命令、136 測試、84 項圖形工程檢查與兩次 CI success；本次候選仍整合／驗證中，不能套用歷史 PASS。細節見 [已交付歷史](../agent-collab/ITERATION.md#本次續修與已交付歷史)。本文不宣稱新版 source 已正式套用、source review 成功或 leadi 已 accepted。
 
-目前工單與依賴以 [LEA-194](https://linear.app/leadingtw273/issue/LEA-194)、[LEA-195](https://linear.app/leadingtw273/issue/LEA-195) 為準，版本／PR／CI／review／merge 以 GitHub 實際紀錄為準。兩單 2026-10-06 已重開為進行中，原依賴保留；精確新計畫文字審查已明確核准，2026-10-06 Claude（`claude-opus-5-5`）單次有效 result 為 approve／0 blocker，只讀該計畫且 SHA／mtime 不變；六項 advisory 按原有限 AC 觀察，不新增 scope。作者自檢不代替 fresh-context 驗收、完整品質或 Windows 親測。核准不包含 code、材質、PNG 或私素材外送。
+目前工單與依賴以 [LEA-194](https://linear.app/leadingtw273/issue/LEA-194)、[LEA-195](https://linear.app/leadingtw273/issue/LEA-195) 為準，版本／PR／CI／review／merge 以 GitHub 實際紀錄為準。歷史視覺調整曾於 2026-10-06 重開兩單，原依賴保留；該次精確計畫文字審查已明確核准，2026-10-06 Claude（`claude-opus-5-5`）單次有效 result 為 approve／0 blocker，只讀該計畫且 SHA／mtime 不變；六項 advisory 按原有限 AC 觀察，不新增 scope。作者自檢不代替 fresh-context 驗收、完整品質或 Windows 親測。核准不包含 code、材質、PNG 或私素材外送。
+
+本次玩家視覺觀察與驗收優先使用主場景 `res://src/main.tscn`；leadi 確認問題發生於主場景，訓練場不是本次新增的玩家視覺 AC。原 P1–P3／E1–E3 與既有回歸入口保留，敵方範圍不擴張。
+
+本次完整原文回饋與範圍內續修授權見 [ITERATION.md](../agent-collab/ITERATION.md#本輪自包含裁決引用)。本機分支 `fix/lea194-player-fade-boundary` 正修正、待驗，尚未交付新版 main。
 
 ## 使用者裁決與產品前提
 
@@ -40,13 +44,15 @@ leadi 於 2026-10-05 指定「先修玩家遮蔽透視在修敵人遮蔽透視�
 
 同一共同 5m 投影窗內保留 1 個 render pixel 的完整 opaque 外緣；base 挖孔與 soft next_pass 漸層採相同內縮支援域。Render pixel 寬度以 `SCREEN_UV * viewport_size` 的 `fwidth` 在分支前計算，對應 logical／render 比例。這只將透明支援域收在原圈內，共同半徑、候選、敵方顯示與拾取圈維持原值；P1 仍以原半徑取圈外，要求差量 0，不新增 radius tolerance 或取樣排除帶，完整陰影保持。縮放驗證、整合 fresh-context 驗收及完整品質尚未完成，不由此實作語意推定 PASS。
 
+本次玩家邊緣續修待驗：既有 opaque／soft 雙 pass 使用同一半徑，但透明 pass 的前後多個表面可能疊加混色；只關閉背面或 foreground gate 的對照不足以排除此問題。修正正針對當下淡出的建築建立同相機的原始最近表面深度資料，讓 soft pass 僅混合最近表面。保留共同 5m、1 個 render pixel 的 opaque 外緣、圈外原 PBR／深度與完整陰影，以及後方建築／Tank4 包絡判斷；敵方、碰撞與實體遮彈不改。此處記錄修正方向，不代表實作、圖形驗收或 source review 已通過。
+
 沿用透明 SubViewport／World3D、主相機及 mesh transform，同步原四車 skin／bone pose 與 alpha silhouette。Mask RGB 編碼有限真實部件類別；Canvas 在 true mask 內取相鄰部件界線與原約 2px 外緣，只輸出稀疏紅線，不填紅、不畫三角 wireframe、不用 experimental stencil。
 
 部件按四車現有精確名稱分類，如左右 `TrackMesh`、`Tank_Gun`、`Tank_Turret`、`Tank_body`。Tank4 固定上車體即使屬 HullVisual，仍以真實 `Tank_Turret` 本體分類；Tank1 無獨立 turret mesh，只呈現真實 gun／hull／左右履帶界線，不虛構砲塔。原模型、joint、skin 與物理部件不改。
 
 既有 45 joints 履帶 pose／skin 同步保持，不新增動畫框架。正式 Godot 4.7.1 Forward+，Windows 親測；Linux Vulkan 僅作工程圖形驗證，不擴 GL 或跨 renderer 相容性義務。直接技術前提失效、需超出四車拓撲或新增玩法／平台承諾時停碼升回決策，不默默改寫 AC。
 
-拾取仍檢查原 alpha silhouette 與約 2px 線寬鄰域；邊緣可用鄰域 ray。無對應部位實體 hit 時沿用該車表面點中投影最接近命中像素者，仍回真目標世界點。回滾移除本次呈現調整可恢復 PR #126 基線，沒有資料 migration。
+拾取仍檢查原 alpha silhouette 與約 2px 線寬鄰域；邊緣可用鄰域 ray。無對應部位實體 hit 時沿用該車表面點中投影最接近命中像素者，仍回真目標世界點。本次玩家邊緣修正可回滾至 PR #127 已交付基線；較早整輪呈現調整的回滾基線為 PR #126，沒有資料 migration。
 
 ## 固定驗收矩陣
 
@@ -96,4 +102,4 @@ leadi 於 2026-10-05 指定「先修玩家遮蔽透視在修敵人遮蔽透視�
 
 已核可範圍內普通開發、修正、驗證、獨立 review 與真實 gate 後正常 merge 可自主續行；對外發布、產品方向、平台受控設定及素材外送邊界不擴大。`quality`、required `agent-team/review` 與全部平台條件保持，reviewed Head／必要 CI 須對應最新 Head，不能用歷史 PASS 或文件代替。Review advisory 依 [WORKFLOW.md](../agent-collab/WORKFLOW.md) 分本單 blocker／後續 backlog／忽略，不自動擴 AC。
 
-私素材僅供本機開發且保持 ignored，不提交或外送私素材、含素材截圖、憑證或個人私有路徑。上一版 PR #126 與同版 main 私素材 CI 的兩次 grant 已耗用，本輪不能延用。新網路私素材 CI 依 [local-private-ci.md](../local-private-ci.md)，封存後另列 exact PR／Head／run／attempt 授權包；缺權限只暫停該段，不跳過完整品質或平台 gate。計畫文字 review 已核准不代表新版工程或人員驗收通過。
+私素材僅供本機開發且保持 ignored，不提交或外送私素材、含素材截圖、憑證或個人私有路徑。歷史 PR #126、PR #127 及各自同版 main 私素材 CI 的 grant 均已耗用，本次新 Head 不能延用；本次來源／Claude 外送與新私素材 CI 尚未核准。新網路私素材 CI 依 [local-private-ci.md](../local-private-ci.md)，封存後另列 exact PR／Head／run／attempt 授權包；缺權限只暫停該段，不跳過完整品質或平台 gate。計畫文字 review 已核准不代表新版工程或人員驗收通過。

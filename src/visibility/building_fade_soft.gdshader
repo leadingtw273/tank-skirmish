@@ -11,6 +11,8 @@ uniform vec2 viewport_size = vec2(1.0);
 uniform float window_amount : hint_range(0.0, 1.0) = 0.0;
 uniform bool foreground_enabled = false;
 uniform float foreground_depth = 0.0;
+// Deliberately no source_color: the producer is a linear HDR data texture.
+uniform sampler2D nearest_surface_depth : filter_nearest, repeat_disable;
 
 void fragment() {
 	// Match the opaque cut using one render pixel in logical screen units.
@@ -25,6 +27,13 @@ void fragment() {
 	// Match the opaque cut exactly; the window's final inner pixel is opaque.
 	float radius = length(screen_pixels - window_center_pixels) / max(aperture_radius, 0.001);
 	if (aperture_radius <= 0.0 || radius >= 1.0) {
+		discard;
+	}
+	vec4 packed_depth = texture(nearest_surface_depth, SCREEN_UV);
+	vec3 bytes = floor(packed_depth.rgb * 255.0 + 0.5);
+	float nearest_depth = dot(bytes, vec3(65536.0, 256.0, 1.0)) / 4096.0;
+	// One code step plus camera-space float rounding, far below model layers.
+	if (packed_depth.a < 0.5 || abs(-VERTEX.z - nearest_depth) > 0.0005) {
 		discard;
 	}
 	ALBEDO = source_albedo.rgb;

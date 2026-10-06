@@ -2,6 +2,7 @@
 extends Node
 
 const Fade := preload("res://src/visibility/building_fade.gd")
+const NearestDepth := preload("res://src/visibility/player_fade_depth.gd")
 const Vision := preload("res://src/actors/tank/perception/tank_vision.gd")
 const Outline := preload("res://src/visibility/enemy_outline.gd")
 
@@ -11,6 +12,7 @@ const Outline := preload("res://src/visibility/enemy_outline.gd")
 @export_range(0.01, 1.0, 0.01) var fade_seconds := 0.18
 @export_flags_3d_physics var occlusion_collision_mask := 129
 
+var _nearest_depth: Node
 var controlled_tank: Node3D
 var camera: Camera3D
 var _fades: Dictionary = {}
@@ -27,6 +29,8 @@ func _ready() -> void:
 		push_error("TankOcclusion requires PlayerRuntime.")
 		set_process(false)
 		return
+	_nearest_depth = NearestDepth.new()
+	add_child(_nearest_depth)
 	_vision = Vision.new()
 	add_child(_vision)
 	get_tree().tree_changed.connect(_invalidate_building_candidates)
@@ -78,6 +82,9 @@ func _process(_delta: float) -> void:
 			_amounts.erase(building)
 		else:
 			effect.update_window(window.center, window.radius_pixels, window.viewport_size, 1.0, foreground_depth)
+	_nearest_depth.sync(camera, window, _fades.values(), foreground_depth)
+	for effect in _fades.values():
+		effect.set_nearest_depth(_nearest_depth.texture())
 	_update_enemy_outlines()
 
 
@@ -303,3 +310,5 @@ func _restore_buildings() -> void:
 		effect.restore()
 	_fades.clear()
 	_amounts.clear()
+	if is_instance_valid(_nearest_depth):
+		_nearest_depth.clear()

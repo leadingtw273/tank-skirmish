@@ -7,7 +7,7 @@ const Outline := preload("res://src/visibility/enemy_outline.gd")
 
 @export var player_runtime: Node
 ## 玩家與敵方透視窗口共用同一個世界半徑。
-@export_range(1.0, 30.0, 0.5) var window_radius_meters := 8.0
+@export_range(1.0, 30.0, 0.5) var window_radius_meters := 5.0
 @export_range(0.01, 1.0, 0.01) var fade_seconds := 0.18
 @export_flags_3d_physics var occlusion_collision_mask := 129
 
@@ -17,6 +17,8 @@ var _fades: Dictionary = {}
 var _amounts: Dictionary = {}
 var _vision: Node
 var _outlines: Dictionary = {}
+var _building_candidates: Array[Dictionary] = []
+var _building_candidates_dirty := true
 
 
 func _ready() -> void:
@@ -27,6 +29,7 @@ func _ready() -> void:
 		return
 	_vision = Vision.new()
 	add_child(_vision)
+	get_tree().tree_changed.connect(_invalidate_building_candidates)
 	player_runtime.connect("controlled_tank_changed", _bind_tank)
 	_bind_tank(player_runtime.get("controlled_tank") as Node3D)
 
@@ -43,37 +46,107 @@ func _bind_tank(tank: Node3D) -> void:
 func _exit_tree() -> void:
 	_restore_buildings()
 	_clear_enemy_outlines()
+	if get_tree().tree_changed.is_connected(_invalidate_building_candidates):
+		get_tree().tree_changed.disconnect(_invalidate_building_candidates)
+	_building_candidates.clear()
 
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	if not _alive(controlled_tank) or not is_instance_valid(camera):
 		_restore_buildings()
 		_clear_enemy_outlines()
 		return
 	var window := window_for(controlled_tank)
 	var obscuring: Array[Node3D] = []
+	var foreground_depth := _player_foreground_depth()
 	if not window.is_empty():
-		obscuring = building_occluders(controlled_tank)
+		obscuring = _window_buildings(window, foreground_depth)
 	for building in obscuring:
 		if not _fades.has(building):
 			_fades[building] = Fade.new(building)
-			_amounts[building] = 0.0
+			_amounts[building] = 1.0
 	for building in _fades.keys():
 		var effect = _fades[building]
 		if not effect.is_valid():
+			effect.restore()
 			_fades.erase(building)
 			_amounts.erase(building)
 			continue
-		var target := 1.0 if obscuring.has(building) else 0.0
-		var amount := move_toward(float(_amounts[building]), target, delta / maxf(fade_seconds, 0.01))
-		_amounts[building] = amount
-		if amount <= 0.0 or window.is_empty():
+		if not obscuring.has(building) or window.is_empty():
 			effect.restore()
 			_fades.erase(building)
 			_amounts.erase(building)
 		else:
-			effect.update_window(window.center, window.radius_pixels, window.viewport_size, amount)
+			effect.update_window(window.center, window.radius_pixels, window.viewport_size, 1.0, foreground_depth)
 	_update_enemy_outlines()
+
+
+func _invalidate_building_candidates() -> void:
+	_building_candidates_dirty = true
+
+
+func _index_building_meshes(node: Node, indexed: Dictionary) -> void:
+	if node is MeshInstance3D:
+		var building := _building_for(node)
+		if building != null:
+			if not indexed.has(building):
+				indexed[building] = []
+			indexed[building].append(weakref(node))
+	for child in node.get_children():
+		_index_building_meshes(child, indexed)
+
+
+func _window_buildings(window: Dictionary, foreground_depth: float) -> Array[Node3D]:
+	if _building_candidates_dirty:
+		var indexed: Dictionary = {}
+		_index_building_meshes(get_tree().root, indexed)
+		_building_candidates.clear()
+		for building in indexed:
+			_building_candidates.append({"building": weakref(building), "meshes": indexed[building]})
+		_building_candidates_dirty = false
+	var result: Array[Node3D] = []
+	for candidate in _building_candidates:
+		var building := candidate.building.get_ref() as Node3D
+		if not is_instance_valid(building):
+			continue
+		for reference in candidate.meshes:
+			var instance := reference.get_ref() as MeshInstance3D
+			if is_instance_valid(instance) and instance.mesh != null and instance.is_visible_in_tree() \
+					and _mesh_intersects_window(instance, window, foreground_depth):
+				result.append(building)
+				break
+	return result
+
+
+func _mesh_intersects_window(instance: MeshInstance3D, window: Dictionary, foreground_depth: float) -> bool:
+	var bounds := instance.get_aabb()
+	var minimum := Vector2(INF, INF)
+	var maximum := Vector2(-INF, -INF)
+	var in_front := false
+	for index in 8:
+		var point := instance.global_transform * bounds.get_endpoint(index)
+		if camera.is_position_behind(point):
+			continue
+		in_front = in_front or camera.to_local(point).z > foreground_depth
+		var projected := camera.unproject_position(point)
+		minimum = minimum.min(projected)
+		maximum = maximum.max(projected)
+	if not in_front:
+		return false
+	var nearest := (window.center as Vector2).clamp(minimum, maximum)
+	return nearest.distance_squared_to(window.center) < float(window.radius_pixels) * float(window.radius_pixels)
+
+
+func _player_foreground_depth() -> float:
+	# Include the farthest real body/part point, so a wall in front of the rear
+	# hull or tracks still fades even when it lies behind the tank's center.
+	var depth := camera.to_local(_center(controlled_tank)).z
+	if controlled_tank.has_method("part_world_surface_points"):
+		var points: PackedVector3Array = controlled_tank.call("part_world_surface_points")
+		for point in points:
+			if point.is_finite():
+				depth = minf(depth, camera.to_local(point).z)
+	return depth
 
 
 func _update_enemy_outlines() -> void:

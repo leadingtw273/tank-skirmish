@@ -63,10 +63,19 @@ func run() -> void:
 		occlusion.call("_process", 0.25)
 		expect(occlusion.call("faded_buildings").has(building), "camera building fades for " + String(vehicle_id))
 		expect(visual.get_surface_override_material(0) is ShaderMaterial, "per-instance surface override")
+		var replacement := visual.get_surface_override_material(0) as ShaderMaterial
+		expect(replacement.next_pass is ShaderMaterial, "continuous transparent next pass")
+		expect(replacement.get_shader_parameter(&"window_amount") == 1.0, "persistent window uses spatial gradient")
 		expect(untouched.get_surface_override_material(0) == null, "shared-material other building unchanged")
 		expect(mesh.material == source and source.albedo_color == Color(0.4, 0.55, 0.7), "shared source unchanged")
 		expect(visual.cast_shadow == original_shadow and building.collision_layer == 1, "shadow and collision unchanged")
 		var before: Dictionary = occlusion.call("window_for", tank)
+		expect(before.world_radius == 5.0, "shared default world radius is 5m")
+		var foreground_depth := camera.to_local(tank.call("stable_world_center")).z
+		for point in tank.call("part_world_surface_points"):
+			foreground_depth = minf(foreground_depth, camera.to_local(point).z)
+		expect(is_equal_approx(float(replacement.get_shader_parameter(&"foreground_depth")), foreground_depth), "foreground includes farthest actual tank part")
+		expect(replacement.next_pass.get_shader_parameter(&"foreground_depth") == replacement.get_shader_parameter(&"foreground_depth"), "both passes share foreground plane")
 		camera.size *= 0.5
 		var zoomed: Dictionary = occlusion.call("window_for", tank)
 		expect(is_equal_approx(float(zoomed.radius_pixels), float(before.radius_pixels) * 2.0), "world radius follows zoom")
@@ -90,9 +99,39 @@ func run() -> void:
 		tank.get_node("HealthComponent").call("apply_damage", 100000.0)
 		occlusion.call("_process", 0.25)
 		expect(visual.get_surface_override_material(0) == null, "dead player no longer opens window")
+	# A thin foreground building enters the persistent aperture before any
+	# body ray hits it. Its transparent material must already be installed.
+	tank = main.call("replace_player_vehicle", &"tank2") as Node3D
+	building.global_position.x += 200.0
+	center = tank.call("stable_world_center")
+	var edge_mesh := BoxMesh.new()
+	edge_mesh.size = Vector3(0.5, 0.5, 0.5)
+	edge_mesh.material = source
+	var edge := building_at(center + camera.global_basis.z * 12.0 + camera.global_basis.x * 4.7, edge_mesh)
+	(edge.get_child(1) as CollisionShape3D).shape = BoxShape3D.new()
+	((edge.get_child(1) as CollisionShape3D).shape as BoxShape3D).size = edge_mesh.size
+	var edge_visual := edge.get_node("Visual") as MeshInstance3D
+	var behind := building_at(center - camera.global_basis.z * 12.0, edge_mesh)
+	var behind_visual := behind.get_node("Visual") as MeshInstance3D
+	await physics_frame
+	await physics_frame
+	expect(not occlusion.call("building_occluders", tank).has(edge), "window edge enters before any tank occlusion ray")
+	occlusion.call("_process", 0.001)
+	expect(occlusion.call("faded_buildings").has(edge), "foreground window intersection activates without body ray or timer")
+	expect(behind_visual.get_surface_override_material(0) == null, "building behind tank depth stays opaque")
+	edge.global_position += camera.global_basis.x * 2.0
+	occlusion.call("_process", 0.001)
+	expect(edge_visual.get_surface_override_material(0) == null, "moving outside window immediately restores both passes")
+	edge.global_position -= camera.global_basis.x * 2.0
+	occlusion.call("_process", 0.001)
+	expect(edge_visual.get_surface_override_material(0) is ShaderMaterial, "candidate cache follows moving building")
 	main.queue_free()
 	building.queue_free()
 	other.queue_free()
+	await process_frame
+	expect(edge_visual.get_surface_override_material(0) == null, "scene exit restores surviving building next pass")
+	edge.queue_free()
+	behind.queue_free()
 	await process_frame
 	print("TANK_OCCLUSION_PLAYER ", "PASS" if failures.is_empty() else "FAIL", " failures=", failures.size())
 	quit(0 if failures.is_empty() else 1)

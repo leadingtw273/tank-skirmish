@@ -166,3 +166,10 @@ leadi 回報的垂直板來自原火焰 `Flame_Core`：collector 未排除既有
 保留共享核心 R（預設 5m），只有玩家建築淡出的外界為 R+2m（預設 7m）；候選建築、opaque／soft／nearest-depth 使用同一外窗口及原 1 render pixel 邊界保護。soft 保留中心低 alpha 0.06 基底，主要 0.94 平滑過渡移至 core→outer aperture；未提供可選 core 的舊呼叫精確沿原完整曲線。敵方窗口、紅／灰／真煙、picking、碰撞、材質／atlas／陰影保持。
 
 兩個既有測試補 R=3／5／9→outer=5／7／11、原 camera size=50／100、6.7m 外環候選及 8.7m 圈外還原，敵仍 core。作者僅執行一次 headless editor parse，actual exit 0／未見 SCRIPT ERROR 或 Parse Error；原 log 有 4 條 editor socket 建立失敗的環境 D，完整保留於本機 `tank-player-outer-fade-20261007/writer/editor-parse.log`。作者未執行兩項完整 smoke 或 GPU；固定主圖無貼圖／訓練 atlas 真場景與同版獨立驗收由 fresh 進行，人驗仍由 leadi 裁定。
+
+
+## 2026-10-07 玩家殘骸建築灰線
+
+受控玩家死亡後還原建築淡出，只對當下被建築遮住的受控殘骸顯示核心 R=5m 的灰線；死亡觀察者清空敵車輪廓，不顯示其他歷史殘骸。重生後新活車維持 5+2m 淡出，既有 player_wreck 依新觀察者原距離／FOV／LOS、核心窗口及建築遮擋資格顯示或隱藏。專用字典直接重用已有真模型細節／Smoke 輪廓（灰 .55、煙 .35），不加入 enemy 群組／拾取字典，null／重綁／移除／退出清理自有 pass。
+
+既有玩家測試保留活車外環／正式渲染尺寸等斷言，新增單一 tank2 真 Health 死亡、main 公共重生入口與舊殘骸資格／清理；公共入口 fixture 不代表訓練場三秒倒數。作者未執行本輪 parse／完整 smoke／GPU；同版完整玩家／敵車 smoke 與正常訓練 Scene 預熱後死亡→原三秒重生，由 fresh 獨立實證，原倒數／出生點／粒子來源不改。候選與原始驗證資料位於本機 `tank-player-wreck-occlusion-20261007/`，人驗由 leadi 裁定。

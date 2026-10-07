@@ -64,6 +64,123 @@ func expect_player_outer_windows(occlusion: Node, camera: Camera3D, tank: Node3D
 	occlusion.call("_process", 0.25)
 
 
+func expect_player_wreck_flow(main: Node3D, occlusion: Node, camera: Camera3D, building: StaticBody3D, source: Material) -> void:
+	var wreck := main.call("replace_player_vehicle", &"tank2") as Node3D
+	# Isolate this finite tank2 fixture from wrecks retained by the original catalog loop.
+	for previous: Node3D in get_nodes_in_group(&"player_wreck"):
+		previous.global_position += Vector3(500, 0, 0)
+	var center: Vector3 = wreck.call("stable_world_center")
+	var building_pose := building.global_transform
+	building.global_position = camera.project_ray_origin(camera.unproject_position(center)).lerp(center, 0.7)
+	await physics_frame
+	await physics_frame
+	occlusion.call("_process", 0.25)
+	expect(occlusion.call("faded_buildings").has(building), "live tank2 retains original player fade")
+	var spawn_pose := wreck.global_transform
+	wreck.get_node("HealthComponent").call("apply_damage", 100000.0)
+	occlusion.call("_process", 0.25)
+	var line: Node = occlusion.get("_player_wreck_outlines").get(wreck)
+	expect(line != null and bool(line.get("active")), "controlled dead tank2 has its own active outline")
+	expect(building.get_node("Visual").get_surface_override_material(0) == null, "controlled death restores building material")
+	if line == null:
+		return
+	var core: Dictionary = occlusion.call("window_for", wreck)
+	var color: Vector3 = line.get("_material").get_shader_parameter(&"line_color")
+	expect(color.is_equal_approx(Vector3(0.55, 0.55, 0.55)), "player wreck reuses neutral body and smoke color")
+	expect(core.world_radius == 5.0 and is_equal_approx(float(line.get("_radius")), float(core.radius_pixels)), "player wreck uses core 5m rather than outer 7m")
+	var sources: Array = line.get("_sources")
+	expect(not sources.is_empty() and sources == line.get("_geometry").get("_sources"), "player wreck retains real shared model and geometry sources")
+	for mesh: MeshInstance3D in sources:
+		expect(not mesh.is_in_group(&"effect_mesh"), "player wreck excludes FX mesh")
+	expect(line.call("pick", core.center).is_empty() and occlusion.call("resolve_enemy_target", core.center).is_empty(), "player wreck is never an enemy aim target")
+	# Public runtime entry tests real replacement/binding/group order, not the training 3s timer.
+	var observer := main.call("respawn_player_vehicle", &"tank2", spawn_pose) as Node3D
+	expect(observer != null and wreck.is_in_group(&"player_wreck") and not wreck.is_in_group(&"enemy_tank"), "public respawn retains only player wreck classification")
+	expect(occlusion.get("_player_wreck_outlines").is_empty(), "respawn binding clears owned old renderers before next frame")
+	if observer == null:
+		return
+	observer.global_position = wreck.global_position + Vector3(0, 0, 12)
+	await physics_frame
+	await physics_frame
+	occlusion.call("_process", 0.25)
+	line = occlusion.get("_player_wreck_outlines").get(wreck)
+	expect(line != null and bool(line.get("active")), "new live observer can see eligible retained player wreck")
+	expect(occlusion.call("player_fade_window_for", observer).world_radius == 7.0, "respawned live player retains 5m plus 2m fade window")
+	expect(not occlusion.call("outlined_enemies").has(wreck), "retained player wreck stays outside enemy resolver dictionary")
+	if line == null:
+		return
+	building.global_position.x += 250.0
+	await physics_frame
+	await physics_frame
+	occlusion.call("_process", 0.25)
+	expect(not bool(line.get("active")), "unoccluded retained wreck has no xray")
+	building.global_position.x -= 250.0
+	observer.global_position = wreck.global_position + Vector3(0, 0, 500)
+	await physics_frame
+	await physics_frame
+	occlusion.call("_process", 0.25)
+	expect(not bool(line.get("active")), "retained wreck beyond current observer range is hidden")
+	observer.global_position = wreck.global_position + Vector3(0, 0, 80)
+	observer.call("aim_turret_at", wreck.call("stable_world_center"), 10.0)
+	await physics_frame
+	await physics_frame
+	occlusion.call("_process", 0.25)
+	expect(bool(line.get("active")), "retained wreck inside current far cone returns")
+	var turret := observer.call("get_turret_pivot") as Node3D
+	var turret_pose := turret.transform
+	turret.rotate_y(PI)
+	occlusion.call("_process", 0.25)
+	expect(not bool(line.get("active")), "retained wreck outside current far cone is hidden")
+	turret.transform = turret_pose
+	observer.global_position = wreck.global_position + Vector3(0, 0, 12)
+	await physics_frame
+	await physics_frame
+	occlusion.call("_process", 0.25)
+	expect(bool(line.get("active")), "retained wreck recovers when qualified again")
+	var enemy := Catalog.instantiate(&"tank2")
+	enemy.process_mode = Node.PROCESS_MODE_DISABLED
+	root.add_child(enemy)
+	enemy.global_position = observer.global_position + Vector3(12, 0, -12)
+	enemy.add_to_group(&"enemy_tank")
+	var enemy_center: Vector3 = enemy.call("stable_world_center")
+	var wall_mesh := BoxMesh.new()
+	wall_mesh.size = Vector3(8, 14, 8)
+	wall_mesh.material = source
+	var enemy_wall := building_at(camera.project_ray_origin(camera.unproject_position(enemy_center)).lerp(enemy_center, 0.7), wall_mesh)
+	((enemy_wall.get_child(1) as CollisionShape3D).shape as BoxShape3D).size = wall_mesh.size
+	await physics_frame
+	await physics_frame
+	occlusion.call("_process", 0.25)
+	expect(occlusion.call("outlined_enemies").has(enemy), "live observer retains qualified real enemy outline")
+	observer.get_node("HealthComponent").call("apply_damage", 100000.0)
+	occlusion.call("_process", 0.25)
+	var dead_candidates: Dictionary = occlusion.get("_player_wreck_outlines")
+	expect(dead_candidates.size() == 1 and dead_candidates.has(observer), "dead observer renders only its controlled wreck, never old wrecks")
+	expect(occlusion.call("outlined_enemies").is_empty(), "dead observer clears previously visible enemy information")
+	var replacement := main.call("respawn_player_vehicle", &"tank2", spawn_pose) as Node3D
+	replacement.global_position = wreck.global_position + Vector3(0, 0, 12)
+	await physics_frame
+	await physics_frame
+	occlusion.call("_process", 0.25)
+	var removed_id := wreck.get_instance_id()
+	wreck.queue_free()
+	await process_frame
+	occlusion.call("_process", 0.25)
+	for remaining: Node3D in occlusion.get("_player_wreck_outlines"):
+		expect(remaining.get_instance_id() != removed_id, "removed retained wreck clears its owned renderer")
+	var runtime := main.get_node("PlayerRuntime")
+	runtime.call("set_controlled_tank", null)
+	expect(occlusion.get("_player_wreck_outlines").is_empty(), "null binding clears every player wreck renderer")
+	runtime.call("set_controlled_tank", replacement)
+	main.call("replace_player_vehicle", &"tank2")
+	expect(occlusion.get("_player_wreck_outlines").is_empty(), "vehicle replacement clears owned player wreck renderers")
+	enemy.queue_free()
+	enemy_wall.queue_free()
+	building.global_transform = building_pose
+	await process_frame
+	print("PLAYER_WRECK_FIXTURE public_respawn_entry_only=true normal_three_second_timer_tested=false")
+
+
 func run() -> void:
 	# Formal canvas_items configuration: render 1280x720, logical 1920x1080.
 	root.size = Vector2i(1280, 720)
@@ -145,6 +262,7 @@ func run() -> void:
 		tank.get_node("HealthComponent").call("apply_damage", 100000.0)
 		occlusion.call("_process", 0.25)
 		expect(visual.get_surface_override_material(0) == null, "dead player no longer opens window")
+	await expect_player_wreck_flow(main, occlusion, camera, building, source)
 	# A thin foreground building enters the persistent aperture before any
 	# body ray hits it. Its transparent material must already be installed.
 	tank = main.call("replace_player_vehicle", &"tank2") as Node3D

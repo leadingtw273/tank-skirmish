@@ -20,6 +20,7 @@ var _fades: Dictionary = {}
 var _amounts: Dictionary = {}
 var _vision: Node
 var _outlines: Dictionary = {}
+var _player_wreck_outlines: Dictionary = {}
 var _building_candidates: Array[Dictionary] = []
 var _building_candidates_dirty := true
 
@@ -42,6 +43,7 @@ func _ready() -> void:
 func _bind_tank(tank: Node3D) -> void:
 	_restore_buildings()
 	_clear_enemy_outlines()
+	_clear_player_wreck_outlines()
 	controlled_tank = tank
 	_vision.set("observer", tank)
 	var rig := player_runtime.get("camera_controller") as Node
@@ -51,15 +53,22 @@ func _bind_tank(tank: Node3D) -> void:
 func _exit_tree() -> void:
 	_restore_buildings()
 	_clear_enemy_outlines()
+	_clear_player_wreck_outlines()
 	if get_tree().tree_changed.is_connected(_invalidate_building_candidates):
 		get_tree().tree_changed.disconnect(_invalidate_building_candidates)
 	_building_candidates.clear()
 
 
 func _process(_delta: float) -> void:
-	if not _alive(controlled_tank) or not is_instance_valid(camera):
+	if not _present(controlled_tank) or not is_instance_valid(camera):
 		_restore_buildings()
 		_clear_enemy_outlines()
+		_clear_player_wreck_outlines()
+		return
+	if not _alive(controlled_tank):
+		_restore_buildings()
+		_clear_enemy_outlines()
+		_update_player_wreck_outlines()
 		return
 	var window := player_fade_window_for(controlled_tank)
 	var obscuring: Array[Node3D] = []
@@ -87,6 +96,7 @@ func _process(_delta: float) -> void:
 	for effect in _fades.values():
 		effect.set_nearest_depth(_nearest_depth.texture())
 	_update_enemy_outlines()
+	_update_player_wreck_outlines()
 
 
 func _invalidate_building_candidates() -> void:
@@ -182,6 +192,49 @@ func _update_enemy_outlines() -> void:
 			_outlines[enemy].set_active(false)
 			_outlines[enemy].queue_free()
 			_outlines.erase(enemy)
+
+
+## 玩家殘骸只作示意，不加入 enemy 字典或敵方拾取。
+func _update_player_wreck_outlines() -> void:
+	var observer_alive := _alive(controlled_tank)
+	var candidates: Array[Node3D] = []
+	if observer_alive:
+		for candidate in get_tree().get_nodes_in_group(&"player_wreck"):
+			var wreck := candidate as Node3D
+			if wreck != controlled_tank and _present(wreck) and not _alive(wreck):
+				candidates.append(wreck)
+	else:
+		# 死亡觀察者只看當下受控殘骸，不揭露其他車輛。
+		candidates.append(controlled_tank)
+	for wreck in candidates:
+		var window := window_for(wreck)
+		var eligible := not window.is_empty()
+		if eligible and observer_alive:
+			eligible = bool(_vision.call("can_see", wreck))
+		if eligible:
+			eligible = not building_occluders(wreck).is_empty()
+		if eligible and not _player_wreck_outlines.has(wreck):
+			var outline := Outline.new()
+			add_child(outline)
+			outline.configure(wreck, camera)
+			_player_wreck_outlines[wreck] = outline
+		if _player_wreck_outlines.has(wreck):
+			var outline = _player_wreck_outlines[wreck]
+			if eligible:
+				outline.update_window(camera, window)
+			outline.set_active(eligible)
+	for wreck in _player_wreck_outlines.keys():
+		if not _present(wreck) or not candidates.has(wreck):
+			_player_wreck_outlines[wreck].set_active(false)
+			_player_wreck_outlines[wreck].queue_free()
+			_player_wreck_outlines.erase(wreck)
+
+
+func _clear_player_wreck_outlines() -> void:
+	for outline in _player_wreck_outlines.values():
+		outline.set_active(false)
+		outline.queue_free()
+	_player_wreck_outlines.clear()
 
 
 func outlined_enemies() -> Array[Node3D]:

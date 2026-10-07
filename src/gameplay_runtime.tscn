@@ -18,7 +18,7 @@ script = ExtResource("2_main")
 
 [node name="CameraRig" type="Node3D" parent="PlayerSpawnGroup" unique_id=1627748860]
 script = ExtResource("2_camera_controller")
-fire_shake_kick_distance = 0.5
+fire_shake_kick_distance = 0.2
 
 [node name="CameraShakePivot" type="Node3D" parent="PlayerSpawnGroup/CameraRig" unique_id=798159369]
 

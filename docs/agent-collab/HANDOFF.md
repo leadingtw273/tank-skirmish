@@ -1,5 +1,15 @@
 # 一次接手入口
 
+現役輪次為 [LEA-134 發射手感續調](ITERATION.md#2026-10-07-lea-134-發射手感續調)，自包含 F1–F5／ADR／參數與試玩入口見 [tank-firing-feel.md](../features/tank-firing-feel.md)。視覺加強、保留移動／瞄準，shake 0.5m→0.2m／原0.2s；正常合併／第二模型複審與做到Windows可實測已明示授權。手感人驗pending。
+
+查 [LEA-134](https://linear.app/leadingtw273/issue/LEA-134)、現有PR與最新同HEAD證據。基線是 [PR #128](https://github.com/leadingtw273/tank-skirmish/pull/128) 已合併的 main `679decd21d6d3a2b38e237330cd995ebe320a8cb`，tree `c912a8afe76ade1d0551335614b82bdf6b7384ec`；原透視source／真CI／cleanup／本機交付／accepted與194／195 Done閉包。新分支 `feat/lea134-firing-feel-adjustment`，正式目錄和舊工作樹由root guarded FF正常同步。
+
+候選新core、既有直接checks均作者actual exit0／ERROR0，diff-check通過；接手由非作者做同HEAD四車真viewport A/B與來源review、完整quality，不以作者證據代驗。之後root交Windows主圖F5／訓練場F6試玩；網路私CI不作preview前置。Short影格未取得，不稱精確復刻；235原UID／586 ignored素材保持，不外送，新Head私CI另需exacttuple，PR #128 grant不重用。
+
+以下原透視交接保留為歷史；舊「main dc885899／尚未upload」已由PR #128閉包取代。現況以頂部與ITERATION新輪為準。
+
+---
+
 目前原透視範圍已本機交付並人驗 `accepted`：leadi 2026-10-07 明示可以收尾，產品版為 `0d7b523922d8cc9654b4f4447006792e5e901b68`。最新同版證據與裁決見 [ITERATION 最新引用](ITERATION.md#2026-10-07-原透視範圍人驗-accepted-與交付邊界)，原產品 AC／ADR／術語見 [tank-occlusion.md](../features/tank-occlusion.md)。本機 accepted 與 GitHub 交付分開；下方 2026-10-06 舊候選／needs_changes 是歷史，不能當作目前待驗狀態。
 
 工單、負責人、依賴、工作範圍與共享進度查 [LEA-194](https://linear.app/leadingtw273/issue/LEA-194) 與 [LEA-195](https://linear.app/leadingtw273/issue/LEA-195) 的現役紀錄；2026-10-07 最新兩票均 Done，原透視範圍人驗 accepted，195 仍依賴 194；owner、AC 與原範圍不改。本入口不另建中央 journal 或進度狀態表。

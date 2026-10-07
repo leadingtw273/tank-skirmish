@@ -1,3 +1,21 @@
+# 2026-10-07 LEA-134 發射手感續調
+
+狀態：已核可開發；作者有限 core 與既有直接 checks 已 actual exit 0／ERROR 0，diff-check 通過。候選待同 HEAD 非作者 fresh-context 圖形驗收、來源 review、完整 quality 與人的手感驗收（pending）。自包含 ADR、參數、固定 F1–F5 與試玩入口見 [tank-firing-feel.md](../features/tank-firing-feel.md)。
+
+leadi 2026-10-07 授權收尾後即刻射擊手感、正常合併／複審，選只加強視覺並保留移動／瞄準，以及鏡頭 0.5m→0.2m／原 0.2s。最新明示「提前核可第二模型相關複審操作，直接做到讓我可以實測手感」。範圍內自主續行，優先交付本機 Windows 候選；原平台／私素材／外送邊界保持。
+
+沿 [LEA-134](https://linear.app/leadingtw273/issue/LEA-134) 新輪（In Progress），關聯已完成的 [LEA-148](https://linear.app/leadingtw273/issue/LEA-148)，不復活取消的151。保留134舊正文／歷史，新輪明示砲管動畫與鏡頭降低。
+
+基線為已合併 [PR #128](https://github.com/leadingtw273/tank-skirmish/pull/128) 的 `main 679decd21d6d3a2b38e237330cd995ebe320a8cb`／tree `c912a8afe76ade1d0551335614b82bdf6b7384ec`；原真 CI、cleanup、來源 fresh、本機 FF、194／195 Done 與原透視人驗 accepted 已閉包。新分支 `feat/lea134-firing-feel-adjustment`，只寫新隔離產品工作樹。
+
+三可見根共同反作用、GunVisual 另退縮，原機械 pivots／MuzzlePoint／impulse 不動。參考 Short 26–28 秒因429／bot gate未取得影格，不稱看過或精確復刻；Gemini影片第二意見缺席。人的手感驗收保持pending，不將作者證據當fresh／完整quality／GitHubpass。
+
+235 原 UID、586 ignored 本機素材與正式來源 metadata 保持。新 Head 私 CI 需 exact tuple，PR #128 grant 不重用，網路私 CI 不作本機 preview 前置。最新 HEAD、Windows候選及真實平台 gate 交付時讀回。
+
+以下原透視記錄為歷史；舊「尚未交付／main dc885899」已由上方PR #128閉包取代。
+
+---
+
 # 2026-10-06 玩家遮蔽淡出與敵車透視輪廓續修
 
 狀態：原透視範圍已本機交付，人員產品驗收 `accepted`（leadi 2026-10-07 明確確認）；LEA-194／LEA-195 均為 Done。Windows 人驗產品版為 `0d7b523922d8cc9654b4f4447006792e5e901b68`，同版有限獨立實跑與來源讀回見下方最新引用。GitHub main 仍為 `dc8858991316fa3207e9b6d5765e1e8cc3df89e1`、open PR 0；本輪來源尚未 upload／merge，GitHub 交付不視為完成。以下有日期的舊 needs_changes、PR #126／#127 與失敗證據均保留為歷史。

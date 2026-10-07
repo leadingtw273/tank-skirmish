@@ -48,7 +48,7 @@ func sync(main_camera: Camera3D, window: Dictionary, effects: Array, foreground_
 		_viewport.render_target_update_mode = SubViewport.UPDATE_DISABLED
 		return
 	var main_viewport := main_camera.get_viewport()
-	var render_size := Vector2(main_viewport.get_texture().get_size()) * main_viewport.scaling_3d_scale
+	var render_size := main_viewport.get_visible_rect().size * main_viewport.get_stretch_transform().get_scale() * main_viewport.scaling_3d_scale
 	_viewport.size = Vector2i(maxi(roundi(render_size.x), 1), maxi(roundi(render_size.y), 1))
 	for property in [&"projection", &"size", &"fov", &"near", &"far", &"keep_aspect", &"frustum_offset", &"h_offset", &"v_offset", &"cull_mask"]:
 		_camera.set(property, main_camera.get(property))

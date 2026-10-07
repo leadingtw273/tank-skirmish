@@ -65,6 +65,14 @@ func expect_player_outer_windows(occlusion: Node, camera: Camera3D, tank: Node3D
 
 
 func run() -> void:
+	# Formal canvas_items configuration: render 1280x720, logical 1920x1080.
+	root.size = Vector2i(1280, 720)
+	root.content_scale_size = Vector2i(1920, 1080)
+	root.content_scale_factor = 1.0
+	root.content_scale_mode = Window.CONTENT_SCALE_MODE_CANVAS_ITEMS
+	root.scaling_3d_scale = 1.0
+	await process_frame
+	expect(root.size == Vector2i(1280, 720) and root.get_visible_rect().size.is_equal_approx(Vector2(1920, 1080)), "formal canvas_items window fixture")
 	var main := load("res://src/gameplay_runtime.tscn").instantiate() as Node3D
 	main.process_mode = Node.PROCESS_MODE_DISABLED
 	root.add_child(main)
@@ -105,6 +113,9 @@ func run() -> void:
 		var before: Dictionary = occlusion.call("window_for", tank)
 		expect(before.world_radius == 5.0, "shared default world radius is 5m")
 		if vehicle_id == Catalog.IDS[0]:
+			var nearest_viewport: SubViewport = occlusion.get("_nearest_depth").get("_viewport")
+			expect(nearest_viewport.size == Vector2i(1280, 720), "nearest capture uses actual 1280x720 render grid")
+			print("NEAREST_CAPTURE window=", root.size, " logical=", root.get_visible_rect().size, " capture=", nearest_viewport.size)
 			expect_player_outer_windows(occlusion, camera, tank, visual)
 		var foreground_depth := camera.to_local(tank.call("stable_world_center")).z
 		for point in tank.call("part_world_surface_points"):

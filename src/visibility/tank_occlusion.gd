@@ -224,7 +224,7 @@ func _update_player_wreck_outlines() -> void:
 				outline.update_window(camera, window)
 			outline.set_active(eligible)
 	for wreck in _player_wreck_outlines.keys():
-		if not _present(wreck) or not candidates.has(wreck):
+		if not is_instance_valid(wreck) or not _present(wreck) or not candidates.has(wreck):
 			_player_wreck_outlines[wreck].set_active(false)
 			_player_wreck_outlines[wreck].queue_free()
 			_player_wreck_outlines.erase(wreck)

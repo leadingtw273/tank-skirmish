@@ -31,6 +31,39 @@ func building_at(position: Vector3, mesh: Mesh) -> StaticBody3D:
 	return body
 
 
+func expect_player_outer_windows(occlusion: Node, camera: Camera3D, tank: Node3D, visual: MeshInstance3D) -> void:
+	var original_size := camera.size
+	var original_radius: float = occlusion.get("window_radius_meters")
+	var center: Vector3 = tank.call("stable_world_center")
+	for camera_size in [50.0, 100.0]:
+		camera.size = camera_size
+		var two_meters := camera.unproject_position(center).distance_to(camera.unproject_position(center + camera.global_basis.x.normalized() * 2.0))
+		for core_meters in [3.0, 5.0, 9.0]:
+			occlusion.set("window_radius_meters", core_meters)
+			occlusion.call("_process", 0.25)
+			var core: Dictionary = occlusion.call("window_for", tank)
+			var outer: Dictionary = occlusion.call("player_fade_window_for", tank)
+			expect(core.world_radius == core_meters, "public window remains core radius")
+			expect(outer.world_radius == core_meters + 2.0 and outer.core_world_radius == core_meters, "player outer adds exactly 2m")
+			expect(is_equal_approx(float(outer.core_radius_pixels), float(core.radius_pixels)), "player retains projected core")
+			expect(is_equal_approx(float(outer.radius_pixels) - float(core.radius_pixels), two_meters), "outer ring projects 2m at both camera scales")
+			var replacement := visual.get_surface_override_material(0) as ShaderMaterial
+			for material in [replacement, replacement.next_pass]:
+				expect(is_equal_approx(float(material.get_shader_parameter(&"window_radius_pixels")), float(outer.radius_pixels)), "opaque and soft share player outer radius")
+			expect(is_equal_approx(float(replacement.next_pass.get_shader_parameter(&"window_core_radius_pixels")), float(core.radius_pixels)), "soft receives explicit core radius")
+			var nearest_material: ShaderMaterial = occlusion.get("_nearest_depth").get("_material")
+			expect(is_equal_approx(float(nearest_material.get_shader_parameter(&"window_radius_pixels")), float(outer.radius_pixels)), "nearest-depth uses same player outer radius")
+			print("PLAYER_OUTER core_m=", core_meters, " outer_m=", outer.world_radius, " camera_size=", camera_size, " ring_pixels=", float(outer.radius_pixels) - float(core.radius_pixels))
+	# Existing five-argument callers reset the optional core and retain the old curve.
+	var effect = occlusion.get("_fades")[visual.get_parent()]
+	var window: Dictionary = occlusion.call("window_for", tank)
+	effect.update_window(window.center, window.radius_pixels, window.viewport_size, 1.0, -INF)
+	expect(visual.get_surface_override_material(0).next_pass.get_shader_parameter(&"window_core_radius_pixels") == 0.0, "legacy call clears explicit core")
+	occlusion.set("window_radius_meters", original_radius)
+	camera.size = original_size
+	occlusion.call("_process", 0.25)
+
+
 func run() -> void:
 	var main := load("res://src/gameplay_runtime.tscn").instantiate() as Node3D
 	main.process_mode = Node.PROCESS_MODE_DISABLED
@@ -71,6 +104,8 @@ func run() -> void:
 		expect(visual.cast_shadow == original_shadow and building.collision_layer == 1, "shadow and collision unchanged")
 		var before: Dictionary = occlusion.call("window_for", tank)
 		expect(before.world_radius == 5.0, "shared default world radius is 5m")
+		if vehicle_id == Catalog.IDS[0]:
+			expect_player_outer_windows(occlusion, camera, tank, visual)
 		var foreground_depth := camera.to_local(tank.call("stable_world_center")).z
 		for point in tank.call("part_world_surface_points"):
 			foreground_depth = minf(foreground_depth, camera.to_local(point).z)
@@ -107,7 +142,7 @@ func run() -> void:
 	var edge_mesh := BoxMesh.new()
 	edge_mesh.size = Vector3(0.5, 0.5, 0.5)
 	edge_mesh.material = source
-	var edge := building_at(center + camera.global_basis.z * 12.0 + camera.global_basis.x * 4.7, edge_mesh)
+	var edge := building_at(center + camera.global_basis.z * 12.0 + camera.global_basis.x * 6.7, edge_mesh)
 	(edge.get_child(1) as CollisionShape3D).shape = BoxShape3D.new()
 	((edge.get_child(1) as CollisionShape3D).shape as BoxShape3D).size = edge_mesh.size
 	var edge_visual := edge.get_node("Visual") as MeshInstance3D
@@ -117,7 +152,7 @@ func run() -> void:
 	await physics_frame
 	expect(not occlusion.call("building_occluders", tank).has(edge), "window edge enters before any tank occlusion ray")
 	occlusion.call("_process", 0.001)
-	expect(occlusion.call("faded_buildings").has(edge), "foreground window intersection activates without body ray or timer")
+	expect(occlusion.call("faded_buildings").has(edge), "new outer ring intersection activates without body ray or timer")
 	expect(behind_visual.get_surface_override_material(0) == null, "building behind tank depth stays opaque")
 	edge.global_position += camera.global_basis.x * 2.0
 	occlusion.call("_process", 0.001)

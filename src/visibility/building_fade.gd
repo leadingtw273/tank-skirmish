@@ -25,7 +25,7 @@ func _init(building: Node3D) -> void:
 	_collect(building)
 
 
-func update_window(center_pixels: Vector2, radius_pixels: float, viewport_size: Vector2, amount: float, foreground_depth: float = -INF) -> void:
+func update_window(center_pixels: Vector2, radius_pixels: float, viewport_size: Vector2, amount: float, foreground_depth: float = -INF, core_radius_pixels: float = 0.0) -> void:
 	if not is_valid():
 		return
 	for state in _surfaces:
@@ -36,6 +36,7 @@ func update_window(center_pixels: Vector2, radius_pixels: float, viewport_size: 
 			material.set_shader_parameter(&"window_amount", clampf(amount, 0.0, 1.0))
 			material.set_shader_parameter(&"foreground_enabled", is_finite(foreground_depth))
 			material.set_shader_parameter(&"foreground_depth", foreground_depth if is_finite(foreground_depth) else 0.0)
+		state.replacement.next_pass.set_shader_parameter(&"window_core_radius_pixels", maxf(core_radius_pixels, 0.0))
 
 
 func set_nearest_depth(depth_texture: Texture2D) -> void:

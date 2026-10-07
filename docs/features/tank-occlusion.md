@@ -159,3 +159,10 @@ leadi 回報的垂直板來自原火焰 `Flame_Core`：collector 未排除既有
 固定一台自然入口 training tank2（僅測試 player pose 設為 (0,0,8)，相機不移動）真 Health 100→50→0，Forward+／Vulkan 的 17 項作者量測有 16 項 true：各階段只收 5 個模型／0 effect_mesh；來源定位先鎖定的 Flame_Core 356 像素區域，候選 opaque 為 0；健康真煙 0、受損 760、死亡 1314 像素，死亡中性線 2317／非中性 0；live 本敵命中、dead 空與 smoke-only 0 命中，原 camera size 100／5m 保持。圖片為 `dead-training.png`、`dead-lines.png`、`dead-real-smoke.png`、`dead-part-mask.png`。
 
 該 GPU raw exit 2／log 完整保留，不能稱作者 overall PASS：唯一 D 是把健康前全部 Smoke 的參數跨受損／死亡啟動比較。原 `tank_damage_visuals.gd:90–100` 明確設 local_coords=true 並 restart；同 source/base 的 6 個 Smoke 只在 local_coords／seed 出現差異，seed 與 restart 的因果屬推論。FX mesh／material／layer 及其餘 Smoke 基本參數同值，來源腳本、SmokePass 與全部 235 UID／586 素材 metadata 保持。fresh 入口為本輪 `tank-smoke-quad-20261007/fresh/`，依 Q1–Q3 在固定同 stage 核對原粒子身份／base／穩定參數，不用跨 stage 快照代替驗收。作者不代替 fresh-context 驗收；人驗 needs_changes，待 leadi 親測。
+
+
+## 2026-10-07 玩家核心外固定 2m 漸變
+
+保留共享核心 R（預設 5m），只有玩家建築淡出的外界為 R+2m（預設 7m）；候選建築、opaque／soft／nearest-depth 使用同一外窗口及原 1 render pixel 邊界保護。soft 保留中心低 alpha 0.06 基底，主要 0.94 平滑過渡移至 core→outer aperture；未提供可選 core 的舊呼叫精確沿原完整曲線。敵方窗口、紅／灰／真煙、picking、碰撞、材質／atlas／陰影保持。
+
+兩個既有測試補 R=3／5／9→outer=5／7／11、原 camera size=50／100、6.7m 外環候選及 8.7m 圈外還原，敵仍 core。作者僅執行一次 headless editor parse，actual exit 0／未見 SCRIPT ERROR 或 Parse Error；原 log 有 4 條 editor socket 建立失敗的環境 D，完整保留於本機 `tank-player-outer-fade-20261007/writer/editor-parse.log`。作者未執行兩項完整 smoke 或 GPU；固定主圖無貼圖／訓練 atlas 真場景與同版獨立驗收由 fresh 進行，人驗仍由 leadi 裁定。

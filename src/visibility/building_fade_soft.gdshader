@@ -9,6 +9,8 @@ uniform float source_metallic = 0.0;
 uniform float source_specular = 0.5;
 uniform vec2 window_center_pixels = vec2(0.0);
 uniform float window_radius_pixels = 0.0;
+// Zero keeps the complete legacy curve for callers without an explicit core.
+uniform float window_core_radius_pixels = 0.0;
 uniform vec2 viewport_size = vec2(1.0);
 uniform float window_amount : hint_range(0.0, 1.0) = 0.0;
 uniform bool foreground_enabled = false;
@@ -48,5 +50,11 @@ void fragment() {
 	// Continuous alpha: clear at the center, almost clear across the inner
 	// region, then a smooth outer transition to the untouched opaque pass.
 	float radial_alpha = 0.06 * smoothstep(0.0, 0.70, radius) + 0.94 * smoothstep(0.70, 1.0, radius);
+	if (window_core_radius_pixels > 0.0) {
+		float core_radius = min(window_core_radius_pixels, aperture_radius);
+		float distance_pixels = length(screen_pixels - window_center_pixels);
+		radial_alpha = 0.06 * smoothstep(0.0, 0.70, distance_pixels / core_radius)
+				+ 0.94 * smoothstep(core_radius, aperture_radius, distance_pixels);
+	}
 	ALPHA = mix(1.0, radial_alpha, clamp(window_amount, 0.0, 1.0));
 }

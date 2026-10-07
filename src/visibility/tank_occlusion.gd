@@ -5,9 +5,10 @@ const Fade := preload("res://src/visibility/building_fade.gd")
 const NearestDepth := preload("res://src/visibility/player_fade_depth.gd")
 const Vision := preload("res://src/actors/tank/perception/tank_vision.gd")
 const Outline := preload("res://src/visibility/enemy_outline.gd")
+const PLAYER_FADE_OUTER_METERS := 2.0
 
 @export var player_runtime: Node
-## 玩家與敵方透視窗口共用同一個世界半徑。
+## 玩家與敵方共用核心半徑；只有玩家建築淡出向外延伸固定 2m。
 @export_range(1.0, 30.0, 0.5) var window_radius_meters := 5.0
 @export_range(0.01, 1.0, 0.01) var fade_seconds := 0.18
 @export_flags_3d_physics var occlusion_collision_mask := 129
@@ -60,7 +61,7 @@ func _process(_delta: float) -> void:
 		_restore_buildings()
 		_clear_enemy_outlines()
 		return
-	var window := window_for(controlled_tank)
+	var window := player_fade_window_for(controlled_tank)
 	var obscuring: Array[Node3D] = []
 	var foreground_depth := _player_foreground_depth()
 	if not window.is_empty():
@@ -81,7 +82,7 @@ func _process(_delta: float) -> void:
 			_fades.erase(building)
 			_amounts.erase(building)
 		else:
-			effect.update_window(window.center, window.radius_pixels, window.viewport_size, 1.0, foreground_depth)
+			effect.update_window(window.center, window.radius_pixels, window.viewport_size, 1.0, foreground_depth, window.core_radius_pixels)
 	_nearest_depth.sync(camera, window, _fades.values(), foreground_depth)
 	for effect in _fades.values():
 		effect.set_nearest_depth(_nearest_depth.texture())
@@ -221,6 +222,20 @@ func _clear_enemy_outlines() -> void:
 
 
 func window_for(target: Node3D) -> Dictionary:
+	return _window_for(target, window_radius_meters)
+
+
+## 玩家候選、兩個材質 pass 與 nearest-depth 共用此外窗口。
+func player_fade_window_for(target: Node3D) -> Dictionary:
+	var window := _window_for(target, window_radius_meters + PLAYER_FADE_OUTER_METERS)
+	if not window.is_empty():
+		var core_edge := camera.unproject_position(_center(target) + camera.global_basis.x.normalized() * window_radius_meters)
+		window["core_radius_pixels"] = (window.center as Vector2).distance_to(core_edge)
+		window["core_world_radius"] = window_radius_meters
+	return window
+
+
+func _window_for(target: Node3D, radius_meters: float) -> Dictionary:
 	if not is_instance_valid(target) or not is_instance_valid(camera):
 		return {}
 	var center := _center(target)
@@ -230,11 +245,11 @@ func window_for(target: Node3D) -> Dictionary:
 	var size := camera.get_viewport().get_visible_rect().size
 	if size.x <= 0.0 or size.y <= 0.0:
 		return {}
-	var edge := camera.unproject_position(center + camera.global_basis.x.normalized() * window_radius_meters)
+	var edge := camera.unproject_position(center + camera.global_basis.x.normalized() * radius_meters)
 	var radius := screen.distance_to(edge)
 	if not Rect2(-Vector2.ONE * radius, size + Vector2.ONE * radius * 2.0).has_point(screen):
 		return {}
-	return {"center": screen, "radius_pixels": radius, "viewport_size": size, "world_radius": window_radius_meters}
+	return {"center": screen, "radius_pixels": radius, "viewport_size": size, "world_radius": radius_meters}
 
 
 ## 正交相機的射線起點各不相同，不能從 Camera3D 的位置向車體射線。

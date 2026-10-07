@@ -102,9 +102,21 @@ func run() -> void:
 		expect(occlusion.call("outlined_enemies").has(enemy), "camera wall enables enemy outline")
 		if vehicle_id == Catalog.IDS[0]:
 			expect_model_sources(occlusion.get("_outlines")[enemy], enemy, decoration, initial_models)
+			for core_meters in [3.0, 5.0, 9.0]:
+				occlusion.set("window_radius_meters", core_meters)
+				occlusion.call("_process", 0.25)
+				var enemy_core: Dictionary = occlusion.call("window_for", enemy)
+				var player_outer: Dictionary = occlusion.call("player_fade_window_for", player)
+				expect(enemy_core.world_radius == core_meters and player_outer.world_radius == core_meters + 2.0, "enemy core stays R while player outer is R+2")
+				expect(is_equal_approx(float(occlusion.get("_outlines")[enemy].get("_radius")), float(enemy_core.radius_pixels)), "enemy outline uses core projection")
+			occlusion.set("window_radius_meters", 5.0)
+			occlusion.call("_process", 0.25)
 		var player_window: Dictionary = occlusion.call("window_for", player)
 		var enemy_window: Dictionary = occlusion.call("window_for", enemy)
 		expect(is_equal_approx(player_window.radius_pixels, enemy_window.radius_pixels), "enemy and player share circle radius")
+		var player_outer_window: Dictionary = occlusion.call("player_fade_window_for", player)
+		expect(enemy_window.world_radius == 5.0 and player_outer_window.world_radius == 7.0, "enemy retains 5m core while player fades to 7m")
+		expect(is_equal_approx(float(occlusion.get("_outlines")[enemy].get("_radius")), float(enemy_window.radius_pixels)), "enemy outline radius stays core")
 		var wall := building_at(Vector3(0, 10, -2), Vector3(80, 30, 3))
 		await physics_frame
 		await physics_frame

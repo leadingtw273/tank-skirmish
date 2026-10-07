@@ -2,21 +2,25 @@
 extends Node
 
 const Fade := preload("res://src/visibility/building_fade.gd")
+const NearestDepth := preload("res://src/visibility/player_fade_depth.gd")
 const Vision := preload("res://src/actors/tank/perception/tank_vision.gd")
 const Outline := preload("res://src/visibility/enemy_outline.gd")
+const PLAYER_FADE_OUTER_METERS := 2.0
 
 @export var player_runtime: Node
-## 玩家與敵方透視窗口共用同一個世界半徑。
+## 玩家與敵方共用核心半徑；只有玩家建築淡出向外延伸固定 2m。
 @export_range(1.0, 30.0, 0.5) var window_radius_meters := 5.0
 @export_range(0.01, 1.0, 0.01) var fade_seconds := 0.18
 @export_flags_3d_physics var occlusion_collision_mask := 129
 
+var _nearest_depth: Node
 var controlled_tank: Node3D
 var camera: Camera3D
 var _fades: Dictionary = {}
 var _amounts: Dictionary = {}
 var _vision: Node
 var _outlines: Dictionary = {}
+var _player_wreck_outlines: Dictionary = {}
 var _building_candidates: Array[Dictionary] = []
 var _building_candidates_dirty := true
 
@@ -27,6 +31,8 @@ func _ready() -> void:
 		push_error("TankOcclusion requires PlayerRuntime.")
 		set_process(false)
 		return
+	_nearest_depth = NearestDepth.new()
+	add_child(_nearest_depth)
 	_vision = Vision.new()
 	add_child(_vision)
 	get_tree().tree_changed.connect(_invalidate_building_candidates)
@@ -37,6 +43,7 @@ func _ready() -> void:
 func _bind_tank(tank: Node3D) -> void:
 	_restore_buildings()
 	_clear_enemy_outlines()
+	_clear_player_wreck_outlines()
 	controlled_tank = tank
 	_vision.set("observer", tank)
 	var rig := player_runtime.get("camera_controller") as Node
@@ -46,17 +53,24 @@ func _bind_tank(tank: Node3D) -> void:
 func _exit_tree() -> void:
 	_restore_buildings()
 	_clear_enemy_outlines()
+	_clear_player_wreck_outlines()
 	if get_tree().tree_changed.is_connected(_invalidate_building_candidates):
 		get_tree().tree_changed.disconnect(_invalidate_building_candidates)
 	_building_candidates.clear()
 
 
 func _process(_delta: float) -> void:
-	if not _alive(controlled_tank) or not is_instance_valid(camera):
+	if not _present(controlled_tank) or not is_instance_valid(camera):
 		_restore_buildings()
 		_clear_enemy_outlines()
+		_clear_player_wreck_outlines()
 		return
-	var window := window_for(controlled_tank)
+	if not _alive(controlled_tank):
+		_restore_buildings()
+		_clear_enemy_outlines()
+		_update_player_wreck_outlines()
+		return
+	var window := player_fade_window_for(controlled_tank)
 	var obscuring: Array[Node3D] = []
 	var foreground_depth := _player_foreground_depth()
 	if not window.is_empty():
@@ -77,8 +91,12 @@ func _process(_delta: float) -> void:
 			_fades.erase(building)
 			_amounts.erase(building)
 		else:
-			effect.update_window(window.center, window.radius_pixels, window.viewport_size, 1.0, foreground_depth)
+			effect.update_window(window.center, window.radius_pixels, window.viewport_size, 1.0, foreground_depth, window.core_radius_pixels)
+	_nearest_depth.sync(camera, window, _fades.values(), foreground_depth)
+	for effect in _fades.values():
+		effect.set_nearest_depth(_nearest_depth.texture())
 	_update_enemy_outlines()
+	_update_player_wreck_outlines()
 
 
 func _invalidate_building_candidates() -> void:
@@ -153,7 +171,7 @@ func _update_enemy_outlines() -> void:
 	var enemies := get_tree().get_nodes_in_group(&"enemy_tank")
 	for candidate in enemies:
 		var enemy := candidate as Node3D
-		if enemy == controlled_tank or not _alive(enemy):
+		if enemy == controlled_tank or not _present(enemy):
 			continue
 		var window := window_for(enemy)
 		var eligible := not window.is_empty() and bool(_vision.call("can_see", enemy))
@@ -170,10 +188,53 @@ func _update_enemy_outlines() -> void:
 				outline.update_window(camera, window)
 			outline.set_active(eligible)
 	for enemy in _outlines.keys():
-		if not is_instance_valid(enemy) or not enemies.has(enemy) or not _alive(enemy):
+		if not is_instance_valid(enemy) or not enemies.has(enemy) or not _present(enemy):
 			_outlines[enemy].set_active(false)
 			_outlines[enemy].queue_free()
 			_outlines.erase(enemy)
+
+
+## 玩家殘骸只作示意，不加入 enemy 字典或敵方拾取。
+func _update_player_wreck_outlines() -> void:
+	var observer_alive := _alive(controlled_tank)
+	var candidates: Array[Node3D] = []
+	if observer_alive:
+		for candidate in get_tree().get_nodes_in_group(&"player_wreck"):
+			var wreck := candidate as Node3D
+			if wreck != controlled_tank and _present(wreck) and not _alive(wreck):
+				candidates.append(wreck)
+	else:
+		# 死亡觀察者只看當下受控殘骸，不揭露其他車輛。
+		candidates.append(controlled_tank)
+	for wreck in candidates:
+		var window := window_for(wreck)
+		var eligible := not window.is_empty()
+		if eligible and observer_alive:
+			eligible = bool(_vision.call("can_see", wreck))
+		if eligible:
+			eligible = not building_occluders(wreck).is_empty()
+		if eligible and not _player_wreck_outlines.has(wreck):
+			var outline := Outline.new()
+			add_child(outline)
+			outline.configure(wreck, camera)
+			_player_wreck_outlines[wreck] = outline
+		if _player_wreck_outlines.has(wreck):
+			var outline = _player_wreck_outlines[wreck]
+			if eligible:
+				outline.update_window(camera, window)
+			outline.set_active(eligible)
+	for wreck in _player_wreck_outlines.keys():
+		if not is_instance_valid(wreck) or not _present(wreck) or not candidates.has(wreck):
+			_player_wreck_outlines[wreck].set_active(false)
+			_player_wreck_outlines[wreck].queue_free()
+			_player_wreck_outlines.erase(wreck)
+
+
+func _clear_player_wreck_outlines() -> void:
+	for outline in _player_wreck_outlines.values():
+		outline.set_active(false)
+		outline.queue_free()
+	_player_wreck_outlines.clear()
 
 
 func outlined_enemies() -> Array[Node3D]:
@@ -194,6 +255,8 @@ func resolve_enemy_target(screen_position: Vector2, collision_mask: int = 129) -
 	var closest := INF
 	var result: Dictionary = {}
 	for enemy in outlined_enemies():
+		if not _alive(enemy):
+			continue
 		var hit: Dictionary = _outlines[enemy].pick(screen_position, excluded, collision_mask)
 		if hit.is_empty():
 			continue
@@ -212,6 +275,20 @@ func _clear_enemy_outlines() -> void:
 
 
 func window_for(target: Node3D) -> Dictionary:
+	return _window_for(target, window_radius_meters)
+
+
+## 玩家候選、兩個材質 pass 與 nearest-depth 共用此外窗口。
+func player_fade_window_for(target: Node3D) -> Dictionary:
+	var window := _window_for(target, window_radius_meters + PLAYER_FADE_OUTER_METERS)
+	if not window.is_empty():
+		var core_edge := camera.unproject_position(_center(target) + camera.global_basis.x.normalized() * window_radius_meters)
+		window["core_radius_pixels"] = (window.center as Vector2).distance_to(core_edge)
+		window["core_world_radius"] = window_radius_meters
+	return window
+
+
+func _window_for(target: Node3D, radius_meters: float) -> Dictionary:
 	if not is_instance_valid(target) or not is_instance_valid(camera):
 		return {}
 	var center := _center(target)
@@ -221,11 +298,11 @@ func window_for(target: Node3D) -> Dictionary:
 	var size := camera.get_viewport().get_visible_rect().size
 	if size.x <= 0.0 or size.y <= 0.0:
 		return {}
-	var edge := camera.unproject_position(center + camera.global_basis.x.normalized() * window_radius_meters)
+	var edge := camera.unproject_position(center + camera.global_basis.x.normalized() * radius_meters)
 	var radius := screen.distance_to(edge)
 	if not Rect2(-Vector2.ONE * radius, size + Vector2.ONE * radius * 2.0).has_point(screen):
 		return {}
-	return {"center": screen, "radius_pixels": radius, "viewport_size": size, "world_radius": window_radius_meters}
+	return {"center": screen, "radius_pixels": radius, "viewport_size": size, "world_radius": radius_meters}
 
 
 ## 正交相機的射線起點各不相同，不能從 Camera3D 的位置向車體射線。
@@ -291,8 +368,12 @@ func _center(target: Node3D) -> Vector3:
 	return target.call("stable_world_center") as Vector3 if target.has_method("stable_world_center") else target.global_position
 
 
+func _present(target: Node3D) -> bool:
+	return is_instance_valid(target) and target.is_inside_tree() and not target.is_queued_for_deletion()
+
+
 func _alive(target: Node3D) -> bool:
-	if not is_instance_valid(target) or not target.is_inside_tree():
+	if not _present(target):
 		return false
 	var health := target.get_node_or_null("HealthComponent")
 	return health == null or float(health.get("current_health")) > 0.0
@@ -303,3 +384,5 @@ func _restore_buildings() -> void:
 		effect.restore()
 	_fades.clear()
 	_amounts.clear()
+	if is_instance_valid(_nearest_depth):
+		_nearest_depth.clear()

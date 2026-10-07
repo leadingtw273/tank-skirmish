@@ -14,7 +14,7 @@ const GROUPS_WITH_CHILDREN := 1
 const ROOT_NODE_CHILDREN := 0
 const EXTRA_CLEARANCE := 1.0
 const EXPECTED_FOUR_TANK_RADIUS := 3.6427174
-const EXPECTED_SOURCE_PATHS := ["Main/World/Ground", "SightBlockers"]
+const EXPECTED_SOURCE_PATHS := ["Main/World/Ground", "SightBlockers", "EntryOutlinePreview/Building"]
 
 var _failures: Array[String] = []
 
@@ -32,10 +32,13 @@ func _run() -> void:
 	playtest.process_mode = Node.PROCESS_MODE_DISABLED
 	var ground := playtest.get_node_or_null("Main/World/Ground") as StaticBody3D
 	var blockers := playtest.get_node_or_null("SightBlockers") as Node3D
+	var entry_building := playtest.get_node_or_null("EntryOutlinePreview/Building") as StaticBody3D
 	if ground != null:
 		ground.process_mode = Node.PROCESS_MODE_ALWAYS
 	if blockers != null:
 		blockers.process_mode = Node.PROCESS_MODE_ALWAYS
+	if entry_building != null:
+		entry_building.process_mode = Node.PROCESS_MODE_ALWAYS
 	root.add_child(playtest)
 	await physics_frame
 	await physics_frame
@@ -63,8 +66,8 @@ func _run() -> void:
 
 
 func _validate_authored_sources(playtest: Node3D, ground: StaticBody3D, blockers: Node3D) -> void:
-	if ground == null or blockers == null:
-		_fail("Authored training ground must expose Ground and SightBlockers source roots.")
+	if ground == null or blockers == null or not playtest.get_node_or_null("EntryOutlinePreview/Building") is StaticBody3D:
+		_fail("Authored training ground must expose Ground, SightBlockers, and EntryOutlinePreview/Building source roots.")
 		return
 	var source_paths: Array[String] = []
 	for source in get_nodes_in_group(SOURCE_GROUP):
@@ -73,7 +76,7 @@ func _validate_authored_sources(playtest: Node3D, ground: StaticBody3D, blockers
 	var expected: Array = EXPECTED_SOURCE_PATHS.duplicate()
 	expected.sort()
 	if source_paths != expected:
-		_fail("Navigation source group must contain only Ground and SightBlockers; got %s." % [source_paths])
+		_fail("Navigation source group must contain exactly the three authored static source roots; got %s." % [source_paths])
 	var building_bodies := 0
 	for row in blockers.get_children():
 		for building in row.get_children():
@@ -84,7 +87,7 @@ func _validate_authored_sources(playtest: Node3D, ground: StaticBody3D, blockers
 	if not ground is StaticBody3D or playtest.get_node_or_null("Main/World/Targets") == null \
 			or playtest.get_node_or_null("Encounter/Enemy") == null:
 		_fail("Smoke fixture must retain ground, training targets, and the encounter tank.")
-	for forbidden in [playtest.get_node_or_null("Main/World/Targets"), playtest.get_node_or_null("Encounter/Enemy")]:
+	for forbidden in [playtest.get_node_or_null("Main/World/Targets"), playtest.get_node_or_null("Encounter/Enemy"), playtest.get_node_or_null("EntryOutlinePreview/Enemy")]:
 		if forbidden != null and forbidden.is_in_group(SOURCE_GROUP):
 			_fail("Training targets and encounter tanks must not be navigation bake sources.")
 
@@ -119,7 +122,7 @@ func _validate_group_parse_and_native_bake(region: NavigationRegion3D, authored:
 	var source := NavigationMeshSourceGeometryData3D.new()
 	NavigationServer3D.parse_source_geometry_data(baked, source, region)
 	if source.get_vertices().is_empty():
-		_fail("GROUPS_WITH_CHILDREN must parse non-empty source vertices from Ground and SightBlockers.")
+		_fail("GROUPS_WITH_CHILDREN must parse non-empty source vertices from the three authored static source roots.")
 		return
 	region.navigation_mesh = baked
 	var finished := [false]

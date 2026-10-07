@@ -2,6 +2,8 @@ extends Node
 ## 獨立車體 silhouette；資格、相機建築遮蔽與共同世界半徑由 controller 決定。
 
 const OutlineShader := preload("res://src/visibility/enemy_outline.gdshader")
+const GeometryPass := preload("res://src/visibility/enemy_geometry.gd")
+const SmokePass := preload("res://src/visibility/enemy_smoke.gd")
 const LINE_RADIUS := 2
 const MAX_QUERIES := 64
 # 同一真部件的所有 surfaces 共用色碼；RGB 僅供紅線視覺，拾取仍只讀 alpha。
@@ -33,6 +35,8 @@ var _projected_bounds := Rect2()
 var _has_bounds := false
 var _image: Image
 var _image_frame := -1
+var _geometry: Node
+var _smoke: Node
 
 
 func configure(enemy: Node3D, main_camera: Camera3D) -> void:
@@ -40,9 +44,6 @@ func configure(enemy: Node3D, main_camera: Camera3D) -> void:
 	if is_instance_valid(target):
 		if target.tree_exiting.is_connected(_on_target_exiting):
 			target.tree_exiting.disconnect(_on_target_exiting)
-		var old_health := target.get_node_or_null("HealthComponent")
-		if old_health != null and old_health.depleted.is_connected(_on_target_exiting):
-			old_health.depleted.disconnect(_on_target_exiting)
 	target = enemy
 	_main_camera = main_camera
 	if _viewport == null:
@@ -56,14 +57,15 @@ func configure(enemy: Node3D, main_camera: Camera3D) -> void:
 	_skeleton_sources.clear()
 	_skeleton_proxies.clear()
 	_has_skinned_mesh = false
+	_geometry.clear()
+	_smoke.configure(target)
 	if not is_instance_valid(target):
 		return
 	target.tree_exiting.connect(_on_target_exiting)
-	var health := target.get_node_or_null("HealthComponent")
-	if health != null:
-		health.depleted.connect(_on_target_exiting)
 	_collect_meshes(target)
+	_geometry.configure(_sources)
 	_sync_meshes()
+	_update_line_color()
 
 
 func update_window(main_camera: Camera3D, window: Dictionary) -> void:
@@ -90,7 +92,10 @@ func update_window(main_camera: Camera3D, window: Dictionary) -> void:
 	_material.set_shader_parameter("viewport_size", _screen_size)
 	_material.set_shader_parameter("window_center", _center)
 	_material.set_shader_parameter("radius_pixels", _radius)
+	_update_line_color()
 	_sync_meshes()
+	_geometry.sync(main_camera, dimensions, _material)
+	_smoke.sync(main_camera, dimensions)
 
 
 func set_active(enabled: bool) -> void:
@@ -101,6 +106,9 @@ func set_active(enabled: bool) -> void:
 		_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS if active else SubViewport.UPDATE_DISABLED
 	if not active:
 		_image = null
+	if _geometry != null:
+		_geometry.set_active(active)
+		_smoke.set_active(active)
 
 
 func mask_image() -> Image:
@@ -114,7 +122,7 @@ func mask_image() -> Image:
 
 
 func pick(screen_position: Vector2, excluded: Array[RID] = [], collision_mask: int = 129) -> Dictionary:
-	if not active or not _target_valid() or not is_instance_valid(_main_camera):
+	if not active or not _target_alive() or not is_instance_valid(_main_camera):
 		return {}
 	if _radius <= 0.0 or screen_position.distance_to(_center) >= _radius:
 		return {}
@@ -210,12 +218,18 @@ func _create_renderer() -> void:
 	_overlay.visible = false
 	_material = ShaderMaterial.new()
 	_material.shader = OutlineShader
+	_geometry = GeometryPass.new()
+	add_child(_geometry)
+	_smoke = SmokePass.new()
+	add_child(_smoke)
+	_material.set_shader_parameter(&"smoke_alpha", _smoke.texture())
 	_overlay.material = _material
 	layer.add_child(_overlay)
 
 
 func _collect_meshes(node: Node) -> void:
-	if node is MeshInstance3D and node.mesh != null:
+	# 原 VFX 面片保留自己的世界呈現，不納入車體 mask 或幾何細節。
+	if node is MeshInstance3D and node.mesh != null and not node.is_in_group(&"effect_mesh"):
 		var proxy := MeshInstance3D.new()
 		proxy.mesh = node.mesh
 		proxy.material_override = _part_materials[_mesh_part(node.name)]
@@ -304,10 +318,18 @@ func _skeleton_proxy(source: Skeleton3D) -> Skeleton3D:
 
 
 func _target_valid() -> bool:
-	if not is_instance_valid(target) or not target.is_inside_tree() or target.is_queued_for_deletion():
+	return is_instance_valid(target) and target.is_inside_tree() and not target.is_queued_for_deletion()
+
+
+func _target_alive() -> bool:
+	if not _target_valid():
 		return false
 	var health := target.get_node_or_null("HealthComponent")
 	return health == null or float(health.get("current_health")) > 0.0
+
+
+func _update_line_color() -> void:
+	_material.set_shader_parameter(&"line_color", Vector3(1.0, 0.025, 0.045) if _target_alive() else Vector3(0.55, 0.55, 0.55))
 
 
 func _on_target_exiting() -> void:
@@ -317,3 +339,5 @@ func _on_target_exiting() -> void:
 func _process(_delta: float) -> void:
 	if active and not _target_valid():
 		set_active(false)
+	elif active:
+		_update_line_color()

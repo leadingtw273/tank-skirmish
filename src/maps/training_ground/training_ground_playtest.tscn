@@ -62,7 +62,7 @@ startup_player_id = "tank2"
 [node name="BuildingRowA" type="Node3D" parent="SightBlockers" unique_id=867756296]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 57.7511, -7.6293945e-06, -13.666855)
 
-[node name="CentralOneStory" type="StaticBody3D" parent="SightBlockers/BuildingRowA" unique_id=1222072022]
+[node name="CentralOneStory" type="StaticBody3D" parent="SightBlockers/BuildingRowA" unique_id=1222072022 groups=["occlusion_building"]]
 transform = Transform3D(0.9999905, 0, 0.0043514445, 0, 1, 0, -0.0043514445, 0, 0.9999905, 1.668953, 7.6293945e-06, -6.445112)
 collision_mask = 0
 
@@ -72,7 +72,7 @@ collision_mask = 0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.01004, 0)
 shape = SubResource("OneStoryCollisionShape")
 
-[node name="NorthGable" type="StaticBody3D" parent="SightBlockers/BuildingRowA" unique_id=1755871463]
+[node name="NorthGable" type="StaticBody3D" parent="SightBlockers/BuildingRowA" unique_id=1755871463 groups=["occlusion_building"]]
 transform = Transform3D(0.9999905, 0, 0.0043514445, 0, 1, 0, -0.0043514445, 0, 0.9999905, 9.826126, 0, -6.7027454)
 collision_mask = 0
 
@@ -82,7 +82,7 @@ collision_mask = 0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.64421, 0)
 shape = SubResource("GableRoofCollisionShape")
 
-[node name="SouthTwoStory" type="StaticBody3D" parent="SightBlockers/BuildingRowA" unique_id=813370176]
+[node name="SouthTwoStory" type="StaticBody3D" parent="SightBlockers/BuildingRowA" unique_id=813370176 groups=["occlusion_building"]]
 transform = Transform3D(0.9999905, 0, 0.0043514445, 0, 1, 0, -0.0043514445, 0, 0.9999905, -9.560379, -6.67572e-06, -6.7607174)
 collision_mask = 0
 
@@ -95,7 +95,7 @@ shape = SubResource("TwoStoryWideCollisionShape")
 [node name="BuildingRowB" type="Node3D" parent="SightBlockers" unique_id=821651781]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 87.83442, -7.6293945e-06, -48.557083)
 
-[node name="CentralOneStory" type="StaticBody3D" parent="SightBlockers/BuildingRowB" unique_id=1354150827]
+[node name="CentralOneStory" type="StaticBody3D" parent="SightBlockers/BuildingRowB" unique_id=1354150827 groups=["occlusion_building"]]
 transform = Transform3D(0.9999905, 0, 0.0043514445, 0, 1, 0, -0.0043514445, 0, 0.9999905, 1.668953, 7.6293945e-06, -6.445112)
 collision_mask = 0
 
@@ -105,7 +105,7 @@ collision_mask = 0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.01004, 0)
 shape = SubResource("OneStoryCollisionShape")
 
-[node name="NorthGable" type="StaticBody3D" parent="SightBlockers/BuildingRowB" unique_id=770529621]
+[node name="NorthGable" type="StaticBody3D" parent="SightBlockers/BuildingRowB" unique_id=770529621 groups=["occlusion_building"]]
 transform = Transform3D(0.9999905, 0, 0.0043514445, 0, 1, 0, -0.0043514445, 0, 0.9999905, 9.826126, 0, -6.7027454)
 collision_mask = 0
 
@@ -115,7 +115,7 @@ collision_mask = 0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.64421, 0)
 shape = SubResource("GableRoofCollisionShape")
 
-[node name="SouthTwoStory" type="StaticBody3D" parent="SightBlockers/BuildingRowB" unique_id=1719794433]
+[node name="SouthTwoStory" type="StaticBody3D" parent="SightBlockers/BuildingRowB" unique_id=1719794433 groups=["occlusion_building"]]
 transform = Transform3D(0.9999905, 0, 0.0043514445, 0, 1, 0, -0.0043514445, 0, 0.9999905, -9.560379, -6.67572e-06, -6.7607174)
 collision_mask = 0
 
@@ -128,7 +128,7 @@ shape = SubResource("TwoStoryWideCollisionShape")
 [node name="BuildingRowC" type="Node3D" parent="SightBlockers" unique_id=736483046]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 30.213696, -1.5258789e-05, -30.354063)
 
-[node name="CentralOneStory" type="StaticBody3D" parent="SightBlockers/BuildingRowC" unique_id=370564157]
+[node name="CentralOneStory" type="StaticBody3D" parent="SightBlockers/BuildingRowC" unique_id=370564157 groups=["occlusion_building"]]
 transform = Transform3D(0.9999905, 0, 0.0043514445, 0, 1, 0, -0.0043514445, 0, 0.9999905, 1.668953, 7.6293945e-06, -6.445112)
 collision_mask = 0
 
@@ -138,7 +138,7 @@ collision_mask = 0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.01004, 0)
 shape = SubResource("OneStoryCollisionShape")
 
-[node name="NorthGable" type="StaticBody3D" parent="SightBlockers/BuildingRowC" unique_id=2061822288]
+[node name="NorthGable" type="StaticBody3D" parent="SightBlockers/BuildingRowC" unique_id=2061822288 groups=["occlusion_building"]]
 transform = Transform3D(0.9999905, 0, 0.0043514445, 0, 1, 0, -0.0043514445, 0, 0.9999905, 9.826126, 0, -6.7027454)
 collision_mask = 0
 
@@ -148,7 +148,7 @@ collision_mask = 0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.64421, 0)
 shape = SubResource("GableRoofCollisionShape")
 
-[node name="SouthTwoStory" type="StaticBody3D" parent="SightBlockers/BuildingRowC" unique_id=1408064987]
+[node name="SouthTwoStory" type="StaticBody3D" parent="SightBlockers/BuildingRowC" unique_id=1408064987 groups=["occlusion_building"]]
 transform = Transform3D(0.9999905, 0, 0.0043514445, 0, 1, 0, -0.0043514445, 0, 0.9999905, -9.560379, -6.67572e-06, -6.7607174)
 collision_mask = 0
 
@@ -156,6 +156,23 @@ collision_mask = 0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="SightBlockers/BuildingRowC/SouthTwoStory" unique_id=1737064384]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.9463, 0)
+shape = SubResource("TwoStoryWideCollisionShape")
+
+[node name="EntryOutlinePreview" type="Node3D" parent="."]
+
+[node name="Enemy" parent="EntryOutlinePreview" groups=["enemy_tank"] instance=ExtResource("4_enemy")]
+position = Vector3(24, 0, -12)
+vehicle_id = &"tank2"
+freeze = true
+
+[node name="Building" type="StaticBody3D" parent="EntryOutlinePreview" groups=["occlusion_building", "training_navigation_source"]]
+position = Vector3(33, 0, -3)
+collision_mask = 0
+
+[node name="Model" parent="EntryOutlinePreview/Building" instance=ExtResource("9_two_story_wide")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="EntryOutlinePreview/Building"]
+position = Vector3(0, 4.9463, 0)
 shape = SubResource("TwoStoryWideCollisionShape")
 
 [node name="TrainingControls" type="Node3D" parent="."]

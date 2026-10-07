@@ -1,12 +1,12 @@
 # 一次接手入口
 
-目前輪次是 2026-10-06 玩家遮蔽淡出與敵車透視輪廓續修，權威為 [ITERATION.md](ITERATION.md)；自包含產品裁決、既有 ADR、P1–P3／E1–E3、術語與有限測試入口見 [tank-occlusion.md](../features/tank-occlusion.md)。leadi 已親測上一版並回報 `needs_changes`；本次候選仍整合／驗證中，不宣稱新版 PASS 或 accepted。
+目前原透視範圍已本機交付並人驗 `accepted`：leadi 2026-10-07 明示可以收尾，產品版為 `0d7b523922d8cc9654b4f4447006792e5e901b68`。最新同版證據與裁決見 [ITERATION 最新引用](ITERATION.md#2026-10-07-原透視範圍人驗-accepted-與交付邊界)，原產品 AC／ADR／術語見 [tank-occlusion.md](../features/tank-occlusion.md)。本機 accepted 與 GitHub 交付分開；下方 2026-10-06 舊候選／needs_changes 是歷史，不能當作目前待驗狀態。
 
-工單、負責人、依賴、工作範圍與共享進度查 [LEA-194](https://linear.app/leadingtw273/issue/LEA-194) 與 [LEA-195](https://linear.app/leadingtw273/issue/LEA-195) 的現役紀錄；2026-10-06 讀回兩單進行中，LEA-195 仍依賴 LEA-194。先完成玩家工程驗證，再整合敵方；本入口不另建中央 journal 或進度狀態表。
+工單、負責人、依賴、工作範圍與共享進度查 [LEA-194](https://linear.app/leadingtw273/issue/LEA-194) 與 [LEA-195](https://linear.app/leadingtw273/issue/LEA-195) 的現役紀錄；2026-10-07 最新兩票均 Done，原透視範圍人驗 accepted，195 仍依賴 194；owner、AC 與原範圍不改。本入口不另建中央 journal 或進度狀態表。
 
-版本、PR、CI、獨立 review 與 merge 以 GitHub 為準。[PR #126](https://github.com/leadingtw273/tank-skirmish/pull/126) 是已合併的歷史工程交付；本次基線為 [`main f97581214e713627fce93a6a00ad8aae7206c5fc`](https://github.com/leadingtw273/tank-skirmish/commit/f97581214e713627fce93a6a00ad8aae7206c5fc)，來源樹 `2074e262610c426efadd605bd80b17769ca318a3`。2026-10-05 的完整品質、84 項圖形檢查及兩次 CI success 僅覆蓋該版，摘要見 [已交付歷史](ITERATION.md#本次續修與已交付歷史)，不能據此推定本次同 Head gate 通過。
+版本、PR、CI、獨立 review 與 merge 以 GitHub 為準。[PR #126](https://github.com/leadingtw273/tank-skirmish/pull/126) 是已合併的歷史工程交付；[PR #127](https://github.com/leadingtw273/tank-skirmish/pull/127) 亦已合併，本次基線為 [`main dc8858991316fa3207e9b6d5765e1e8cc3df89e1`](https://github.com/leadingtw273/tank-skirmish/commit/dc8858991316fa3207e9b6d5765e1e8cc3df89e1)，來源樹 `f0b14b98396f87bfbe71513252dbbdda2c830336`。GitHub main 目前仍 dc885899、open PR 0；本輪 0d7 來源尚未 upload／merge，待取得 exact source／新私素材 CI 授權並滿足真實 gate 後處理。2026-10-05 的完整品質、84 項圖形檢查及兩次 CI success 僅覆蓋該歷史版本，摘要見 [已交付歷史](ITERATION.md#本次續修與已交付歷史)，不能據此推定新 Head gate 通過。
 
-本次需求與精確新計畫文字審查已明確核准；2026-10-06 Claude（`claude-opus-5-5`）單次有效 result 為 approve／0 blocker，只讀該計畫且 SHA／mtime 不變。候選仍整合／驗證中，尚未正式套用 source；作者自檢不代替 fresh-context 驗收、完整品質或 Windows 親測。計畫審查不擴為 code、材質、PNG 或私素材外送授權。
+歷史 PR #127 的需求與精確計畫文字審查已明確核准；2026-10-06 Claude（`claude-opus-5-5`）單次有效 result 為 approve／0 blocker，只讀該計畫且 SHA／mtime 不變。本機產品 0d7 已正常 FF 至 Windows，有限 fresh-context 驗收與 leadi 親測 accepted 均有讀回；後續接手核對這些精確證據，不能以作者自檢取代獨立驗收或未執行的完整 CI。計畫審查不擴為 code、材質、PNG 或私素材外送授權。
 
 將下列 prompt 貼給接手成員自己的 agent；不需中央 Controller、原實作者對話或個人記憶。
 
@@ -16,7 +16,10 @@
    再讀 docs/features/tank-occlusion.md 的本次親測回饋與有限 AC。
 2. 查 Linear LEA-194／LEA-195、現有 PR、目前 branch／工作樹與版本；
    本次基線及目標分支以 ITERATION 為準，PROJECT 管理輪快照保留為歷史。
-   PR #126 已合併；兩單原依賴保留，親測狀態 needs_changes。
+   PR #126／#127 已合併；GitHub main 仍 dc885899、open PR 0。
+   Windows 產品版 0d7 已交付且原透視範圍人驗 accepted，194／195 均 Done，
+   原依賴與 owner／AC 保留；本輪 source 尚未 upload／merge。
+   後續 GitHub 交付先核 exact source／私素材 CI 授權，不重用 plan-only grant。
    對帳授權、我的工單、責任人、重複／重疊／依賴與真實交付現況。
 3. 第一次讀完先回報授權與範圍、相關工單／PR、依賴、
    未知資訊與下一個可執行動作，不將歷史 PASS 當新版證據。
@@ -29,7 +32,13 @@
 
 身份／本人負責工單由接手成員設定；未設定時先唯讀對帳，不推定所有權。同步正式 source 前重查正式目錄 dirty 與使用者 Windows 編輯器工作，只精準套用，不 reset／stash；新 Head、PR 與試玩版本須實際讀回才記錄。
 
-## 接手順序與保留邊界
+## 接手順序與保留邊界（2026-10-06 原輪紀錄）
+
+以下原輪方向與 AC 保留為歷史；目前產品與人驗狀態以頂部及 ITERATION 的 2026-10-07 accepted 記錄為準，GitHub source／CI／merge 仍依原授權和 gate。
+
+本次玩家視覺觀察與驗收優先使用主場景 `res://src/main.tscn`；leadi 確認問題發生於主場景，訓練場不是本次新增的玩家視覺 AC。原 P1–P3／E1–E3 與既有回歸入口保留，敵方範圍不擴張。
+
+本次修正方向是讓 faded buildings 的 soft pass 依同相機原始最近表面深度只混合最近面，避免前後表面疊色；共同 5m、1 個 render pixel 外緣、圈外 PBR／深度、完整陰影與原 foreground／Tank4 包絡保持。實作及新 Head 驗證尚待讀回，不將此方向寫成 PASS。
 
 本次玩家共同半徑預設 5m，原單一設定與投影函式沿用；8m 為歷史預設，原裁決未將它鎖定。玩家圓窗常駐跟隨受控車，前景 building 投影 bounds 交窗即選取，不等首個車體遮擋 ray。中心連續 alpha 為 0 或近 0、無 noise／hash／dither，外緣平滑過渡；圈外 opaque 外觀與完整陰影保持，透明 next_pass 僅補窗內且不重複投影陰影。
 
@@ -47,4 +56,25 @@
 
 保留 [PROJECT.md](PROJECT.md) 環境／平台設定、[WORKFLOW.md](WORKFLOW.md) 的同 Head 獨立 review／必要 CI／普通 merge 規則、required `quality` 與 `agent-team/review` 及 protected settings。不跳過 gate、不降低 checks、不用 bypass；舊 Team registration／Job 只作歷史相容資料，不啟動舊派工。
 
-安全與 CI 權威仍為 [host-managed-settings.md](../host-managed-settings.md) 及 [local-private-ci.md](../local-private-ci.md)。私素材只作本機開發輸入，保持 ignored，不提交或外送。上一版 PR #126 與同版 main 私素材 CI 的兩次 grant 已耗用；本次新 run／attempt 仍須封存後列 exact PR／Head／run／attempt 另取核准。缺權限只暫停該段驗證；本次計畫文字 review 授權不涵蓋 source、PNG、私素材、公開發布、商店發行或破壞性操作。
+安全與 CI 權威仍為 [host-managed-settings.md](../host-managed-settings.md) 及 [local-private-ci.md](../local-private-ci.md)。私素材只作本機開發輸入，保持 ignored，不提交或外送。歷史 PR #126、PR #127 及各自同版 main 私素材 CI 的 grant 均已耗用；本次來源／Claude 外送與新私素材 CI 尚未核准，不能重用舊 grant；本次新 run／attempt 仍須封存後列 exact PR／Head／run／attempt 另取核准。缺權限只暫停該段驗證；本次計畫文字 review 授權不涵蓋 source、PNG、私素材、公開發布、商店發行或破壞性操作。
+
+
+## 本機敵車細節與真煙候選（2026-10-06）
+
+最新增強候選沿 LEA-195，權威與固定 G1–G3／S1–S2／L1／R1 見 [本輪紀錄](ITERATION.md#2026-10-06-敵車幾何細節與真受損煙續修) 與 [feature](../features/tank-occlusion.md#2026-10-06-敵車真幾何細節與受損煙候選)。writer 已完成有限 Forward+ 真渲染自驗，含自然訓練場入口 PNG；alpha／pick 保持，首輪嚴格 RGB 少量 body／履帶 depth tie 差異保留待 root 裁定。這不是 fresh-context PASS 或人驗 accepted。
+
+產品可寫位置只在隔離 worktree；正式 Windows 預覽尚維持既有 `4a49059a279c0786d42a2f286905dd8fa6ac8640`。接手先核對 root 封存的新 Head／tree／同版 fresh 驗證，不沿用作者敘事代驗收。指定 spec 外送 grant 已耗用，不含 source／PNG／私素材、新 CI、遠端推送或 main；原素材 ignored 與 UID metadata 必須保持。
+
+
+## 殘骸灰線與訓練場玩家淡出候選（2026-10-06）
+
+本輪產品裁決與授權見 [ITERATION](ITERATION.md#2026-10-06-殘骸灰線與訓練場玩家遮蔽修正)，固定 W1–R1 與作者實跑見 [feature](../features/tank-occlusion.md#2026-10-06-殘骸灰色透視與訓練場玩家淡出候選)。來源候選已完成作者六直接 checks 與有限真渲染；原 B／D 及 corrected log 保留，不是 fresh-context PASS 或 accepted。接手須核對 root 封存的新 Head／同版 fresh，而不是沿作者敘事代驗。
+
+writer 沒有 stage／commit、修改正式 Windows 預覽／235 UID／素材、外送 source／PNG 或推送 main。正式 M 仍維持既有 `7d9b61f3e40ad7933ae6b285d0c384b4845a2b88`，之後只由 root 按已核可 guarded fast-forward 同步。計畫外送 grant 已耗用，無本輪新 CI／素材 runner 授權，人驗仍待 leadi F8→F6 重啟訓練場確認。
+
+
+## 灰殘骸矩形 FX 板本機回歸（2026-10-07）
+
+本輪僅修已有 AC「實體模型＋真煙、排除 FX 面片」漏收的 `effect_mesh`，共用 collector 按既有群組略過 Mesh、仍遞迴 child；真模型 Quad／原世界 FX 與 Smoke 不動。根因及有限 Q1–Q3 作者證據見 [feature](../features/tank-occlusion.md#2026-10-07-灰殘骸煙上方矩形板回歸修正)，本機 `agent-team/tmp/tank-smoke-quad-20261007/writer/` 保存原紅燈 17 failures（16 實際反例＋1 測試 D）、最終兩關聯 checks exit 0，以及單台 tank2 真受損／死亡渲染。
+
+作者 GPU 原 raw exit 2 的唯一 D 為跨 stage 比較原煙啟動的 local_coords／seed，16 項產品量測 true，不稱 overall PASS；source 原 local_coords 設定與 restart 已讀回，沒有修改 FX／粒子。接手在本輪 `fresh/` 核對固定同 stage 的 source/base／穩定參數及 Q1–Q3；不能把作者畫面或量測敘事當 fresh 驗收。235 UID／586 素材 metadata 保持；writer 不 stage／commit／同步 M／外送或 CI，人驗 needs_changes，待 leadi 確認。

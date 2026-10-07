@@ -4,6 +4,43 @@ render_mode unshaded;
 uniform vec2 viewport_size = vec2(1.0);
 uniform vec2 window_center = vec2(0.0);
 uniform float radius_pixels = 0.0;
+uniform vec3 line_color = vec3(1.0, 0.025, 0.045);
+uniform sampler2D geometry_data : filter_nearest, repeat_disable;
+uniform sampler2D smoke_alpha : filter_nearest, repeat_disable;
+uniform float depth_min = 0.0;
+uniform float depth_span = 1.0;
+uniform mat4 inverse_projection;
+uniform bool orthogonal = true;
+uniform float normal_cos_threshold = 0.819152; // 35 degrees, not lighting/material changes.
+uniform float depth_threshold = 0.06;
+
+vec3 oct_decode(vec2 encoded) {
+	vec2 xy = encoded * 2.0 - 1.0;
+	vec3 normal = vec3(xy, 1.0 - abs(xy.x) - abs(xy.y));
+	float fold = max(-normal.z, 0.0);
+	normal.xy += vec2(normal.x >= 0.0 ? -fold : fold, normal.y >= 0.0 ? -fold : fold);
+	return normalize(normal);
+}
+
+vec3 view_position(vec2 uv, float depth) {
+	vec4 projected = inverse_projection * vec4(uv.x * 2.0 - 1.0, 1.0 - uv.y * 2.0, 1.0, 1.0);
+	vec3 position = projected.xyz / projected.w;
+	return orthogonal ? vec3(position.xy, -depth) : position * (-depth / position.z);
+}
+
+float feature(vec2 a_uv, vec2 b_uv) {
+	vec4 a = texture(geometry_data, a_uv);
+	vec4 b = texture(geometry_data, b_uv);
+	if (a.a < 0.9 || b.a < 0.9) { return 0.0; }
+	vec3 na = oct_decode(a.rg);
+	vec3 nb = oct_decode(b.rg);
+	if (dot(na, nb) < normal_cos_threshold) { return 1.0; }
+	vec3 delta = view_position(b_uv, depth_min + b.b * depth_span) - view_position(a_uv, depth_min + a.b * depth_span);
+	// Signed plane residual removes both orthographic/perspective surface slopes.
+	float residual_a = abs(dot(na, delta)) / max(abs(na.z), 0.15);
+	float residual_b = abs(dot(nb, delta)) / max(abs(nb.z), 0.15);
+	return step(depth_threshold, min(residual_a, residual_b));
+}
 
 void fragment() {
 	vec4 mask = texture(TEXTURE, UV);
@@ -33,5 +70,20 @@ void fragment() {
 	}
 	float distance_pixels = length(UV * viewport_size - window_center);
 	float clip = 1.0 - smoothstep(max(radius_pixels - 2.0, 0.0), radius_pixels, distance_pixels);
-	COLOR = vec4(1.0, 0.025, 0.045, max(outer_edge, internal_edge) * clip);
+	float detail_edge = 0.0;
+	if (interior > 0.9) {
+		if (right.a > 0.9) { detail_edge = feature(UV, UV + vec2(TEXTURE_PIXEL_SIZE.x, 0.0)); }
+		if (down.a > 0.9) { detail_edge = max(detail_edge, feature(UV, UV + vec2(0.0, TEXTURE_PIXEL_SIZE.y))); }
+	}
+	float smoke = texture(smoke_alpha, UV).a;
+	float smoke_delta = 0.0;
+	for (int y = -1; y <= 1; y++) {
+		for (int x = -1; x <= 1; x++) {
+			smoke_delta = max(smoke_delta, abs(smoke - texture(smoke_alpha, UV + vec2(float(x), float(y)) * TEXTURE_PIXEL_SIZE).a));
+		}
+	}
+	// 同色 max 保留較強幾何線；真煙線也可顯示於車體 interior，不進 picking mask。
+	float smoke_edge = smoothstep(0.06, 0.18, smoke_delta) * 0.35;
+	float geometry_edge = max(max(outer_edge, internal_edge), detail_edge * 0.75);
+	COLOR = vec4(line_color, max(geometry_edge, smoke_edge) * clip);
 }

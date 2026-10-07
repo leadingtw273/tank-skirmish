@@ -82,8 +82,8 @@ void fragment() {
 			smoke_delta = max(smoke_delta, abs(smoke - texture(smoke_alpha, UV + vec2(float(x), float(y)) * TEXTURE_PIXEL_SIZE).a));
 		}
 	}
-	// 本車原 alpha interior 優先；煙不搶幾何內線，更不進 picking mask。
-	float smoke_edge = smoothstep(0.06, 0.18, smoke_delta) * 0.35 * (1.0 - interior);
+	// 同色 max 保留較強幾何線；真煙線也可顯示於車體 interior，不進 picking mask。
+	float smoke_edge = smoothstep(0.06, 0.18, smoke_delta) * 0.35;
 	float geometry_edge = max(max(outer_edge, internal_edge), detail_edge * 0.75);
 	COLOR = vec4(line_color, max(geometry_edge, smoke_edge) * clip);
 }

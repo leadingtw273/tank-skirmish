@@ -1,17 +1,17 @@
 # 2026-10-06 玩家遮蔽淡出與敵車透視輪廓續修
 
-狀態：`approved`（原核可產品範圍內，依本次親測回饋續修）。人員產品驗收：`needs_changes`。PR #126 與 2026-10-06 的 PR #127 已工程交付；本次沿用原核可範圍修正玩家透視邊緣與角度閃爍，LEA-194 進行中、LEA-195 已完成。本機修正待驗，沒有本次新 Head 的 PASS、交付 commit 或 accepted。
+狀態：原透視範圍已本機交付，人員產品驗收 `accepted`（leadi 2026-10-07 明確確認）；LEA-194／LEA-195 均為 Done。Windows 人驗產品版為 `0d7b523922d8cc9654b4f4447006792e5e901b68`，同版有限獨立實跑與來源讀回見下方最新引用。GitHub main 仍為 `dc8858991316fa3207e9b6d5765e1e8cc3df89e1`、open PR 0；本輪來源尚未 upload／merge，GitHub 交付不視為完成。以下有日期的舊 needs_changes、PR #126／#127 與失敗證據均保留為歷史。
 
 自包含產品決策、既有 ADR、術語與有限測試入口見 [tank-occlusion.md](../features/tank-occlusion.md)。專案設定沿用 [PROJECT.md](PROJECT.md)，協作與真實合併條件沿用 [WORKFLOW.md](WORKFLOW.md)；PROJECT 原管理輪分支／基線快照保留為歷史，本輪以本檔為準。
 
 | 本輪定義 | 內容 |
 | --- | --- |
 | 目標／動機 | 玩家中心透明且無顆粒、邊緣平滑、小範圍常駐跟隨；敵車紅線包含真實車體／砲塔／砲管／履帶部件界線，方便部位瞄準。 |
-| 執行順序／工單 | 沿用 [LEA-194：玩家局部建築淡出](https://linear.app/leadingtw273/issue/LEA-194) 與 [LEA-195：敵車紅線輪廓與透視瞄準](https://linear.app/leadingtw273/issue/LEA-195)。2026-10-06 本次讀回 LEA-194 已重開進行中、LEA-195 已完成；195 依賴 194 的原關係保留，本次只續修玩家，不把兩單互相擴 scope。 |
+| 執行順序／工單 | 沿用 [LEA-194：玩家局部建築淡出](https://linear.app/leadingtw273/issue/LEA-194) 與 [LEA-195：敵車紅線輪廓與透視瞄準](https://linear.app/leadingtw273/issue/LEA-195)。2026-10-07 最新人驗 accepted，兩單工程狀態均 Done；195 依賴 194 的原關係、owner 與原 scope 保留。2026-10-06 的 194 重開進行中／195 已完成是歷史讀回。 |
 | 範圍 | 玩家前景建築局部透明窗、同一世界半徑設定、視野內被相機建築遮住的敵車稀疏紅色外框與部件界線、既有真目標世界點瞄準接點。 |
-| Base／交付 | 既有 `main`，本次基線 [`dc8858991316fa3207e9b6d5765e1e8cc3df89e1`](https://github.com/leadingtw273/tank-skirmish/commit/dc8858991316fa3207e9b6d5765e1e8cc3df89e1)，來源樹 `f0b14b98396f87bfbe71513252dbbdda2c830336`（已合併 [PR #127](https://github.com/leadingtw273/tank-skirmish/pull/127)）。新修正在隔離分支 `fix/lea194-player-fade-boundary` 待驗；main 尚無本次修正。原視覺調整基線 f975812／PR #126 保留為歷史。 |
+| Base／交付 | 既有 `main`，本次基線 [`dc8858991316fa3207e9b6d5765e1e8cc3df89e1`](https://github.com/leadingtw273/tank-skirmish/commit/dc8858991316fa3207e9b6d5765e1e8cc3df89e1)，來源樹 `f0b14b98396f87bfbe71513252dbbdda2c830336`（已合併 [PR #127](https://github.com/leadingtw273/tank-skirmish/pull/127)）。本機產品版 `0d7b523922d8cc9654b4f4447006792e5e901b68` 已交付 Windows 並人驗 accepted；GitHub main 尚無本輪修正，來源 upload／PR／CI／merge 待另依真實授權與 gate 處理。原視覺調整基線 f975812／PR #126 保留為歷史。 |
 | 核可人／日期 | leadi，原輪 2026-10-05；2026-10-06 親測回饋決定本次視覺 AC，見下方摘要。 |
-| 責任／人驗 | 工單負責人與共享進度以 Linear 實際紀錄為準；leadi 為產品決策及人員產品驗收人，本次結果為 needs_changes。 |
+| 責任／人驗 | 工單負責人與共享進度以 Linear 實際紀錄為準；leadi 為產品決策及人員產品驗收人，2026-10-07 對本機產品版 0d7 的原透視範圍裁定 accepted；舊 needs_changes 保留為歷史。 |
 | 術語 | 沿用既有三個產品術語；定義在產品文件，接手不需個人記憶。 |
 
 ## 本次續修與已交付歷史
@@ -65,7 +65,7 @@
 | E2 | 指向 turret／gun 與履帶真像素能解析真目標世界點並經既有 Aim 瞄準；空白像素不命中，砲口實體首撞仍牆，Projectile 遮彈不回歸。 |
 | E3 | 原車型 near／far／角度或逐部位 LOS 不符、全 LOS 堵塞、死亡／換車／退出：無紅線／舊拾取；既有 45 joints 履帶 pose 同步保留。 |
 
-必跑直接 smoke：`tank_occlusion`、`enemy_occlusion`、`aim_cursor`、`partial_visibility`、`partial_visibility_combat`、`enemy_combat`；完整入口為 `scripts/ci.sh`。圖形 harness 使用新的輸出目錄，不覆寫歷史圖／報告。Headless shader 建立成功不能代替視覺驗收；新 fresh-context 代理依固定矩陣獨立實跑並讀回，作者不自稱驗收。新版工程交付與 leadi 親測分開，人驗維持 needs_changes，直到取得真實確認。
+必跑直接 smoke：`tank_occlusion`、`enemy_occlusion`、`aim_cursor`、`partial_visibility`、`partial_visibility_combat`、`enemy_combat`；完整入口為 `scripts/ci.sh`。圖形 harness 使用新的輸出目錄，不覆寫歷史圖／報告。Headless shader 建立成功不能代替視覺驗收；新 fresh-context 代理依固定矩陣獨立實跑並讀回，作者不自稱驗收。工程交付與 leadi 親測分開；最新本機產品版 0d7 的原透視範圍人驗已 accepted，依下方 2026-10-07 記錄，不能據此宣稱未執行的新 GitHub／完整 CI gate 通過。
 
 ## 保持條件與明確排除
 
@@ -98,3 +98,12 @@ Windows 單人 PvE、正交斜俯視、四款 catalog 坦克與既有動機不�
 leadi 要求死敵保留透視、含真煙改淡灰，並回報訓練場玩家透視缺失；本輪沿既有 LEA-194／195，基線 `7d9b61f3e40ad7933ae6b285d0c384b4845a2b88`，鎖定 plan SHA256 `2807778365f2957ac71812a83c7e28a432912c3ea09a9d4418dcdb66badcbf4a`。指定 plan 單次外送授權 `call_6qkat1kJCLrQK0y28leVGmYG` 的實際 Claude 結果 approve／0 blocker，root 已處理五項 advisory、不新增 AC；外送 grant 已耗用，不涵蓋來源／PNG／素材、新 CI、push／main。
 
 候選只改七個產品檔、既有 enemy_occlusion_smoke 的原死亡語意與三文件。W1–W3／P1–P2／R1 的作者有限證據、原 B／D、真相機尺寸和 PNG 見 [feature](../features/tank-occlusion.md#2026-10-06-殘骸灰色透視與訓練場玩家淡出候選)。最終 code 六直接 smoke exit 0／runtime errors 0，最後限定 W1／P2 GPU exit 0；作者自驗不代替 fresh。235 UID 保持，未改 Windows／main／素材或外送，尚待 root 精確提交與 fresh-context 同版驗收，人驗 needs_changes。
+
+
+## 2026-10-07 原透視範圍人驗 accepted 與交付邊界
+
+leadi 明確裁決：「可以，透視相關驗收通過，這張單可以收尾」。目前 Windows 可見產品版 `0d7b523922d8cc9654b4f4447006792e5e901b68`（tree `9c847ff1f2fa4bccf262b3178f3a8d47b8fcc4a4`，source SHA-256 `54082c9485679759d35f36244ea0d22bf45af781de12277d01f62346dace76d9`）的玩家／敵人透視、玩家外側 2m 漸變、灰色殘骸及真煙已 accepted。[LEA-194](https://linear.app/leadingtw273/issue/LEA-194)／[LEA-195](https://linear.app/leadingtw273/issue/LEA-195) 最新權威讀回皆 Done，owner、原 AC、194 blocks 195、歷史 needs_changes 與失敗紀錄原樣保留。
+
+本機證據根目錄為 `agent-team/tmp/tank-player-wreck-occlusion-20261007/`：`fresh/report-final.json` 的同版 W1–W5 有限驗收成立，完整 tank／enemy smoke 各 exit 0、script／runtime frame errors 0；正常訓練死亡→三秒重生 GPU exit 0，已知兩條 shutdown D 與 RID warning 保留，不稱乾淨 error log 或新完整 quality PASS。`preview/ff-sync-readback.json` 核對 Windows 本機正常 FF 與 235 UID／586 素材 metadata；`closure/human-acceptance-readback.json` 為此次 leadi 裁決與兩票讀回 PASS。b876 exit 0／兩條 SCRIPT ERROR 的 A/W3 原始假綠及其他 D 未刪除。
+
+本機產品已交付，人驗與兩票可收尾；GitHub main 仍 dc885899、open PR 0，本輪 source 尚未 upload／merge。後續來源對外 upload／review 須取得 exact source 範圍授權，新私素材 CI 須另列 exact PR／Head／run／attempt；舊 plan-only grant 已耗用，不能涵蓋 source／PNG／私素材。原 required quality／review 與正常 merge gate 保留，不以本機 accepted 宣稱 GitHub 交付完成。

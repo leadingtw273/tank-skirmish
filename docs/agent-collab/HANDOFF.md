@@ -1,12 +1,12 @@
 # 一次接手入口
 
-目前輪次是 2026-10-06 玩家遮蔽淡出與敵車透視輪廓續修，權威為 [ITERATION.md](ITERATION.md)；自包含產品裁決、既有 ADR、P1–P3／E1–E3、術語與有限測試入口見 [tank-occlusion.md](../features/tank-occlusion.md)。PR #127 已工程交付；leadi 新回報主場景玩家透視邊緣與角度閃爍，人驗維持 `needs_changes`。本次原 LEA-194 續修仍待驗，不宣稱本次新 Head PASS 或 accepted。
+目前原透視範圍已本機交付並人驗 `accepted`：leadi 2026-10-07 明示可以收尾，產品版為 `0d7b523922d8cc9654b4f4447006792e5e901b68`。最新同版證據與裁決見 [ITERATION 最新引用](ITERATION.md#2026-10-07-原透視範圍人驗-accepted-與交付邊界)，原產品 AC／ADR／術語見 [tank-occlusion.md](../features/tank-occlusion.md)。本機 accepted 與 GitHub 交付分開；下方 2026-10-06 舊候選／needs_changes 是歷史，不能當作目前待驗狀態。
 
-工單、負責人、依賴、工作範圍與共享進度查 [LEA-194](https://linear.app/leadingtw273/issue/LEA-194) 與 [LEA-195](https://linear.app/leadingtw273/issue/LEA-195) 的現役紀錄；2026-10-06 本次讀回 LEA-194 進行中、LEA-195 已完成，195 仍依賴 194。本次只修玩家、優先主場景視覺觀察；本入口不另建中央 journal 或進度狀態表。
+工單、負責人、依賴、工作範圍與共享進度查 [LEA-194](https://linear.app/leadingtw273/issue/LEA-194) 與 [LEA-195](https://linear.app/leadingtw273/issue/LEA-195) 的現役紀錄；2026-10-07 最新兩票均 Done，原透視範圍人驗 accepted，195 仍依賴 194；owner、AC 與原範圍不改。本入口不另建中央 journal 或進度狀態表。
 
-版本、PR、CI、獨立 review 與 merge 以 GitHub 為準。[PR #126](https://github.com/leadingtw273/tank-skirmish/pull/126) 是已合併的歷史工程交付；[PR #127](https://github.com/leadingtw273/tank-skirmish/pull/127) 亦已合併，本次基線為 [`main dc8858991316fa3207e9b6d5765e1e8cc3df89e1`](https://github.com/leadingtw273/tank-skirmish/commit/dc8858991316fa3207e9b6d5765e1e8cc3df89e1)，來源樹 `f0b14b98396f87bfbe71513252dbbdda2c830336`。2026-10-05 的完整品質、84 項圖形檢查及兩次 CI success 僅覆蓋該版，摘要見 [已交付歷史](ITERATION.md#本次續修與已交付歷史)，不能據此推定本次同 Head gate 通過。
+版本、PR、CI、獨立 review 與 merge 以 GitHub 為準。[PR #126](https://github.com/leadingtw273/tank-skirmish/pull/126) 是已合併的歷史工程交付；[PR #127](https://github.com/leadingtw273/tank-skirmish/pull/127) 亦已合併，本次基線為 [`main dc8858991316fa3207e9b6d5765e1e8cc3df89e1`](https://github.com/leadingtw273/tank-skirmish/commit/dc8858991316fa3207e9b6d5765e1e8cc3df89e1)，來源樹 `f0b14b98396f87bfbe71513252dbbdda2c830336`。GitHub main 目前仍 dc885899、open PR 0；本輪 0d7 來源尚未 upload／merge，待取得 exact source／新私素材 CI 授權並滿足真實 gate 後處理。2026-10-05 的完整品質、84 項圖形檢查及兩次 CI success 僅覆蓋該歷史版本，摘要見 [已交付歷史](ITERATION.md#本次續修與已交付歷史)，不能據此推定新 Head gate 通過。
 
-歷史 PR #127 的需求與精確計畫文字審查已明確核准；2026-10-06 Claude（`claude-opus-5-5`）單次有效 result 為 approve／0 blocker，只讀該計畫且 SHA／mtime 不變。本次玩家邊緣修正在本機 `fix/lea194-player-fade-boundary` 分支待驗，尚未正式套用；作者自檢不代替 fresh-context 驗收、完整品質或 Windows 親測。計畫審查不擴為 code、材質、PNG 或私素材外送授權。
+歷史 PR #127 的需求與精確計畫文字審查已明確核准；2026-10-06 Claude（`claude-opus-5-5`）單次有效 result 為 approve／0 blocker，只讀該計畫且 SHA／mtime 不變。本機產品 0d7 已正常 FF 至 Windows，有限 fresh-context 驗收與 leadi 親測 accepted 均有讀回；後續接手核對這些精確證據，不能以作者自檢取代獨立驗收或未執行的完整 CI。計畫審查不擴為 code、材質、PNG 或私素材外送授權。
 
 將下列 prompt 貼給接手成員自己的 agent；不需中央 Controller、原實作者對話或個人記憶。
 
@@ -16,8 +16,10 @@
    再讀 docs/features/tank-occlusion.md 的本次親測回饋與有限 AC。
 2. 查 Linear LEA-194／LEA-195、現有 PR、目前 branch／工作樹與版本；
    本次基線及目標分支以 ITERATION 為準，PROJECT 管理輪快照保留為歷史。
-   PR #126／#127 已合併；main dc885899 為本次基線。194 進行中、195 已完成，
-   原依賴保留；本次玩家修正待驗，親測狀態 needs_changes。
+   PR #126／#127 已合併；GitHub main 仍 dc885899、open PR 0。
+   Windows 產品版 0d7 已交付且原透視範圍人驗 accepted，194／195 均 Done，
+   原依賴與 owner／AC 保留；本輪 source 尚未 upload／merge。
+   後續 GitHub 交付先核 exact source／私素材 CI 授權，不重用 plan-only grant。
    對帳授權、我的工單、責任人、重複／重疊／依賴與真實交付現況。
 3. 第一次讀完先回報授權與範圍、相關工單／PR、依賴、
    未知資訊與下一個可執行動作，不將歷史 PASS 當新版證據。
@@ -30,7 +32,9 @@
 
 身份／本人負責工單由接手成員設定；未設定時先唯讀對帳，不推定所有權。同步正式 source 前重查正式目錄 dirty 與使用者 Windows 編輯器工作，只精準套用，不 reset／stash；新 Head、PR 與試玩版本須實際讀回才記錄。
 
-## 接手順序與保留邊界
+## 接手順序與保留邊界（2026-10-06 原輪紀錄）
+
+以下原輪方向與 AC 保留為歷史；目前產品與人驗狀態以頂部及 ITERATION 的 2026-10-07 accepted 記錄為準，GitHub source／CI／merge 仍依原授權和 gate。
 
 本次玩家視覺觀察與驗收優先使用主場景 `res://src/main.tscn`；leadi 確認問題發生於主場景，訓練場不是本次新增的玩家視覺 AC。原 P1–P3／E1–E3 與既有回歸入口保留，敵方範圍不擴張。
 

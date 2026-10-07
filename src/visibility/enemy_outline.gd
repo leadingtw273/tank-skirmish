@@ -329,7 +329,7 @@ func _target_alive() -> bool:
 
 
 func _update_line_color() -> void:
-	_material.set_shader_parameter(&"line_color", Vector3(1.0, 0.025, 0.045) if _target_alive() else Vector3(0.72, 0.72, 0.72))
+	_material.set_shader_parameter(&"line_color", Vector3(1.0, 0.025, 0.045) if _target_alive() else Vector3(0.55, 0.55, 0.55))
 
 
 func _on_target_exiting() -> void:

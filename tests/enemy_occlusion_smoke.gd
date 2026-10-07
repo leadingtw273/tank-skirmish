@@ -163,7 +163,7 @@ func run() -> void:
 	var wreck_outline: Node = occlusion.get("_outlines")[enemy]
 	expect_model_sources(wreck_outline, enemy, decoration, initial_models)
 	var line_color: Vector3 = wreck_outline.get("_material").get_shader_parameter(&"line_color")
-	expect(line_color.is_equal_approx(Vector3(0.72, 0.72, 0.72)), "wreck body and smoke share neutral gray")
+	expect(line_color.is_equal_approx(Vector3(0.55, 0.55, 0.55)), "wreck body and smoke share neutral gray")
 	screen = camera.unproject_position(enemy.call("stable_world_center"))
 	expect(wreck_outline.call("pick", screen).is_empty(), "wreck outline cannot become an aim target")
 	expect(occlusion.call("resolve_enemy_target", screen).is_empty(), "resolver rejects wreck outline")

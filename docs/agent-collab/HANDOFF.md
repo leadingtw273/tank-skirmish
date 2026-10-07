@@ -88,3 +88,10 @@ writer 沒有 stage／commit、修改正式 Windows 預覽／235 UID／素材、
 本輪僅修已有 AC「實體模型＋真煙、排除 FX 面片」漏收的 `effect_mesh`，共用 collector 按既有群組略過 Mesh、仍遞迴 child；真模型 Quad／原世界 FX 與 Smoke 不動。根因及有限 Q1–Q3 作者證據見 [feature](../features/tank-occlusion.md#2026-10-07-灰殘骸煙上方矩形板回歸修正)，本機 `agent-team/tmp/tank-smoke-quad-20261007/writer/` 保存原紅燈 17 failures（16 實際反例＋1 測試 D）、最終兩關聯 checks exit 0，以及單台 tank2 真受損／死亡渲染。
 
 作者 GPU 原 raw exit 2 的唯一 D 為跨 stage 比較原煙啟動的 local_coords／seed，16 項產品量測 true，不稱 overall PASS；source 原 local_coords 設定與 restart 已讀回，沒有修改 FX／粒子。接手在本輪 `fresh/` 核對固定同 stage 的 source/base／穩定參數及 Q1–Q3；不能把作者畫面或量測敘事當 fresh 驗收。235 UID／586 素材 metadata 保持；writer 不 stage／commit／同步 M／外送或 CI，人驗 needs_changes，待 leadi 確認。
+
+
+## 訓練場建築淡出啟動候選（2026-10-07）
+
+當前沿 LEA-194、分支 `fix/lea194-training-occlusion-activation`，base `40c632f79dc4261a6d9d106608f03ae1368f27ff`；該版開砲已人驗 accepted，195 保持 Done。本輪 user 選接近真車體遮擋才淡出，共同5m核心＋2m外圈保留，替代舊預先淡出 P2。有限 A1–A4、完整玩家 sample gate、原 .18s amount 混合與九直接入口作者實跑 RC 0／ERROR 0 見 [feature](../features/tank-occlusion.md#2026-10-07-訓練場建築淡出啟動修正)；invalid/offscreen/behind-camera window 保持立即還原。原紅燈及 fixture D 均留存，不以作者結果代 fresh 驗收。
+
+接手核對 root 封存的同 HEAD／tree／來源 hash，再獨立來源、真圖形、完整品質與 guarded 正常 FF 試玩；本輪人驗 pending。僅改 controller、既有 tank occlusion smoke 及三份文件，無 shader／素材／模型／camera／fire／physics／UID 修改。236 UID 與 586 ignored 素材 metadata 保全；原 M／上一開砲工作樹／舊透視工作樹及 main/origin 不由作者更動，來源及私素材不外送，GitHub CI／merge 另按實際平台紀錄。

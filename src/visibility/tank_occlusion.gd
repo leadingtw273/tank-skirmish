@@ -59,7 +59,7 @@ func _exit_tree() -> void:
 	_building_candidates.clear()
 
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
 	if not _present(controlled_tank) or not is_instance_valid(camera):
 		_restore_buildings()
 		_clear_enemy_outlines()
@@ -71,14 +71,23 @@ func _process(_delta: float) -> void:
 		_update_player_wreck_outlines()
 		return
 	var window := player_fade_window_for(controlled_tank)
+	if window.is_empty():
+		## 出畫面／相機後方沒有可用窗，沿原不可顯示的立即清理語意。
+		_restore_buildings()
+		_update_enemy_outlines()
+		_update_player_wreck_outlines()
+		return
 	var obscuring: Array[Node3D] = []
 	var foreground_depth := _player_foreground_depth()
-	if not window.is_empty():
-		obscuring = _window_buildings(window, foreground_depth)
+	var actual_occluders := building_occluders(controlled_tank, true)
+	for building in _window_buildings(window, foreground_depth):
+		if actual_occluders.has(building):
+			obscuring.append(building)
 	for building in obscuring:
 		if not _fades.has(building):
 			_fades[building] = Fade.new(building)
-			_amounts[building] = 1.0
+			_amounts[building] = 0.0
+	var fade_step := maxf(delta, 0.0) / maxf(fade_seconds, 0.01)
 	for building in _fades.keys():
 		var effect = _fades[building]
 		if not effect.is_valid():
@@ -86,12 +95,18 @@ func _process(_delta: float) -> void:
 			_fades.erase(building)
 			_amounts.erase(building)
 			continue
-		if not obscuring.has(building) or window.is_empty():
+		var target := 1.0 if obscuring.has(building) else 0.0
+		var amount := move_toward(float(_amounts.get(building, 0.0)), target, fade_step)
+		## 只消除逐幀累加的浮點殘差，避免 .18s 後留下不可見的 next_pass。
+		if absf(amount - target) <= 0.000001:
+			amount = target
+		if amount == 0.0:
 			effect.restore()
 			_fades.erase(building)
 			_amounts.erase(building)
 		else:
-			effect.update_window(window.center, window.radius_pixels, window.viewport_size, 1.0, foreground_depth, window.core_radius_pixels)
+			_amounts[building] = amount
+			effect.update_window(window.center, window.radius_pixels, window.viewport_size, amount, foreground_depth, window.core_radius_pixels)
 	_nearest_depth.sync(camera, window, _fades.values(), foreground_depth)
 	for effect in _fades.values():
 		effect.set_nearest_depth(_nearest_depth.texture())
@@ -306,14 +321,15 @@ func _window_for(target: Node3D, radius_meters: float) -> Dictionary:
 
 
 ## 正交相機的射線起點各不相同，不能從 Camera3D 的位置向車體射線。
-func building_occluders(target: Node3D) -> Array[Node3D]:
+## 玩家啟動資格採全部既有部位表面點；預設維持敵方／舊呼叫的有限抽樣。
+func building_occluders(target: Node3D, full_surface_sampling: bool = false) -> Array[Node3D]:
 	var buildings: Array[Node3D] = []
 	if not is_instance_valid(target) or not is_instance_valid(camera) or not target.is_inside_tree():
 		return buildings
 	var points := PackedVector3Array([_center(target)])
 	if target.has_method("part_world_surface_points"):
 		var surface_points: PackedVector3Array = target.call("part_world_surface_points")
-		var stride := maxi(1, ceili(float(surface_points.size()) / 24.0))
+		var stride := 1 if full_surface_sampling else maxi(1, ceili(float(surface_points.size()) / 24.0))
 		for index in range(0, surface_points.size(), stride):
 			points.append(surface_points[index])
 	var space := target.get_world_3d().direct_space_state

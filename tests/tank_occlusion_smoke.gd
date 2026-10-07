@@ -31,6 +31,126 @@ func building_at(position: Vector3, mesh: Mesh) -> StaticBody3D:
 	return body
 
 
+func expect_activation_transition(main: Node3D, occlusion: Node, camera: Camera3D, building: StaticBody3D) -> void:
+	var tank := main.call("replace_player_vehicle", &"tank2") as Node3D
+	var pose := building.global_transform
+	var center: Vector3 = tank.call("stable_world_center")
+	building.global_position = camera.project_ray_origin(camera.unproject_position(center)).lerp(center, 0.7)
+	await physics_frame
+	await physics_frame
+	occlusion.call("_restore_buildings")
+	expect(occlusion.call("building_occluders", tank).has(building), "A2 fixture has actual part camera obstruction")
+	var visual := building.get_node("Visual") as MeshInstance3D
+	var amounts: Array[float] = []
+	for unused in 9:
+		occlusion.call("_process", 0.02)
+		amounts.append(float(occlusion.get("_amounts").get(building, 0.0)))
+	expect(amounts[0] > 0.0 and amounts[0] < 1.0, "A2 first contact begins between zero and one")
+	for index in range(1, amounts.size()):
+		expect(amounts[index] > amounts[index - 1] and amounts[index] - amounts[index - 1] <= 0.112,
+			"A2 fade-in is continuous and bounded at frame " + str(index))
+	expect(is_equal_approx(amounts[-1], 1.0), "A2 fade-in reaches one at original .18s")
+	var replacement := visual.get_surface_override_material(0) as ShaderMaterial
+	building.global_position += Vector3(200, 0, 0)
+	await physics_frame
+	await physics_frame
+	amounts.clear()
+	for frame in 9:
+		occlusion.call("_process", 0.02)
+		amounts.append(float(occlusion.get("_amounts").get(building, 0.0)))
+		if frame < 8:
+			expect(visual.get_surface_override_material(0) == replacement and replacement.next_pass != null,
+				"A2 loss retains both passes until amount zero")
+			expect(is_equal_approx(float(replacement.get_shader_parameter(&"window_amount")), amounts[-1])
+				and is_equal_approx(float(replacement.next_pass.get_shader_parameter(&"window_amount")), amounts[-1]),
+				"A2 both passes receive the same exit amount")
+	expect(amounts[0] > 0.0 and amounts[0] < 1.0, "A2 first exit frame is a partial fade")
+	for index in range(1, amounts.size()):
+		expect(amounts[index] < amounts[index - 1] and amounts[index - 1] - amounts[index] <= 0.112,
+			"A2 fade-out is continuous and bounded at frame " + str(index))
+	expect(is_zero_approx(amounts[-1]) and visual.get_surface_override_material(0) == null
+		and not occlusion.get("_fades").has(building), "A2 .18s exit restores material and removes next pass")
+	print("ACTIVATION_TIMING exit_amounts=", amounts)
+	building.global_transform = pose
+	await physics_frame
+	await physics_frame
+
+
+func actual_surface_buildings(occlusion: Node, camera: Camera3D, tank: Node3D) -> Array[Node3D]:
+	var result: Array[Node3D] = []
+	var points: PackedVector3Array = tank.call("part_world_surface_points")
+	points.append(tank.call("stable_world_center"))
+	for point in points:
+		var screen := camera.unproject_position(point)
+		if camera.is_position_behind(point) or not camera.get_viewport().get_visible_rect().has_point(screen):
+			continue
+		var query := PhysicsRayQueryParameters3D.create(camera.project_ray_origin(screen), point, 129, [tank.get_rid()])
+		query.hit_from_inside = true
+		var hit := tank.get_world_3d().direct_space_state.intersect_ray(query)
+		if not hit.is_empty():
+			var building: Node3D = occlusion.call("_building_for", hit.collider)
+			if building != null and not result.has(building): result.append(building)
+	return result
+
+
+func stop_fixture(node: Node) -> void:
+	# Keep collision objects in physics while holding the real map pose still.
+	node.set_process(false)
+	node.set_physics_process(false)
+	if node is RigidBody3D: node.freeze = true
+	for child in node.get_children(): stop_fixture(child)
+
+
+func expect_training_positions() -> void:
+	# Reuse the twelve real training poses of the original regression evidence.
+	root.size = Vector2i(960, 580)
+	root.content_scale_size = Vector2i(1920, 1160)
+	await process_frame
+	var training := load("res://src/maps/training_ground/training_ground_playtest.tscn").instantiate() as Node3D
+	root.add_child(training)
+	var main := training.get_node("Main")
+	var tank := main.call("replace_player_vehicle", &"tank1") as Node3D
+	stop_fixture(training)
+	var occlusion := main.get_node("TankOcclusion")
+	var rig: Node3D = main.get("player_runtime").get("camera_controller")
+	var camera: Camera3D = rig.get("camera")
+	camera.size = 35.0
+	rig.global_position = Vector3(42, 0, -1) + (rig.get("follow_target_offset") as Vector3) + Vector3(-8, 0, -21)
+	var samples := [["start", 42, -1, -PI/2], ["away", 44, 1, -PI/2], ["outside", 46, 3, -PI/2],
+		["south-corner", 42, 3, -PI/2], ["corner", 40, 5, -PI/2], ["south-wall", 37, 5, -PI/2],
+		["south-mid", 34, 5, -PI/2], ["south-west", 31, 5, -PI/2], ["east-wall", 42, -4, -PI/2],
+		["east-north", 42, -8, -PI/2], ["east-back", 42, -12, -PI/2], ["start-turn", 42, -1, 0.0]]
+	var exposed := 0
+	var obstructed := 0
+	for sample in samples:
+		tank.global_position = Vector3(sample[1], 0.01, sample[2])
+		tank.global_rotation = Vector3(0, sample[3], 0)
+		tank.get("turret_pivot").rotation = Vector3.ZERO
+		tank.call("_sync_rigid_parts")
+		await physics_frame
+		await physics_frame
+		var actual := actual_surface_buildings(occlusion, camera, tank)
+		for unused in 12: occlusion.call("_process", 1.0 / 60.0)
+		var faded: Array = occlusion.call("faded_buildings")
+		if actual.is_empty():
+			exposed += 1
+			expect(faded.is_empty(), "A1 actual all-part rays zero stays opaque: " + str(sample[0]))
+			for candidate in get_nodes_in_group("occlusion_building"):
+				for child in candidate.find_children("*", "MeshInstance3D", true, false):
+					if child.mesh != null:
+						for surface in child.mesh.get_surface_count():
+							expect(not (child.get_surface_override_material(surface) is ShaderMaterial),
+								"A1 exposed training material restored: " + str(sample[0]))
+		else:
+			obstructed += 1
+			expect(not faded.is_empty(), "A1 actual part obstruction activates: " + str(sample[0]))
+			for building in faded: expect(actual.has(building), "A1 no unrelated side building: " + str(sample[0]))
+		print("TRAINING_ACTIVATION ", sample[0], " actual=", actual.size(), " faded=", faded.size())
+	expect(exposed > 0 and obstructed > 0, "A1 twelve real positions cover exposure and actual obstruction")
+	training.queue_free()
+	await process_frame
+
+
 func expect_player_outer_windows(occlusion: Node, camera: Camera3D, tank: Node3D, visual: MeshInstance3D) -> void:
 	var original_size := camera.size
 	var original_radius: float = occlusion.get("window_radius_meters")
@@ -262,9 +382,9 @@ func run() -> void:
 		tank.get_node("HealthComponent").call("apply_damage", 100000.0)
 		occlusion.call("_process", 0.25)
 		expect(visual.get_surface_override_material(0) == null, "dead player no longer opens window")
+	await expect_activation_transition(main, occlusion, camera, building)
 	await expect_player_wreck_flow(main, occlusion, camera, building, source)
-	# A thin foreground building enters the persistent aperture before any
-	# body ray hits it. Its transparent material must already be installed.
+	# 本輪明示取代舊 P2 的預先啟動：外環交窗但沒有部件實遮擋，必須保持 opaque。
 	tank = main.call("replace_player_vehicle", &"tank2") as Node3D
 	building.global_position.x += 200.0
 	center = tank.call("stable_world_center")
@@ -281,14 +401,15 @@ func run() -> void:
 	await physics_frame
 	expect(not occlusion.call("building_occluders", tank).has(edge), "window edge enters before any tank occlusion ray")
 	occlusion.call("_process", 0.001)
-	expect(occlusion.call("faded_buildings").has(edge), "new outer ring intersection activates without body ray or timer")
+	expect(not occlusion.call("faded_buildings").has(edge) and edge_visual.get_surface_override_material(0) == null,
+		"A1 outer ring intersection alone stays opaque without actual part obstruction")
 	expect(behind_visual.get_surface_override_material(0) == null, "building behind tank depth stays opaque")
 	edge.global_position += camera.global_basis.x * 2.0
 	occlusion.call("_process", 0.001)
 	expect(edge_visual.get_surface_override_material(0) == null, "moving outside window immediately restores both passes")
 	edge.global_position -= camera.global_basis.x * 2.0
 	occlusion.call("_process", 0.001)
-	expect(edge_visual.get_surface_override_material(0) is ShaderMaterial, "candidate cache follows moving building")
+	expect(edge_visual.get_surface_override_material(0) == null, "A1 moving side candidate stays opaque without part obstruction")
 	main.queue_free()
 	building.queue_free()
 	other.queue_free()
@@ -297,5 +418,6 @@ func run() -> void:
 	edge.queue_free()
 	behind.queue_free()
 	await process_frame
+	await expect_training_positions()
 	print("TANK_OCCLUSION_PLAYER ", "PASS" if failures.is_empty() else "FAIL", " failures=", failures.size())
 	quit(0 if failures.is_empty() else 1)

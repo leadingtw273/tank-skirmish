@@ -125,3 +125,10 @@ leadi 明確裁決：「可以，透視相關驗收通過，這張單可以收�
 本機證據根目錄為 `agent-team/tmp/tank-player-wreck-occlusion-20261007/`：`fresh/report-final.json` 的同版 W1–W5 有限驗收成立，完整 tank／enemy smoke 各 exit 0、script／runtime frame errors 0；正常訓練死亡→三秒重生 GPU exit 0，已知兩條 shutdown D 與 RID warning 保留，不稱乾淨 error log 或新完整 quality PASS。`preview/ff-sync-readback.json` 核對 Windows 本機正常 FF 與 235 UID／586 素材 metadata；`closure/human-acceptance-readback.json` 為此次 leadi 裁決與兩票讀回 PASS。b876 exit 0／兩條 SCRIPT ERROR 的 A/W3 原始假綠及其他 D 未刪除。
 
 本機產品已交付，人驗與兩票可收尾；GitHub main 仍 dc885899、open PR 0，本輪 source 尚未 upload／merge。後續來源對外 upload／review 須取得 exact source 範圍授權，新私素材 CI 須另列 exact PR／Head／run／attempt；舊 plan-only grant 已耗用，不能涵蓋 source／PNG／私素材。原 required quality／review 與正常 merge gate 保留，不以本機 accepted 宣稱 GitHub 交付完成。
+
+
+## 2026-10-07 訓練場建築淡出啟動續修
+
+leadi 對基線 `40c632f79dc4261a6d9d106608f03ae1368f27ff` 的開砲動效已 accepted，另選「接近實際車體遮擋時才平滑淡出（建議）」；LEA-194 重開、LEA-195 Done，R5＋outer2 保留。分支 `fix/lea194-training-occlusion-activation` 僅玩家啟動 gate／原 .18s amount 混合及必要測試、文件；本輪取代歷史預先淡出 P2，其他原 AC 不降低。鎖定 plan SHA-256 `c9c38f12ce7e989608ed90bf503e54d7a97f3316c9629adda23df875370229ab` 已原生 fresh 計畫審查 approve／0 blocker；外部計畫審查被平台拒絕，沒有有效 result，不重試外送。
+
+實作、有限 A1–A4 和作者九直接 smoke RC 0／ERROR 0 見 [feature](../features/tank-occlusion.md#2026-10-07-訓練場建築淡出啟動修正)。原紅燈與訓練 fixture D 保留，修正停用方式後十二點涵蓋實際外露／遮擋。invalid window 沿原立即還原；.18s 只用於有效窗內正常進出資格。保持 236 UID、586 ignored 私素材與既有開砲／敵方／physics。本輪來源待同 HEAD fresh 來源／圖形及完整品質讀回，leadi 人驗 pending；沒有新的 GitHub CI PASS 或公開交付宣稱。

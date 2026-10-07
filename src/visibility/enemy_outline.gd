@@ -228,7 +228,8 @@ func _create_renderer() -> void:
 
 
 func _collect_meshes(node: Node) -> void:
-	if node is MeshInstance3D and node.mesh != null:
+	# 原 VFX 面片保留自己的世界呈現，不納入車體 mask 或幾何細節。
+	if node is MeshInstance3D and node.mesh != null and not node.is_in_group(&"effect_mesh"):
 		var proxy := MeshInstance3D.new()
 		proxy.mesh = node.mesh
 		proxy.material_override = _part_materials[_mesh_part(node.name)]

@@ -36,6 +36,26 @@ func building_at(position: Vector3, size: Vector3) -> StaticBody3D:
 	return body
 
 
+func expect_model_sources(outline: Node, enemy: Node3D, decoration: MeshInstance3D, initial_models: Array[MeshInstance3D]) -> void:
+	var sources: Array = outline.get("_sources")
+	var geometry_sources: Array = outline.get("_geometry").get("_sources")
+	var effect_count := 0
+	for mesh: MeshInstance3D in enemy.find_children("*", "MeshInstance3D", true, false):
+		if mesh.mesh == null:
+			continue
+		if mesh.is_in_group(&"effect_mesh"):
+			effect_count += 1
+			expect(not sources.has(mesh), "effect_mesh excluded from aiming part mask: " + String(mesh.name))
+			expect(not geometry_sources.has(mesh), "effect_mesh excluded from geometry detail: " + String(mesh.name))
+		elif not initial_models.has(mesh):
+			print("POST_CONFIGURE_MESH path=", mesh.get_path(), " captured=", sources.has(mesh))
+	for mesh in initial_models:
+		expect(sources.has(mesh) and geometry_sources.has(mesh), "actual model source retained: " + String(mesh.name))
+	expect(effect_count > 1 and initial_models.size() > 1, "real tank includes both damage FX and model sources")
+	expect(sources.has(decoration) and geometry_sources.has(decoration), "unmarked model Quad beneath marked parent remains collected")
+	print("MODEL_SOURCE_FILTER effects=", effect_count, " models=", initial_models.size(), " captured=", sources.size())
+
+
 func run() -> void:
 	var main := load("res://src/gameplay_runtime.tscn").instantiate() as Node3D
 	main.process_mode = Node.PROCESS_MODE_DISABLED
@@ -45,9 +65,23 @@ func run() -> void:
 	var camera: Camera3D = occlusion.get("camera")
 	var enemy := Catalog.instantiate(&"tank2")
 	enemy.process_mode = Node.PROCESS_MODE_DISABLED
+	# Owned fixture distinguishes mesh classification from primitive type and subtree exclusion.
+	var effect_fixture := MeshInstance3D.new()
+	effect_fixture.name = "EffectFixture"
+	effect_fixture.mesh = QuadMesh.new()
+	effect_fixture.add_to_group(&"effect_mesh")
+	enemy.add_child(effect_fixture)
+	var decoration := MeshInstance3D.new()
+	decoration.name = "ModelQuadDecoration"
+	decoration.mesh = QuadMesh.new()
+	effect_fixture.add_child(decoration)
 	root.add_child(enemy)
 	enemy.global_position = Vector3(0, 0, -12)
 	enemy.add_to_group(&"enemy_tank")
+	var initial_models: Array[MeshInstance3D] = []
+	for mesh: MeshInstance3D in enemy.find_children("*", "MeshInstance3D", true, false):
+		if mesh.mesh != null and not mesh.is_in_group(&"effect_mesh"):
+			initial_models.append(mesh)
 	var center: Vector3 = enemy.call("stable_world_center")
 	var screen := camera.unproject_position(center)
 	var camera_origin := camera.project_ray_origin(screen)
@@ -66,6 +100,8 @@ func run() -> void:
 		expect(bool(vision.call("can_see", enemy)), "near enemy has clear player LOS")
 		occlusion.call("_process", 0.25)
 		expect(occlusion.call("outlined_enemies").has(enemy), "camera wall enables enemy outline")
+		if vehicle_id == Catalog.IDS[0]:
+			expect_model_sources(occlusion.get("_outlines")[enemy], enemy, decoration, initial_models)
 		var player_window: Dictionary = occlusion.call("window_for", player)
 		var enemy_window: Dictionary = occlusion.call("window_for", enemy)
 		expect(is_equal_approx(player_window.radius_pixels, enemy_window.radius_pixels), "enemy and player share circle radius")
@@ -125,6 +161,7 @@ func run() -> void:
 	occlusion.call("_process", 0.25)
 	expect(occlusion.call("outlined_enemies").has(enemy), "eligible wreck keeps its outline")
 	var wreck_outline: Node = occlusion.get("_outlines")[enemy]
+	expect_model_sources(wreck_outline, enemy, decoration, initial_models)
 	var line_color: Vector3 = wreck_outline.get("_material").get_shader_parameter(&"line_color")
 	expect(line_color.is_equal_approx(Vector3(0.72, 0.72, 0.72)), "wreck body and smoke share neutral gray")
 	screen = camera.unproject_position(enemy.call("stable_world_center"))

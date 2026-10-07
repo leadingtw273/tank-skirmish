@@ -67,3 +67,10 @@
 本輪產品裁決與授權見 [ITERATION](ITERATION.md#2026-10-06-殘骸灰線與訓練場玩家遮蔽修正)，固定 W1–R1 與作者實跑見 [feature](../features/tank-occlusion.md#2026-10-06-殘骸灰色透視與訓練場玩家淡出候選)。來源候選已完成作者六直接 checks 與有限真渲染；原 B／D 及 corrected log 保留，不是 fresh-context PASS 或 accepted。接手須核對 root 封存的新 Head／同版 fresh，而不是沿作者敘事代驗。
 
 writer 沒有 stage／commit、修改正式 Windows 預覽／235 UID／素材、外送 source／PNG 或推送 main。正式 M 仍維持既有 `7d9b61f3e40ad7933ae6b285d0c384b4845a2b88`，之後只由 root 按已核可 guarded fast-forward 同步。計畫外送 grant 已耗用，無本輪新 CI／素材 runner 授權，人驗仍待 leadi F8→F6 重啟訓練場確認。
+
+
+## 灰殘骸矩形 FX 板本機回歸（2026-10-07）
+
+本輪僅修已有 AC「實體模型＋真煙、排除 FX 面片」漏收的 `effect_mesh`，共用 collector 按既有群組略過 Mesh、仍遞迴 child；真模型 Quad／原世界 FX 與 Smoke 不動。根因及有限 Q1–Q3 作者證據見 [feature](../features/tank-occlusion.md#2026-10-07-灰殘骸煙上方矩形板回歸修正)，本機 `agent-team/tmp/tank-smoke-quad-20261007/writer/` 保存原紅燈 17 failures（16 實際反例＋1 測試 D）、最終兩關聯 checks exit 0，以及單台 tank2 真受損／死亡渲染。
+
+作者 GPU 原 raw exit 2 的唯一 D 為跨 stage 比較原煙啟動的 local_coords／seed，16 項產品量測 true，不稱 overall PASS；source 原 local_coords 設定與 restart 已讀回，沒有修改 FX／粒子。接手在本輪 `fresh/` 核對固定同 stage 的 source/base／穩定參數及 Q1–Q3；不能把作者畫面或量測敘事當 fresh 驗收。235 UID／586 素材 metadata 保持；writer 不 stage／commit／同步 M／外送或 CI，人驗 needs_changes，待 leadi 確認。

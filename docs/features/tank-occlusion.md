@@ -148,3 +148,14 @@ leadi 要求「摧毀後該敵方坦克透視照常顯示，線條包含煙霧�
 原錯誤完整保存：新增 W3 測試曾暴露作者省去 valid short-circuit 的 freed-target TypedArray 回歸（B），已恢復 guard，六 checks 以最終 code 重跑成功。首 GPU 的全畫面 atlas 差異混入 839 個合法紅輪廓 pixels、smoke-only 誤含原 2px 外框、resolver 合法命中旁活敵、null snapshot getter 都是 D 測量錯誤；raw exit 2／log 保留，最多一輪限定 W1／P2 修正後 exit 0，沒有重跑已通過 W2／W3／main 或改產品追假紅。
 
 工程來源待 root 提交封存、fresh-context 同版核對及本機預覽同步；正式 Windows 專案尚未由 writer 修改，人驗仍 needs_changes。未 stage／commit、未跑 full quality／Windows、未外送 source／PNG／私素材。
+
+
+## 2026-10-07 灰殘骸煙上方矩形板回歸修正
+
+leadi 回報的垂直板來自原火焰 `Flame_Core`：collector 未排除既有 `effect_mesh`，原透明特效材質被車體代理材質蓋成實體 mask／幾何。此次只在共用 `_collect_meshes` 略過已標記的 Mesh，仍遞迴 children；真模型 Quad／裝飾、原世界 FX、獨立真 Smoke、紅／灰色、picking、5m 與玩家淡出不改。既有分類權威是 training_target_controller／training_combat_encounter 的 `effect_mesh` 用法，不新增素材群組或面片型別白名單。
+
+本機作者證據在 `agent-team/tmp/tank-smoke-quad-20261007/writer/`。既有 enemy_occlusion smoke 加入回歸後，舊 collector 真紅 exit 1：16 項 FX mask／geometry 反例；另 1 項量測 D 是死亡後才生成的 `/root/Tank/TankDepletedExplosion/Core` 被誤當初始化模型（原 damage visuals 的死亡一次性爆炸），raw 17 failures 保留。固定初始化模型 identity 後，最終 enemy_occlusion 與 aim_cursor 兩直接 checks 均 exit 0、runtime error 0，真模型及未標記 Quad 子節點控制保留。
+
+固定一台自然入口 training tank2（僅測試 player pose 設為 (0,0,8)，相機不移動）真 Health 100→50→0，Forward+／Vulkan 的 17 項作者量測有 16 項 true：各階段只收 5 個模型／0 effect_mesh；來源定位先鎖定的 Flame_Core 356 像素區域，候選 opaque 為 0；健康真煙 0、受損 760、死亡 1314 像素，死亡中性線 2317／非中性 0；live 本敵命中、dead 空與 smoke-only 0 命中，原 camera size 100／5m 保持。圖片為 `dead-training.png`、`dead-lines.png`、`dead-real-smoke.png`、`dead-part-mask.png`。
+
+該 GPU raw exit 2／log 完整保留，不能稱作者 overall PASS：唯一 D 是把健康前全部 Smoke 的參數跨受損／死亡啟動比較。原 `tank_damage_visuals.gd:90–100` 明確設 local_coords=true 並 restart；同 source/base 的 6 個 Smoke 只在 local_coords／seed 出現差異，seed 與 restart 的因果屬推論。FX mesh／material／layer 及其餘 Smoke 基本參數同值，來源腳本、SmokePass 與全部 235 UID／586 素材 metadata 保持。fresh 入口為本輪 `tank-smoke-quad-20261007/fresh/`，依 Q1–Q3 在固定同 stage 核對原粒子身份／base／穩定參數，不用跨 stage 快照代替驗收。作者不代替 fresh-context 驗收；人驗 needs_changes，待 leadi 親測。

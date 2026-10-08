@@ -1,0 +1,37 @@
+[gd_resource type="ShaderMaterial" load_steps=7 format=3]
+
+[ext_resource type="Shader" path="res://assets/BinbunGrass/shader/grass.gdshader" id="1_grass"]
+[ext_resource type="Texture2D" path="res://assets/BinbunGrass/texture/grass_basic_02.png" id="2_shape"]
+
+[sub_resource type="FastNoiseLite" id="GrassNoise"]
+seed = 117
+frequency = 0.018
+
+[sub_resource type="NoiseTexture2D" id="GrassNoiseTexture"]
+width = 256
+height = 256
+seamless = true
+noise = SubResource("GrassNoise")
+
+[sub_resource type="Gradient" id="GrassGradient"]
+colors = PackedColorArray(0.27, 0.36, 0.22, 1, 0.36, 0.43, 0.28, 1)
+
+[sub_resource type="GradientTexture2D" id="GrassPalette"]
+gradient = SubResource("GrassGradient")
+width = 256
+height = 1
+
+[resource]
+shader = ExtResource("1_grass")
+shader_parameter/billboard = true
+shader_parameter/shape_texture = ExtResource("2_shape")
+shader_parameter/shape_atlas = ExtResource("2_shape")
+shader_parameter/use_atlas = false
+shader_parameter/noise_texture = SubResource("GrassNoiseTexture")
+shader_parameter/color_gradient = SubResource("GrassPalette")
+shader_parameter/random_variation = 0.0
+shader_parameter/wind_texture = SubResource("GrassNoiseTexture")
+shader_parameter/wind_velocity = Vector2(0, 0)
+shader_parameter/alpha_cut_start = 0.35
+shader_parameter/alpha_cut_end = 0.65
+shader_parameter/alpha_mode = 2

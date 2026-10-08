@@ -166,3 +166,10 @@ leadi 要求「主要地圖的建築與道路間小空地，以及建築群外�
 封存 plan SHA-256 `23f12db1f907d7ec30f95bce28258f409c2a43678ac656c14eb0756f85c1220b` 的平台原生隔離第二模型審查 approve／0 blocker；Claude 外送被平台拒絕，沒有有效 Claude 結果或 source／素材外送。本機實作 GO 只含 GroundMaterial、自有世界 XZ 草皮 shader／必要 UID 與最小本輪文件；原地形／collision、道路／建築、玩法、正式相機／環境與必要平台 gate 保持。固定 F1–F3、兩個原 smoke、作者真原生 renderer 證據與 shutdown 限制見 [feature](../features/main-ground-grass.md)。
 
 237 原 UID／586 ignored 素材 metadata、正式 M／其他 refs／工作樹／cache 保全；新增 shader UID 明列。最新候選待 fresh-context 同版 source／有限真圖驗收，之後才由 root 正常 guarded FF 本機交付，leadi 色調／畫面人驗仍 pending。完整 quality／新 CI／PR／push／正式 GitHub merge 尚未執行，不以本機作者證據或歷史 PASS 代替。
+
+
+## 2026-10-08 LEA-209：BinbunGrass 草株續輪
+
+leadi 指定使用既有 BinbunGrass，沿用自然灰綠配色與 LEA-209，人驗 pending。基線為已交付草底 `07249fea`；新隔離分支 `feat/lea209-binbun-grass`，正式 preview、main／origin/main 與其他作者來源保持。v2 plan SHA-256 `efebd118098b301b0aa838eda051d38025c66b271d59886cf3a248f001ec9209` 與有限校準附錄 `a61014a6da5b869e2172ab78f9fd07de051b6a2caf0ac537767f80d7a42ad343` 經平台原生第二模型 approve／0 blocker，root 明確 GO；沒有有效 Claude 外送結果。
+
+最終只新增 GrassField 生成 script／UID、自有 Binbun material 與必要 scene refs；Quad 0.6×0.9m／center.y0.45、內格 jitter±1.4m／各軸首末±0.5m。來源 PNG／shader、草叢間低飽和灰綠色差、seed、候選上限與 1m 排除保持。作者最終 F1–F4 同鏡頭真原生 A/B 與兩原 smoke actual exit0，原 shutdown cleanup raw 保留；初輪圖未覆寫。實際參數、403320 株與有限證據入口見 [feature](../features/main-ground-grass.md#本輪-binbungrass-草株)。fresh-context 與正式本機同步由 root 後續執行；不代替 leadi 親測。

@@ -2,15 +2,30 @@
 
 leadi 要求主地圖建築與道路間的小空地，以及建築群外露地面補草地，並於 2026-10-08 選定「偏自然的灰綠草地（建議）」。工單為 [LEA-209](https://linear.app/leadingtw273/issue/LEA-209/主地圖建築道路間與街區外空地補草皮)，人驗 pending。
 
+
+## 本輪 BinbunGrass 草株
+
+leadi 明確指定使用 BinbunGrass；本輪基於已本機交付的灰綠草底 `07249fea5327c5efb05b0ea868d0f16ce626dcea`，隔離分支 `feat/lea209-binbun-grass`。v2 計畫與有限外觀校準均經平台原生第二模型 approve／0 blocker，依 root 明確 GO 實作，最新候選仍待 fresh-context 與 leadi 親測。
+
+主圖 GrassField 引用自有 `main_grass_field.gd`／`binbun_grass_material.tres`，真實使用既有 `assets/BinbunGrass/texture/grass_basic_02.png` 與 `assets/BinbunGrass/shader/grass.gdshader`，原素材與 shader bytes 保持。自有 palette 產生草叢間低飽和灰綠色差；billboard 開啟、atlas 關閉、random_variation=0、wind_velocity=(0,0)、alpha_mode=2、cast_shadow 關閉。保留原灰綠不透明草底；草株使用來源 shader 的 alpha 行為。
+
+全圖 ±960m 以 3m 全域格一次生成，最多 409600 候選，再歸入 128m／最多 225 個 MultiMesh。固定 seed117；內格各軸 jitter±1.4m，每軸首末格仍±0.5m，根部距地圖邊緣至少 1m。Quad 為 0.6×0.9m、center_offset.y=0.45m、根部 y=0.01m，維持來源 2:3 比例。道路與建築 Mesh local AABB 八角經完整 world transform 投影為 XZ 凸包後外擴 1m；AABB 僅作 chunk／點預篩。沒有逐幀生成、每株節點或新增 collision。
+
+最終作者原生 Godot 4.7.1／Vulkan Forward+ 真實生成 403320 株、225 chunks、388 排除 footprints，單次啟動生成 255ms（不是 FPS 效能承諾）。07249 草底 baseline 與最終草株四視角使用相同相機：F1／F2／F3 沿下方歷史設定，F4 為 F1 相同 basis／位置、size25 近景。四圖 actual exit0、runtime ERROR0／WARNING0；退出後同 baseline 的 2 ERROR／1 WARNING renderer cleanup 訊息完整保留。原 `main_ground_visual_smoke.gd` 與 `map960_components_smoke.gd` 最終同版 actual exit0／ERROR0／WARNING0；後者僅歷史元件回歸。
+
+本機驗證入口為 `tank-main-grass-20261008/binbun-{baseline,final}` 的原 PNG、raw log 與 receipts；初輪點陣圖保留於 `binbun-candidate`。正式相機／環境、Ground geometry、道路／建築、導航、射擊／移動與原 238 UID 保持；唯一新增 script UID `uid://coqwynwbywgp7`。獨立驗收與 guarded 本機交付由 root 接續；道路／台階入口與車體在作者圖可辨，遠景草葉縮放觀感與整體自然感仍待 leadi 親測，沒有新增完整 quality／效能矩陣。
+
+以下保留上一輪平面草底證據。
+
 基線為已合併 PR #129 的 `main 590c80177125bd8f86acc273954d5f3d4b1d9d2d`，tree `1519636493b8e5a16d4cb13aa652a9f943f4131d`。本輪計畫 SHA-256 `23f12db1f907d7ec30f95bce28258f409c2a43678ac656c14eb0756f85c1220b` 的平台原生隔離第二模型審查 approve／0 blocker；Claude 外送審查被平台拒絕，沒有有效 Claude 結果，不重試外送。
 
-## 有限實作與保持條件
+## 平面草底歷史：有限實作與保持條件
 
 GroundMaterial 改用專案自有不透明 `ground_grass.gdshader`。兩個灰綠色與 `patch_size_meters` 可在 Inspector 調整；預設 12m 主斑駁與其 3 倍頻率的柔和細色差。座標取 `MODEL_MATRIX` 轉換後的世界 XZ，色差固定於地面，保留一般 PBR 受光／陰影與 roughness 0.92。
 
 Ground 尺寸／transform／collider、200 道路、170 建築、Navigation、坦克遮蔽與射擊／移動、正式相機及 Environment 原 source 資料保持。這是平面草皮，不新增草株、風動、透明 pass 或地形位移，也不改既有私有素材。新增 shader companion UID 為 Godot 生成的 `uid://cb2d0xawr4aql`；237 原 UID bytes／metadata 與 586 ignored 私素材 metadata、原快取與正式來源保持。
 
-## 固定驗收點
+## 平面草底歷史：固定驗收點
 
 | 視角 | 驗證相機 | 檢查 |
 | --- | --- | --- |
@@ -20,7 +35,7 @@ Ground 尺寸／transform／collider、200 道路、170 建築、Navigation、�
 
 固定相機僅位於本機驗證 fixture，正式相機未改。用 Godot 開啟本輪工程交付的 `project.godot`，F5／`res://src/main.tscn` 即可親測；配色與自然場地觀感仍待 leadi。
 
-## 作者有限證據與限制
+## 平面草底歷史：作者有限證據與限制
 
 Windows 原生 Godot 4.7.1、Vulkan Forward+／RTX 5090 的 baseline／candidate 同視角三張 PNG 均保存成功，兩段 CLI actual exit 0；擷取 runtime ERROR0／WARNING0。兩段在 `GRASS_CAPTURE_DONE` 後均出現同樣 2 ERROR／1 WARNING 的 Texture RID leak／ImageTexture renderer shutdown 訊息，raw 留存，不稱整份 log 無錯誤。
 

@@ -1,6 +1,6 @@
 # 2026-10-07 LEA-134 發射手感續調
 
-狀態：已核可開發；作者有限 core 與既有直接 checks 已 actual exit 0／ERROR 0，diff-check 通過。候選待同 HEAD 非作者 fresh-context 圖形驗收、來源 review、完整 quality 與人的手感驗收（pending）。自包含 ADR、參數、固定 F1–F5 與試玩入口見 [tank-firing-feel.md](../features/tank-firing-feel.md)。
+狀態：LEA-134 發射手感／首發、LEA-194 建築淡出與 LEA-208 訓練場 AI 修正均已由 leadi 實測 accepted；本輪進行正常正式收尾。最新 HEAD 的必要 CI、獨立審查、PR 與合併仍須依 GitHub 實況完成，不沿用歷史 PASS。
 
 leadi 2026-10-07 授權收尾後即刻射擊手感、正常合併／複審，選只加強視覺並保留移動／瞄準，以及鏡頭 0.5m→0.2m／原 0.2s。最新明示「提前核可第二模型相關複審操作，直接做到讓我可以實測手感」。範圍內自主續行，優先交付本機 Windows 候選；原平台／私素材／外送邊界保持。
 
@@ -150,3 +150,10 @@ leadi 2026-10-08 回覆「可」，核可進場特效初始化與真首發／後
 本機封閉計畫及性能證據保存在本輪 isolated artifacts；新增 `res://tests/ai_recovery_selection_cost_smoke.gd` 以真 Tank2 同 snapshot，保留完整原 radius／sample／provider 支撐算法作 oracle，比較全支撐欄位與 query 計數、連續 pose／mask／exclude／旗標覆寫、八組模型輸入與真 selecting_escape 輸入的原 forward／angular 輸出；ground segment 後加 drift 另屬原處理。相關回歸只跑 `rigid_terrain_segment_smoke`、`escape_handoff_smoke`、`recovery_continuation_smoke`；新增同義 smoke、terrain 與 continuation 均 actual exit 0／ERROR 0／WARN 0。escape handoff actual exit 1／ERROR 2／WARN 0；相同 flags／資產／cache／script 的 exact b9 baseline 亦相同兩個 Mirror gun／hull 失敗（queries 103／148、相同 blocker／fraction／phase），因此 root 分類本單前既有 fixture／backlog，未改原 expected 或 physics。新 smoke 初次 typed empty-array fixture D 的 script／shutdown errors raw 保留，測試修正後通過；完整 CI 未跑，不冒稱全部回歸 PASS。
 
 是否採用須由同場景／Tank2／heading／cap 的 Windows 原生 before／after 各 120 ticks 證明實質收益，初始化與性能窗分開，不含每內層 query 計時包裝，不以碰到 20ms 上限推定改善。產品三檔已固定供 Windows before／after 量測，root 讀回短窗有實質改善並支持採用；詳細 source tuple／性能分布以本機封存 receipt 為準，ray parameters 重用未量到獨立收益，僅保留已驗證同義結果。最新封存版本 fresh-context 審查／有限實跑、guarded 正常 FF 與 AI 人驗仍 pending；收益不足交 root 裁決，不降低碰撞精度或擴大架構。236 原 UID／586 ignored 素材及原工作樹／refs／cache／Windows userdata 保全，原 editors／games 不操作；本單不是 GitHub CI／合併／公開發布完成。
+
+
+## 2026-10-08 已驗收三票正式收尾
+
+leadi 實測後明示「可以，暫時沒問題了，請你做好收尾合併后關單」，核可 LEA-134／194／208 正常 PR、最新 HEAD 驗證與獨立審查、符合既有平台條件的合併後關單。三票產品人驗 accepted；LEA-195 原 Done 保留，各票 owner 不變。範圍僅收尾已接受的發射／相機、玩家建築淡出、首發 FX 與 AI 選向同義成本修正，不新增玩法或調整物理參數。
+
+新增 AI 同義 smoke 的同名 Godot UID 納入來源，並將該 smoke 加入既有 quality 清單；原 74 命令、ERROR／exit 掃描、workflow 與必要 checks 保持。escape handoff 不在現行 quality 清單，exact b9 與候選同失敗的 fixture 證據保留為診斷 backlog，不改 expected 或聲稱 PASS。完整最新 quality／review／PR／merge／main 結果以 [GitHub](https://github.com/leadingtw273/tank-skirmish) 真實同版紀錄為準；[LEA-134](https://linear.app/leadingtw273/issue/LEA-134)、[LEA-194](https://linear.app/leadingtw273/issue/LEA-194)、[LEA-208](https://linear.app/leadingtw273/issue/LEA-208) 的工程狀態、owner 與正式交付由 Linear 讀回。合併真成功後才關三票，不預填 CI 綠燈或已合併。新私素材 CI 仍須 exact PR／HEAD／run／attempt grant，舊 grant 不重用。

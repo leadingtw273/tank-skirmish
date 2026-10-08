@@ -1,6 +1,6 @@
 # 一次接手入口
 
-現役輪次為 [LEA-134 發射手感續調](ITERATION.md#2026-10-07-lea-134-發射手感續調)，自包含 F1–F5／ADR／參數與試玩入口見 [tank-firing-feel.md](../features/tank-firing-feel.md)。視覺加強、保留移動／瞄準，shake 0.5m→0.2m／原0.2s；正常合併／第二模型複審與做到Windows可實測已明示授權。手感人驗pending。
+現役輪次為 [已驗收三票正式收尾](ITERATION.md#2026-10-08-已驗收三票正式收尾)：LEA-134 發射／首發、LEA-194 建築淡出與 LEA-208 訓練場 AI 修正均已由 leadi 人驗 accepted，並明示要求正常合併後關單；LEA-195 原 Done 保留。最新 HEAD 的完整 quality、獨立審查與正式 PR／merge 尚須依平台真實結果完成。
 
 查 [LEA-134](https://linear.app/leadingtw273/issue/LEA-134)、現有PR與最新同HEAD證據。基線是 [PR #128](https://github.com/leadingtw273/tank-skirmish/pull/128) 已合併的 main `679decd21d6d3a2b38e237330cd995ebe320a8cb`，tree `c912a8afe76ade1d0551335614b82bdf6b7384ec`；原透視source／真CI／cleanup／本機交付／accepted與194／195 Done閉包。新分支 `feat/lea134-firing-feel-adjustment`，正式目錄和舊工作樹由root guarded FF正常同步。
 
@@ -109,3 +109,10 @@ writer 沒有 stage／commit、修改正式 Windows 預覽／235 UID／素材、
 使用者已明確接受首發卡頓，原話及「訓練場」回覆見 [ITERATION](ITERATION.md#lea-208訓練場敵車轉角脫困選向成本修正)。新 `fix/lea208-ai-recovery-selection-cost` 基於 `b9a03acaa1c6e109b3a360f4fe5fbb94a56f87aa`；只作 typed radius、query-local 私有 ray parameters 與同 query driving preview 三項同義修正，保持原 AI collision／cap／horizon／微步／候選／terrain-first／drift 與已驗收首發、相機及透明過渡。
 
 接手查看本輪同 source 的作者四有限入口 logs／original algorithm oracle、Windows 原生 before／after 短窗與最新封存 HEAD fresh 審查，勿將作者自驗／20ms 上限／歷史完整 CI 當性能改善或新 gate PASS；原 fixture D 與失敗原文保留。Windows 有限 before／after 已由 root 讀回支持採用，數字與同 source tuple 保留於本機 receipt；ray parameters 重用沒有獨立量測收益宣稱。新增同義 smoke／terrain／continuation 均 exit 0／ERROR 0／WARN 0；escape handoff exit 1／ERROR 2，exact b9 baseline 同兩個 Mirror gun／hull fixture 失敗，按 root 裁決保留既有 backlog，不改 expected。fresh、正式本機 guarded FF 與 AI 人驗仍 pending，完整 CI 未跑。新的功能入口 `res://tests/ai_recovery_selection_cost_smoke.gd`；本機交付後開 `res://src/maps/training_ground/training_ground_playtest.tscn` F6，沿既有訓練場敵車轉角位置與移動測法驗證。來源／私素材不外送，不操作原 Windows editors／games，原 236 UID／586素材／工作樹／refs／cache／userdata 守衛保持。
+
+
+## 2026-10-08 三票 accepted 正式收尾
+
+使用者明示「可以，暫時沒問題了，請你做好收尾合併后關單」；產品人驗 accepted 與先前候選 pending 的歷史記錄分開。收尾只補新測試 companion UID、quality 的 AI 同義 smoke 與授權／人驗交接，保留已 accepted 產品 bytes、原 74 命令及平台必要 checks。新 HEAD 須獨立審查及真完整 quality，不以舊 CI 或作者有限 checks 代替。
+
+PR／CI／review／MERGED／main 以 [GitHub](https://github.com/leadingtw273/tank-skirmish) 真實同版讀回為準；三票 [134](https://linear.app/leadingtw273/issue/LEA-134)／[194](https://linear.app/leadingtw273/issue/LEA-194)／[208](https://linear.app/leadingtw273/issue/LEA-208) 合併成功後才關 Done，owner 保留。新 private CI 依 [runbook](../local-private-ci.md) 取得 exact tuple grant，不重用已耗用 grant；來源以外的私素材、畫面與本機 raw artifacts 不外送。escape fixture 原 baseline 同失敗保留為診斷 backlog，不改 expected；人驗 accepted 不等於必要平台 gate 已滿足。

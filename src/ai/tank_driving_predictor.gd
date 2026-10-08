@@ -528,7 +528,7 @@ func _probe_profile(space: PhysicsDirectSpaceState3D, snapshot: Dictionary, radi
 		last_action = action
 		if phase == &"rejoining": return {"safe": advance >= Recovery.PROGRESS_METRES, "budget": false, "final_root":root, "phase":phase, "positive_advance":advance, "action":last_action}
 		var movement := float(action.movement); var turn := float(action.turn)
-		var preview: Dictionary = _tank.call(&"predictive_driving_step", speed, angular, movement, turn, STEP_SECONDS)
+		var preview: Dictionary = solver.predictive_driving_step(speed, angular, movement, turn, STEP_SECONDS) if solver != null and solver.has_method("predictive_driving_step") else _tank.call(&"predictive_driving_step", speed, angular, movement, turn, STEP_SECONDS)
 		if not preview.has("angular_speed"): return {"safe":false,"budget":false,"final_root":root,"phase":phase,"positive_advance":advance,"action":last_action}
 		var substeps := maxi(1, ceili(radius * maxf(absf(angular),absf(float(preview.angular_speed))) * STEP_SECONDS / MAX_SWEEP_DISTANCE))
 		var sub_delta := STEP_SECONDS / float(substeps); var roots: Array[Transform3D] = []; var start := root
@@ -689,12 +689,15 @@ func _contact_normal(hit: Dictionary, root: Transform3D) -> Vector3:
 
 func _snapshot_radius(shapes: Array, transforms: Array, root: Transform3D) -> float:
 	var radius := 0.1
+	var root_origin: Vector3 = root.origin
 	for index in shapes.size():
 		var convex := shapes[index] as ConvexPolygonShape3D
 		if convex == null:
 			return 1000.0
-		for point in convex.points:
-			radius = maxf(radius, root.origin.distance_to((transforms[index] as Transform3D) * point))
+		var points: PackedVector3Array = convex.points
+		var world_transform: Transform3D = transforms[index]
+		for point: Vector3 in points:
+			radius = maxf(radius, root_origin.distance_to(world_transform * point))
 	return radius + 0.01
 
 

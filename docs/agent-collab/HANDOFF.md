@@ -102,3 +102,10 @@ writer 沒有 stage／commit、修改正式 Windows 預覽／235 UID／素材、
 現役沿 LEA-134、`fix/lea134-firing-fx-prewarm`，base `acdedad63df538256b18d79e799aa43fd48e5117`；leadi 回覆「可」核可進場初始化與首發／後三發量測。固定 A1–A7、真授權、有限作者入口與 Windows F5／F6 在 [feature](../features/tank-firing-feel.md#2026-10-08-首發-fx-同步預初始化)，輪次在 [ITERATION](ITERATION.md#2026-10-08-lea-134-首發-fx-預初始化)。原開砲手感、建築過渡 accepted 與195 Done保留；本輪人驗 pending。
 
 只在共用 CombatRuntime ready 同步隱藏初始化四個純 FX wrapper 並 immediate free，source registration／換車／正式每發保持；不能稱 GPU pipeline 全暖或首發全面修復。作者四有限相關 checks actual exit 0／ERROR 0，既有 invalid ShotEvent fixture WARN 1 留存；原 baseline 紅燈與首輪 mapping／import raw errors 不隱去，本機 writer 保存 commands／logs／guards。原四樹／cache／userdata、236原UID／586素材metadata保持，沒有新UID。非作者最新 HEAD fresh／Windows Native startup＋一首發三暖發量測仍 pending，後續同版封存 artifact 與 Linear 是結果權威；未跑完整 CI，不預填 PASS。root 在無 blocker後 guarded 正常 FF 同步 M，作者不直接碰正式 source／original caches／236 UID／586 ignored素材 metadata，不 push／CI／merge main或外送素材。跨模型計畫外送被平台拒絕，已使用原生隔離 approve／0 blocker 替代並保留限制。
+
+
+## LEA-208：訓練場敵車選向 CPU 候選
+
+使用者已明確接受首發卡頓，原話及「訓練場」回覆見 [ITERATION](ITERATION.md#lea-208訓練場敵車轉角脫困選向成本修正)。新 `fix/lea208-ai-recovery-selection-cost` 基於 `b9a03acaa1c6e109b3a360f4fe5fbb94a56f87aa`；只作 typed radius、query-local 私有 ray parameters 與同 query driving preview 三項同義修正，保持原 AI collision／cap／horizon／微步／候選／terrain-first／drift 與已驗收首發、相機及透明過渡。
+
+接手查看本輪同 source 的作者四有限入口 logs／original algorithm oracle、Windows 原生 before／after 短窗與最新封存 HEAD fresh 審查，勿將作者自驗／20ms 上限／歷史完整 CI 當性能改善或新 gate PASS；原 fixture D 與失敗原文保留。Windows 有限 before／after 已由 root 讀回支持採用，數字與同 source tuple 保留於本機 receipt；ray parameters 重用沒有獨立量測收益宣稱。新增同義 smoke／terrain／continuation 均 exit 0／ERROR 0／WARN 0；escape handoff exit 1／ERROR 2，exact b9 baseline 同兩個 Mirror gun／hull fixture 失敗，按 root 裁決保留既有 backlog，不改 expected。fresh、正式本機 guarded FF 與 AI 人驗仍 pending，完整 CI 未跑。新的功能入口 `res://tests/ai_recovery_selection_cost_smoke.gd`；本機交付後開 `res://src/maps/training_ground/training_ground_playtest.tscn` F6，沿既有訓練場敵車轉角位置與移動測法驗證。來源／私素材不外送，不操作原 Windows editors／games，原 236 UID／586素材／工作樹／refs／cache／userdata 守衛保持。

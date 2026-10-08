@@ -4,13 +4,14 @@ extends RefCounted
 const MIN_UP_COMPONENT := 0.0001
 const MIN_DIRECTION_LENGTH_SQUARED := 0.000001
 
-static func sample(space: PhysicsDirectSpaceState3D, pose: Transform3D, local_points: Array[Vector3], excluded: Array[RID], mask: int, step_height: float, snap_distance: float, max_slope_degrees: float) -> Dictionary:
+static func sample(space: PhysicsDirectSpaceState3D, pose: Transform3D, local_points: Array[Vector3], excluded: Array[RID], mask: int, step_height: float, snap_distance: float, max_slope_degrees: float, reusable_query: PhysicsRayQueryParameters3D = null) -> Dictionary:
 	var indices := PackedInt32Array()
 	var positions: Array[Vector3] = []
 	var normals: Array[Vector3] = []
 	var heights := PackedFloat64Array()
-	var query := PhysicsRayQueryParameters3D.new()
+	var query := reusable_query if reusable_query != null else PhysicsRayQueryParameters3D.new()
 	query.collision_mask = mask; query.exclude = excluded; query.collide_with_bodies = true; query.collide_with_areas = false
+	query.hit_back_faces = true; query.hit_from_inside = false
 	var zero_window_floor := INF
 	var zero_window_valid := true
 	var up := maxf(step_height, 0.0) + 0.02

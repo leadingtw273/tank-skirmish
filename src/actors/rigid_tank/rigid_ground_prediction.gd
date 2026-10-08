@@ -13,6 +13,8 @@ var _station_support_cache: Dictionary = {}
 var _terrain := TerrainClassifier.new()
 var _drive_model := preload("res://src/actors/rigid_tank/rigid_tank_prediction.gd").new()
 var _motion_support_cache: Dictionary = {}
+## 只屬於本次同步預測 provider；重用參數容器，不重用碰撞答案。
+var _motion_support_ray := PhysicsRayQueryParameters3D.new()
 var _exact_ceiling_cache: Dictionary = {}
 var _initial_drift := Vector3.ZERO
 var _drift := Vector3.ZERO
@@ -349,7 +351,7 @@ func _motion_support(pose: Transform3D, step_height: float) -> Dictionary:
 	if _motion_support_cache.has(pose): return _motion_support_cache[pose]
 	if not _reserve(4): return {}
 	var result := MotionSupport.sample(space, pose, tank._prediction_support_points, excluded,
-		tank.collision_mask, step_height, tank.ground_snap_distance + tank.ground_step_height, tank.ground_max_slope_degrees)
+		tank.collision_mask, step_height, tank.ground_snap_distance + tank.ground_step_height, tank.ground_max_slope_degrees, _motion_support_ray)
 	_motion_support_cache[pose] = result
 	var floor_y: float = result.get("step_zero_floor_y", -INF)
 	if is_finite(floor_y) and bool(result.get("supported", false)):

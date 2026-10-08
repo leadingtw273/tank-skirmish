@@ -165,8 +165,12 @@ run("smoke", godot, [
   "--script",
   "res://tests/smoke.gd",
 ], { scanGodotErrors: true });
+run("firing-visual-recoil-smoke", godot, [
+  "--headless", "--audio-driver", "Dummy", "--fixed-fps", "60", "--path", ".",
+  "--script", "res://tests/firing_visual_recoil_smoke.gd",
+], { scanGodotErrors: true });
 
-for (const testName of ["main_ground_visual_smoke", "player_rigid_integration_smoke", "player_rigid_variants_runtime_smoke", "player_rigid_variants_contact_smoke", "player_rigid_variants_aim_smoke", "rigid_high_speed_obstacle_smoke", "rigid_ai_terrain_smoke", "rigid_ai_curb_boundary_smoke", "rigid_braking_sweep_smoke", "rigid_braking_oriented_sweep_smoke", "rigid_braking_support_domain_smoke", "rigid_terrain_classifier_smoke", "rigid_terrain_segment_smoke", "rigid_layered_candidate_fallback_smoke", "rigid_prediction_scheduling_smoke", "rigid_training_narrow_portal_smoke", "rigid_training_exit_corner_smoke", "turn_space_geometry_smoke", "turn_space_navigation_smoke"]) {
+for (const testName of ["main_ground_visual_smoke", "player_rigid_integration_smoke", "player_rigid_variants_runtime_smoke", "player_rigid_variants_contact_smoke", "player_rigid_variants_aim_smoke", "rigid_high_speed_obstacle_smoke", "rigid_ai_terrain_smoke", "rigid_ai_curb_boundary_smoke", "rigid_braking_sweep_smoke", "rigid_braking_oriented_sweep_smoke", "rigid_braking_support_domain_smoke", "rigid_terrain_classifier_smoke", "rigid_terrain_segment_smoke", "ai_recovery_selection_cost_smoke", "rigid_layered_candidate_fallback_smoke", "rigid_prediction_scheduling_smoke", "rigid_training_narrow_portal_smoke", "rigid_training_exit_corner_smoke", "turn_space_geometry_smoke", "turn_space_navigation_smoke"]) {
   run(testName.replaceAll("_", "-"), godot, [
     "--headless", "--audio-driver", "Dummy", "--fixed-fps", "60", "--path", ".",
     "--script", `res://tests/${testName}.gd`,

@@ -20,7 +20,7 @@ const ShotEvent := preload("res://src/combat/shot_event.gd")
 
 @export_category("開砲鏡頭震動")
 ## 開砲瞬間 CameraShakePivot 沿砲彈反方向後座的距離，單位為世界公尺。
-@export_range(0.0, 5.0, 0.01) var fire_shake_kick_distance := 0.25
+@export_range(0.0, 5.0, 0.01) var fire_shake_kick_distance := 0.2
 ## 開砲後座從最大位移平順回到原位所需時間，單位為秒。
 @export_range(0.01, 2.0, 0.01) var fire_shake_duration_seconds := 0.2
 

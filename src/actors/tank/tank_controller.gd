@@ -113,6 +113,24 @@ var _ground_native_moved := false
 ## 視覺坦克模型回到製作時靜止位置所需的秒數。
 @export var visual_recoil_return_seconds := 0.18
 
+@export_category("剛體坦克開砲視覺反作用")
+## 僅動畫三個可見根；不移動機械樞紐、砲口或真剛體，停用可供同姿態對照。
+@export var firing_visual_recoil_enabled := true
+## 砲管相對砲塔沿反射擊方向退縮的世界公尺數，不受匯入模型縮放影響。
+@export_range(0.0, 2.0, 0.01) var firing_gun_recoil_distance := 0.45
+## 砲管快速退縮到峰值的時間，單位秒。
+@export_range(0.001, 1.0, 0.001) var firing_gun_kick_seconds := 0.04
+## 砲管從峰值平順回正的時間，單位秒。
+@export_range(0.001, 2.0, 0.001) var firing_gun_return_seconds := 0.24
+## 全車可見部件共同沿水平反射擊方向位移的世界公尺數。
+@export_range(0.0, 1.0, 0.01) var firing_body_recoil_distance := 0.22
+## 以穩定車體中心後仰的角度；沿本發水平射向的一端抬起，單位度。
+@export_range(0.0, 10.0, 0.1) var firing_body_pitch_degrees := 1.4
+## 全車可見反作用到達峰值的時間，單位秒。
+@export_range(0.001, 1.0, 0.001) var firing_body_kick_seconds := 0.05
+## 全車可見反作用從峰值平順回正的時間，單位秒。
+@export_range(0.001, 2.0, 0.001) var firing_body_return_seconds := 0.28
+
 @export_category("鏡頭")
 ## CameraController 可要求的最大游標前視距離，單位為公尺。
 @export var max_camera_look_ahead_distance := 30.0
@@ -197,6 +215,9 @@ var tread_animation_paused := true
 var tread_animations_available := false
 var visual_recoil_rest_local_position := Vector3.ZERO
 var visual_recoil_tween: Tween
+var _firing_visual_rests: Array[Transform3D] = []
+var _firing_recoil_elapsed := INF
+var _firing_recoil_direction_local := Vector3.ZERO
 var hull_aim_turn_input := 0.0
 var _part_collision_shapes: Array[CollisionShape3D] = []
 ## 在 bind 時一次保留每個離線 convex 的頂點；旋轉 guard 不會在 physics step 重建 debug mesh。
@@ -233,6 +254,8 @@ func configure_external_physics(body: RigidBody3D) -> void:
 	collision_layer = 0
 	collision_mask = 0
 	get_node("TrackContactEffects").set_physics_process(false)
+	## 此時 HealthComponent 尚在 donor 內，之後原 rigid 組裝只 reparent 同一元件。
+	get_node("HealthComponent").health_changed.connect(_on_firing_recoil_health_changed)
 
 
 func _query_self_rid() -> RID:
@@ -244,6 +267,7 @@ func _query_collision_mask() -> int:
 
 
 func _ready() -> void:
+	set_process(false)
 	## 每次實例化都從此車型的 base 值開始，避免重生或場景覆用保留上次交戰擴散。
 	current_spread_degrees = clampf(aim_spread_base_degrees, 0.0, maxf(aim_spread_cap_degrees, 0.0))
 	_fire_spread_degrees = 0.0
@@ -273,6 +297,7 @@ func _ready() -> void:
 	)
 	_setup_tread_animations()
 	_setup_grounding()
+	_firing_visual_rests.assign([hull_visual.transform, turret_visual.transform, gun_visual.transform])
 
 
 func _setup_grounding() -> void:
@@ -609,7 +634,12 @@ func _convex_debug_vertices(shape: ConvexPolygonShape3D) -> PackedVector3Array:
 func _current_anchor_transform(anchor: String) -> Transform3D:
 	match anchor:
 		"hull":
-			return _mechanical_global_transform(tank_model.global_transform)
+			var hull_anchor := tank_model.global_transform
+			if not _firing_visual_rests.is_empty() and not is_inf(_firing_recoil_elapsed):
+				## 只移除本輪 HullVisual 的 render 變換，再沿原 legacy 機械剝離。
+				var parent := (hull_visual.get_parent() as Node3D).global_transform
+				hull_anchor = parent * _firing_visual_rests[0] * hull_visual.transform.affine_inverse() * parent.affine_inverse() * hull_anchor
+			return _mechanical_global_transform(hull_anchor)
 		"turret":
 			return _mechanical_global_transform(turret_pivot.global_transform)
 		"gun":
@@ -635,6 +665,9 @@ func _sync_part_collision_shapes() -> void:
 				return
 			_part_collision_shapes[shape_index].global_transform = anchor_transform * part.anchor_transform * local_transform
 			shape_index += 1
+	## 瞄準可在 render 更新之後改動機械 parents；同影格重算可見姿態，不改碰撞權威。
+	if _firing_recoil_elapsed != INF:
+		_apply_firing_visual_recoil()
 
 
 ## 僅供 Task 2 fixture 讀取最近一筆 root／turret／gun guard 計數；不會逐幀輸出。
@@ -1587,6 +1620,85 @@ func request_fire() -> void:
 	current_spread_degrees = new_total
 	if not is_instance_valid(_external_physics_body):
 		_play_visual_recoil(muzzle_direction)
+	else:
+		_play_firing_visual_recoil(muzzle_direction)
+
+
+func _play_firing_visual_recoil(muzzle_direction: Vector3) -> void:
+	_reset_firing_visual_recoil()
+	if not firing_visual_recoil_enabled or _firing_visual_rests.is_empty():
+		return
+	_firing_recoil_direction_local = global_basis.inverse() * muzzle_direction.normalized()
+	_firing_recoil_elapsed = 0.0
+	set_process(true)
+	_apply_firing_visual_recoil()
+
+
+func _process(delta: float) -> void:
+	_update_firing_visual_recoil(delta)
+
+
+func _update_firing_visual_recoil(delta: float) -> void:
+	if is_inf(_firing_recoil_elapsed):
+		return
+	_firing_recoil_elapsed += maxf(delta, 0.0)
+	var end := maxf(firing_gun_kick_seconds + firing_gun_return_seconds, firing_body_kick_seconds + firing_body_return_seconds)
+	if not firing_visual_recoil_enabled or _firing_recoil_elapsed >= end:
+		_reset_firing_visual_recoil()
+		return
+	_apply_firing_visual_recoil()
+
+
+func _firing_recoil_strength(kick_seconds: float, return_seconds: float) -> float:
+	var kick := maxf(kick_seconds, 0.001)
+	if _firing_recoil_elapsed < kick:
+		var remaining := 1.0 - _firing_recoil_elapsed / kick
+		return 1.0 - remaining * remaining
+	var returned := clampf((_firing_recoil_elapsed - kick) / maxf(return_seconds, 0.001), 0.0, 1.0)
+	return 1.0 - returned * returned * (3.0 - 2.0 * returned)
+
+
+func _apply_firing_visual_recoil() -> void:
+	if _firing_visual_rests.is_empty():
+		return
+	var visual_roots: Array[Node3D] = [hull_visual, turret_visual, gun_visual]
+	if not firing_visual_recoil_enabled or is_inf(_firing_recoil_elapsed):
+		for index in 3:
+			visual_roots[index].transform = _firing_visual_rests[index]
+		return
+	## 本發車體反作用隨真車姿態移動；炮管退縮則沿當下機械射向，承接轉塔與俯仰。
+	var direction := global_basis * _firing_recoil_direction_local
+	var horizontal := Vector3(direction.x, 0.0, direction.z).normalized()
+	var body_strength := _firing_recoil_strength(firing_body_kick_seconds, firing_body_return_seconds)
+	var body_basis := Basis.IDENTITY
+	if not horizontal.is_zero_approx():
+		body_basis = Basis(horizontal.cross(Vector3.UP), deg_to_rad(maxf(firing_body_pitch_degrees, 0.0)) * body_strength)
+	var center := stable_world_center()
+	var body := Transform3D(body_basis, center - body_basis * center - horizontal * maxf(firing_body_recoil_distance, 0.0) * body_strength)
+	var gun_strength := _firing_recoil_strength(firing_gun_kick_seconds, firing_gun_return_seconds)
+	for index in 3:
+		var visual := visual_roots[index]
+		var parent := (visual.get_parent() as Node3D).global_transform
+		var world_pose := body * parent * _firing_visual_rests[index]
+		if index == 2:
+			world_pose.origin -= body_basis * muzzle_global_direction() * maxf(firing_gun_recoil_distance, 0.0) * gun_strength
+		visual.transform = parent.affine_inverse() * world_pose
+
+
+func _reset_firing_visual_recoil() -> void:
+	_firing_recoil_elapsed = INF
+	_firing_recoil_direction_local = Vector3.ZERO
+	_apply_firing_visual_recoil()
+	set_process(false)
+
+
+func _on_firing_recoil_health_changed(current: float, _maximum: float) -> void:
+	if current <= 0.0:
+		_reset_firing_visual_recoil()
+
+
+func _exit_tree() -> void:
+	_reset_firing_visual_recoil()
 
 
 func _play_visual_recoil(muzzle_direction: Vector3) -> void:

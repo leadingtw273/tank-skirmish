@@ -173,3 +173,12 @@ leadi 回報的垂直板來自原火焰 `Flame_Core`：collector 未排除既有
 受控玩家死亡後還原建築淡出，只對當下被建築遮住的受控殘骸顯示核心 R=5m 的灰線；死亡觀察者清空敵車輪廓，不顯示其他歷史殘骸。重生後新活車維持 5+2m 淡出，既有 player_wreck 依新觀察者原距離／FOV／LOS、核心窗口及建築遮擋資格顯示或隱藏。專用字典直接重用已有真模型細節／Smoke 輪廓（灰 .55、煙 .35），不加入 enemy 群組／拾取字典，null／重綁／移除／退出清理自有 pass。
 
 既有玩家測試保留活車外環／正式渲染尺寸等斷言，新增單一 tank2 真 Health 死亡、main 公共重生入口與舊殘骸資格／清理；公共入口 fixture 不代表訓練場三秒倒數。作者未執行本輪 parse／完整 smoke／GPU；同版完整玩家／敵車 smoke 與正常訓練 Scene 預熱後死亡→原三秒重生，由 fresh 獨立實證，原倒數／出生點／粒子來源不改。候選與原始驗證資料位於本機 `tank-player-wreck-occlusion-20261007/`，人驗由 leadi 裁定。
+
+
+## 2026-10-07 訓練場建築淡出啟動修正
+
+leadi 已選擇「接近實際車體遮擋時才平滑淡出（建議）」，共同核心 5m 與外側固定 2m 保留。本輪沿 LEA-194 重開續修，LEA-195 保持 Done；基線 `40c632f79dc4261a6d9d106608f03ae1368f27ff` 的開砲動效已人驗 accepted，不另調整。工作分支為 `fix/lea194-training-occlusion-activation`。本節是目前啟動策略，前文 P2「車體遮擋前預先淡出」及 6.7m 外環反例保留為歷史，已由本次明示選擇取代；其他幾何、圈外、完整陰影及清理條件仍有效。
+
+玩家沿原圓窗／投影 bounds／最遠部位 camera-Z 包絡篩選候選，再與全部既有部位表面點的相機建築遮擋集合相交；任一實際部件首次受遮擋即可啟動，不要求中心或整車先消失。既有 `building_occluders` 的可選完整採樣只供玩家啟動，敵方及其他舊呼叫保留原最多 24 點 stride。每棟既有 amount 以 delta 在原 `fade_seconds = 0.18` 內連續往 1／0 移動，新建從 0 開始，正常失去資格至 amount 0 才還原材質；過渡仍更新共同窗、nearest-depth 來源和雙 pass。玩家 window 無效／出畫面／相機後方與 null、換車、死亡、退出沿原立即清理，不新增窗口快取。
+
+有限 A1–A4：十二個既有訓練位置中，全部件相機建築命中 0 者退出後 opaque；真部件遮擋啟動；逐幀進／離為 0→中間值→1／1→中間值→0，原 .18s 完全還原；四車包絡、外圈、shadow、碰撞、清理及敵方 LOS／輪廓／pick／實體遮彈保持，已 accepted firing 不回歸。原版新 smoke 真 RC 1 保存，包含時間與外環反例；訓練 fixture 起初停用整樹導致碰撞移除的 D 已保留並修正，只停 process／physics 且 freeze 車體。最終九個既有 smoke（tank/enemy occlusion、aim cursor、partial visibility、partial visibility combat、enemy combat、firing visual recoil、四車 aim、part geometry）作者直接實跑均 RC 0、ERROR 0；十二點覆蓋 8 個完全外露與 4 個實際遮擋位置。作者 headless 結果不代替同 HEAD 的 fresh-context 來源／圖形驗收、完整 quality 或 leadi 親測，本輪人驗 pending。原 236 UID／586 ignored 素材保留，不含素材或影像外送。

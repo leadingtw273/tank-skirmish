@@ -1,5 +1,15 @@
 # 一次接手入口
 
+現役輪次為 [已驗收三票正式收尾](ITERATION.md#2026-10-08-已驗收三票正式收尾)：LEA-134 發射／首發、LEA-194 建築淡出與 LEA-208 訓練場 AI 修正均已由 leadi 人驗 accepted，並明示要求正常合併後關單；LEA-195 原 Done 保留。最新 HEAD 的完整 quality、獨立審查與正式 PR／merge 尚須依平台真實結果完成。
+
+查 [LEA-134](https://linear.app/leadingtw273/issue/LEA-134)、現有PR與最新同HEAD證據。基線是 [PR #128](https://github.com/leadingtw273/tank-skirmish/pull/128) 已合併的 main `679decd21d6d3a2b38e237330cd995ebe320a8cb`，tree `c912a8afe76ade1d0551335614b82bdf6b7384ec`；原透視source／真CI／cleanup／本機交付／accepted與194／195 Done閉包。新分支 `feat/lea134-firing-feel-adjustment`，正式目錄和舊工作樹由root guarded FF正常同步。
+
+候選新core、既有直接checks均作者actual exit0／ERROR0，diff-check通過；接手由非作者做同HEAD四車真viewport A/B與來源review、完整quality，不以作者證據代驗。之後root交Windows主圖F5／訓練場F6試玩；網路私CI不作preview前置。Short影格未取得，不稱精確復刻；235原UID／586 ignored素材保持，不外送，新Head私CI另需exacttuple，PR #128 grant不重用。
+
+以下原透視交接保留為歷史；舊「main dc885899／尚未upload」已由PR #128閉包取代。現況以頂部與ITERATION新輪為準。
+
+---
+
 目前原透視範圍已本機交付並人驗 `accepted`：leadi 2026-10-07 明示可以收尾，產品版為 `0d7b523922d8cc9654b4f4447006792e5e901b68`。最新同版證據與裁決見 [ITERATION 最新引用](ITERATION.md#2026-10-07-原透視範圍人驗-accepted-與交付邊界)，原產品 AC／ADR／術語見 [tank-occlusion.md](../features/tank-occlusion.md)。本機 accepted 與 GitHub 交付分開；下方 2026-10-06 舊候選／needs_changes 是歷史，不能當作目前待驗狀態。
 
 工單、負責人、依賴、工作範圍與共享進度查 [LEA-194](https://linear.app/leadingtw273/issue/LEA-194) 與 [LEA-195](https://linear.app/leadingtw273/issue/LEA-195) 的現役紀錄；2026-10-07 最新兩票均 Done，原透視範圍人驗 accepted，195 仍依賴 194；owner、AC 與原範圍不改。本入口不另建中央 journal 或進度狀態表。
@@ -78,3 +88,31 @@ writer 沒有 stage／commit、修改正式 Windows 預覽／235 UID／素材、
 本輪僅修已有 AC「實體模型＋真煙、排除 FX 面片」漏收的 `effect_mesh`，共用 collector 按既有群組略過 Mesh、仍遞迴 child；真模型 Quad／原世界 FX 與 Smoke 不動。根因及有限 Q1–Q3 作者證據見 [feature](../features/tank-occlusion.md#2026-10-07-灰殘骸煙上方矩形板回歸修正)，本機 `agent-team/tmp/tank-smoke-quad-20261007/writer/` 保存原紅燈 17 failures（16 實際反例＋1 測試 D）、最終兩關聯 checks exit 0，以及單台 tank2 真受損／死亡渲染。
 
 作者 GPU 原 raw exit 2 的唯一 D 為跨 stage 比較原煙啟動的 local_coords／seed，16 項產品量測 true，不稱 overall PASS；source 原 local_coords 設定與 restart 已讀回，沒有修改 FX／粒子。接手在本輪 `fresh/` 核對固定同 stage 的 source/base／穩定參數及 Q1–Q3；不能把作者畫面或量測敘事當 fresh 驗收。235 UID／586 素材 metadata 保持；writer 不 stage／commit／同步 M／外送或 CI，人驗 needs_changes，待 leadi 確認。
+
+
+## 訓練場建築淡出啟動候選（2026-10-07）
+
+當前沿 LEA-194、分支 `fix/lea194-training-occlusion-activation`，base `40c632f79dc4261a6d9d106608f03ae1368f27ff`；該版開砲已人驗 accepted，195 保持 Done。本輪 user 選接近真車體遮擋才淡出，共同5m核心＋2m外圈保留，替代舊預先淡出 P2。有限 A1–A4、完整玩家 sample gate、原 .18s amount 混合與九直接入口作者實跑 RC 0／ERROR 0 見 [feature](../features/tank-occlusion.md#2026-10-07-訓練場建築淡出啟動修正)；invalid/offscreen/behind-camera window 保持立即還原。原紅燈及 fixture D 均留存，不以作者結果代 fresh 驗收。
+
+接手核對 root 封存的同 HEAD／tree／來源 hash，再獨立來源、真圖形、完整品質與 guarded 正常 FF 試玩；本輪人驗 pending。僅改 controller、既有 tank occlusion smoke 及三份文件，無 shader／素材／模型／camera／fire／physics／UID 修改。236 UID 與 586 ignored 素材 metadata 保全；原 M／上一開砲工作樹／舊透視工作樹及 main/origin 不由作者更動，來源及私素材不外送，GitHub CI／merge 另按實際平台紀錄。
+
+
+## 2026-10-08 首發 FX 預初始化候選
+
+現役沿 LEA-134、`fix/lea134-firing-fx-prewarm`，base `acdedad63df538256b18d79e799aa43fd48e5117`；leadi 回覆「可」核可進場初始化與首發／後三發量測。固定 A1–A7、真授權、有限作者入口與 Windows F5／F6 在 [feature](../features/tank-firing-feel.md#2026-10-08-首發-fx-同步預初始化)，輪次在 [ITERATION](ITERATION.md#2026-10-08-lea-134-首發-fx-預初始化)。原開砲手感、建築過渡 accepted 與195 Done保留；本輪人驗 pending。
+
+只在共用 CombatRuntime ready 同步隱藏初始化四個純 FX wrapper 並 immediate free，source registration／換車／正式每發保持；不能稱 GPU pipeline 全暖或首發全面修復。作者四有限相關 checks actual exit 0／ERROR 0，既有 invalid ShotEvent fixture WARN 1 留存；原 baseline 紅燈與首輪 mapping／import raw errors 不隱去，本機 writer 保存 commands／logs／guards。原四樹／cache／userdata、236原UID／586素材metadata保持，沒有新UID。非作者最新 HEAD fresh／Windows Native startup＋一首發三暖發量測仍 pending，後續同版封存 artifact 與 Linear 是結果權威；未跑完整 CI，不預填 PASS。root 在無 blocker後 guarded 正常 FF 同步 M，作者不直接碰正式 source／original caches／236 UID／586 ignored素材 metadata，不 push／CI／merge main或外送素材。跨模型計畫外送被平台拒絕，已使用原生隔離 approve／0 blocker 替代並保留限制。
+
+
+## LEA-208：訓練場敵車選向 CPU 候選
+
+使用者已明確接受首發卡頓，原話及「訓練場」回覆見 [ITERATION](ITERATION.md#lea-208訓練場敵車轉角脫困選向成本修正)。新 `fix/lea208-ai-recovery-selection-cost` 基於 `b9a03acaa1c6e109b3a360f4fe5fbb94a56f87aa`；只作 typed radius、query-local 私有 ray parameters 與同 query driving preview 三項同義修正，保持原 AI collision／cap／horizon／微步／候選／terrain-first／drift 與已驗收首發、相機及透明過渡。
+
+接手查看本輪同 source 的作者四有限入口 logs／original algorithm oracle、Windows 原生 before／after 短窗與最新封存 HEAD fresh 審查，勿將作者自驗／20ms 上限／歷史完整 CI 當性能改善或新 gate PASS；原 fixture D 與失敗原文保留。Windows 有限 before／after 已由 root 讀回支持採用，數字與同 source tuple 保留於本機 receipt；ray parameters 重用沒有獨立量測收益宣稱。新增同義 smoke／terrain／continuation 均 exit 0／ERROR 0／WARN 0；escape handoff exit 1／ERROR 2，exact b9 baseline 同兩個 Mirror gun／hull fixture 失敗，按 root 裁決保留既有 backlog，不改 expected。fresh、正式本機 guarded FF 與 AI 人驗仍 pending，完整 CI 未跑。新的功能入口 `res://tests/ai_recovery_selection_cost_smoke.gd`；本機交付後開 `res://src/maps/training_ground/training_ground_playtest.tscn` F6，沿既有訓練場敵車轉角位置與移動測法驗證。來源／私素材不外送，不操作原 Windows editors／games，原 236 UID／586素材／工作樹／refs／cache／userdata 守衛保持。
+
+
+## 2026-10-08 三票 accepted 正式收尾
+
+使用者明示「可以，暫時沒問題了，請你做好收尾合併后關單」；產品人驗 accepted 與先前候選 pending 的歷史記錄分開。收尾只補新測試 companion UID、quality 的 AI 同義 smoke 與授權／人驗交接，保留已 accepted 產品 bytes、原 74 命令及平台必要 checks。新 HEAD 須獨立審查及真完整 quality，不以舊 CI 或作者有限 checks 代替。
+
+PR／CI／review／MERGED／main 以 [GitHub](https://github.com/leadingtw273/tank-skirmish) 真實同版讀回為準；三票 [134](https://linear.app/leadingtw273/issue/LEA-134)／[194](https://linear.app/leadingtw273/issue/LEA-194)／[208](https://linear.app/leadingtw273/issue/LEA-208) 合併成功後才關 Done，owner 保留。新 private CI 依 [runbook](../local-private-ci.md) 取得 exact tuple grant，不重用已耗用 grant；來源以外的私素材、畫面與本機 raw artifacts 不外送。escape fixture 原 baseline 同失敗保留為診斷 backlog，不改 expected；人驗 accepted 不等於必要平台 gate 已滿足。

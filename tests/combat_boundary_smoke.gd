@@ -9,6 +9,19 @@ const CombatRuntime := preload("res://src/combat/combat_runtime.gd")
 const TankProjectile := preload("res://src/combat/projectile.gd")
 const HealthComponent := preload("res://src/combat/damage/health_component.gd")
 const DamageReceiver := preload("res://src/combat/damage/damage_receiver.gd")
+const FIRING_VFX_PATHS := [
+	"res://src/vfx/muzzle/muzzle_flash_vfx.tscn", MUZZLE_SMOKE_VFX_PATH,
+	"res://src/vfx/projectiles/javelin_projectile_vfx.tscn", IMPACT_VFX_PATH,
+]
+
+var initialized_vfx: Array[int] = []
+var initialized_paths: Array[String] = []
+var initialization_visible := false
+var initialization_shots := 0
+var initialization_impacts := 0
+var startup_state: Dictionary = {}
+var startup_unchanged := false
+var startup_clean := false
 
 
 class TestShotSource extends Node3D:
@@ -24,8 +37,32 @@ func _init() -> void:
 		_fail("Combat boundary smoke could not load the main scene.")
 		return
 	var instance := packed_scene.instantiate()
+	var runtime := instance.get_node("CombatRuntime") as CombatRuntime
+	var initial_tank := instance.get_node("PlayerSpawnGroup/Tank")
+	initial_tank.shot_event_fired.connect(func(_event): initialization_shots += 1)
+	runtime.impact_resolved.connect(func(_event): initialization_impacts += 1)
+	initial_tank.ready.connect(func(): startup_state = _startup_snapshot(instance, initial_tank))
+	var observe := func(node: Node):
+		if runtime.is_ancestor_of(node) and node.scene_file_path in FIRING_VFX_PATHS:
+			initialized_vfx.append(node.get_instance_id())
+			initialized_paths.append(node.scene_file_path)
+			initialization_visible = initialization_visible or (node as Node3D).is_visible_in_tree()
+	node_added.connect(observe)
+	runtime.ready.connect(func():
+		startup_unchanged = startup_state == _startup_snapshot(instance, initial_tank)
+		startup_clean = runtime.get_child_count() == 2 \
+			and runtime.projectiles.get_child_count() == 0 and runtime.effects.get_child_count() == 0)
 	root.add_child(instance)
 	call_deferred("_validate", instance)
+
+
+func _startup_snapshot(instance: Node, tank: Node) -> Dictionary:
+	var donor: Node = tank.combat_tank
+	return {"health": tank.get_node("HealthComponent").current_health,
+		"cooldown": donor._fire_cooldown_remaining, "pending": tank._pending_shots.duplicate(),
+		"impulses": tank.recoil_application_count, "recoil": donor._firing_recoil_elapsed,
+		"muzzle": donor.muzzle_point.global_transform,
+		"camera": instance.get_node("PlayerSpawnGroup/CameraRig/CameraShakePivot").transform}
 
 
 func _validate(instance: Node) -> void:
@@ -37,6 +74,18 @@ func _validate(instance: Node) -> void:
 	if runtime == null or tank == null or player_runtime == null or projectiles == null or effects == null:
 		_fail("Combat boundary smoke requires the composed main-scene dependencies.")
 		return
+	if initialization_shots != 0 or initialization_impacts != 0 or initialization_visible \
+			or not startup_unchanged or not startup_clean or initialized_paths.size() != 4:
+		_fail("FX initialization must create four invisible wrappers without gameplay changes or retained children.")
+		return
+	for path in FIRING_VFX_PATHS:
+		if initialized_paths.count(path) != 1:
+			_fail("Each firing FX wrapper must initialize exactly once per CombatRuntime.")
+			return
+	for id in initialized_vfx:
+		if is_instance_id_valid(id):
+			_fail("All initialization-only FX must be synchronously freed before the playable frame.")
+			return
 	for property in player_runtime.get_property_list():
 		if property.get("name") == &"combat_runtime":
 			_fail("PlayerRuntime must not retain a CombatRuntime reference.")
@@ -60,6 +109,9 @@ func _validate(instance: Node) -> void:
 	var observed_shots: Array[ShotEvent] = []
 	tank.shot_event_fired.connect(func(shot_event: ShotEvent) -> void: observed_shots.append(shot_event))
 	runtime.register_shot_source(tank)
+	if initialized_paths.size() != 4:
+		_fail("Registering a shot source must not repeat firing FX initialization.")
+		return
 	tank.request_fire()
 	if observed_shots.size() != 1 or projectiles.get_child_count() != 1 or _count_named_children(effects, &"MuzzleSmokeVFX") != 1:
 		_fail("Each valid ShotEvent must create exactly one projectile and one MuzzleSmokeVFX.")
@@ -118,6 +170,7 @@ func _validate(instance: Node) -> void:
 	if projectiles.get_child_count() != 2 or _count_named_children(effects, &"MuzzleSmokeVFX") != 1:
 		_fail("A registered source must connect exactly once and create one projectile plus one MuzzleSmokeVFX.")
 		return
+	var wrapper_count_after_source_shot := initialized_paths.size()
 	runtime.unregister_shot_source(source)
 	source.publish(source_shot)
 	if projectiles.get_child_count() != 2 or runtime.get_registered_shot_sources() != [tank]:
@@ -129,6 +182,9 @@ func _validate(instance: Node) -> void:
 	await process_frame
 	if runtime.get_registered_shot_sources() != [tank]:
 		_fail("A released source must leave no CombatRuntime callback registration.")
+		return
+	if initialized_paths.size() != wrapper_count_after_source_shot:
+		_fail("Changing shot sources must preserve the single runtime initialization.")
 		return
 
 	var target := StaticBody3D.new()

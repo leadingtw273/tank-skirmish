@@ -157,3 +157,12 @@ leadi 2026-10-08 回覆「可」，核可進場特效初始化與真首發／後
 leadi 實測後明示「可以，暫時沒問題了，請你做好收尾合併后關單」，核可 LEA-134／194／208 正常 PR、最新 HEAD 驗證與獨立審查、符合既有平台條件的合併後關單。三票產品人驗 accepted；LEA-195 原 Done 保留，各票 owner 不變。範圍僅收尾已接受的發射／相機、玩家建築淡出、首發 FX 與 AI 選向同義成本修正，不新增玩法或調整物理參數。
 
 新增 AI 同義 smoke 的同名 Godot UID 納入來源，並將該 smoke 加入既有 quality 清單；原 74 命令、ERROR／exit 掃描、workflow 與必要 checks 保持。escape handoff 不在現行 quality 清單，exact b9 與候選同失敗的 fixture 證據保留為診斷 backlog，不改 expected 或聲稱 PASS。完整最新 quality／review／PR／merge／main 結果以 [GitHub](https://github.com/leadingtw273/tank-skirmish) 真實同版紀錄為準；[LEA-134](https://linear.app/leadingtw273/issue/LEA-134)、[LEA-194](https://linear.app/leadingtw273/issue/LEA-194)、[LEA-208](https://linear.app/leadingtw273/issue/LEA-208) 的工程狀態、owner 與正式交付由 Linear 讀回。合併真成功後才關三票，不預填 CI 綠燈或已合併。新私素材 CI 仍須 exact PR／HEAD／run／attempt grant，舊 grant 不重用。
+
+
+## 2026-10-08 LEA-209：主地圖空地草皮
+
+leadi 要求「主要地圖的建築與道路間小空地，以及建築群外露出的地面都補上草地」，並選定「偏自然的灰綠草地（建議）」。本輪只作主圖平面不透明草底；[LEA-209](https://linear.app/leadingtw273/issue/LEA-209/主地圖建築道路間與街區外空地補草皮) 已建立 In Progress／未指派，歷史 117／122／140／177 原狀且無 blocking 依賴，人驗 pending。基線 `main 590c80177125bd8f86acc273954d5f3d4b1d9d2d`，隔離分支 `feat/main-world-ground-grass`。
+
+封存 plan SHA-256 `23f12db1f907d7ec30f95bce28258f409c2a43678ac656c14eb0756f85c1220b` 的平台原生隔離第二模型審查 approve／0 blocker；Claude 外送被平台拒絕，沒有有效 Claude 結果或 source／素材外送。本機實作 GO 只含 GroundMaterial、自有世界 XZ 草皮 shader／必要 UID 與最小本輪文件；原地形／collision、道路／建築、玩法、正式相機／環境與必要平台 gate 保持。固定 F1–F3、兩個原 smoke、作者真原生 renderer 證據與 shutdown 限制見 [feature](../features/main-ground-grass.md)。
+
+237 原 UID／586 ignored 素材 metadata、正式 M／其他 refs／工作樹／cache 保全；新增 shader UID 明列。最新候選待 fresh-context 同版 source／有限真圖驗收，之後才由 root 正常 guarded FF 本機交付，leadi 色調／畫面人驗仍 pending。完整 quality／新 CI／PR／push／正式 GitHub merge 尚未執行，不以本機作者證據或歷史 PASS 代替。

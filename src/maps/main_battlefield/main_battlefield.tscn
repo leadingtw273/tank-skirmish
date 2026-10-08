@@ -44,9 +44,14 @@
 [ext_resource type="Texture2D" path="res://assets/BinbunSkies/textures/clouds/clouds_01.tres" id="42_i7060"]
 [ext_resource type="Texture2D" path="res://assets/BinbunSkies/textures/clouds/clouds_02.tres" id="43_mwgf4"]
 
-[sub_resource type="StandardMaterial3D" id="GroundMaterial"]
-albedo_color = Color(0.42, 0.26, 0.12, 1)
-roughness = 0.92
+[ext_resource type="Shader" path="res://src/maps/main_battlefield/ground_grass.gdshader" id="44_ground_grass"]
+
+[sub_resource type="ShaderMaterial" id="GroundMaterial"]
+shader = ExtResource("44_ground_grass")
+shader_parameter/grass_dark = Color(0.27, 0.36, 0.22, 1)
+shader_parameter/grass_light = Color(0.36, 0.43, 0.28, 1)
+shader_parameter/patch_size_meters = 12.0
+shader_parameter/roughness = 0.92
 
 [sub_resource type="BoxMesh" id="GroundMesh"]
 material = SubResource("GroundMaterial")

@@ -132,3 +132,10 @@ leadi 明確裁決：「可以，透視相關驗收通過，這張單可以收�
 leadi 對基線 `40c632f79dc4261a6d9d106608f03ae1368f27ff` 的開砲動效已 accepted，另選「接近實際車體遮擋時才平滑淡出（建議）」；LEA-194 重開、LEA-195 Done，R5＋outer2 保留。分支 `fix/lea194-training-occlusion-activation` 僅玩家啟動 gate／原 .18s amount 混合及必要測試、文件；本輪取代歷史預先淡出 P2，其他原 AC 不降低。鎖定 plan SHA-256 `c9c38f12ce7e989608ed90bf503e54d7a97f3316c9629adda23df875370229ab` 已原生 fresh 計畫審查 approve／0 blocker；外部計畫審查被平台拒絕，沒有有效 result，不重試外送。
 
 實作、有限 A1–A4 和作者九直接 smoke RC 0／ERROR 0 見 [feature](../features/tank-occlusion.md#2026-10-07-訓練場建築淡出啟動修正)。原紅燈與訓練 fixture D 保留，修正停用方式後十二點涵蓋實際外露／遮擋。invalid window 沿原立即還原；.18s 只用於有效窗內正常進出資格。保持 236 UID、586 ignored 私素材與既有開砲／敵方／physics。本輪來源待同 HEAD fresh 來源／圖形及完整品質讀回，leadi 人驗 pending；沒有新的 GitHub CI PASS 或公開交付宣稱。
+
+
+## 2026-10-08 LEA-134 首發 FX 預初始化
+
+leadi 2026-10-08 回覆「可」，核可進場特效初始化與真首發／後三發對照。root 已查共享 LEA-134 未指派、In Progress，同目標無新 owner 工作、open PR 0；沿原 134、保留已 accepted 的開砲手感與建築過渡、LEA-195 Done。固定 A1–A7／CPU 預初始化限制與本機入口見 [feature](../features/tank-firing-feel.md#2026-10-08-首發-fx-同步預初始化)。
+
+基線 `acdedad63df538256b18d79e799aa43fd48e5117`／tree `f971f91b16edc28d256b3e9ff5d202cdb29cba92`，新自有分支 `fix/lea134-firing-fx-prewarm`。sealed plan SHA-256 `8a65f598397faebbb0cd50d45bcba38c79c13e66925638db78229096109c2a27` 原生隔離審查 approve／0 blocker；外部計畫審查被平台拒絕，未重試，沒有跨模型有效結果或 source／素材外送。只改 CombatRuntime、既有 combat boundary smoke 與三份文件；不改 controller／scene／素材／cache／input／AI，不增 pool／await gate／viewport。作者四相關入口 actual exit 0／ERROR 0（既有 invalid ShotEvent fixture WARN 1 保留），新 combat assertions exact baseline 紅燈 exit 1／ERROR 1；首次 mapping ERROR 297 與一次候選 import 的 TCP ERROR 4 raw logs 留本機 writer，未冒稱完整 CI PASS。原四樹／cache／userdata 與候選236原UID／586素材metadata真guard保持，無新增UID。Windows 原生收益、最新 HEAD fresh、正式 M 交付及本輪人驗 pending；歷史 PASS 不代本輪證據。236 原 UID／586 ignored 素材 metadata、四個原工作樹／refs／Windows userdata 保全；新網路私 CI 與對外 source 操作不沿用舊 grant。

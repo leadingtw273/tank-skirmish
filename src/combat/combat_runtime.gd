@@ -6,6 +6,8 @@ class_name CombatRuntime
 const PROJECTILE_SCENE := preload("res://src/combat/projectile.tscn")
 const IMPACT_VFX_SCENE := preload("res://src/vfx/impacts/impact_explosion_vfx.tscn")
 const MUZZLE_SMOKE_VFX_SCENE := preload("res://src/vfx/muzzle/muzzle_smoke_vfx.tscn")
+const MUZZLE_FLASH_VFX_SCENE := preload("res://src/vfx/muzzle/muzzle_flash_vfx.tscn")
+const JAVELIN_VFX_SCENE := preload("res://src/vfx/projectiles/javelin_projectile_vfx.tscn")
 const TankProjectile := preload("res://src/combat/projectile.gd")
 const ShotEvent := preload("res://src/combat/shot_event.gd")
 const ImpactEvent := preload("res://src/combat/impact_event.gd")
@@ -46,8 +48,40 @@ func _ready() -> void:
 	if projectiles == null or effects == null:
 		push_error("CombatRuntime requires injected Projectiles and Effects containers.")
 		return
+	_preinitialize_firing_vfx()
 	for shot_source in shot_sources:
 		register_shot_source(shot_source)
+
+
+func _preinitialize_firing_vfx() -> void:
+	## 只提前局部 CPU 端的場景／材質／播放初始化；隱藏物件未繪製，不保證 GPU pipeline 已預熱。
+	## ready 在來源註冊前同步做一次，換車只重新接線，不建立戰鬥 Projectile 或發出遊戲事件。
+	var hidden_root := Node3D.new()
+	hidden_root.visible = false
+	var flash := MUZZLE_FLASH_VFX_SCENE.instantiate() as Node3D
+	var smoke := MUZZLE_SMOKE_VFX_SCENE.instantiate() as Node3D
+	var javelin := JAVELIN_VFX_SCENE.instantiate() as Node3D
+	var impact := IMPACT_VFX_SCENE.instantiate() as Node3D
+	for vfx in [flash, smoke, javelin, impact]:
+		vfx.visible = false
+		hidden_root.add_child(vfx)
+	for vfx in [flash, javelin, impact]:
+		## 避免 vendor ready 自動播放；one_shot 排除 play 的 await／循環分支。
+		vfx.set("one_shot", true)
+		vfx.set("autoplay", false)
+	var smoke_particles := smoke.get_node("SmokeBigVFX_01/Smoke") as GPUParticles3D
+	var smoke_material := smoke_particles.process_material.duplicate(true) as ParticleProcessMaterial
+	smoke_material.direction = Vector3.RIGHT
+	smoke_particles.process_material = smoke_material
+	smoke_particles.one_shot = true
+	smoke.scale = Vector3.ONE * muzzle_smoke_scale
+	add_child(hidden_root)
+	_apply_impact_vfx_scale(impact, impact_vfx_scale)
+	for vfx in [flash, javelin, impact]:
+		vfx.call("play")
+	smoke_particles.restart()
+	## 同步返回前釋放所有粒子、網格、燈與 decal；沒有計時器或可操作影格殘留。
+	hidden_root.free()
 
 
 ## 回傳目前註冊來源的快照；修改回傳陣列不會影響執行期 registry。

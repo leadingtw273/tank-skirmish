@@ -43,3 +43,28 @@ hull 機械 anchor 查詢先移除本輪 HullVisual render 變換，再沿原 le
 候選先由非作者按 F1–F4 做同 HEAD 真 viewport A/B 與來源 review，再由 root 依既有 guarded FF 正常交付 Windows 主圖 F5／訓練場 F6 試玩。最新版本、實際 quality／平台 gate 與人驗結果在交付時讀回，不預填 PASS。
 
 586 私素材只依既有 lock 清單作本機 ignored 輸入，235 原 UID metadata 保持；來源普通 PR／合併依已核可輪次與真實 gate，不 bypass。新 Head 網路私 CI 仍需 exact PR／Head／run／attempt 授權，PR #128 grant 已耗用，不能冒用；網路私 CI 不是本機 preview 的前置。未授權外送素材／截圖、公開發行或修改 protected settings、project.godot、workflow、asset lock。
+
+
+## 2026-10-08 首發 FX 同步預初始化
+
+leadi 回覆「可」，核可進場時先初始化發射特效，並比較真首發與後三發。本輪沿 LEA-134、分支 `fix/lea134-firing-fx-prewarm`，基線 `acdedad63df538256b18d79e799aa43fd48e5117`／tree `f971f91b16edc28d256b3e9ff5d202cdb29cba92`。sealed plan SHA-256 `8a65f598397faebbb0cd50d45bcba38c79c13e66925638db78229096109c2a27` 經原生隔離計畫審查 approve／0 blocker；跨模型外部審查曾被平台拒絕，未重試或外送來源、素材。原開砲手感與建築過渡的人驗 accepted 保留，本輪首發改善人驗 pending。
+
+CombatRuntime 在 ready 容器檢查後、註冊 shot source 前同步建立一次純 flash、smoke、javelin VFX、impact wrapper。暫時父節點與四個 wrapper 進樹前即隱藏；controller 設 one_shot／停用 autoplay 後同步初始化、播放並立即 free。smoke 使用本次複製的 process material，impact 沿既有 scale helper；沒有真正戰鬥 Projectile、射擊／命中 handler、計時器或延至玩家可操作影格的節點。正常換車只重新接線；每發仍用原材質複製、尺寸、restart／play 與清理，砲管 0.45m、車體 0.22m、鏡頭 0.2m 與原 duration 保持。
+
+本選項只提前部分 CPU 首用工作。隱藏 FX 未繪製，不能宣稱 GPU draw pipeline 全部預熱、首發尖峰消失，亦不能以 headless／fixed-fps 當性能證據；不新增 await 屏障、輸入／AI gate、loading UI、SubViewport、pool、logger 或磁碟／引擎 cache 管理。
+
+| AC | 本輪有限判定 |
+| --- | --- |
+| A1 | ready 不發 shot／impact，不改 HP、cooldown、pending physics、recoil、camera，不生成真 Projectile；預初始化全程不可見、無聲，無 FX／燈／decal／timer 殘留。 |
+| A2 | 每 CombatRuntime 一次；四車共用四種 FX，換車不重做，主圖／訓練場原組裝與 source 接線保持。 |
+| A3 | 正式每發的原 call、material、scale、restart／play、傷害／瞄準／impulse／cooldown 與 0.45／0.22／0.2 保持。 |
+| A4 | 同 Windows 原生 GPU／renderer／viewport／helper 下，一首發與三暖發全部有效；記 startup、同步與逐 frame wall time、pipeline counters、impact 時序及原 FX。 |
+| A5 | 分開報同步成本與 render 尖峰；若未改善或只有部分改善如實記錄，不盲加架構或測量矩陣。 |
+| A6 | M／N2／N1／old、既有 refs、236 UID、586 ignored 私素材 metadata 與原 Windows userdata 保持；只提交明列 source／測試／文件。 |
+| A7 | 最新封存 HEAD 非作者 fresh-context 來源與相關實跑驗收；無 blocker 後由 root guarded 正常 FF 至 M，供 Windows F6 人驗。 |
+
+直接作者入口為 pinned Godot 4.7.1 的 `--headless --path <repo> --script res://tests/combat_boundary_smoke.gd`；擴充既有 smoke 觀察四個不可見 wrapper、同步釋放與 ready 前後 HP／cooldown／pending／recoil／muzzle／camera、shot／impact，以及 source 重新註冊不重做。另跑既有 firing visual recoil、combat／projectile 相關有限入口與 source／diff-check；作者四入口 `combat_boundary_smoke`、`firing_visual_recoil_smoke`、`smoke`、`enemy_combat_smoke` 均 actual exit 0／ERROR 0，完整 CI 未執行。`smoke` 留 WARN 1，來自既有 camera invalid ShotEvent fixture 的非有限 Vector3；其餘 WARN 0。新 combat assertions 套 exact 基線 production 出現 actual exit 1／ERROR 1 的四 wrapper 缺口，候選還原後通過。首次候選缺 road PNG import mapping 的 raw exit 0／ERROR 297 不算 PASS；只在自有工作樹 import 一次後修正，import 本身 raw exit 0／ERROR 4 為受限 sandbox editor TCP listener，完整 log 保留。
+
+Windows 原生量測與 fresh-context 驗收尚 pending；後續同 HEAD 封存 artifact、Linear 真實讀回是結果權威，不將作者自驗稱獨立 PASS。交付後 Godot 開 `project.godot`，主圖 F5、`res://src/maps/training_ground/training_ground_playtest.tscn` F6；先看啟動無特效，再實際一首發＋三暖發，觀察四車正常 FX、手感與 startup 成本。尚未 guarded FF 前，正式 M 保持基線。私素材不提交／外送，新網路 CI、push／PR／merge 仍依各自真實授權及平台 gate。
+
+作者保全讀回：原 M／N2／N1／old 的 HEAD／tree／source／status／refs／原 caches 與 Windows userdata 未改；候選 236 原 UID、586 私素材的 bytes／mode／uid／gid／mtime 與原輸入一致，沒有新增 generated UID。作者 logs／checks／guards 留於本機 `agent-team/tmp/tank-firing-prewarm-20261008/writer/`；這是作者有限證據，不能替代 A4／A5 性能或 A7 fresh 驗收。

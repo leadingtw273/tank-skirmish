@@ -95,3 +95,10 @@ writer 沒有 stage／commit、修改正式 Windows 預覽／235 UID／素材、
 當前沿 LEA-194、分支 `fix/lea194-training-occlusion-activation`，base `40c632f79dc4261a6d9d106608f03ae1368f27ff`；該版開砲已人驗 accepted，195 保持 Done。本輪 user 選接近真車體遮擋才淡出，共同5m核心＋2m外圈保留，替代舊預先淡出 P2。有限 A1–A4、完整玩家 sample gate、原 .18s amount 混合與九直接入口作者實跑 RC 0／ERROR 0 見 [feature](../features/tank-occlusion.md#2026-10-07-訓練場建築淡出啟動修正)；invalid/offscreen/behind-camera window 保持立即還原。原紅燈及 fixture D 均留存，不以作者結果代 fresh 驗收。
 
 接手核對 root 封存的同 HEAD／tree／來源 hash，再獨立來源、真圖形、完整品質與 guarded 正常 FF 試玩；本輪人驗 pending。僅改 controller、既有 tank occlusion smoke 及三份文件，無 shader／素材／模型／camera／fire／physics／UID 修改。236 UID 與 586 ignored 素材 metadata 保全；原 M／上一開砲工作樹／舊透視工作樹及 main/origin 不由作者更動，來源及私素材不外送，GitHub CI／merge 另按實際平台紀錄。
+
+
+## 2026-10-08 首發 FX 預初始化候選
+
+現役沿 LEA-134、`fix/lea134-firing-fx-prewarm`，base `acdedad63df538256b18d79e799aa43fd48e5117`；leadi 回覆「可」核可進場初始化與首發／後三發量測。固定 A1–A7、真授權、有限作者入口與 Windows F5／F6 在 [feature](../features/tank-firing-feel.md#2026-10-08-首發-fx-同步預初始化)，輪次在 [ITERATION](ITERATION.md#2026-10-08-lea-134-首發-fx-預初始化)。原開砲手感、建築過渡 accepted 與195 Done保留；本輪人驗 pending。
+
+只在共用 CombatRuntime ready 同步隱藏初始化四個純 FX wrapper 並 immediate free，source registration／換車／正式每發保持；不能稱 GPU pipeline 全暖或首發全面修復。作者四有限相關 checks actual exit 0／ERROR 0，既有 invalid ShotEvent fixture WARN 1 留存；原 baseline 紅燈與首輪 mapping／import raw errors 不隱去，本機 writer 保存 commands／logs／guards。原四樹／cache／userdata、236原UID／586素材metadata保持，沒有新UID。非作者最新 HEAD fresh／Windows Native startup＋一首發三暖發量測仍 pending，後續同版封存 artifact 與 Linear 是結果權威；未跑完整 CI，不預填 PASS。root 在無 blocker後 guarded 正常 FF 同步 M，作者不直接碰正式 source／original caches／236 UID／586 ignored素材 metadata，不 push／CI／merge main或外送素材。跨模型計畫外送被平台拒絕，已使用原生隔離 approve／0 blocker 替代並保留限制。

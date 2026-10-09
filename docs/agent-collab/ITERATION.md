@@ -173,3 +173,9 @@ leadi 要求「主要地圖的建築與道路間小空地，以及建築群外�
 leadi 指定使用既有 BinbunGrass，沿用自然灰綠配色與 LEA-209，人驗 pending。基線為已交付草底 `07249fea`；新隔離分支 `feat/lea209-binbun-grass`，正式 preview、main／origin/main 與其他作者來源保持。v2 plan SHA-256 `efebd118098b301b0aa838eda051d38025c66b271d59886cf3a248f001ec9209` 與有限校準附錄 `a61014a6da5b869e2172ab78f9fd07de051b6a2caf0ac537767f80d7a42ad343` 經平台原生第二模型 approve／0 blocker，root 明確 GO；沒有有效 Claude 外送結果。
 
 最終只新增 GrassField 生成 script／UID、自有 Binbun material 與必要 scene refs；Quad 0.6×0.9m／center.y0.45、內格 jitter±1.4m／各軸首末±0.5m。來源 PNG／shader、草叢間低飽和灰綠色差、seed、候選上限與 1m 排除保持。作者最終 F1–F4 同鏡頭真原生 A/B 與兩原 smoke actual exit0，原 shutdown cleanup raw 保留；初輪圖未覆寫。實際參數、403320 株與有限證據入口見 [feature](../features/main-ground-grass.md#本輪-binbungrass-草株)。fresh-context 與正式本機同步由 root 後續執行；不代替 leadi 親測。
+
+## 2026-10-09 LEA-209：demo 密草與風動
+
+leadi 提供 MF5mbh／Z3QuLY demo 並要求主圖草地接近它，仍沿LEA-209與自然灰綠裁決；root封閉GO只含草株script／自有material及本feature／ITERATION／HANDOFF。計畫SHA-256 `d872296f3f79bfd31431ea526cadae9faedabd71a1310291d686b82c9ac7b314` 原生隔離review approve／0 blocker；沒有來源／素材外送或Claude／Gemini有效結果。Base為本機 `cc21ff8`，隔離W正常分支 `feat/lea209-grass-demo`；main／origin仍590c801，正式M與原未提交工作保持。
+
+固定範圍是全floor底草與排除算法保持、相機附近32m／9×9／0.5m密草有界分批更新、原wind uniform與自有獨立noise；完整scope／初始化補齊取捨與有限AC見 [feature](../features/main-ground-grass.md#2026-10-09-demo-密草與風動續輪)。作者本機真Forward+圖／GIF、外區返回／inset／排除與有限frame成本、兩原smoke證據存N7；fixture D及舊renderer shutdown raw保留，最新actual結果依receipts讀回，非完整CI或gameplay benchmark。239原UID、586私素材hash／metadata／ignored與玩法逐檔保持；沒有scene／來源素材／碰撞／AI／透視／相機／光照調整。最新source待fresh-context有限工程驗收及root guarded FF至本機playtest；leadi F8/F5人驗pending，不push／改main／關單。

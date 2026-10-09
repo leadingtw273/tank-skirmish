@@ -1,5 +1,7 @@
 # 一次接手入口
 
+最新 LEA-209 demo 續輪從本機 `cc21ff8`／隔離 `feat/lea209-grass-demo` 開發；root 對 sealed plan `d872296f3f79bfd31431ea526cadae9faedabd71a1310291d686b82c9ac7b314` 明確 GO，原生plan review approve／0 blocker。保留全floor底草／排除凸包，新增相機落地中心附近有界32m密草與原uniform風動；初始化分批補齊、無相機base-only。範圍與本機作者真圖、動態GIF、兩原smoke、fixture D／shutdown限制見 [最新feature](../features/main-ground-grass.md#2026-10-09-demo-密草與風動續輪)。最新source尚待fresh與root guarded本機交付、人驗pending；不沿用下方歷史PASS代新版驗收、不push／CI／關單。
+
 目前 LEA-209 續輪依 leadi 指定真實使用 BinbunGrass，基於本機灰綠草底 `07249fea`、隔離分支 `feat/lea209-binbun-grass`。原生 v2 與最後有限校準審查 approve／0 blocker；Quad 0.6×0.9m、內格 jitter±1.4m／各軸首末±0.5m，來源素材與 shader、灰綠 palette、排除算法保持。最新四視角與兩原 smoke actual exit0；真實 counts／退出 cleanup 限制／本機 receipts 入口見 [feature](../features/main-ground-grass.md#本輪-binbungrass-草株)。候選待 fresh-context 與 root guarded 本機交付，leadi 親測 pending。下方歷史輪次保留。
 
 現役輪次為 [已驗收三票正式收尾](ITERATION.md#2026-10-08-已驗收三票正式收尾)：LEA-134 發射／首發、LEA-194 建築淡出與 LEA-208 訓練場 AI 修正均已由 leadi 人驗 accepted，並明示要求正常合併後關單；LEA-195 原 Done 保留。最新 HEAD 的完整 quality、獨立審查與正式 PR／merge 尚須依平台真實結果完成。

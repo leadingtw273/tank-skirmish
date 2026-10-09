@@ -2,6 +2,16 @@
 
 leadi 要求主地圖建築與道路間的小空地，以及建築群外露地面補草地，並於 2026-10-08 選定「偏自然的灰綠草地（建議）」。工單為 [LEA-209](https://linear.app/leadingtw273/issue/LEA-209/主地圖建築道路間與街區外空地補草皮)，人驗 pending。
 
+## 2026-10-09 demo 密草與風動續輪
+
+leadi 提供兩段 BinbunGrass demo，要求接近連續密草與成片風動。本輪從本機 `cc21ff8` 的隔離 W／`feat/lea209-grass-demo` 續修；封存計畫 SHA-256 `d872296f3f79bfd31431ea526cadae9faedabd71a1310291d686b82c9ac7b314` 經原生隔離 plan review approve／0 blocker，root 明確 GO。沒有 Claude／Gemini 外送或可確認的跨模型結果。
+
+原 1920m floor、403320 株／225 個 128m 底草 chunks、388 個道路／建築 world-XZ 凸包外擴 1m 排除與 seed 保持。相機中心射線落地點附近另有 32m／0.5m 格距、jitter±0.2m、Quad0.8×1.0m 的 9×9 detail tiles；最多81 tiles／331776候選，每幀1024候選且最多一次4096株buffer提交，跨32m才調整有界佇列、優先中心、離區釋放與取消過期工作。根部保持1m floor inset，無相機的直接地圖 smoke 只留底草。初始化允許分批補齊，沒有碰撞／踩壓、每株節點或玩法變更。
+
+自有材質使用原來源 shader 的 wind_velocity=(1.2,0.6)，獨立256px seamless wind noise／FastNoiseLite frequency0.08；灰綠palette為(0.25,0.34,0.20)至(0.40,0.48,0.30)，alpha_mode2與原shape保持。Base／detail保守bounds含風位移；PNG、來源 shader、UID、scene、相機、光照、道路／建築素材保持。
+
+本機作者有限證據保存在 `agent-team/tmp/tank-grass-demo-20261009/`：同正式相機F1/F2/F4、外區(400,400)、四個秒級風動PNG、真render連續風GIF、移動frame／batch成本、返回buffer一致與全detail根排除／inset讀回。首輪fixture提前等待及次輪DONE字串format ERROR原raw保留；修正只在本機驗證fixture，不改AC或玩法。最新兩原smoke、renderer runtime／既有2ERROR+1WARN shutdown分類以本輪actual receipts為準。這是作者有限工程證據，沒有完整gameplay／跨硬體性能承諾、GitHub／CI／關單或本輪人驗accepted；fresh與root guarded本機交付另讀回。
+
 
 ## 本輪 BinbunGrass 草株
 

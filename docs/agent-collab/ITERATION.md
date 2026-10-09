@@ -1,3 +1,17 @@
+# 2026-10-09 LEA-209 出生庭院草場續修
+
+leadi 新裁決：全地圖大量生成有效能問題；先只鋪主世界坦克出生的空地，草須自然綿延交接。沿同票修正，尚待本機獨立工程驗收與 leadi 實測，不沿用前版人驗或 CI 結果。
+
+本版固定 `Rect2(-116,-115,25,24)`，實車出生 `(-108,0,-106)`；0.2m 格距、±0.08m 抖動、seed117，15,000 候選經既有道路／建築世界 XZ 凸包外擴1m排除。一次性單一 MultiMesh，移除全地圖底草、視野細節tile與每幀生成。Quad 0.4×0.4m、subdiv2/2、centerY0.2，原四形atlas／billboard及平滑alpha，wind(0.6,0.3)。出生patch的無碰撞PlaneMesh與草葉共用同noise／palette／原demo受光算法；其餘floor材質保持。
+
+免費原source atlas只是新增一個ignored本機CC0輸入，原586私素材與239原UID保持；shader/PNG來源不修改，atlas不Git／不外送。正常來源分支 `feat/lea209-spawn-grass`，基線 `3e88ec173e30b452df43749230ad4aba2c2148b4`。本輪不push、PR、網路CI或關票；本機FF由獨立驗收後交付處理。
+
+作者同source有限證據：WinGodot4.7.1／Forward+，15,000候選、11,820株、單一MultiMesh、生成7ms；草根出界0／獨立凸包重建排除反例0、無每幀process，共用noise／palette讀回true。F1／F4與32幀2.56秒wind已實拍，兩原smoke actual exit0且無ERROR/WARN；圖形runtime的WASAPI與退出RID清理訊息與基線相同。此為作者證據，獨立驗收與leadi人驗仍pending。
+
+以下前版記錄保留作歷史，不當作本版PASS。
+
+---
+
 # 2026-10-07 LEA-134 發射手感續調
 
 狀態：LEA-134 發射手感／首發、LEA-194 建築淡出與 LEA-208 訓練場 AI 修正均已由 leadi 實測 accepted；本輪進行正常正式收尾。最新 HEAD 的必要 CI、獨立審查、PR 與合併仍須依 GitHub 實況完成，不沿用歷史 PASS。

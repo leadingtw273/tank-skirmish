@@ -20,3 +20,5 @@ src/world/buildings/quaternius/collisions/
 src/world/buildings/quaternius/items/
 artifacts-local/
 __pycache__/
+/assets/BinbunGrass/texture/grass_basic_atlas.png
+/assets/BinbunGrass/texture/grass_basic_atlas.png.import

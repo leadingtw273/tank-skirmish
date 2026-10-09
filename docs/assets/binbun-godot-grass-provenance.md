@@ -36,3 +36,9 @@ ground. Scene-specific road corridors and the existing building collision boxes
 plus a 0.5-meter clearance are excluded; other ground remains grass-covered and
 driveable. The source shader is used unmodified; its animated wind texture receives
 a non-zero velocity from the scene material.
+
+## 2026-10-09 local source atlas input
+
+出生庭院改用免費 demo 的四形 atlas；不使用或聲稱具有付費 Full 的14形狀／10 presets。原樣 `copy2` 自既有 cache `source/assets/BinbunGrass/src/texture/basic/grass_basic_atlas.png`，本機目的為 `assets/BinbunGrass/texture/grass_basic_atlas.png`；SHA-256 `73471dd753dc80b141dc1b958a834107205c23d7982fc6b01319921128b73995`。來源 archive／作者／CC0 授權沿上方已驗證紀錄。atlas 與 Godot `.import` sidecar 精確 ignored，不提交或外送。它是新增一個CC0本機輸入，與保留不變的586私素材分開計數。
+
+原 demo `main.tscn` 為20×20m／10,000株、Quad0.4×0.4、subdiv2/2、centerY0.2；原材 billboard／atlas true、Dithered1（0.4–0.6），地葉共用同noise／palette／light。此版Smooth0與wind(0.6,0.3)是本輪平滑與動畫需求的自有材質選擇；原shader／PNG不改。出生地面使用project-owned `spawn_grass_ground.gdshader` 配對原grass light，兩材共享同一NoiseTexture／GradientTexture，不改原floor。

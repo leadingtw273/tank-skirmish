@@ -1,8 +1,16 @@
+# 2026-10-12 草地人驗 accepted；雨天近夜晚續輪
+
+leadi 明示接受本機草地版本 `d5d7ef69`；LEA-209 已讀回人驗 accepted 評論，原工程驗收與本機交付證據保留於 `/home/markchou/evidence/retained-project-data-20261012/tank-grass-wall-20261012/`。GitHub main 尚未包含本機草地續修，不以人驗代替 CI／merge。
+
+本輪新增主地圖雨天近夜晚暖路燈；可撞倒即熄、推動、5 秒後開始淡出。新輪程式尚未實作／验收，產品人驗 pending；既有證據路徑搬遷修改正常保存，不覆寫或回退。
+
+---
+
 # 2026-10-12 LEA-209 牆邊草留白修正
 
 leadi 確認牆邊只見建築與地面、分界太明確；本輪沿既有自然銜接 AC 修正。建築 XZ 凸包排除距離由 1m 改為 0.15m，道路保留 1m；草型、密度／seed、材質受光／深度／風動與玩法保持。
 
-作者同版 WinGodot4.7.1／Forward+，同 F4 相機實拍：出生 11820→12494 株，庭院樣本最近草根至低層外緣 1.0208→0.1551m；60m 方框檢查 24301→29244 根，道路 1m／建築原凸包內／樣本建築 0.15m 排除反例均 0。兩原 smoke actual exit0、ERROR／WARNING0；圖形退出兩版同有既有 RID 清理訊息。證據在本機 `agent-team/tmp/tank-grass-wall-20261012/{baseline,candidate}`，不是完整 benchmark 或新版人驗。
+作者同版 WinGodot4.7.1／Forward+，同 F4 相機實拍：出生 11820→12494 株，庭院樣本最近草根至低層外緣 1.0208→0.1551m；60m 方框檢查 24301→29244 根，道路 1m／建築原凸包內／樣本建築 0.15m 排除反例均 0。兩原 smoke actual exit0、ERROR／WARNING0；圖形退出兩版同有既有 RID 清理訊息。證據在本機 `/home/markchou/evidence/retained-project-data-20261012/tank-grass-wall-20261012/{baseline,candidate}`，不是完整 benchmark 或新版人驗。
 
 候選 `fix/lea209-grass-wall-gap` 待 fresh-context 同 Head 驗收與 root 正常本機 FF；沒有 push／PR／CI／關票或來源／私圖外送。以下為前輪紀錄。
 
@@ -123,7 +131,7 @@ writer 沒有 stage／commit、修改正式 Windows 預覽／235 UID／素材、
 
 ## 灰殘骸矩形 FX 板本機回歸（2026-10-07）
 
-本輪僅修已有 AC「實體模型＋真煙、排除 FX 面片」漏收的 `effect_mesh`，共用 collector 按既有群組略過 Mesh、仍遞迴 child；真模型 Quad／原世界 FX 與 Smoke 不動。根因及有限 Q1–Q3 作者證據見 [feature](../features/tank-occlusion.md#2026-10-07-灰殘骸煙上方矩形板回歸修正)，本機 `agent-team/tmp/tank-smoke-quad-20261007/writer/` 保存原紅燈 17 failures（16 實際反例＋1 測試 D）、最終兩關聯 checks exit 0，以及單台 tank2 真受損／死亡渲染。
+本輪僅修已有 AC「實體模型＋真煙、排除 FX 面片」漏收的 `effect_mesh`，共用 collector 按既有群組略過 Mesh、仍遞迴 child；真模型 Quad／原世界 FX 與 Smoke 不動。根因及有限 Q1–Q3 作者證據見 [feature](../features/tank-occlusion.md#2026-10-07-灰殘骸煙上方矩形板回歸修正)，本機 `/home/markchou/evidence/retained-project-data-20261012/tank-smoke-quad-20261007/writer/` 保存原紅燈 17 failures（16 實際反例＋1 測試 D）、最終兩關聯 checks exit 0，以及單台 tank2 真受損／死亡渲染。
 
 作者 GPU 原 raw exit 2 的唯一 D 為跨 stage 比較原煙啟動的 local_coords／seed，16 項產品量測 true，不稱 overall PASS；source 原 local_coords 設定與 restart 已讀回，沒有修改 FX／粒子。接手在本輪 `fresh/` 核對固定同 stage 的 source/base／穩定參數及 Q1–Q3；不能把作者畫面或量測敘事當 fresh 驗收。235 UID／586 素材 metadata 保持；writer 不 stage／commit／同步 M／外送或 CI，人驗 needs_changes，待 leadi 確認。
 

@@ -1,8 +1,16 @@
+# 2026-10-12 草地人驗 accepted；雨天近夜晚續輪
+
+leadi 明示接受本機草地版本 `d5d7ef69`；LEA-209 已讀回人驗 accepted 評論，原工程驗收與本機交付證據保留於 `/home/markchou/evidence/retained-project-data-20261012/tank-grass-wall-20261012/`。GitHub main 尚未包含本機草地續修，不以人驗代替 CI／merge。
+
+本輪新增主地圖雨天近夜晚暖路燈；可撞倒即熄、推動、5 秒後開始淡出。新輪程式尚未實作／验收，產品人驗 pending；既有證據路徑搬遷修改正常保存，不覆寫或回退。
+
+---
+
 # 2026-10-12 LEA-209 牆邊草留白修正
 
 leadi 確認牆邊只見建築與地面、分界太明確；本輪沿既有自然銜接 AC 修正。建築 XZ 凸包排除距離由 1m 改為 0.15m，道路保留 1m；草型、密度／seed、材質受光／深度／風動與玩法保持。
 
-作者同版 WinGodot4.7.1／Forward+，同 F4 相機實拍：出生 11820→12494 株，庭院樣本最近草根至低層外緣 1.0208→0.1551m；60m 方框檢查 24301→29244 根，道路 1m／建築原凸包內／樣本建築 0.15m 排除反例均 0。兩原 smoke actual exit0、ERROR／WARNING0；圖形退出兩版同有既有 RID 清理訊息。證據在本機 `agent-team/tmp/tank-grass-wall-20261012/{baseline,candidate}`，不是完整 benchmark 或新版人驗。
+作者同版 WinGodot4.7.1／Forward+，同 F4 相機實拍：出生 11820→12494 株，庭院樣本最近草根至低層外緣 1.0208→0.1551m；60m 方框檢查 24301→29244 根，道路 1m／建築原凸包內／樣本建築 0.15m 排除反例均 0。兩原 smoke actual exit0、ERROR／WARNING0；圖形退出兩版同有既有 RID 清理訊息。證據在本機 `/home/markchou/evidence/retained-project-data-20261012/tank-grass-wall-20261012/{baseline,candidate}`，不是完整 benchmark 或新版人驗。
 
 候選 `fix/lea209-grass-wall-gap` 待 fresh-context 同 Head 驗收與 root 正常本機 FF；沒有 push／PR／CI／關票或來源／私圖外送。以下為前輪紀錄。
 
@@ -156,7 +164,7 @@ leadi 要求死敵保留透視、含真煙改淡灰，並回報訓練場玩家�
 
 leadi 明確裁決：「可以，透視相關驗收通過，這張單可以收尾」。目前 Windows 可見產品版 `0d7b523922d8cc9654b4f4447006792e5e901b68`（tree `9c847ff1f2fa4bccf262b3178f3a8d47b8fcc4a4`，source SHA-256 `54082c9485679759d35f36244ea0d22bf45af781de12277d01f62346dace76d9`）的玩家／敵人透視、玩家外側 2m 漸變、灰色殘骸及真煙已 accepted。[LEA-194](https://linear.app/leadingtw273/issue/LEA-194)／[LEA-195](https://linear.app/leadingtw273/issue/LEA-195) 最新權威讀回皆 Done，owner、原 AC、194 blocks 195、歷史 needs_changes 與失敗紀錄原樣保留。
 
-本機證據根目錄為 `agent-team/tmp/tank-player-wreck-occlusion-20261007/`：`fresh/report-final.json` 的同版 W1–W5 有限驗收成立，完整 tank／enemy smoke 各 exit 0、script／runtime frame errors 0；正常訓練死亡→三秒重生 GPU exit 0，已知兩條 shutdown D 與 RID warning 保留，不稱乾淨 error log 或新完整 quality PASS。`preview/ff-sync-readback.json` 核對 Windows 本機正常 FF 與 235 UID／586 素材 metadata；`closure/human-acceptance-readback.json` 為此次 leadi 裁決與兩票讀回 PASS。b876 exit 0／兩條 SCRIPT ERROR 的 A/W3 原始假綠及其他 D 未刪除。
+本機證據根目錄為 `/home/markchou/evidence/retained-project-data-20261012/tank-player-wreck-occlusion-20261007/`：`fresh/report-final.json` 的同版 W1–W5 有限驗收成立，完整 tank／enemy smoke 各 exit 0、script／runtime frame errors 0；正常訓練死亡→三秒重生 GPU exit 0，已知兩條 shutdown D 與 RID warning 保留，不稱乾淨 error log 或新完整 quality PASS。`preview/ff-sync-readback.json` 核對 Windows 本機正常 FF 與 235 UID／586 素材 metadata；`closure/human-acceptance-readback.json` 為此次 leadi 裁決與兩票讀回 PASS。b876 exit 0／兩條 SCRIPT ERROR 的 A/W3 原始假綠及其他 D 未刪除。
 
 本機產品已交付，人驗與兩票可收尾；GitHub main 仍 dc885899、open PR 0，本輪 source 尚未 upload／merge。後續來源對外 upload／review 須取得 exact source 範圍授權，新私素材 CI 須另列 exact PR／Head／run／attempt；舊 plan-only grant 已耗用，不能涵蓋 source／PNG／私素材。原 required quality／review 與正常 merge gate 保留，不以本機 accepted 宣稱 GitHub 交付完成。
 

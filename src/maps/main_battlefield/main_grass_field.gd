@@ -6,7 +6,8 @@ const GRID_STEP := 0.2
 const GRID_COLUMNS := 125
 const GRID_ROWS := 120
 const JITTER := 0.08
-const CLEARANCE := 1.0
+const ROAD_CLEARANCE := 1.0
+const BUILDING_CLEARANCE := 0.15
 const ROOT_HEIGHT := 0.01
 const SEED := 117
 const CHUNK_SIZE := 16.0
@@ -62,8 +63,8 @@ var last_refresh_usec := 0
 
 func _ready() -> void:
 	var started := Time.get_ticks_msec()
-	_collect_footprints(get_parent().get_node("Roads"))
-	_collect_footprints(get_parent().get_node("Buildings"))
+	_collect_footprints(get_parent().get_node("Roads"), ROAD_CLEARANCE)
+	_collect_footprints(get_parent().get_node("Buildings"), BUILDING_CLEARANCE)
 	var random := RandomNumberGenerator.new()
 	random.seed = SEED
 	var points := PackedVector2Array()
@@ -116,7 +117,7 @@ func _apply_ground_material() -> void:
 	var visual := get_parent().get_node("Ground/Visual") as MeshInstance3D
 	visual.material_override = material
 
-func _collect_footprints(container: Node) -> void:
+func _collect_footprints(container: Node, clearance: float) -> void:
 	for child: Node in container.find_children("*", "MeshInstance3D", true, false):
 		var instance := child as MeshInstance3D
 		if instance.mesh == null or not instance.visible:
@@ -133,7 +134,7 @@ func _collect_footprints(container: Node) -> void:
 			hull.resize(hull.size() - 1)
 		if hull.size() < 3:
 			continue
-		for polygon: PackedVector2Array in Geometry2D.offset_polygon(hull, CLEARANCE, Geometry2D.JOIN_MITER):
+		for polygon: PackedVector2Array in Geometry2D.offset_polygon(hull, clearance, Geometry2D.JOIN_MITER):
 			var bounds := Rect2(polygon[0], Vector2.ZERO)
 			for point: Vector2 in polygon:
 				bounds = bounds.expand(point)

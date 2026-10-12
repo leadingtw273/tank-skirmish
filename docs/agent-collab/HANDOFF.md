@@ -1,3 +1,13 @@
+# 2026-10-12 LEA-209 牆邊草留白修正
+
+leadi 確認牆邊只見建築與地面、分界太明確；本輪沿既有自然銜接 AC 修正。建築 XZ 凸包排除距離由 1m 改為 0.15m，道路保留 1m；草型、密度／seed、材質受光／深度／風動與玩法保持。
+
+作者同版 WinGodot4.7.1／Forward+，同 F4 相機實拍：出生 11820→12494 株，庭院樣本最近草根至低層外緣 1.0208→0.1551m；60m 方框檢查 24301→29244 根，道路 1m／建築原凸包內／樣本建築 0.15m 排除反例均 0。兩原 smoke actual exit0、ERROR／WARNING0；圖形退出兩版同有既有 RID 清理訊息。證據在本機 `agent-team/tmp/tank-grass-wall-20261012/{baseline,candidate}`，不是完整 benchmark 或新版人驗。
+
+候選 `fix/lea209-grass-wall-gap` 待 fresh-context 同 Head 驗收與 root 正常本機 FF；沒有 push／PR／CI／關票或來源／私圖外送。以下為前輪紀錄。
+
+---
+
 # 2026-10-12 LEA-209 相機範圍草地續輪
 
 leadi 先確認出生草效果很好，核可按相機可見地面＋外圍緩衝分塊生成／跨chunk更新／固定位置／有限快取；沿LEA-209，不改認可出生樣式。最新閉包計畫與原生隔離plan review approve／0 blocker由root GO，本輪基線 `0fde8832717d3639567d430e9d1a407ffbe85cae`、分支 `feat/lea209-camera-grass-stream`。

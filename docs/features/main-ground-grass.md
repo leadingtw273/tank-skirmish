@@ -1,3 +1,27 @@
+# 2026-10-12 LEA-209 相機地面草串流
+
+leadi 已肯定出生草樣式並核可相機可見地面＋外圍緩衝、16m 區塊、近密遠疏與固定位置。本輪由 `0fde8832717d3639567d430e9d1a407ffbe85cae` 沿同票實作；新視野功能的人員驗收仍 pending。
+
+保留原出生 15,000 候選／11,820 株、seed117、Quad0.4×0.4／subdiv2、四形 atlas、Smooth alpha、wind(0.6,0.3) 及原材質。串流跳過出生 Rect2(-116,-115,25,24)，以全域0.2m整數格與固定hash生成抖動及atlas0–3；0.4／0.8m為同格子集。原 vendor shader／PNG bytes 不修改，新增自有 `stream_grass.gdshader`（UID `uid://c7uxgao5c2vxd`）僅增加穩定atlas及分層淡入／距離過渡；原240 UID 保持。
+
+相機四角射線落於 y=0 的 convex polygon，32m外擴挑真相交16m區塊；bbox僅預篩。focus跨16m、zoom跨4m桶或視窗／basis變動才更新desired，儲存以focus格中心計算。近48m完整0.2m、48→64m平滑降為0.4m；可見polygon邊緣±8m再降為0.8m。dense預載至80m、mid預載可見外24m；草形／位置在返區與升密度時不變，新補株約0.35秒淡入，既有株保留epoch。
+
+道路／建築原世界凸包外擴1m一次建立、16m bucket篩選，無per-grass physics。active≤400、cached≤64、出生＋active＋cached＋pending實存總株數≤750,000，超限先淘汰cache；過期job取消。每frame候選deadline2ms／最多2048候選，最多1次MultiMesh upload／6400株；upload及整frame實測另列，2ms不宣稱涵蓋不可中斷upload。base／mid區只訪問400／1600個對應子集候選。
+
+既有 Ground/Visual 套同noise／palette／light配對底材，移除小SpawnGroundPatch，無新增重疊平面、地形或碰撞。原floor幾何、道路／建築材質、玩法／射擊／AI／透視／相機控制／照明保持；原586私素材與ignored CC0 atlas保持，沒有外送素材、PNG或source。
+
+作者本機圖形／路徑／效能與兩原smoke證據在 `agent-team/tmp/tank-grass-stream-20261012/`；完整原始結果見 N9/candidate/final-benchmark.json、native-final.log 與兩smoke raw。作者證據不代替 fresh-context 或 leadi 人验；本輪不push／PR／網路CI／關票，正式目錄FF由root獨立验收後處理。
+
+作者 exactsource 有限證據：WinGodot4.7.1／Forward+／RTX5090，1920×1080、關VSync且同相機／保留遮蔽視覺更新。最大視角stream steady frame median/p95/max=2.851/3.755/4.227ms；同版birth-only=1.958/2.887/3.109、off=1.639/2.103/2.453；原出生baseline=1.5195/1.980/2.304。8m/s固定相機路徑=3.984/6.380/8.530ms，候選CPUwork p95/max=2.001/2.013ms、upload=.595/3.136ms；frame為實際wall間隔，不當GPU獨立測量。
+
+F1共922frame補齊5.805s（含startup首frame1.594s）、外區3.884s、返區4.150s，steady排除startup與截圖I/O。近區／外區／返區佇列均歸零；peak749809株、active275／cache64、候選peak1962／upload1；出生11820、stream出生重複／外界／排除反例均0。唯一效率校準僅將base/mid候選訪問6400改400/1600，位置／atlas不變；初輪raw保留。新point的epoch在publish寫入，旧point保留每cell實際epoch。
+
+兩原smoke `main_ground_visual_smoke.gd`／`map960_components_smoke.gd` actual exit0；原floor AABB／collider對齊與三点ray保持、無camera只生出生草。F1/F4/移动/缩放/外區/返區真圖、16frame跨focus格GIF及runtime rows在上述N9/candidate；camera transform／size與N9/baseline相同讀回true。圖形run runtime ERROR0／WARNING0，退出同baseline RID清理2 ERROR／1 WARNING另列；作者證據不代替fresh及新視野功能人驗。原生第二模型plan APPROVE／0 blocker，缺Claude/Gemini外送第二意見如實保留。
+
+以下為前輪歷史，不能代替新版結果。
+
+---
+
 # 2026-10-09 LEA-209 出生庭院草場續修
 
 leadi 新裁決：全地圖大量生成有效能問題；先只鋪主世界坦克出生的空地，草須自然綿延交接。沿同票修正，尚待本機獨立工程驗收與 leadi 實測，不沿用前版人驗或 CI 結果。

@@ -1,3 +1,13 @@
+# 2026-10-12 LEA-209 相機範圍草地續輪
+
+leadi 先確認出生草效果很好，核可按相機可見地面＋外圍緩衝分塊生成／跨chunk更新／固定位置／有限快取；沿LEA-209，不改認可出生樣式。最新閉包計畫與原生隔離plan review approve／0 blocker由root GO，本輪基線 `0fde8832717d3639567d430e9d1a407ffbe85cae`、分支 `feat/lea209-camera-grass-stream`。
+
+16m chunk、48→64m近區密度過渡、0.2／0.4／0.8m固定嵌套格、dense80m／mid外24m／base32m預載；草與原Ground連續共用palette／noise受光，玩法及原素材保持。750,000株總cap涵蓋出生／active／cache／pending，active400／cache64、2ms候選deadline／2048候選／每frame單次6400株upload。詳細固定實作與有限驗證入口見 [main-ground-grass.md](../features/main-ground-grass.md)。
+
+作者本機Forward+有限路徑與兩原smoke actual exit0，birth11820／重複與排除反例0、peak749809；同相機baseline與16frame跨格GIF已留存，效能／raw入口見feature。工程獨立驗收／本機FF與新功能人驗pending；原出生樣式accepted不延伸成新串流功能accepted。不push／PR／網路CI／關票或外送source／圖／素材；root待fresh同Head PASS後正常本機FF。下方歷史不作本輪PASS。
+
+---
+
 # 2026-10-09 LEA-209 出生庭院草場續修
 
 leadi 新裁決：全地圖大量生成有效能問題；先只鋪主世界坦克出生的空地，草須自然綿延交接。沿同票修正，尚待本機獨立工程驗收與 leadi 實測，不沿用前版人驗或 CI 結果。

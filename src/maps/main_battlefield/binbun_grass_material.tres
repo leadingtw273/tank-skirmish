@@ -1,6 +1,6 @@
 [gd_resource type="ShaderMaterial" load_steps=10 format=3]
 
-[ext_resource type="Shader" path="res://assets/BinbunGrass/shader/grass.gdshader" id="1_grass"]
+[ext_resource type="Shader" path="res://src/maps/main_battlefield/weather_grass.gdshader" id="1_grass"]
 [ext_resource type="Texture2D" path="res://assets/BinbunGrass/texture/grass_basic_02.png" id="2_shape"]
 
 [ext_resource type="Texture2D" path="res://assets/BinbunGrass/texture/grass_basic_atlas.png" id="3_atlas"]

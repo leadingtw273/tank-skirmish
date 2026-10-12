@@ -22,3 +22,9 @@ artifacts-local/
 __pycache__/
 /assets/BinbunGrass/texture/grass_basic_atlas.png
 /assets/BinbunGrass/texture/grass_basic_atlas.png.import
+
+# 本輪原道路包兩路燈：僅本機原始 GLB 與隔離匯入 metadata。
+/assets/AtomicRealmModularRoads/lighting/lamp_1.glb
+/assets/AtomicRealmModularRoads/lighting/lamp_1.glb.import
+/assets/AtomicRealmModularRoads/lighting/lamp_2.glb
+/assets/AtomicRealmModularRoads/lighting/lamp_2.glb.import

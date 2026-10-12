@@ -2,7 +2,7 @@
 
 leadi 明示接受本機草地版本 `d5d7ef69`；LEA-209 已讀回人驗 accepted 評論，原工程驗收與本機交付證據保留於 `/home/markchou/evidence/retained-project-data-20261012/tank-grass-wall-20261012/`。GitHub main 尚未包含本機草地續修，不以人驗代替 CI／merge。
 
-本輪新增主地圖雨天近夜晚暖路燈；可撞倒即熄、推動、5 秒後開始淡出。新輪程式尚未實作／验收，產品人驗 pending；既有證據路徑搬遷修改正常保存，不覆寫或回退。
+本輪 [LEA-212](https://linear.app/leadingtw273/issue/LEA-212/主地圖雨天近夜晚與可推倒路燈) 主地圖雨天近夜晚暖路燈已形成隔離候選：六燈可由原 Tank2 真實撞倒即熄、再推動，5 秒後開始 2 秒淡出並完整釋放。有限作者原生同 F5 畫面、完整生命週期及 baseline／candidate 四原 smoke 已留證；詳見 [雨夜路燈 feature](../features/rain-dusk-lamps.md)。獨立同 Head 驗收、本機正式交付及本功能產品人驗均 pending，不沿用原草地 accepted；既有證據路徑搬遷修改正常保存。
 
 ---
 

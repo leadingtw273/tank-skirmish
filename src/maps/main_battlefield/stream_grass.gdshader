@@ -126,5 +126,5 @@ void fragment() {
 
 void light(){
 	float ndotl = dot(LIGHT, NORMAL) * ATTENUATION;
-	DIFFUSE_LIGHT += ndotl;
+	DIFFUSE_LIGHT += ndotl * LIGHT_COLOR;
 }

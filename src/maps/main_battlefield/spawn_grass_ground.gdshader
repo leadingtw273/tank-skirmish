@@ -15,5 +15,5 @@ void fragment() {
 }
 
 void light() {
-	DIFFUSE_LIGHT += dot(LIGHT, NORMAL) * ATTENUATION;
+	DIFFUSE_LIGHT += dot(LIGHT, NORMAL) * ATTENUATION * LIGHT_COLOR;
 }

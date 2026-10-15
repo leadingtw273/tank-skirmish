@@ -54,6 +54,7 @@ func _effect_shadow_control(lamp: RigidBody3D, floor: MeshInstance3D, camera: Ca
 	var atmosphere := Node3D.new()
 	atmosphere.set_script(load("res://src/maps/main_battlefield/lamp_atmosphere.gd"))
 	lamp.add_child(atmosphere)
+	lamp.atmosphere = atmosphere
 	atmosphere.set_process(false)
 	var glint := ShaderMaterial.new()
 	glint.shader = load("res://src/maps/main_battlefield/wet_road_glint.gdshader")
@@ -66,12 +67,10 @@ func _effect_shadow_control(lamp: RigidBody3D, floor: MeshInstance3D, camera: Ca
 	rain.mesh = quad
 	root.add_child(rain)
 	rain.position = Vector3(6,1,5)
-	var positions := PackedVector3Array([lamp.light.global_position,Vector3.ZERO,Vector3.ZERO,Vector3.ZERO,Vector3.ZERO,Vector3.ZERO])
-	var active := PackedFloat32Array([1,0,0,0,0,0])
+	var positions := PackedVector3Array([lamp.light.global_position,Vector3.ZERO,Vector3.ZERO,Vector3.ZERO,Vector3.ZERO,Vector3.ZERO,Vector3.ZERO,Vector3.ZERO])
+	var active := PackedFloat32Array([1,0,0,0,0,0,0,0])
 	glint.set_shader_parameter("lamp_positions",positions)
 	glint.set_shader_parameter("lamp_active",active)
-	rain_material.set_shader_parameter("lamp_positions",positions)
-	rain_material.set_shader_parameter("lamp_ranges",PackedFloat32Array([22,0,0,0,0,0]))
 	var points: Array[Vector3] = []
 	for x: float in [5.5,6.0,6.5]:
 		for z: float in [4.5,5.0,5.5]:
@@ -84,12 +83,6 @@ func _effect_shadow_control(lamp: RigidBody3D, floor: MeshInstance3D, camera: Ca
 		lamp.light.light_energy = 0.0 if state == "cold-baseline" else original_energy
 		atmosphere.visible = state != "cold-baseline"
 		floor.mesh.material.next_pass = null if state == "cold-baseline" else glint
-		rain_material.set_shader_parameter("lamp_active",PackedFloat32Array([0,0,0,0,0,0]) if state == "cold-baseline" else active)
-		var colors := PackedVector3Array([Vector3.ZERO,Vector3.ZERO,Vector3.ZERO,Vector3.ZERO,Vector3.ZERO,Vector3.ZERO])
-		if state != "cold-baseline":
-			var color: Color = lamp.light.light_color.srgb_to_linear() * original_energy
-			colors[0] = Vector3(color.r,color.g,color.b)
-		rain_material.set_shader_parameter("lamp_colors",colors)
 		if state == "unblocked":
 			wall_visual.visible = false
 			wall.collision_layer = 0
@@ -176,7 +169,8 @@ func _run() -> void:
 			var view := {}
 			var lums := {}
 			for state in ["off", "noshadow", "shadow"]:
-				lamp.call("set_light_active", state != "off", state == "shadow")
+				lamp.light.visible = state != "off"
+				lamp.light.shadow_enabled = state == "shadow"
 				await _frames(10)
 				lums[state] = _measure(cam, pts)
 				root.get_texture().get_image().save_png(ProjectSettings.globalize_path("%s/lamp%d-%s-%s.png" % [out, variant, ["top", "oblique"][ci], state]))
@@ -193,7 +187,8 @@ func _run() -> void:
 			view["darkened_samples_gt50pct"] = darkened
 			row.views[["top", "oblique"][ci]] = view
 		# AC5：燈具是否仍在「其他光源」（方向光）下投影。
-		lamp.call("set_light_active", false, false)
+		lamp.light.visible = false
+		lamp.light.shadow_enabled = false
 		top.current = true
 		sun.visible = true
 		await _frames(10)
@@ -225,7 +220,8 @@ func _run() -> void:
 				control_points.append(Vector3(x, 0, z))
 		var control := {}
 		for state: String in ["noshadow", "shadow"]:
-			lamp.call("set_light_active", true, state == "shadow")
+			lamp.light.visible = true
+			lamp.light.shadow_enabled = state == "shadow"
 			await _frames(10)
 			control[state + "_mean"] = _mean(_measure(top, control_points))
 			root.get_texture().get_image().save_png(ProjectSettings.globalize_path("%s/lamp%d-other-caster-%s.png" % [out, variant, state]))

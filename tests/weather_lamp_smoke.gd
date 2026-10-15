@@ -1,4 +1,4 @@
-## 本輪有限矩陣：六燈實際 shape、原 Tank2 接觸、推動及 5+2 秒生命週期。
+## 本輪有限矩陣：全圖燈實際 shape、原 Tank2 接觸、推動及 5+2 秒生命週期。
 extends SceneTree
 
 var failures: Array[String] = []
@@ -52,11 +52,11 @@ func _run() -> void:
 		var model_casts: bool = lamp.visuals.size() == 1 + lamp.heads.size() and lamp.visuals[0].cast_shadow == GeometryInstance3D.SHADOW_CASTING_SETTING_ON
 		var heads_do_not_cast: bool = lamp.heads.all(func(head: MeshInstance3D): return head.cast_shadow == GeometryInstance3D.SHADOW_CASTING_SETTING_OFF)
 		_expect("pole-shadow-casters-" + str(lamp.name), model_casts and heads_do_not_cast, lamp.visuals.size())
-	_expect("bounds", weather.rain.amount <= 7000 and lamps.size() == 6 and weather.heightfield.size == Vector3(180, 80, 180), {"particles":weather.rain.amount,"lamps":lamps.size()})
-	var lamp: RigidBody3D = lamps[0]
-	var other: RigidBody3D = lamps[5]
-	# 沿新 P1 所在街邊朝 +Z 行駛，車心向車道偏 1m；只控制原公開輸入及初始姿勢。
-	tank.global_transform = Transform3D(Basis(Vector3.UP, PI * 0.5), lamp.global_position + Vector3(1, 1, -8))
+	_expect("bounds", weather.rain.amount <= 7000 and lamps.size() == 69 and weather.heightfield.size == Vector3(180, 80, 180), {"particles":weather.rain.amount,"lamps":lamps.size()})
+	var lamp: RigidBody3D = lamps.filter(func(item: RigidBody3D): return item.get_meta("layout_id") == "G0__T:corner:0")[0]
+	var other: RigidBody3D = lamps.filter(func(item: RigidBody3D): return item.get_meta("layout_id") == "UL1__Corner90:corner:0")[0]
+	# 沿新 G0 路口燈 所在街邊朝 +Z 行駛，車心向車道偏 1m；只控制原公開輸入及初始姿勢。
+	tank.global_transform = Transform3D(Basis(Vector3.UP, PI * 0.5), lamp.global_position + Vector3(-1, 1, -8))
 	tank.linear_velocity = Vector3.ZERO
 	tank.angular_velocity = Vector3.ZERO
 	await _frames(120)
@@ -130,7 +130,7 @@ func _run() -> void:
 		if is_instance_valid(standing):
 			lights += int(standing.light.visible)
 			shadows += int(standing.light.visible and standing.light.shadow_enabled)
-	_expect("light-limits", lights <= 6 and shadows == lights, {"lights":lights,"shadows":shadows})
+	_expect("light-limits", lights <= 8 and shadows == lights, {"lights":lights,"shadows":shadows})
 	var old_focus: Vector3 = weather.ground_focus
 	root.get_camera_3d().global_position += Vector3(32, 0, 16)
 	for unused: int in 3:

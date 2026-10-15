@@ -155,3 +155,32 @@ MainWeather 移除 RainPlayerFill；只在存活的受控車兩錨點上掛 Spot
 新增原 weather smoke 的六盞自身投影檢查；未修產品來源時 `red-weather.log` actual exit1／六個新檢查 FAIL，其餘原檢查 PASS；修正後 `green-weather.log` actual exit0／failures0，兩者 ERROR0。命令為 `<Godot4.7.1> --headless --audio-driver Dummy --fixed-fps 60 --path <隔離專案> --script res://tests/weather_lamp_smoke.gd`，XDG 三目錄獨立置於 `/tmp/lea212-xdg/`。Windows 對照命令沿前述原生入口，改用 `--script res://lea212_capture.gd --resolution 1920x1080 -- baseline`／`-- candidate`；有效兩次 actual exit0／ERROR0。首次 960×720 helper 座標換算錯誤的輸出保存在 `baseline-harness-invalid/` 與 `baseline-console.log`，不作有效證據。
 
 最新封存 Head 的 fresh-context 四原 smoke、weather smoke 與有限來源／證據查核另存本輪 `fresh/`。不以本機修正宣稱原功能全部人驗通過、完整 CI、push、PR、合併或關單；原產品設定與 `.godot` 未交給測試引擎寫入。
+
+## f2a96b3 審查修正：R1 柔暖車燈、R2 正式機位證據、R3-B
+
+本節取代第二輪初稿的車燈參數、六燈數量及三層薄霧；依企劃核可進入 B。只完成作者實作／回歸，交付後停在企劃審查，不自行派驗收、不 push／PR／關票。
+
+R1 四車的既有錨點不動，Spot 改為暖白 `(1,.85,.65)`、energy `2.4`（街燈仍為6）、range20m、俯角16°、半角42°、angle attenuation `.6`、distance attenuation `1.25`，兩盞都開陰影。光束由近地面開始並柔化外緣，沒有加入車模型／材質補光。四車均以正式遊戲相機的相同 basis、正交 size27 拍近景；另有原 F5 與車頭距實際建築約1m的近牆圖。關閉街燈的原生 off/on 量測，沿左右錨點前1.08m的亮度由 `.04854` 分別變為 `.16747/.17111`，之後沿各束方向持續漸弱，前14.58m仍有 `.04574→.04938` 的受光。數據是 PNG 亮度，不是光度學單位；車頭中央前1m尚未落在左右光束交集，不能拿它代替各束的近端樣本。四車跟隨／換車／死亡／卸載條件仍由 smoke 檢查。
+
+R2 正式機位證據位於 `round2-b/formal-occlusion-ground/`。三組保持正式相機 basis／projection，只平移並改 size60，來源是 G2、Mirror_H1、RI 三盞生成燈。`formal-cases-ground.json` 以實體 ray 確認相機到燈被建築遮住、光源到取樣地面被建築遮住、相機到該地面則可見；不以屋頂擋住取樣點的畫面冒充地面測量。每組依序為 `before-mechanism`／`after`／`cold-control`：前者在相同新燈位重現9e19e1a的無陰影 Omni 與原 unshaded 光效，後者使用本輪修正，cold 關該光作控制；其餘街燈與車燈關閉以隔離來源。這是修正前機制的控制重現，不宣稱整張圖來自9e19e1a。路燈 energy6／range22 全程不變，三組被擋 halo 皆隱藏，取樣 after 與 cold 的 PNG 亮度差為 `0 / 0 / .002805`；完整畫面保留供企劃檢查背面、屋頂邊與牆角。
+
+水平 banding 的消去實驗（`banding-diagnosis*`）顯示：放寬倒影方向門檻、移除 film、移除 light attenuation／陰影仍存在條帶；關閉 GroundMist 才消失。原因是三層水平霧片在掠視角形成分層，不是已移除的正弦倒影重新加入。改為一片22×3m、中心高0.8m的柔邊 billboard 低霧，保留深度軟交界與真實 `light()/ATTENUATION` 遮擋。`banding-regression/` 重建原六燈同座標／朝向，在原退回低角度與正式 basis 各拍舊三層／新單層對照；陰影全開、energy6／range22不變。沒有用關光或降低路燈範圍修圖。
+
+R3-B 由200個實際道路模組與170棟建築生成配置，先排路口內角，再排直通及連接道路。全域柱中心最小12m，沿路由相鄰路口燈投影起算30m並交錯；沒有合法 anchor 的兩條 edge 才從 connection 起點起算，記在 JSON。新結果 **69盞**（54內角、2直通、13沿路），實際最小 **12.17651m**；52個候選略過：46個不足12m、4個沒有實際人行道、2個距建築不足。數量下降同時來自去除密集角燈與改為從角燈起算，沒有手動刪座標。原六燈依裁決由新配置取代，逐一對應仍在 `existing_six`。
+
+`generate_lamp_plan.py` 同時輸出完整 `lamp-plan.json/svg` 及只含 pose／來源ID的 `lamp_layout.gd`；將後者複製到 `src/maps/main_battlefield/`，主圖讀此產物建立全部實體。生成產物可逐 byte 重現，未將私有碰撞 faces 納入 Git。`validate_lamp_plan.gd` 對69個姿勢以原 capsule／arm 真實 shape 查核，overlap／支撐錯誤0；遊戲中的69盞也全部通過 standing 檢查。直立時另鎖Y軸以避免 Jolt 在人行道產生約2.7mm的靜置穿入；接觸時解除所有鎖，原倒燈推動、即熄光、5秒等待＋2秒淡出及釋放條件都保持。
+
+光源預算為 **最多8盞街燈＋2盞玩家車燈**，Sun另計。每0.2秒依正式相機下光照球的螢幕投影邊界篩選，優先距地面焦點近者；所有啟用街燈都有陰影。超額或畫外關 Omni／halo／mist，WarmHead emission 保留；倒燈仍立即熄頭並走原生命週期。倒影只上傳8個活躍來源，暖雨由引擎接收實際光源，沒有全圖硬編碼6燈限制。非活躍霧不跑 halo射線，直立燈停用空轉的 physics callback，倒下時恢復計時。
+
+Windows原生 Godot4.7.1／RTX5090／Forward+ Vulkan，同1920×1080、草啟用、VSync1、max_fps0，每機位360 warmup／240 steady。正式 F5 不改 transform／size100，密集街廓沿同 basis 平移至焦點 `(-84,0,-48)`、size100。`Performance.TIME_PROCESS` 為引擎 frame 樣本，非GPU timer，也不推論長時間駕駛成本。
+
+| 240 steady | 9e19e1a median／p95 | 本輪 median／p95 | median差 |
+| --- | --- | --- | --- |
+| F5 | 17.504／17.551ms | 17.851／18.000ms | +1.98% |
+| 密集街廓 | 17.3285／18.744ms | 17.792／18.722ms | +2.67% |
+
+兩機位的240/240幀（100%）均觸及預算：F5候選32、啟用8、關光24；密集街廓候選44、啟用8、關光36。候選包含光照球碰到畫面但柱在畫外者。未發生無陰影仍開光；未承諾所有可見燈頭都有照明。`weather_lamp_budget_smoke` 另跨五個街廓驗證此取捨與遠燈發光頭。
+
+證據根為 `artifacts-local/lea212-20261015/round2-b/`：`layout/lamp-plan.png`、`screens-final/` 四車／近牆／F5／密集街道、上述正式遮擋與banding、`headlight-road-anchor-rays/`、`performance.json`、`smoke/results.json`、`light-effects/metrics.json`。五支指定 smoke＋headlights＋四車runtime＋budget共8支 headless，及1支原生 `weather_light_occlusion_smoke` 皆 actual exit0、ERROR0。原生自遮光806點×兩型×兩機位仍保留100%，控制牆遮光／月光柱影及雨絲受光也通過。native fixture只更新8來源基準、移除雨shader廢棄uniform，光度控制以直接切換真Light隔離FX；原檢查門檻未降低。
+
+主圖原生 capture 全部 exit0，runtime／script／shader ERROR0；退出仍有與9e19e1a相同的兩條 texture cleanup ERROR與一條WARNING，並未算入 smoke 的 ERROR0。helpers、完整原始樣本、來源manifest及主目錄／627素材保全讀回封存本機。工程結果交企劃審查，不代表視覺AC已由作者自行核可。

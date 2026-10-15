@@ -4,16 +4,17 @@ extends Node3D
 const LAMP := preload("res://src/maps/main_battlefield/street_lamp.tscn")
 const RAIN_MATERIAL := preload("res://src/maps/main_battlefield/lit_rain.gdshader")
 const WET_GLINT := preload("res://src/maps/main_battlefield/wet_road_glint.gdshader")
-const SIDEWALK_HEIGHT := 0.110125
-const POSITIONS := [Vector3(-89.5, SIDEWALK_HEIGHT, -108), Vector3(-78.5, SIDEWALK_HEIGHT, -120),
-	Vector3(-108, SIDEWALK_HEIGHT, -126.5), Vector3(-126.5, SIDEWALK_HEIGHT, -100),
-	Vector3(-108, SIDEWALK_HEIGHT, -77.5), Vector3(-89.5, SIDEWALK_HEIGHT, -77.5)]
-const LAMP_YAWS := [0.0, PI, PI * 0.5, PI, -PI * 0.5, -PI * 0.25]
+const LAYOUT := preload("res://src/maps/main_battlefield/lamp_layout.gd")
+# 街燈8盞＋玩家Spot2盞；超額只保留燈頭，不降級成無陰影光源。
+const MAX_ACTIVE_LIGHTS := 8
 var lamps: Array[RigidBody3D] = []
 var rain: GPUParticles3D
 var heightfield: GPUParticlesCollisionHeightField3D
 var ground_focus := Vector3.ZERO
 var _light_interval := 0.0
+var visible_candidates := 0
+var budget_dropped := 0
+var active_lamps: Array[RigidBody3D] = []
 var road_glints: ShaderMaterial
 var rain_material: ShaderMaterial
 var player_headlights: Array[SpotLight3D] = []
@@ -21,13 +22,15 @@ var _player_runtime: Node
 var _player_health: HealthComponent
 
 func _ready() -> void:
-	for index: int in POSITIONS.size():
+	for index: int in LAYOUT.LAMPS.size():
+		var pose: Array = LAYOUT.LAMPS[index]
 		var lamp := LAMP.instantiate() as RigidBody3D
 		lamp.name = "StreetLamp%d" % (index + 1)
-		lamp.position = POSITIONS[index]
-		lamp.set_meta("spawn_height", POSITIONS[index].y)
+		lamp.position = pose[0]
+		lamp.set_meta("spawn_height", pose[0].y)
+		lamp.set_meta("layout_id", pose[2])
 		lamp.model_variant = 1
-		lamp.rotation.y = LAMP_YAWS[index]
+		lamp.rotation.y = pose[1]
 		add_child(lamp)
 		lamps.append(lamp)
 	road_glints = ShaderMaterial.new()
@@ -66,6 +69,8 @@ func _ready() -> void:
 	heightfield.follow_camera_enabled = false
 	add_child(heightfield)
 	_update_camera()
+	_update_lights()
+	_sync_road_glints()
 	call_deferred("_bind_player_headlights")
 
 func _bind_player_headlights() -> void:
@@ -88,11 +93,13 @@ func _set_player_headlights_target(tank: Node3D) -> void:
 	for anchor: Node3D in tank.get_node("Headlights").get_children():
 		var light := SpotLight3D.new()
 		light.name = "RainHeadlight"
-		light.rotation.x = deg_to_rad(-6.0)
-		light.light_color = Color(1.0, 0.92, 0.78)
-		light.light_energy = 12.0
+		light.rotation.x = deg_to_rad(-16.0)
+		light.light_color = Color(1.0, 0.85, 0.65)
+		light.light_energy = 2.4
 		light.spot_range = 20.0
-		light.spot_angle = 24.0
+		light.spot_angle = 42.0
+		light.spot_angle_attenuation = 0.6
+		light.spot_attenuation = 1.25
 		light.shadow_enabled = true
 		anchor.add_child(light)
 		player_headlights.append(light)
@@ -134,40 +141,51 @@ func _wet_roads(node: Node, materials: Dictionary) -> void:
 
 func _process(delta: float) -> void:
 	_update_camera()
-	_sync_road_glints()
 	_light_interval -= delta
-	if _light_interval > 0:
-		return
-	_light_interval = 0.2
-	var standing: Array[RigidBody3D] = []
-	for lamp in lamps:
-		if is_instance_valid(lamp) and not lamp.toppled:
-			standing.append(lamp)
-	standing.sort_custom(func(a: RigidBody3D, b: RigidBody3D):
+	if _light_interval <= 0:
+		_light_interval = 0.2
+		_update_lights()
+	_sync_road_glints()
+
+func _in_light_view(camera: Camera3D, lamp: RigidBody3D) -> bool:
+	var center: Vector3 = lamp.light.global_position
+	if camera.is_position_behind(center):
+		return false
+	# 正式正交相機：光照球的投影邊界可涵蓋柱在畫面外、光照仍入畫的情形。
+	var radius: float = lamp.light.omni_range
+	var point := camera.unproject_position(center)
+	var extent := Vector2(
+		point.distance_to(camera.unproject_position(center + camera.global_basis.x * radius)),
+		point.distance_to(camera.unproject_position(center + camera.global_basis.y * radius)))
+	return Rect2(point - extent, extent * 2).intersects(get_viewport().get_visible_rect())
+
+func _update_lights() -> void:
+	var camera := get_viewport().get_camera_3d()
+	var candidates: Array[RigidBody3D] = []
+	for lamp: RigidBody3D in lamps:
+		if is_instance_valid(lamp) and not lamp.toppled and camera != null and _in_light_view(camera, lamp):
+			candidates.append(lamp)
+	candidates.sort_custom(func(a: RigidBody3D, b: RigidBody3D):
 		return a.global_position.distance_squared_to(ground_focus) < b.global_position.distance_squared_to(ground_focus))
-	for index: int in standing.size():
-		var lamp := standing[index]
-		# R2：本階段仍只有六盞街燈，所有啟用燈都投影，避免背牆漏光。
-		lamp.set_light_active(lamp.global_position.distance_to(ground_focus) < 110.0, true)
+	visible_candidates = candidates.size()
+	budget_dropped = maxi(0, visible_candidates - MAX_ACTIVE_LIGHTS)
+	active_lamps.clear()
+	for index: int in mini(MAX_ACTIVE_LIGHTS, candidates.size()):
+		active_lamps.append(candidates[index])
+	for lamp: RigidBody3D in lamps:
+		if is_instance_valid(lamp):
+			lamp.set_light_active(lamp in active_lamps, true)
 
 func _sync_road_glints() -> void:
 	var positions := PackedVector3Array()
 	var active := PackedFloat32Array()
-	var colors := PackedVector3Array()
-	var ranges := PackedFloat32Array()
-	for lamp in lamps:
-		var valid := is_instance_valid(lamp)
+	for index: int in MAX_ACTIVE_LIGHTS:
+		var lamp: RigidBody3D = active_lamps[index] if index < active_lamps.size() else null
+		var valid: bool = is_instance_valid(lamp) and lamp.light.visible
 		positions.append(lamp.light.global_position if valid else Vector3.ZERO)
-		active.append(1.0 if valid and lamp.light.visible else 0.0)
-		var color: Color = lamp.light.light_color.srgb_to_linear() if valid else Color.BLACK
-		colors.append(Vector3(color.r, color.g, color.b) * lamp.light.light_energy if valid else Vector3.ZERO)
-		ranges.append(lamp.light.omni_range if valid else 1.0)
+		active.append(1.0 if valid else 0.0)
 	road_glints.set_shader_parameter("lamp_positions", positions)
 	road_glints.set_shader_parameter("lamp_active", active)
-	rain_material.set_shader_parameter("lamp_positions", positions)
-	rain_material.set_shader_parameter("lamp_active", active)
-	rain_material.set_shader_parameter("lamp_colors", colors)
-	rain_material.set_shader_parameter("lamp_ranges", ranges)
 
 func _update_camera() -> void:
 	var camera := get_viewport().get_camera_3d()

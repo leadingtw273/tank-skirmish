@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""R3-A：由 Godot 匯出的真實道路／碰撞幾何產生燈位；僅輸出 JSON／SVG。"""
+"""R3-B：由真實道路／碰撞幾何產生12m淨距燈位，輸出 JSON／SVG／執行期配置。"""
 import argparse
 import collections
 import html
@@ -9,6 +9,7 @@ import re
 from pathlib import Path
 
 SPACING = 30.0
+MIN_DISTANCE = 12.0
 OFFSET = 5.5
 CLEARANCE = 0.5 + 0.18  # 建築到燈柱外緣至少 0.5m。
 
@@ -72,7 +73,6 @@ def generate(data, catalog):
         if pts:
             buildings.append((b['name'], ts, (min(p[0] for p in pts), min(p[1] for p in pts), max(p[0] for p in pts), max(p[1] for p in pts))))
     accepted, skipped = [], []
-    existing = [xz(r['position']) for r in data['existing_lamps']]
 
     def consider(p, toward, source, kind, station):
         candidate_id = f'{source}:{kind}:{station}'
@@ -93,13 +93,13 @@ def generate(data, catalog):
             if any(barycentric(p, t) is not None or min(segment_distance(p, xz(t[i]), xz(t[(i + 1) % 3])) for i in range(3)) < CLEARANCE for t in ts):
                 reason = reason or '建築外緣不足0.5m:' + name
                 break
-        if any(length(sub(p, xz(old['position']))) < 6.0 for old in accepted): reason = reason or '與已排燈位過近（6m）'
+        if any(length(sub(p, xz(old['position']))) < MIN_DISTANCE - 1e-6 for old in accepted): reason = reason or '與已排燈位過近（12m）'
         if reason:
             row['reason'] = reason
             skipped.append(row)
         else: accepted.append(row)
 
-    for row in roads:
+    for row in sorted(roads, key=lambda r: (r["name"].endswith("__Road1"), r["name"])):
         if row['group'] != 'Junctions': continue
         pivot, local_dirs = local_ports(row, catalog)
         center = xz(transform(row, pivot))
@@ -122,22 +122,30 @@ def generate(data, catalog):
             match = re.fullmatch(r'(.+)_to_(.+)_\d+', row['name'])
             assert match, row['name']
             edges[f'{match[1]}_to_{match[2]}'].append(row)
+    edge_anchors = []
     for name, modules in sorted(edges.items()):
         origin = xz(modules[0]['origin'])
         direction = unit(xz(modules[0]['basis'][2]))
         normal = (-direction[1], direction[0])
         projection = [dot(sub(xz(v), origin), direction) for row in modules for t in triangles(row) for v in t]
         low, high = min(projection), max(projection)
-        distance = high - low
-        count = max(0, int(math.floor(distance / SPACING + 0.5)))
-        stations = [low + (distance - (count - 1) * SPACING) / 2 + i * SPACING for i in range(count)]
-        phase = 1 if sum(name.encode()) % 2 else -1
-        nearby = [p for p in existing if low - 1 <= dot(sub(p, origin), direction) <= high + 1 and abs(dot(sub(p, origin), normal)) < 8]
-        if nearby and stations:
-            def score(side):
-                points = [add(add(origin, mul(direction, s)), mul(normal, side * (-1) ** i * OFFSET)) for i, s in enumerate(stations)]
-                return sum(min(length(sub(p, q)) for q in points) for p in nearby)
-            phase = min((-1, 1), key=score)
+        # 優先內角燈已全數排完；直路由固定端的相鄰路口燈起算30m。
+        # 用 source 節點關係選相鄰路口，避免隔街燈成為錯誤 anchor。
+        endpoint_names = name.split('_to_')
+        anchors = [r for r in accepted if r['kind'] in ('corner', 'through')
+                   and r['source'].split('__')[0] in endpoint_names
+                   and abs(dot(sub(xz(r['position']), origin), normal)) < 8]
+        near_start = [r for r in anchors if dot(sub(xz(r['position']), origin), direction) <= low + 12]
+        anchor = max(near_start, key=lambda r: (dot(sub(xz(r['position']), origin), direction), r['id']), default=None)
+        start = dot(sub(xz(anchor['position']), origin), direction) if anchor else low
+        phase = -1 if anchor and dot(sub(xz(anchor['position']), origin), normal) >= 0 else 1
+        stations = []
+        station = start + SPACING
+        while station <= high + 1e-6:
+            if station >= low - 1e-6: stations.append(station)
+            station += SPACING
+        edge_anchors.append({'edge': name, 'anchor': anchor['id'] if anchor else 'connection-start',
+                             'origin_station_m': start, 'stations_m': stations})
         for i, station in enumerate(stations):
             side = phase * (-1) ** i
             p = add(add(origin, mul(direction, station)), mul(normal, side * OFFSET))
@@ -146,8 +154,8 @@ def generate(data, catalog):
     for i, old in enumerate(data['existing_lamps']):
         nearest = min(accepted, key=lambda r: length(sub(xz(r['position']), xz(old['position']))))
         d = length(sub(xz(nearest['position']), xz(old['position'])))
-        old_mapping.append({'old': i + 1, 'old_position': old['position'], 'proposal': nearest['id'], 'distance_m': d, 'action': '保留／微調到演算法燈位' if d < 2 else '由鄰近演算法燈位取代（本階段未套用）'})
-    return {'phase': 'R3-A，僅規劃，未加入遊戲', 'spacing_m': SPACING, 'offset_m': OFFSET, 'pole_radius_m': 0.18, 'building_edge_clearance_m': 0.5,
+        old_mapping.append({'old': i + 1, 'old_position': old['position'], 'proposal': nearest['id'], 'distance_m': d, 'action': '保留／微調到演算法燈位' if d < 2 else '由鄰近演算法燈位取代'})
+    return {'phase': 'R3-B，已核可規則之生成燈位', 'minimum_distance_m': MIN_DISTANCE, 'edge_anchors': edge_anchors, 'actual_minimum_distance_m': min(length(sub(xz(a['position']), xz(b['position']))) for i, a in enumerate(accepted) for b in accepted[i+1:]), 'spacing_m': SPACING, 'offset_m': OFFSET, 'pole_radius_m': 0.18, 'building_edge_clearance_m': 0.5,
             'statistics': {'road_modules': len(roads), 'junctions': sum(r['group'] == 'Junctions' for r in roads), 'connection_edges': len(edges), 'buildings': len(buildings), 'lamps': len(accepted), 'skipped': len(skipped), 'by_kind': dict(collections.Counter(r['kind'] for r in accepted)), 'skip_reasons': dict(collections.Counter(r['reason'].split(':')[0] for r in skipped))},
             'lamps': accepted, 'skipped': skipped, 'existing_six': old_mapping}
 
@@ -159,7 +167,7 @@ def svg(data, plan):
     scale = min(1480 / (hi_x - lo_x), 1480 / (hi_z - lo_z))
     def point(p): return ((p[0] - lo_x) * scale + 60, (p[1] - lo_z) * scale + 100)
     def pts(values): return ' '.join(f'{x:.2f},{y:.2f}' for x, y in map(point, values))
-    elements = ['<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1700" viewBox="0 0 1600 1700">', '<rect width="1600" height="1700" fill="#14202b"/>', '<g font-family="Microsoft JhengHei,Noto Sans CJK TC,sans-serif" fill="#e2e9ed">', '<text x="60" y="42" font-size="27">LEA-212 R3-A 全圖路燈規劃（尚未套用遊戲）</text>', f'<text x="60" y="76" font-size="18">黃點／箭頭：燈柱／燈臂　紅叉：略過　青點：出生　預計 {len(plan["lamps"])} 盞，略過 {len(plan["skipped"])} 處</text>', '</g>']
+    elements = ['<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1700" viewBox="0 0 1600 1700">', '<rect width="1600" height="1700" fill="#14202b"/>', '<g font-family="Microsoft JhengHei,Noto Sans CJK TC,sans-serif" fill="#e2e9ed">', '<text x="60" y="42" font-size="27">LEA-212 R3-B 全圖路燈配置（最小間距12m）</text>', f'<text x="60" y="76" font-size="18">黃點／箭頭：燈柱／燈臂　紅叉：略過　青點：出生　預計 {len(plan["lamps"])} 盞，略過 {len(plan["skipped"])} 處</text>', '</g>']
     for row in data['roads']:
         for tri in triangles(row):
             color = '#829098' if sum(v[1] for v in tri) / 3 > .06 else '#354858'
@@ -190,6 +198,12 @@ def main():
     args.output.mkdir(parents=True, exist_ok=True)
     (args.output / 'lamp-plan.json').write_text(json.dumps(plan, ensure_ascii=False, indent=2))
     (args.output / 'lamp-plan.svg').write_text(svg(data, plan))
+    runtime = ["## 自 generate_lamp_plan.py 產生；請修改道路資料／規則後重新生成。", "extends RefCounted", "const LAMPS := ["]
+    for lamp in plan['lamps']:
+        x, y, z = lamp['position']
+        runtime.append(f'\t[Vector3({x:.8f}, {y:.8f}, {z:.8f}), {lamp["yaw"]:.10f}, "{lamp["id"]}"],')
+    runtime.append("]\n")
+    (args.output / 'lamp_layout.gd').write_text('\n'.join(runtime))
     print(json.dumps(plan['statistics'], ensure_ascii=False))
 
 

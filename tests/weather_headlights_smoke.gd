@@ -38,7 +38,8 @@ func _run() -> void:
 		_expect(str(id) + "-two-variant-anchors", lights.size() == 2 and tank.get_node("Headlights").get_child_count() == 2)
 		for light: SpotLight3D in lights:
 			var direction := -light.global_basis.z
-			_expect(str(id) + "-forward-down-shadow", direction.dot(-tank.global_basis.x) > 0.98 and direction.dot(Vector3.DOWN) > 0.04 and light.shadow_enabled and light.spot_range >= 15.0 and light.spot_range <= 20.0)
+			_expect(str(id) + "-forward-down-shadow", direction.dot(-tank.global_basis.x * cos(deg_to_rad(16.0)) + Vector3.DOWN * sin(deg_to_rad(16.0))) > 0.9999 and light.shadow_enabled and light.spot_range >= 15.0 and light.spot_range <= 20.0)
+			_expect(str(id) + "-warm-soft-auxiliary", light.light_color.is_equal_approx(Color(1,.85,.65)) and light.light_energy < 6.0 and light.spot_angle == 42.0 and is_equal_approx(light.spot_angle_attenuation,0.6))
 			var anchor := light.get_parent() as Marker3D
 			var query := PhysicsRayQueryParameters3D.create(anchor.global_position, anchor.global_position + tank.global_basis.x * 2.0, 1)
 			query.hit_from_inside = true
@@ -51,14 +52,14 @@ func _run() -> void:
 			previous_lights.append(weakref(light))
 		var original_basis := tank.basis
 		tank.rotate_y(0.7)
-		_expect(str(id) + "-turns-with-hull", lights.all(func(light: SpotLight3D): return (-light.global_basis.z).dot(-tank.global_basis.x) > 0.98))
+		_expect(str(id) + "-turns-with-hull", lights.all(func(light: SpotLight3D): return (-light.global_basis.z).dot(-tank.global_basis.x * cos(deg_to_rad(16.0)) + Vector3.DOWN * sin(deg_to_rad(16.0))) > 0.9999))
 		tank.basis = original_basis
 	var road_lights := 0
 	var shadows := 0
 	for lamp in weather.get("lamps"):
 		road_lights += int(lamp.light.visible)
 		shadows += int(lamp.light.shadow_enabled)
-	_expect("six-roads-all-shadowed-plus-two-headlights", weather.get("lamps").size() == 6 and road_lights <= 6 and shadows == road_lights and weather.get("player_headlights").size() == 2)
+	_expect("all-roads-budget-shadowed-plus-two-headlights", weather.get("lamps").size() == 69 and road_lights <= 8 and shadows == road_lights and weather.get("player_headlights").size() == 2)
 	(tank.get_node("HealthComponent") as HealthComponent).apply_damage(100000.0)
 	_expect("death-hides-before-wreck-free", is_instance_valid(tank) and weather.get("player_headlights").is_empty() and previous_lights.all(func(ref: WeakRef): return not ref.get_ref().visible))
 	await _frames(2)

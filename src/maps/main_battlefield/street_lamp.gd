@@ -8,6 +8,7 @@ const LAMP_SHADOW_LAYER := 1 << 19
 var toppled := false
 var toppled_seconds := 0.0
 var contact_count := 0
+var atmosphere: Node3D
 var light: OmniLight3D
 var heads: Array[MeshInstance3D] = []
 var visuals: Array[GeometryInstance3D] = []
@@ -22,6 +23,7 @@ func _ready() -> void:
 	center_of_mass = Vector3(0, 3, 0)
 	linear_damp = 0.7
 	angular_damp = 0.8
+	axis_lock_linear_y = true
 	axis_lock_linear_x = true
 	axis_lock_linear_z = true
 	axis_lock_angular_x = true
@@ -68,10 +70,11 @@ func _ready() -> void:
 	light.omni_attenuation = 1.5
 	light.shadow_caster_mask = 0xFFFFFFFF ^ LAMP_SHADOW_LAYER
 	add_child(light)
-	var atmosphere := ATMOSPHERE.new()
+	atmosphere = ATMOSPHERE.new()
 	atmosphere.name = "LampAtmosphere"
 	add_child(atmosphere)
 	body_entered.connect(_body_entered)
+	set_physics_process(false)
 
 func _add_shape(shape: Shape3D, offset: Vector3) -> void:
 	var collider := CollisionShape3D.new()
@@ -94,12 +97,15 @@ func _body_entered(body: Node) -> void:
 	if toppled:
 		return
 	toppled = true
+	set_physics_process(true)
+	atmosphere.set_active(false)
 	# 光及自有發光材質在首個接觸回呼立即熄滅；不碰原 GLB 材質。
 	light.visible = false
 	for head: MeshInstance3D in heads:
 		var material := head.mesh.material as StandardMaterial3D
 		material.emission_enabled = false
 		material.albedo_color = Color(0.16, 0.15, 0.13)
+	axis_lock_linear_y = false
 	axis_lock_linear_x = false
 	axis_lock_linear_z = false
 	axis_lock_angular_x = false
@@ -119,6 +125,7 @@ func set_light_active(active: bool, casts_shadow: bool) -> void:
 		return
 	light.visible = active
 	light.shadow_enabled = active and casts_shadow
+	atmosphere.set_active(active)
 
 func _physics_process(delta: float) -> void:
 	if not toppled:

@@ -21,9 +21,9 @@ func _faces(node: Node) -> Array:
 func _run() -> void:
 	var data := {"roads":[], "buildings":[], "existing_lamps":[], "spawn":[-108,0,-106]}
 	var map := load("res://src/maps/main_battlefield/main_battlefield.tscn").instantiate() as Node3D
-	var constants: Dictionary = map.get_node("MainWeather").get_script().get_script_constant_map()
-	for index: int in constants.POSITIONS.size():
-		data.existing_lamps.append({"position":_v(constants.POSITIONS[index]), "yaw":constants.LAMP_YAWS[index]})
+	# 第一輪六盞僅供歷史映射；執行端已由生成 layout 取代。
+	for position: Vector3 in [Vector3(-89.5,.110125,-108), Vector3(-78.5,.110125,-120), Vector3(-108,.110125,-126.5), Vector3(-126.5,.110125,-100), Vector3(-108,.110125,-77.5), Vector3(-89.5,.110125,-77.5)]:
+		data.existing_lamps.append({"position":_v(position)})
 	map.get_node("MainWeather").free()
 	map.get_node("GrassField").free()
 	root.add_child(map)

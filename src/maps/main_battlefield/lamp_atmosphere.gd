@@ -22,25 +22,27 @@ func _ready() -> void:
 		halo.mesh = quad
 		add_child(halo)
 		halos.append(halo)
-	for index: int in 3:
-		var layer := MeshInstance3D.new()
-		layer.name = "GroundMist%d" % index
-		layer.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-		var quad := QuadMesh.new()
-		quad.size = Vector2(22 - index * 3, 22 - index * 3)
-		var material := ShaderMaterial.new()
-		material.shader = MIST
-		material.set_shader_parameter("noise_offset", float(index) * 7.3)
-		quad.material = material
-		layer.mesh = quad
-		layer.position = Vector3(0, 0.35 + index * 0.5, 0)
-		layer.rotation.x = -PI * 0.5
-		add_child(layer)
+	# 單片面向相機的低霧，避免掠視角把三個水平層看成明暗橫帶。
+	var layer := MeshInstance3D.new()
+	layer.name = "GroundMist"
+	layer.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	var quad := QuadMesh.new()
+	quad.size = Vector2(22, 3.0)
+	var material := ShaderMaterial.new()
+	material.shader = MIST
+	quad.material = material
+	layer.mesh = quad
+	layer.position = Vector3(0, 0.8, 0)
+	add_child(layer)
 
-func _process(_delta: float) -> void:
-	visible = source_light.visible
+func set_active(active: bool) -> void:
+	visible = active
+	set_physics_process(active)
 
 func _physics_process(delta: float) -> void:
+	if not source_light.visible:
+		set_active(false)
+		return
 	_occlusion_interval -= delta
 	if _occlusion_interval > 0.0:
 		return

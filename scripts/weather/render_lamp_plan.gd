@@ -21,9 +21,9 @@ func _run() -> void:
 	var font := SystemFont.new()
 	font.font_names = PackedStringArray(["Microsoft JhengHei", "Noto Sans CJK TC"])
 	var captions := [
-		[Vector2(60,15),27,"LEA-212 R3-A 全圖路燈規劃（尚未套用遊戲）"],
+		[Vector2(60,15),27,"LEA-212 R3-B 全圖路燈配置（最小間距12m）"],
 		[Vector2(60,56),18,"黃點／箭頭：燈柱／燈臂　紅叉：略過　青點：出生　預計 %d 盞，略過 %d 處" % [plan.lamps.size(),plan.skipped.size()]],
-		[Vector2(60,1628),18,"北在上（−Z）｜約30m交錯｜人行道中心線偏移5.5m｜建築與實際形狀篩選"]]
+		[Vector2(60,1628),18,"北在上（−Z）｜從路口燈起算約30m交錯｜最小12m｜人行道中心線偏移5.5m｜建築與實際形狀篩選"]]
 	for caption: Array in captions:
 		var label := Label.new()
 		label.position = caption[0]

@@ -48,6 +48,7 @@ func _run() -> void:
 			"toppled": lamp.toppled, "overlaps": overlaps}
 		placements.append(row)
 		_expect("standing-" + str(lamp.name), not lamp.toppled and row.tilt < 1 and absf(lamp.position.y) < 0.05 and overlaps.is_empty(), row)
+		_expect("no-self-shadow-" + str(lamp.name), lamp.visuals.size() == 1 + lamp.heads.size() and lamp.visuals.all(func(visual: GeometryInstance3D): return visual.cast_shadow == GeometryInstance3D.SHADOW_CASTING_SETTING_OFF), lamp.visuals.size())
 	_expect("bounds", weather.rain.amount <= 7000 and lamps.size() == 6 and weather.heightfield.size == Vector3(180, 80, 180), {"particles":weather.rain.amount,"lamps":lamps.size()})
 	var lamp: RigidBody3D = lamps[0]
 	var other: RigidBody3D = lamps[5]

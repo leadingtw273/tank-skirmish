@@ -40,6 +40,7 @@ func _ready() -> void:
 	for x: float in head_positions:
 		var head := MeshInstance3D.new()
 		head.name = "WarmHead%d" % heads.size()
+		head.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		var mesh := SphereMesh.new()
 		mesh.radius = 0.16
 		mesh.height = 0.18
@@ -72,6 +73,8 @@ func _add_shape(shape: Shape3D, offset: Vector3) -> void:
 
 func _collect_visuals(node: Node) -> void:
 	if node is GeometryInstance3D:
+		# 原 GLB 是合併網格；關閉自身投影，避免光源啟用陰影時被燈柱／燈罩遮住。
+		(node as GeometryInstance3D).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		visuals.append(node as GeometryInstance3D)
 	for child: Node in node.get_children():
 		_collect_visuals(child)

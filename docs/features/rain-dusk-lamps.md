@@ -27,3 +27,13 @@ Windows 原生入口固定 `Godot_v4.7.1-stable_win64_console.exe --path <自有
 首次 derivative 相對 include 搬移錯誤曾使 palette/noise 讀取失敗並產生藍白 chunk 階梯，已修為 vendor 絕對 include 及重拍；只以 `*-final` 畫面與 corrected logs 作最終來源證據。作者自檢不代替 fresh 驗收；後續 guarded 本機 FF 由 root 按獨立結果處理，沒有 push／PR／CI／公開發布的預填結果。
 
 短樣本使用 Godot `Performance.TIME_PROCESS`（引擎回報的 process frame 時間），不是獨立 GPU timer 或呈現時間戳。baseline／candidate 同 1920×1080、同 F5 與草地，360 warmup／240 steady；warmup median/p95 分別 18.229/31.953ms 與 17.298/32.735ms；steady 分別 16.783/19.004ms 與 17.774/18.382ms。原生 VSync／Engine.max_fps／fixed-fps 的實際 read-back 見 `native-frame-settings.json`；同 cap 的有限穩定性證據不推算雨夜額外 GPU 成本。
+
+## 2026-10-15：滑鼠移動時路燈變暗修正
+
+沿本機 `7a7f534` 與企劃派工，僅修正路燈自身投影。滑鼠 look-ahead 會移動畫面中心落地點，原管理器因此更換最近兩盞開啟陰影的燈。原兩款 GLB 各只有一個合併網格；`lamp_2` 的光源位於 `(0, 5.85, 0)`，在燈柱範圍內。光源陰影開啟後，自身模型會擋住向地面照射的光；WarmHead 也原本開啟投影。現在只將原模型實例及自有燈頭的 `cast_shadow` 設為 OFF，原光源 `shadow_enabled` 管理仍保留，其他場景物件仍可遮光。六燈／最近兩陰影、相機、雨、草、碰撞與倒燈 5＋2 秒生命週期及素材 bytes 均保持。
+
+本輪本機證據位於 `artifacts-local/lea212-20261015/`（ignored，不外送）。隔離 helper `project/lea212_capture.gd` 使用實際路燈場景與原 GLB，在固定灰色地面、相同正交相機 `(0,30,0)`／size32、1920×1080 上逐款比較熄光、陰影關及陰影開；Windows Godot 4.7.1／Forward+／Vulkan／RTX 5090。126 個固定地面樣本的平均亮度扣除熄光值後，`baseline/metrics.json` 顯示 `lamp_2` 關陰影為 `0.0635041352`、開陰影為 `0`；`candidate/metrics.json` 兩者均為 `0.0635041352`（保留比例 100%）。`lamp_1` 修正前後開／關陰影均為 `0.0632078574`。同機位畫面為 `baseline/lamp-2-shadow-on.png` 與 `candidate/lamp-2-shadow-on.png`，各款開／關對照同目錄皆有保存。這是隔離路燈的因果對照，正式 F5 滑鼠操作仍待 leadi 人驗。
+
+新增原 weather smoke 的六盞自身投影檢查；未修產品來源時 `red-weather.log` actual exit1／六個新檢查 FAIL，其餘原檢查 PASS；修正後 `green-weather.log` actual exit0／failures0，兩者 ERROR0。命令為 `<Godot4.7.1> --headless --audio-driver Dummy --fixed-fps 60 --path <隔離專案> --script res://tests/weather_lamp_smoke.gd`，XDG 三目錄獨立置於 `/tmp/lea212-xdg/`。Windows 對照命令沿前述原生入口，改用 `--script res://lea212_capture.gd --resolution 1920x1080 -- baseline`／`-- candidate`；有效兩次 actual exit0／ERROR0。首次 960×720 helper 座標換算錯誤的輸出保存在 `baseline-harness-invalid/` 與 `baseline-console.log`，不作有效證據。
+
+最新封存 Head 的 fresh-context 四原 smoke、weather smoke 與有限來源／證據查核另存本輪 `fresh/`。不以本機修正宣稱原功能全部人驗通過、完整 CI、push、PR、合併或關單；原產品設定與 `.godot` 未交給測試引擎寫入。

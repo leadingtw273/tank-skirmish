@@ -44,7 +44,7 @@ Windows 原生入口固定 `Godot_v4.7.1-stable_win64_console.exe --path <自有
 - `lamp_atmosphere.gd` 在每盞燈建立隨燈生命週期的光暈與三層貼地霧；halo 使用面向相機的柔邊亮度分布，薄霧使用低頻噪聲、柔邊及場景深度交界消散。霧隨暖燈熄滅，無全圖全螢幕濾鏡。
 - `lit_rain.gdshader` 共用管理器提供的六盞實際光源位置、顏色、範圍及啟用狀態；燈外回到原冷雨的顏色 `(0.60,0.72,0.85)` 與 alpha `0.36`，燈下隨距離轉暖、變亮。粒子數 7000、尺寸、速度、屋頂 heightfield 及相機跟隨方式保留。
 - 濕路只在 `Roads` 的執行期材質副本壓暗底色，保留原貼圖與金屬比例，抑制環境高光。`wet_road_glint.gdshader` 作為道路 next pass，依實際燈位及相機方向生成狹長暖倒影；以平滑低頻 value noise 取代規則正弦條紋。沒有覆寫建築材質或更動建築淡出 render layers。
-- A：只為主圖目前受控玩家車的非特效 StandardMaterial3D 建立執行期副本，加入低量冷色填光；支援受控車切換，保留既有發光材質及損傷覆寫流程。原素材 bytes、坦克功能與訓練場不變。
+- A（v3 做法，已退回並由下方 v4 撤回）：只為主圖目前受控玩家車的非特效 StandardMaterial3D 建立執行期副本，加入低量冷色填光。企劃判定會抹平原色／明暗並干擾既有材質路徑，現行版本不採用。
 - D：逐項關閉新增霧、草葉、其他粒子及固定草色後，灰片仍在；改用標準地材或關閉月光後才消失。來源縮到原草底自訂光照的月光／陰影分界。正式修正只將主圖 Sun 能量由 `0.12` 降到 `0.06`、`shadow_blur` 設 `3.0`，柔化冷亮片區，草材質算法與 palette 不變。
 - 柱影：原 GLB 模型恢復 `cast_shadow=ON`，暖燈頭仍為 OFF，Omni 移到燈頭下方 `(1.12,5.65,0)`。單純移位實測仍有 1.7–3% 自遮光，因此路燈模型使用專用視覺 layer 20，僅暖燈的 `shadow_caster_mask` 排除此層；月光仍包含此層，其他物件仍可遮擋暖光。相機仍可見燈具。
 - 主圖 glow 採低強度與 HDR threshold `2.3`，新增 unshaded 光效由 ALBEDO 輸出亮度；原生雙 Quad 探針顯示單寫 EMISSION 無法得到預期可見輸出，故未採用該寫法。
@@ -75,6 +75,27 @@ Windows 原生入口固定 `Godot_v4.7.1-stable_win64_console.exe --path <自有
 額外 layer 1 遮擋物的地面對照，兩款燈皆由關陰影平均亮度 `0.101996` 變為開陰影 `0`，確認其他物件仍實際遮光。F5 全圖 PNG 加權編碼亮度由 baseline `0.18795` 變為 v3 `0.17175`；暖色門檻像素由 `13821` 增至 `16346`，該群平均飽和度由 `0.44867` 變為 `0.42673`。計算方法與全部三機位數據見 `image-metrics.json`；這是門檻式輔助比較，不當作美術驗收結論。
 
 `validation-v3/preservation.json` 查核主工作目錄 2607 檔的 hash／size／mtime、主分支及 HEAD 均未動；候選副本 627 個 assets 檔與原檔 bytes 一致。這些是作者可重現證據，不替代企劃 panel 或 leadi 的人員產品驗收。
+
+## v4：改用玩家局部補光，撤回材質接管
+
+依「企劃審查 v3」，保留已通過的 B／C／D；完整移除 `_fill_player_materials`、`_readable_player_material` 及 `rain_readability_applied` metadata。天氣系統不再寫入坦克的 material override、surface override、next_pass 或 emission，坦克沿用原本的配色、受光、射擊／受損與 LEA-194 淡出材質路徑。原資產 bytes 不變。
+
+`main_weather.gd` 改以一盞 `RainPlayerFill` OmniLight3D 作為目前受控剛體的子節點，局部位置 `(0,3.2,0)`、冷色 `(0.72,0.82,1)`、energy `1.6`、range `5m`、attenuation `1.5`、陰影關閉；以實際光照保留車身亮面、暗面及履帶細節。補光不進入六盞 `lamps` 陣列、不參與街燈距離排序，也不寫入暖雨／道路倒影的六燈參數。穩態光源預算為最多六盞街燈加一盞玩家補光，街燈最多兩盞陰影，補光不增加陰影來源。原生 read-back 實際為六盞街燈全亮、兩盞有陰影，加一盞無陰影補光。
+
+綁定 `PlayerRuntime.controlled_tank_changed`，換車先隱藏／釋放舊補光，再綁新車。死亡不只等車被移除：綁定直屬 `HealthComponent.depleted`，血量歸零當下即撤光，保留的殘骸不會繼續被補亮；已死亡車也不重新補光。地圖卸載時解除 runtime／health 訊號並釋放掛在車上的補光。只載入地圖且沒有 PlayerRuntime 時跳過補光綁定。
+
+作者新增 `weather_player_fill_smoke`，透過實際主圖與公開換車／生命元件驗證跟隨、換車移除、死亡即熄、死車不重亮、重新換存活車及地圖卸載清理。它與五項指定 smoke 皆 actual exit `0`、ERROR `0`；完整命令與結果為 `atmosphere/validation-v4/smoke-results.json`。這是作者回歸測試，不是企劃的 fresh-context 驗收。
+
+v4 同三機位截圖位於 `atmosphere/direction-streets-v4/{baseline,candidate}/{f5,lamp-close,street-layout}.png`，baseline 仍為 `3ee957f`。新增效能證據集中於 `validation-v4/performance.json`，完整命令與 actual exit code 為 `native-capture-commands.json`；逐幀原始樣本、機位、視窗與光源 read-back 在兩個 capture.json，helper 封存於 `validation-v4/helpers/`。
+
+Windows 原生 Godot 4.7.1／RTX 5090／Forward+／Vulkan，兩版同 1920×1080、原 F5 transform／size100、草啟用、VSync `1`、max_fps `0`，依序執行，各取 360 warmup 及 240 steady。數據仍為 Performance.TIME_PROCESS，引擎 process frame 時間，非 GPU timer；受 VSync 影響的短樣本不推論全圖成本。
+
+| 樣本 | baseline 3ee957f median／p95 | v4 median／p95 |
+| --- | --- | --- |
+| 360 warmup | 16.600／18.680 ms | 18.343／18.788 ms |
+| 240 steady | 16.957／19.334 ms | 16.760／18.827 ms |
+
+兩版原生 capture actual exit `0`，runtime／script／shader ERROR `0`；退出時均有與 v3 相同的兩條 texture cleanup ERROR 與一條 WARNING，完整保留，未列為 smoke 的 ERROR 0。`validation-v4/preservation.json` 另存主目錄與素材保全查核。v4 以新 commit 接在 `8c68e9f` 後，不 amend、不 push、不 PR、不關票；A 的視覺驗收仍交企劃。
 
 新增原 weather smoke 的六盞自身投影檢查；未修產品來源時 `red-weather.log` actual exit1／六個新檢查 FAIL，其餘原檢查 PASS；修正後 `green-weather.log` actual exit0／failures0，兩者 ERROR0。命令為 `<Godot4.7.1> --headless --audio-driver Dummy --fixed-fps 60 --path <隔離專案> --script res://tests/weather_lamp_smoke.gd`，XDG 三目錄獨立置於 `/tmp/lea212-xdg/`。Windows 對照命令沿前述原生入口，改用 `--script res://lea212_capture.gd --resolution 1920x1080 -- baseline`／`-- candidate`；有效兩次 actual exit0／ERROR0。首次 960×720 helper 座標換算錯誤的輸出保存在 `baseline-harness-invalid/` 與 `baseline-console.log`，不作有效證據。
 

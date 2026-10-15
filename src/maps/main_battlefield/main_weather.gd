@@ -16,6 +16,9 @@ var ground_focus := Vector3.ZERO
 var _light_interval := 0.0
 var road_glints: ShaderMaterial
 var rain_material: ShaderMaterial
+var player_fill: OmniLight3D
+var _player_runtime: Node
+var _player_health: HealthComponent
 
 func _ready() -> void:
 	for index: int in POSITIONS.size():
@@ -63,48 +66,48 @@ func _ready() -> void:
 	heightfield.follow_camera_enabled = false
 	add_child(heightfield)
 	_update_camera()
-	call_deferred("_bind_player_readability")
+	call_deferred("_bind_player_fill")
 
-func _bind_player_readability() -> void:
-	var runtime := get_parent().get_parent().get_node_or_null("PlayerRuntime")
-	if runtime == null:
+func _bind_player_fill() -> void:
+	_player_runtime = get_parent().get_parent().get_node_or_null("PlayerRuntime")
+	if _player_runtime == null:
 		return
-	runtime.connect("controlled_tank_changed", _apply_player_readability)
-	_apply_player_readability(runtime.get("controlled_tank") as Node3D)
+	_player_runtime.connect("controlled_tank_changed", _set_player_fill_target)
+	_set_player_fill_target(_player_runtime.get("controlled_tank") as Node3D)
 
-func _apply_player_readability(tank: Node3D) -> void:
-	if tank == null or tank.get_meta("rain_readability_applied", false):
+func _set_player_fill_target(tank: Node3D) -> void:
+	_clear_player_fill()
+	if tank == null:
 		return
-	var visual := tank.get_node_or_null("CombatTank/VisualRecoilPivot")
-	if visual == null:
+	var health := tank.get_node_or_null("HealthComponent") as HealthComponent
+	if health == null or health.current_health <= 0.0:
 		return
-	_fill_player_materials(visual, {})
-	tank.set_meta("rain_readability_applied", true)
+	_player_health = health
+	_player_health.depleted.connect(_clear_player_fill)
+	# 六盞街燈以外，僅存活的受控車有一盞局部、無陰影補光。
+	player_fill = OmniLight3D.new()
+	player_fill.name = "RainPlayerFill"
+	player_fill.position = Vector3(0, 3.2, 0)
+	player_fill.light_color = Color(0.72, 0.82, 1.0)
+	player_fill.light_energy = 1.6
+	player_fill.omni_range = 5.0
+	player_fill.omni_attenuation = 1.5
+	player_fill.shadow_enabled = false
+	tank.add_child(player_fill)
 
-func _fill_player_materials(node: Node, materials: Dictionary) -> void:
-	if node is MeshInstance3D and not node.is_in_group("effect_mesh"):
-		var instance := node as MeshInstance3D
-		var override := instance.material_override as StandardMaterial3D
-		if override != null:
-			instance.material_override = _readable_player_material(override, materials)
-		elif instance.mesh != null:
-			for surface: int in instance.mesh.get_surface_count():
-				var source := instance.get_active_material(surface) as StandardMaterial3D
-				if source != null:
-					instance.set_surface_override_material(surface, _readable_player_material(source, materials))
-	for child: Node in node.get_children():
-		_fill_player_materials(child, materials)
+func _clear_player_fill() -> void:
+	if is_instance_valid(_player_health) and _player_health.depleted.is_connected(_clear_player_fill):
+		_player_health.depleted.disconnect(_clear_player_fill)
+	_player_health = null
+	if is_instance_valid(player_fill):
+		player_fill.visible = false
+		player_fill.queue_free()
+	player_fill = null
 
-func _readable_player_material(source: StandardMaterial3D, materials: Dictionary) -> StandardMaterial3D:
-	if source.emission_enabled:
-		return source
-	if not materials.has(source):
-		var fill := source.duplicate() as StandardMaterial3D
-		fill.emission_enabled = true
-		fill.emission_operator = BaseMaterial3D.EMISSION_OP_ADD
-		fill.emission = Color(0.18, 0.23, 0.28)
-		materials[source] = fill
-	return materials[source] as StandardMaterial3D
+func _exit_tree() -> void:
+	if is_instance_valid(_player_runtime) and _player_runtime.is_connected("controlled_tank_changed", _set_player_fill_target):
+		_player_runtime.disconnect("controlled_tank_changed", _set_player_fill_target)
+	_clear_player_fill()
 
 func _wet_roads(node: Node, materials: Dictionary) -> void:
 	if node is MeshInstance3D:

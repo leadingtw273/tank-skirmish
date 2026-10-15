@@ -59,7 +59,7 @@ func _run() -> void:
 	for lamp in weather.get("lamps"):
 		road_lights += int(lamp.light.visible)
 		shadows += int(lamp.light.shadow_enabled)
-	_expect("all-roads-budget-shadowed-plus-two-headlights", weather.get("lamps").size() == 69 and road_lights <= 8 and shadows == road_lights and weather.get("player_headlights").size() == 2)
+	_expect("all-roads-budget-shadowed-plus-two-headlights", weather.get("lamps").size() == 117 and road_lights == weather.visible_candidates and shadows == road_lights and weather.get("player_headlights").size() == 2)
 	(tank.get_node("HealthComponent") as HealthComponent).apply_damage(100000.0)
 	_expect("death-hides-before-wreck-free", is_instance_valid(tank) and weather.get("player_headlights").is_empty() and previous_lights.all(func(ref: WeakRef): return not ref.get_ref().visible))
 	await _frames(2)

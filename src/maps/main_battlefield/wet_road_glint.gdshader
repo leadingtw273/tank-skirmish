@@ -1,8 +1,8 @@
 shader_type spatial;
 render_mode blend_add, cull_disabled, depth_draw_never, ambient_light_disabled, specular_disabled, fog_disabled;
 
-uniform vec3 lamp_positions[8];
-uniform float lamp_active[8];
+uniform vec3 lamp_positions[256];
+uniform int lamp_count = 0;
 varying vec3 world_position;
 
 float hash(vec2 p) {
@@ -29,9 +29,9 @@ void fragment() {
 void light() {
 	if (!LIGHT_IS_DIRECTIONAL) {
 	vec3 light_direction = normalize((INV_VIEW_MATRIX * vec4(LIGHT, 0.0)).xyz);
-	for (int i = 0; i < 8; i++) {
+	for (int i = 0; i < lamp_count; i++) {
 		vec3 lamp_direction = normalize(lamp_positions[i] - world_position);
-		if (lamp_active[i] < 0.5 || dot(light_direction, lamp_direction) < 0.999999) { continue; }
+		if (dot(light_direction, lamp_direction) < 0.999999) { continue; }
 		vec2 toward_camera = normalize(INV_VIEW_MATRIX[2].xz);
 		float mirror_offset = lamp_positions[i].y * length(INV_VIEW_MATRIX[2].xz) / max(INV_VIEW_MATRIX[2].y, 0.1);
 		vec2 delta = world_position.xz - lamp_positions[i].xz - toward_camera * mirror_offset;

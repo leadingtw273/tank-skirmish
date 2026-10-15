@@ -5,8 +5,9 @@ const LAMP := preload("res://src/maps/main_battlefield/street_lamp.tscn")
 const RAIN_MATERIAL := preload("res://src/maps/main_battlefield/lit_rain.gdshader")
 const WET_GLINT := preload("res://src/maps/main_battlefield/wet_road_glint.gdshader")
 const LAYOUT := preload("res://src/maps/main_battlefield/lamp_layout.gd")
-# 街燈8盞＋玩家Spot2盞；超額只保留燈頭，不降級成無陰影光源。
-const MAX_ACTIVE_LIGHTS := 8
+# 畫面含12m緩衝內全亮、全投影；256只供倒影uniform容量，不是關燈上限。
+const VIEW_BUFFER_METERS := 12.0
+const GLINT_CAPACITY := 256
 var lamps: Array[RigidBody3D] = []
 var rain: GPUParticles3D
 var heightfield: GPUParticlesCollisionHeightField3D
@@ -19,9 +20,14 @@ var road_glints: ShaderMaterial
 var rain_material: ShaderMaterial
 var player_headlights: Array[SpotLight3D] = []
 var _player_runtime: Node
+var _shadow_viewport: Viewport
+var _previous_atlas: Dictionary = {}
+var _last_view := Transform3D()
+var _last_view_size := -1.0
 var _player_health: HealthComponent
 
 func _ready() -> void:
+	_configure_shadow_atlas()
 	for index: int in LAYOUT.LAMPS.size():
 		var pose: Array = LAYOUT.LAMPS[index]
 		var lamp := LAMP.instantiate() as RigidBody3D
@@ -115,6 +121,9 @@ func _clear_player_headlights() -> void:
 	player_headlights.clear()
 
 func _exit_tree() -> void:
+	if is_instance_valid(_shadow_viewport):
+		for property: String in _previous_atlas:
+			_shadow_viewport.set(property, _previous_atlas[property])
 	if is_instance_valid(_player_runtime) and _player_runtime.is_connected("controlled_tank_changed", _set_player_headlights_target):
 		_player_runtime.disconnect("controlled_tank_changed", _set_player_headlights_target)
 	_clear_player_headlights()
@@ -139,10 +148,22 @@ func _wet_roads(node: Node, materials: Dictionary) -> void:
 	for child: Node in node.get_children():
 		_wet_roads(child, materials)
 
+func _configure_shadow_atlas() -> void:
+	_shadow_viewport = get_viewport()
+	for property: String in ["positional_shadow_atlas_size", "positional_shadow_atlas_16_bits", "positional_shadow_atlas_quad_0", "positional_shadow_atlas_quad_1", "positional_shadow_atlas_quad_2", "positional_shadow_atlas_quad_3"]:
+		_previous_atlas[property] = _shadow_viewport.get(property)
+	# 4象限×64個Spot，共256個512px槽；避免畫面內燈開著卻拿不到陰影槽。
+	_shadow_viewport.positional_shadow_atlas_size = 8192
+	_shadow_viewport.positional_shadow_atlas_16_bits = false
+	for quadrant: int in 4:
+		_shadow_viewport.set_positional_shadow_atlas_quadrant_subdiv(quadrant, Viewport.SHADOW_ATLAS_QUADRANT_SUBDIV_64)
+
 func _process(delta: float) -> void:
 	_update_camera()
 	_light_interval -= delta
-	if _light_interval <= 0:
+	var camera := get_viewport().get_camera_3d()
+	var moved := camera != null and (not camera.global_transform.is_equal_approx(_last_view) or not is_equal_approx(camera.size, _last_view_size))
+	if _light_interval <= 0 or moved:
 		_light_interval = 0.2
 		_update_lights()
 	_sync_road_glints()
@@ -151,41 +172,38 @@ func _in_light_view(camera: Camera3D, lamp: RigidBody3D) -> bool:
 	var center: Vector3 = lamp.light.global_position
 	if camera.is_position_behind(center):
 		return false
-	# 正式正交相機：光照球的投影邊界可涵蓋柱在畫面外、光照仍入畫的情形。
-	var radius: float = lamp.light.omni_range
 	var point := camera.unproject_position(center)
 	var extent := Vector2(
-		point.distance_to(camera.unproject_position(center + camera.global_basis.x * radius)),
-		point.distance_to(camera.unproject_position(center + camera.global_basis.y * radius)))
+		point.distance_to(camera.unproject_position(center + camera.global_basis.x * VIEW_BUFFER_METERS)),
+		point.distance_to(camera.unproject_position(center + camera.global_basis.y * VIEW_BUFFER_METERS)))
 	return Rect2(point - extent, extent * 2).intersects(get_viewport().get_visible_rect())
 
 func _update_lights() -> void:
 	var camera := get_viewport().get_camera_3d()
-	var candidates: Array[RigidBody3D] = []
-	for lamp: RigidBody3D in lamps:
-		if is_instance_valid(lamp) and not lamp.toppled and camera != null and _in_light_view(camera, lamp):
-			candidates.append(lamp)
-	candidates.sort_custom(func(a: RigidBody3D, b: RigidBody3D):
-		return a.global_position.distance_squared_to(ground_focus) < b.global_position.distance_squared_to(ground_focus))
-	visible_candidates = candidates.size()
-	budget_dropped = maxi(0, visible_candidates - MAX_ACTIVE_LIGHTS)
 	active_lamps.clear()
-	for index: int in mini(MAX_ACTIVE_LIGHTS, candidates.size()):
-		active_lamps.append(candidates[index])
 	for lamp: RigidBody3D in lamps:
-		if is_instance_valid(lamp):
-			lamp.set_light_active(lamp in active_lamps, true)
+		if not is_instance_valid(lamp):
+			continue
+		var active: bool = not lamp.toppled and camera != null and _in_light_view(camera, lamp)
+		lamp.set_light_active(active, true)
+		if active:
+			active_lamps.append(lamp)
+	visible_candidates = active_lamps.size()
+	budget_dropped = 0
+	if camera != null:
+		_last_view = camera.global_transform
+		_last_view_size = camera.size
 
 func _sync_road_glints() -> void:
 	var positions := PackedVector3Array()
-	var active := PackedFloat32Array()
-	for index: int in MAX_ACTIVE_LIGHTS:
-		var lamp: RigidBody3D = active_lamps[index] if index < active_lamps.size() else null
-		var valid: bool = is_instance_valid(lamp) and lamp.light.visible
-		positions.append(lamp.light.global_position if valid else Vector3.ZERO)
-		active.append(1.0 if valid else 0.0)
+	for lamp: RigidBody3D in active_lamps:
+		if is_instance_valid(lamp) and lamp.light.visible:
+			positions.append(lamp.light.global_position)
+	var count := positions.size()
+	assert(count <= GLINT_CAPACITY, "活躍來源超出倒影容量；不可截斷或關燈")
+	positions.resize(GLINT_CAPACITY)
 	road_glints.set_shader_parameter("lamp_positions", positions)
-	road_glints.set_shader_parameter("lamp_active", active)
+	road_glints.set_shader_parameter("lamp_count", count)
 
 func _update_camera() -> void:
 	var camera := get_viewport().get_camera_3d()

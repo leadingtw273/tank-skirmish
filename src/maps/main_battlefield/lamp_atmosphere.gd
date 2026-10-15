@@ -3,12 +3,12 @@ extends Node3D
 
 const MIST := preload("res://src/maps/main_battlefield/lamp_mist.gdshader")
 const HALO := preload("res://src/maps/main_battlefield/lamp_halo.gdshader")
-var source_light: OmniLight3D
+var source_light: Light3D
 var halos: Array[MeshInstance3D] = []
 var _occlusion_interval := 0.0
 
 func _ready() -> void:
-	source_light = get_parent().get_node("WarmLight") as OmniLight3D
+	source_light = get_parent().get_node("WarmLight") as Light3D
 	for head: MeshInstance3D in get_parent().heads:
 		var halo := MeshInstance3D.new()
 		halo.name = "HeadHalo"

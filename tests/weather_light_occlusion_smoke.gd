@@ -67,10 +67,10 @@ func _effect_shadow_control(lamp: RigidBody3D, floor: MeshInstance3D, camera: Ca
 	rain.mesh = quad
 	root.add_child(rain)
 	rain.position = Vector3(6,1,5)
-	var positions := PackedVector3Array([lamp.light.global_position,Vector3.ZERO,Vector3.ZERO,Vector3.ZERO,Vector3.ZERO,Vector3.ZERO,Vector3.ZERO,Vector3.ZERO])
-	var active := PackedFloat32Array([1,0,0,0,0,0,0,0])
-	glint.set_shader_parameter("lamp_positions",positions)
-	glint.set_shader_parameter("lamp_active",active)
+	var positions := PackedVector3Array([lamp.light.global_position])
+	positions.resize(256)
+	glint.set_shader_parameter("lamp_positions", positions)
+	glint.set_shader_parameter("lamp_count", 1)
 	var points: Array[Vector3] = []
 	for x: float in [5.5,6.0,6.5]:
 		for z: float in [4.5,5.0,5.5]:

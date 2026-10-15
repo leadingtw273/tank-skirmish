@@ -9,7 +9,7 @@ var toppled := false
 var toppled_seconds := 0.0
 var contact_count := 0
 var atmosphere: Node3D
-var light: OmniLight3D
+var light: SpotLight3D
 var heads: Array[MeshInstance3D] = []
 var visuals: Array[GeometryInstance3D] = []
 
@@ -47,27 +47,30 @@ func _ready() -> void:
 		head.name = "WarmHead%d" % heads.size()
 		head.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		var mesh := SphereMesh.new()
-		mesh.radius = 0.16
-		mesh.height = 0.18
+		mesh.radius = 0.22
+		mesh.height = 0.22
 		var material := StandardMaterial3D.new()
 		material.albedo_color = Color(1, 0.72, 0.32)
 		material.emission_enabled = true
 		material.emission = Color(1, 0.58, 0.16)
-		material.emission_energy_multiplier = 3.0
+		material.emission_energy_multiplier = 6.0
 		mesh.material = material
 		head.mesh = mesh
-		head.position = Vector3(x, 6.02, 0)
+		head.position = Vector3(x, 6.18, 0)
 		add_child(head)
 		heads.append(head)
 		visuals.append(head)
-	light = OmniLight3D.new()
+	light = SpotLight3D.new()
 	light.name = "WarmLight"
 	# 光源置於實際燈頭下方，避開燈柱及燈罩，保留模型對月光的柱影。
 	light.position = Vector3(1.12, 5.65, 0)
 	light.light_color = Color(1, 0.58, 0.14)
 	light.light_energy = 6.0
-	light.omni_range = 22.0
-	light.omni_attenuation = 1.5
+	light.rotation.x = -PI * 0.5
+	light.spot_range = 22.0
+	light.spot_attenuation = 1.5
+	light.spot_angle = 75.0
+	light.spot_angle_attenuation = 0.2
 	light.shadow_caster_mask = 0xFFFFFFFF ^ LAMP_SHADOW_LAYER
 	add_child(light)
 	atmosphere = ATMOSPHERE.new()

@@ -65,99 +65,184 @@ def local_ports(row, catalog):
 
 def generate(data, catalog):
     roads = data['roads']
-    road_tris = [t for r in roads for t in triangles(r)]
+    # 6m空間索引只加速真實三角形查詢，不用AABB代替人行道／建築幾何。
+    cells = collections.defaultdict(list)
+    for road in roads:
+        for tri in triangles(road):
+            if max(v[1] for v in tri) < 0.06: continue
+            xs, zs = [v[0] for v in tri], [v[2] for v in tri]
+            for x in range(math.floor(min(xs) / 6), math.floor(max(xs) / 6) + 1):
+                for z in range(math.floor(min(zs) / 6), math.floor(max(zs) / 6) + 1):
+                    cells[x, z].append(tri)
     buildings = []
-    for b in data['buildings']:
-        ts = triangles(b)
+    for building in data['buildings']:
+        ts = triangles(building)
         pts = [xz(v) for t in ts for v in t]
         if pts:
-            buildings.append((b['name'], ts, (min(p[0] for p in pts), min(p[1] for p in pts), max(p[0] for p in pts), max(p[1] for p in pts))))
-    accepted, skipped = [], []
+            buildings.append((building['name'], ts, (min(p[0] for p in pts), min(p[1] for p in pts), max(p[0] for p in pts), max(p[1] for p in pts))))
+    accepted, skipped, adjustments = [], [], []
+    geometry_cache = {}
 
-    def consider(p, toward, source, kind, station):
-        candidate_id = f'{source}:{kind}:{station}'
-        row = {'id': candidate_id, 'source': source, 'kind': kind, 'position': [p[0], 0, p[1]],
-               'arm': list(unit(toward)), 'yaw': math.atan2(-toward[1], toward[0])}
-        reason = None
+    def geometry(p):
+        key = tuple(round(v, 6) for v in p)
+        if key in geometry_cache: return geometry_cache[key]
         support = []
-        for t in road_tris:
-            weights = barycentric(p, t)
-            if weights: support.append(sum(weights[i] * t[i][1] for i in range(3)))
-        if not support or max(support) < 0.06: reason = reason or '不是實際人行道頂面'
-        else:
-            row['surface_height'] = max(support)
-            # 單精度 physics 的同平面取樣可相差約1e-7m；向上量化到10µm。
-            row['position'][1] = math.ceil(max(support) * 100000) / 100000
-        for name, ts, bounds in buildings:
-            if not (bounds[0] - CLEARANCE <= p[0] <= bounds[2] + CLEARANCE and bounds[1] - CLEARANCE <= p[1] <= bounds[3] + CLEARANCE): continue
-            if any(barycentric(p, t) is not None or min(segment_distance(p, xz(t[i]), xz(t[(i + 1) % 3])) for i in range(3)) < CLEARANCE for t in ts):
-                reason = reason or '建築外緣不足0.5m:' + name
-                break
-        if any(length(sub(p, xz(old['position']))) < MIN_DISTANCE - 1e-6 for old in accepted): reason = reason or '與已排燈位過近（12m）'
-        if reason:
-            row['reason'] = reason
-            skipped.append(row)
-        else: accepted.append(row)
+        for tri in cells[math.floor(p[0] / 6), math.floor(p[1] / 6)]:
+            w = barycentric(p, tri)
+            if w: support.append(sum(w[i] * tri[i][1] for i in range(3)))
+        height = max(support, default=0)
+        reason = None if height >= 0.06 else '不是實際人行道頂面'
+        if reason is None:
+            for name, ts, bounds in buildings:
+                if not (bounds[0] - CLEARANCE <= p[0] <= bounds[2] + CLEARANCE and bounds[1] - CLEARANCE <= p[1] <= bounds[3] + CLEARANCE): continue
+                if any(barycentric(p, t) is not None or min(segment_distance(p, xz(t[i]), xz(t[(i + 1) % 3])) for i in range(3)) < CLEARANCE for t in ts):
+                    reason = '建築外緣不足0.5m:' + name
+                    break
+        geometry_cache[key] = (height, reason)
+        return height, reason
 
-    for row in sorted(roads, key=lambda r: (r["name"].endswith("__Road1"), r["name"])):
-        if row['group'] != 'Junctions': continue
-        pivot, local_dirs = local_ports(row, catalog)
-        center = xz(transform(row, pivot))
-        dirs = [unit((row['basis'][0][0] * d[0] + row['basis'][2][0] * d[1], row['basis'][0][2] * d[0] + row['basis'][2][2] * d[1])) for d in local_dirs]
+    def place(options, source, kind, station):
+        identity = f'{source}:{kind}:{station}'
+        if any(row['id'] == identity for row in accepted): return True
+        reasons = collections.Counter()
+        for p, toward in options:
+            height, reason = geometry(p)
+            if reason is None and any(length(sub(p, xz(old['position']))) < MIN_DISTANCE - 1e-6 for old in accepted):
+                reason = '與已排燈位過近（12m）'
+            if reason:
+                reasons[reason] += 1
+                continue
+            row = {'id': identity, 'source': source, 'kind': kind, 'position': [p[0], math.ceil(height * 100000) / 100000, p[1]],
+                   'surface_height': height, 'arm': list(unit(toward)), 'yaw': math.atan2(-toward[1], toward[0])}
+            accepted.append(row)
+            movement = length(sub(p, options[0][0]))
+            if movement > 0.01:
+                adjustments.append({'id': identity, 'original_xz': options[0][0], 'moved_m': movement, 'position': row['position']})
+            return True
+        skipped.append({'id': identity, 'source': source, 'kind': kind,
+                        'position': [options[0][0][0], 0, options[0][0][1]], 'reason': '有限替代位置皆不可用', 'attempt_reasons': dict(reasons)})
+        return False
+
+    junctions = {}
+    for road in sorted(roads, key=lambda r: r['name']):
+        if road['group'] != 'Junctions': continue
+        pivot, local_dirs = local_ports(road, catalog)
+        center = xz(transform(road, pivot))
+        dirs = [unit((road['basis'][0][0] * d[0] + road['basis'][2][0] * d[1], road['basis'][0][2] * d[0] + road['basis'][2][2] * d[1])) for d in local_dirs]
         angles = sorted(math.atan2(d[1], d[0]) for d in dirs)
+        groups = []
         if len(dirs) == 2 and dot(dirs[0], dirs[1]) < -0.999:
             n = (-dirs[0][1], dirs[0][0])
-            consider(add(center, mul(n, OFFSET)), mul(n, -1), row['name'], 'through', 0)
-            continue
-        for index, angle in enumerate(angles):
-            gap = (angles[(index + 1) % len(angles)] - angle) % math.tau
-            if gap >= math.pi - 0.01: continue  # 外側扇區不是路口內角。
-            bisector = (math.cos(angle + gap / 2), math.sin(angle + gap / 2))
-            p = add(center, mul(bisector, OFFSET / math.sin(gap / 2)))
-            consider(p, sub(center, p), row['name'], 'corner', index)
+            groups.append(('through', 0, [(add(center, mul(n, OFFSET)), mul(n, -1))]))
+        else:
+            for index, angle in enumerate(angles):
+                gap = (angles[(index + 1) % len(angles)] - angle) % math.tau
+                if gap >= math.pi - 0.01: continue
+                bisector = (math.cos(angle + gap / 2), math.sin(angle + gap / 2))
+                p = add(center, mul(bisector, OFFSET / math.sin(gap / 2)))
+                options = [(p, sub(center, p))]
+                # 11m寬道路兩側內角會衝突；沿相鄰支路錯開約5m，而非刪掉整個角。
+                for shift in range(1, 9):
+                    for direction in [(math.cos(angle), math.sin(angle)), (math.cos(angle + gap), math.sin(angle + gap))]:
+                        q = add(p, mul(direction, shift))
+                        if length(sub(q, center)) <= 16:
+                            options.append((q, sub(add(center, mul(direction, dot(sub(q, center), direction))), q)))
+                groups.append(('corner', index, options))
+        fallback = []
+        for distance in [6, 8, 4, 10, 12]:
+            for direction in dirs:
+                normal = (-direction[1], direction[0])
+                for side in [-1, 1]:
+                    p = add(add(center, mul(direction, distance)), mul(normal, side * OFFSET))
+                    fallback.append((p, mul(normal, -side)))
+        junctions[road['name'].split('__')[0]] = {'name': road['name'], 'center': center, 'groups': groups, 'fallback': fallback}
+    # 先完成每節點一盞，包括原先漏掉的四個45度彎，再配置其餘內角。
+    for junction in junctions.values():
+        covered = any(place(options, junction['name'], kind, index) for kind, index, options in junction['groups'])
+        if not covered:
+            assert place(junction['fallback'], junction['name'], 'junction', 0), junction['name'] + ': 無合法路口保底燈位'
+    for junction in junctions.values():
+        for kind, index, options in junction['groups']:
+            place(options, junction['name'], kind, index)
 
     edges = collections.defaultdict(list)
-    for row in roads:
-        if row['group'] == 'Connections':
-            match = re.fullmatch(r'(.+)_to_(.+)_\d+', row['name'])
-            assert match, row['name']
-            edges[f'{match[1]}_to_{match[2]}'].append(row)
-    edge_anchors = []
+    for road in roads:
+        if road['group'] == 'Connections':
+            match = re.fullmatch(r'(.+)_to_(.+)_\d+', road['name'])
+            assert match, road['name']
+            edges[f'{match[1]}_to_{match[2]}'].append(road)
+    edge_rows, lines = [], collections.defaultdict(list)
     for name, modules in sorted(edges.items()):
         origin = xz(modules[0]['origin'])
         direction = unit(xz(modules[0]['basis'][2]))
+        if direction[0] < -1e-5 or (abs(direction[0]) < 1e-5 and direction[1] < 0): direction = mul(direction, -1)
         normal = (-direction[1], direction[0])
-        projection = [dot(sub(xz(v), origin), direction) for row in modules for t in triangles(row) for v in t]
-        low, high = min(projection), max(projection)
-        # 優先內角燈已全數排完；直路由固定端的相鄰路口燈起算30m。
-        # 用 source 節點關係選相鄰路口，避免隔街燈成為錯誤 anchor。
-        endpoint_names = name.split('_to_')
-        anchors = [r for r in accepted if r['kind'] in ('corner', 'through')
-                   and r['source'].split('__')[0] in endpoint_names
-                   and abs(dot(sub(xz(r['position']), origin), normal)) < 8]
-        near_start = [r for r in anchors if dot(sub(xz(r['position']), origin), direction) <= low + 12]
-        anchor = max(near_start, key=lambda r: (dot(sub(xz(r['position']), origin), direction), r['id']), default=None)
-        start = dot(sub(xz(anchor['position']), origin), direction) if anchor else low
-        phase = -1 if anchor and dot(sub(xz(anchor['position']), origin), normal) >= 0 else 1
-        stations = []
-        station = start + SPACING
-        while station <= high + 1e-6:
-            if station >= low - 1e-6: stations.append(station)
-            station += SPACING
-        edge_anchors.append({'edge': name, 'anchor': anchor['id'] if anchor else 'connection-start',
-                             'origin_station_m': start, 'stations_m': stations})
-        for i, station in enumerate(stations):
-            side = phase * (-1) ** i
-            p = add(add(origin, mul(direction, station)), mul(normal, side * OFFSET))
-            consider(p, mul(normal, -side), name, 'straight', i)
+        angle = math.atan2(direction[1], direction[0])
+        offset = dot(origin, normal)
+        endpoints = [junctions[node]['center'] for node in name.split('_to_')]
+        projections = [dot(xz(v), direction) for module in modules for tri in triangles(module) for v in tri] + [dot(p, direction) for p in endpoints]
+        row = {'id': name, 'direction': direction, 'normal': normal, 'offset': offset, 'low': min(projections), 'high': max(projections)}
+        edge_rows.append(row)
+        lines[round(angle, 5), round(offset, 3)].append(row)
+    # 合併穿過路口的共線道路，避免在每條edge的虛擬端點把實際長空隙藏起來。
+    corridors = []
+    for key, segments in sorted(lines.items()):
+        for segment in sorted(segments, key=lambda r: r['low']):
+            if corridors and corridors[-1]['line'] == key and segment['low'] <= corridors[-1]['high'] + 0.1:
+                corridors[-1]['high'] = max(corridors[-1]['high'], segment['high'])
+                corridors[-1]['edges'].append(segment['id'])
+            else:
+                corridors.append(dict(segment, id='corridor-%d' % len(corridors), line=key, edges=[segment['id']]))
+
+    def coverage(route):
+        stations = sorted((dot(xz(row['position']), route['direction']), row['id']) for row in accepted
+                          if abs(dot(xz(row['position']), route['normal']) - route['offset']) <= 7.75
+                          and route['low'] - 1e-5 <= dot(xz(row['position']), route['direction']) <= route['high'] + 1e-5)
+        points = [(route['low'], 'START')] + stations + [(route['high'], 'END')]
+        gaps = [{'from': a[1], 'to': b[1], 'start_m': a[0], 'end_m': b[0], 'gap_m': b[0] - a[0]} for a, b in zip(points, points[1:])]
+        return {'id': route['id'], 'length_m': route['high'] - route['low'], 'stations': stations, 'gaps': gaps,
+                'maximum_gap_m': max((g['gap_m'] for g in gaps), default=0),
+                'maximum_lamp_pair_gap_m': max((b[0] - a[0] for a, b in zip(stations, stations[1:])), default=0)}
+
+    failed_gaps = set()
+    for iteration in range(300):
+        work = sorted(((gap['gap_m'], route, gap) for route in corridors for gap in coverage(route)['gaps']
+                       if gap['gap_m'] > SPACING + 1e-4 and (route['id'], gap['from'], gap['to']) not in failed_gaps), key=lambda item: (-item[0], item[1]['id']))
+        if not work: break
+        _, route, gap = work[0]
+        midpoint = (gap['start_m'] + gap['end_m']) / 2
+        options = []
+        preferred_side = -1 if sum(route['id'].encode()) % 2 else 1
+        previous = next((r for r in accepted if r['id'] == gap['from']), None)
+        if previous:
+            preferred_side = -1 if dot(xz(previous['position']), route['normal']) - route['offset'] > 0 else 1
+        for shift in [0] + [value for step in range(1, 13) for value in [-step, step]]:
+            station = midpoint + shift
+            if not (max(route['low'], gap['start_m'] + 1) <= station <= min(route['high'], gap['end_m'] - 1)): continue
+            for side in [preferred_side, -preferred_side]:
+                p = add(mul(route['direction'], station), mul(route['normal'], route['offset'] + side * OFFSET))
+                options.append((p, mul(route['normal'], -side)))
+        if not options or not place(options, route['id'], 'straight', iteration):
+            failed_gaps.add((route['id'], gap['from'], gap['to']))
+    corridor_coverage = [coverage(route) for route in corridors]
+    edge_coverage = [coverage(route) for route in edge_rows]
+    maximum_gap = max(row['maximum_gap_m'] for row in corridor_coverage + edge_coverage)
+    assert maximum_gap <= 36.0001, '沿路空隙超標: ' + str([(row['id'], row['maximum_gap_m']) for row in corridor_coverage + edge_coverage if row['maximum_gap_m'] > 36.0001])
+    junction_coverage = [{'node': node, 'lamps': [r['id'] for r in accepted if r['source'] == junction['name']]} for node, junction in junctions.items()]
+    assert all(row['lamps'] for row in junction_coverage)
+    minimum = min(length(sub(xz(a['position']), xz(b['position']))) for i, a in enumerate(accepted) for b in accepted[i + 1:])
     old_mapping = []
     for i, old in enumerate(data['existing_lamps']):
-        nearest = min(accepted, key=lambda r: length(sub(xz(r['position']), xz(old['position']))))
-        d = length(sub(xz(nearest['position']), xz(old['position'])))
-        old_mapping.append({'old': i + 1, 'old_position': old['position'], 'proposal': nearest['id'], 'distance_m': d, 'action': '保留／微調到演算法燈位' if d < 2 else '由鄰近演算法燈位取代'})
-    return {'phase': 'R3-B，已核可規則之生成燈位', 'minimum_distance_m': MIN_DISTANCE, 'edge_anchors': edge_anchors, 'actual_minimum_distance_m': min(length(sub(xz(a['position']), xz(b['position']))) for i, a in enumerate(accepted) for b in accepted[i+1:]), 'spacing_m': SPACING, 'offset_m': OFFSET, 'pole_radius_m': 0.18, 'building_edge_clearance_m': 0.5,
-            'statistics': {'road_modules': len(roads), 'junctions': sum(r['group'] == 'Junctions' for r in roads), 'connection_edges': len(edges), 'buildings': len(buildings), 'lamps': len(accepted), 'skipped': len(skipped), 'by_kind': dict(collections.Counter(r['kind'] for r in accepted)), 'skip_reasons': dict(collections.Counter(r['reason'].split(':')[0] for r in skipped))},
-            'lamps': accepted, 'skipped': skipped, 'existing_six': old_mapping}
+        nearest = min(accepted, key=lambda row: length(sub(xz(row['position']), xz(old['position']))))
+        old_mapping.append({'old': i + 1, 'old_position': old['position'], 'proposal': nearest['id'], 'distance_m': length(sub(xz(nearest['position']), xz(old['position'])))})
+    return {'phase': 'R3-B 覆蓋修正', 'minimum_distance_m': MIN_DISTANCE, 'actual_minimum_distance_m': minimum,
+            'spacing_m': SPACING, 'maximum_allowed_gap_m': 36, 'maximum_along_road_gap_m': maximum_gap,
+            'offset_m': OFFSET, 'pole_radius_m': 0.18, 'building_edge_clearance_m': 0.5,
+            'statistics': {'road_modules': len(roads), 'junctions': len(junctions), 'connection_edges': len(edges), 'buildings': len(buildings), 'lamps': len(accepted), 'skipped': len(skipped),
+                           'by_kind': dict(collections.Counter(row['kind'] for row in accepted)), 'skip_reasons': dict(collections.Counter(row['reason'] for row in skipped)), 'covered_junctions': sum(bool(row['lamps']) for row in junction_coverage),
+                           'maximum_along_road_gap_m': maximum_gap, 'corridors': len(corridors)},
+            'lamps': accepted, 'skipped': skipped, 'adjustments': adjustments, 'existing_six': old_mapping,
+            'junction_coverage': junction_coverage, 'edge_coverage': edge_coverage, 'corridor_coverage': corridor_coverage}
 
 
 def svg(data, plan):
@@ -167,7 +252,7 @@ def svg(data, plan):
     scale = min(1480 / (hi_x - lo_x), 1480 / (hi_z - lo_z))
     def point(p): return ((p[0] - lo_x) * scale + 60, (p[1] - lo_z) * scale + 100)
     def pts(values): return ' '.join(f'{x:.2f},{y:.2f}' for x, y in map(point, values))
-    elements = ['<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1700" viewBox="0 0 1600 1700">', '<rect width="1600" height="1700" fill="#14202b"/>', '<g font-family="Microsoft JhengHei,Noto Sans CJK TC,sans-serif" fill="#e2e9ed">', '<text x="60" y="42" font-size="27">LEA-212 R3-B 全圖路燈配置（最小間距12m）</text>', f'<text x="60" y="76" font-size="18">黃點／箭頭：燈柱／燈臂　紅叉：略過　青點：出生　預計 {len(plan["lamps"])} 盞，略過 {len(plan["skipped"])} 處</text>', '</g>']
+    elements = ['<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1700" viewBox="0 0 1600 1700">', '<rect width="1600" height="1700" fill="#14202b"/>', '<g font-family="Microsoft JhengHei,Noto Sans CJK TC,sans-serif" fill="#e2e9ed">', '<text x="60" y="42" font-size="27">LEA-212 R3-B 全圖路燈配置（12m淨距／沿路空隙≤36m）</text>', f'<text x="60" y="76" font-size="18">黃點／箭頭：燈柱／燈臂　紅叉：略過　青點：出生　預計 {len(plan["lamps"])} 盞，略過 {len(plan["skipped"])} 處</text>', '</g>']
     for row in data['roads']:
         for tri in triangles(row):
             color = '#829098' if sum(v[1] for v in tri) / 3 > .06 else '#354858'

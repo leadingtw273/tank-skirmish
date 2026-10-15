@@ -58,3 +58,13 @@ maximum_health = 100.0
 
 [node name="Tank2DamageVisuals" parent="." instance=ExtResource("3_damage_visuals")]
 depleted_explosion_scale = 1.5
+
+[node name="Headlights" type="Node3D" parent="."]
+
+[node name="HeadlightL" type="Marker3D" parent="Headlights"]
+position = Vector3(-3.42, 1.0, -1.8)
+rotation = Vector3(0, 1.5707963, 0)
+
+[node name="HeadlightR" type="Marker3D" parent="Headlights"]
+position = Vector3(-3.42, 1.0, 1.8)
+rotation = Vector3(0, 1.5707963, 0)

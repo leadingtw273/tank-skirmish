@@ -16,7 +16,7 @@ var ground_focus := Vector3.ZERO
 var _light_interval := 0.0
 var road_glints: ShaderMaterial
 var rain_material: ShaderMaterial
-var player_fill: OmniLight3D
+var player_headlights: Array[SpotLight3D] = []
 var _player_runtime: Node
 var _player_health: HealthComponent
 
@@ -66,48 +66,51 @@ func _ready() -> void:
 	heightfield.follow_camera_enabled = false
 	add_child(heightfield)
 	_update_camera()
-	call_deferred("_bind_player_fill")
+	call_deferred("_bind_player_headlights")
 
-func _bind_player_fill() -> void:
+func _bind_player_headlights() -> void:
 	_player_runtime = get_parent().get_parent().get_node_or_null("PlayerRuntime")
 	if _player_runtime == null:
 		return
-	_player_runtime.connect("controlled_tank_changed", _set_player_fill_target)
-	_set_player_fill_target(_player_runtime.get("controlled_tank") as Node3D)
+	_player_runtime.connect("controlled_tank_changed", _set_player_headlights_target)
+	_set_player_headlights_target(_player_runtime.get("controlled_tank") as Node3D)
 
-func _set_player_fill_target(tank: Node3D) -> void:
-	_clear_player_fill()
+func _set_player_headlights_target(tank: Node3D) -> void:
+	_clear_player_headlights()
 	if tank == null:
 		return
 	var health := tank.get_node_or_null("HealthComponent") as HealthComponent
 	if health == null or health.current_health <= 0.0:
 		return
 	_player_health = health
-	_player_health.depleted.connect(_clear_player_fill)
-	# 六盞街燈以外，僅存活的受控車有一盞局部、無陰影補光。
-	player_fill = OmniLight3D.new()
-	player_fill.name = "RainPlayerFill"
-	player_fill.position = Vector3(0, 3.2, 0)
-	player_fill.light_color = Color(0.72, 0.82, 1.0)
-	player_fill.light_energy = 1.6
-	player_fill.omni_range = 5.0
-	player_fill.omni_attenuation = 1.5
-	player_fill.shadow_enabled = false
-	tank.add_child(player_fill)
+	_player_health.depleted.connect(_clear_player_headlights)
+	# 錨點由各車型提供；車燈跟隨車身，不跟砲塔或後座視覺轉動。
+	for anchor: Node3D in tank.get_node("Headlights").get_children():
+		var light := SpotLight3D.new()
+		light.name = "RainHeadlight"
+		light.rotation.x = deg_to_rad(-6.0)
+		light.light_color = Color(1.0, 0.92, 0.78)
+		light.light_energy = 12.0
+		light.spot_range = 20.0
+		light.spot_angle = 24.0
+		light.shadow_enabled = true
+		anchor.add_child(light)
+		player_headlights.append(light)
 
-func _clear_player_fill() -> void:
-	if is_instance_valid(_player_health) and _player_health.depleted.is_connected(_clear_player_fill):
-		_player_health.depleted.disconnect(_clear_player_fill)
+func _clear_player_headlights() -> void:
+	if is_instance_valid(_player_health) and _player_health.depleted.is_connected(_clear_player_headlights):
+		_player_health.depleted.disconnect(_clear_player_headlights)
 	_player_health = null
-	if is_instance_valid(player_fill):
-		player_fill.visible = false
-		player_fill.queue_free()
-	player_fill = null
+	for light: SpotLight3D in player_headlights:
+		if is_instance_valid(light):
+			light.visible = false
+			light.queue_free()
+	player_headlights.clear()
 
 func _exit_tree() -> void:
-	if is_instance_valid(_player_runtime) and _player_runtime.is_connected("controlled_tank_changed", _set_player_fill_target):
-		_player_runtime.disconnect("controlled_tank_changed", _set_player_fill_target)
-	_clear_player_fill()
+	if is_instance_valid(_player_runtime) and _player_runtime.is_connected("controlled_tank_changed", _set_player_headlights_target):
+		_player_runtime.disconnect("controlled_tank_changed", _set_player_headlights_target)
+	_clear_player_headlights()
 
 func _wet_roads(node: Node, materials: Dictionary) -> void:
 	if node is MeshInstance3D:
@@ -144,7 +147,8 @@ func _process(delta: float) -> void:
 		return a.global_position.distance_squared_to(ground_focus) < b.global_position.distance_squared_to(ground_focus))
 	for index: int in standing.size():
 		var lamp := standing[index]
-		lamp.set_light_active(lamp.global_position.distance_to(ground_focus) < 110.0, index < 2)
+		# R2：本階段仍只有六盞街燈，所有啟用燈都投影，避免背牆漏光。
+		lamp.set_light_active(lamp.global_position.distance_to(ground_focus) < 110.0, true)
 
 func _sync_road_glints() -> void:
 	var positions := PackedVector3Array()

@@ -4,6 +4,8 @@ extends Node3D
 const MIST := preload("res://src/maps/main_battlefield/lamp_mist.gdshader")
 const HALO := preload("res://src/maps/main_battlefield/lamp_halo.gdshader")
 var source_light: OmniLight3D
+var halos: Array[MeshInstance3D] = []
+var _occlusion_interval := 0.0
 
 func _ready() -> void:
 	source_light = get_parent().get_node("WarmLight") as OmniLight3D
@@ -19,6 +21,7 @@ func _ready() -> void:
 		quad.material = material
 		halo.mesh = quad
 		add_child(halo)
+		halos.append(halo)
 	for index: int in 3:
 		var layer := MeshInstance3D.new()
 		layer.name = "GroundMist%d" % index
@@ -36,3 +39,18 @@ func _ready() -> void:
 
 func _process(_delta: float) -> void:
 	visible = source_light.visible
+
+func _physics_process(delta: float) -> void:
+	_occlusion_interval -= delta
+	if _occlusion_interval > 0.0:
+		return
+	_occlusion_interval = 0.1
+	var camera := get_viewport().get_camera_3d()
+	if camera == null:
+		return
+	for halo: MeshInstance3D in halos:
+		# 正交相機每個燈頭有自己的平行視線，不能從相機中心直接射向燈頭。
+		var screen := camera.unproject_position(halo.global_position)
+		var origin := camera.project_ray_origin(screen)
+		var query := PhysicsRayQueryParameters3D.create(origin, halo.global_position, 129, [get_parent().get_rid()])
+		halo.visible = not camera.is_position_behind(halo.global_position) and get_world_3d().direct_space_state.intersect_ray(query).is_empty()

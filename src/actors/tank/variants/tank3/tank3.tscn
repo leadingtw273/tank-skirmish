@@ -63,3 +63,13 @@ depleted_explosion_scale = 1.5
 
 [node name="TrackContactEffects" parent="." index="4"]
 scale = Vector3(1.1, 1.1, 1.1)
+
+[node name="Headlights" type="Node3D" parent="."]
+
+[node name="HeadlightL" type="Marker3D" parent="Headlights"]
+position = Vector3(-3.76, 1.0, -1.95)
+rotation = Vector3(0, 1.5707963, 0)
+
+[node name="HeadlightR" type="Marker3D" parent="Headlights"]
+position = Vector3(-3.76, 1.0, 1.95)
+rotation = Vector3(0, 1.5707963, 0)

@@ -130,7 +130,7 @@ func _run() -> void:
 		if is_instance_valid(standing):
 			lights += int(standing.light.visible)
 			shadows += int(standing.light.visible and standing.light.shadow_enabled)
-	_expect("light-limits", lights <= 6 and shadows <= 2, {"lights":lights,"shadows":shadows})
+	_expect("light-limits", lights <= 6 and shadows == lights, {"lights":lights,"shadows":shadows})
 	var old_focus: Vector3 = weather.ground_focus
 	root.get_camera_3d().global_position += Vector3(32, 0, 16)
 	for unused: int in 3:

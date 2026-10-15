@@ -97,6 +97,61 @@ Windows 原生 Godot 4.7.1／RTX 5090／Forward+／Vulkan，兩版同 1920×1080
 
 兩版原生 capture actual exit `0`，runtime／script／shader ERROR `0`；退出時均有與 v3 相同的兩條 texture cleanup ERROR 與一條 WARNING，完整保留，未列為 smoke 的 ERROR 0。`validation-v4/preservation.json` 另存主目錄與素材保全查核。v4 以新 commit 接在 `8c68e9f` 後，不 amend、不 push、不 PR、不關票；A 的視覺驗收仍交企劃。
 
+## 2026-10-15 第二輪：R1 車燈、R2 遮擋、R3-A 全圖燈位提案
+
+基底 `9e19e1a`，續用 `/tmp/tank-skirmish-lea212-atmosphere`／`feat/lea212-rain-atmosphere`。本節取代 v4 的玩家上方補光與「最近兩盞街燈陰影」；只交 R1＋R2＋R3-A，停企劃審查。R3-B 的全圖實例、動態光源預算與效能矩陣尚未實作，不將作者測試視為產品驗收。
+
+### R1：四車型車頭錨點
+
+四份 donor variant 場景各定義空 `Headlights/HeadlightL`、`HeadlightR`；rigid 組裝只把該空群組移到車身根層，不跟隨砲塔或視覺後座。位置依既有正式 hull／tracks convex snapshot 的 rigid-local 外形配置，沒有改 mesh、材質、碰撞或物理參數。車身前進為 −X、左右為 ±Z，錨點 yaw=π/2，Spot 的 −Z 因而朝車身 −X。
+
+| 車型 | ID | 左右錨點 rigid-local (x,y,±z)，m |
+| --- | --- | --- |
+| 輕型 | tank1 | (−3.08, 0.90, ±1.60) |
+| 中型 | tank2 | (−3.42, 1.00, ±1.80) |
+| 重型 | tank3 | (−3.76, 1.00, ±1.95) |
+| 驅逐 | tank4 | (−3.42, 0.85, ±1.70) |
+
+MainWeather 移除 RainPlayerFill；只在存活的受控車兩錨點上掛 SpotLight3D：暖白 `(1,0.92,0.78)`、energy12、range20m、angle24°、向下6°、陰影開啟。不新增車燈模型，不接管坦克材質。換車／死亡／卸載沿用 runtime 與 health 訊號，立即隱藏並釋放舊燈；訓練場只有空錨點，不掛雨夜車燈。
+
+`round2/screens/candidate/headlights-tank{1,2,3,4}.png` 為四車車頭近景；`weather_headlights_smoke` 實際檢查錨點前向射線能打到車身且起點在形狀外、前進／略向下方向、平移／轉向跟隨、四車切換、死亡與卸載。`headlight-road/` 另有關閉街燈後的同機位車燈開／關濕路面對照：距車燈14.58m樣本 PNG 亮度 `0.04545→0.06980`，範圍仍為20m。
+
+### R2：兩種漏光根因與修正
+
+根因一是六盞活躍 Omni 只有最近兩盞開陰影，其餘可照到建築背後。根因二是 mist／wet-glint／暖雨原本由 unshaded 距離公式自繪，沒有光源到受光點的遮擋；原 depth test 只管相機方向，無法代替光線陰影。halo 也可能在燈頭中心被牆擋住時仍露出外圈。
+
+同主圖機位消去對照在 `round2/r2-ablation/{baseline,candidate}/`：正交 size28、camera `(−102,8,−118)` 看 `(−80,3,−120)`，先保留 F5 原燈管理狀態再固定。每版依序拍 full、只全開陰影、再停用自繪光效；lamp2 的 energy6／range22 全程相同。背牆地面固定 patch 的平均 PNG 亮度為：
+
+| 狀態 | baseline 9e19e1a | 修正後 |
+| --- | --- | --- |
+| 完整效果 | 0.288423 | 0.128833 |
+| 六街燈全開陰影 | 0.156886 | 0.128850 |
+| 再關閉自繪光效 | 0.128833 | 0.128833 |
+
+因此兩條漏光路徑都成立；修正後完整效果的背牆 patch 回到無自繪暖光基準，沒有降低路燈亮度或範圍來隱藏問題。完整同機位前後為 `screens/{baseline,candidate}/building-occlusion.png`，另有 F5、lamp-close。
+
+`r2-geometry.json` 另以實體 ray 確認：相機到 StreetLamp2 光心，以及該光心到 patch 中心地面 `(−98.97682,0,−122.3099)`，兩條視線均被 `Buildings/4Story_Wide_2Doors_Mat_default6` 擋住；不是只憑畫面顏色猜測遮擋關係。
+
+本階段只有原六盞街燈，110m內啟用的街燈一律開陰影；加兩盞有陰影車燈，最多8個局部陰影光源，Sun另計。自繪霧、暖雨及濕路倒影改用 shaded 自訂 `light()` 的真實 `ATTENUATION`（包含陰影）；冷雨底色保留，倒影依實際光方向匹配來源。halo 以 `project_ray_origin` 到燈頭中心的實體 ray 查遮擋，支援正交相機的平行視線；保留原逐像素 depth test。原路燈 caster layer20 排除自身的方案不變，仍保留月光柱影。
+
+新增 Windows 原生 `weather_light_occlusion_smoke`：806個地面點、兩款真 GLB、俯視／斜視，shadow on/off 保留比皆 `100%`；一般 layer1 物件仍遮光，月光仍有柱影。另用實際三個 shader＋halo 對控制牆做冷基準／被擋／移除牆對照：兩款的被擋地面亮度均等於冷基準 `0.059894`、雨絲均等於冷基準 `0.539042`，halo全隱；移除牆後地面約 `0.648`、雨絲 `0.905223`，確認光效仍會發亮。此 smoke 必須用圖形 renderer，不能拿 headless 當影像測量。
+
+### R3-A：演算法與俯視圖，尚未鋪入遊戲
+
+`scripts/weather/export_lamp_geometry.gd` 唯讀匯出主圖實際 Roads/Junctions／Connections 的型別、完整 transform 與碰撞 faces，以及170棟建築的 collision faces。`generate_lamp_plan.py`（Python標準庫，不需pip）合併148個連接模組為72條 edge，以約30m站距兩側交錯；52個路口依實際 outward／pivot 求內角的人行道邊界交點，臂朝路口中心。custom端點讀原 catalog，沒有手寫全圖座標。以實際道路三角形查人行道支撐，並對建築三角形投影做內外與邊距篩選：柱半徑0.18m，柱外緣距建築至少0.5m。高度向上量化到10µm，避免單精度同平面微小穿入，未放寬碰撞檢查。
+
+提案為 **138盞**：94個路口內角、2個直通路口、42個直線段。**略過8處**：D0／L0及其鏡像的4個45°彎道候選無實際人行道支撐；G1_to_G2、Mirror_G1_to_Mirror_G2、N_to_NW、Mirror_N_to_Mirror_NW 共4處距建築不足。逐點來源／朝向／高度、略過原因及既有六燈對應在 `layout/lamp-plan.json`；不把略過列作已放置。
+
+原P3／P5／P6對應提案同座標保留；P1／P2／P4因30m站距提案改由距原點約12.53／6／13m的鄰近演算法燈位取代，明列於 existing_six，供企劃決定是否接受這次重排，未套用原六燈。`validate_lamp_plan.gd` 只重用一盞原型的真 capsule／arm shapes 查全部提案，138個初始 overlap／支撐錯誤皆0；`render_lamp_plan.gd` 輸出含繁中圖例的全圖 PNG。正式原六燈位置與數量目前保持，未執行R3-B。
+
+俯視圖 `round2/layout/lamp-plan.png`，可縮放且有來源 tooltip 的版本為 `lamp-plan.svg`。重現順序為 Godot `--headless --script res://scripts/weather/export_lamp_geometry.gd -- <geometry.json>` → Python `scripts/weather/generate_lamp_plan.py <geometry.json> src/world/roads/custom_catalog.json <output-dir>` → Godot `validate_lamp_plan.gd -- <lamp-plan.json> <validation.json>` → 原生圖形 `render_lamp_plan.gd -- <SVG> <plan.json> <PNG>`。完整命令與來源 hash 留在本機證據，圖與 collision faces 不進Git。
+
+### 第二輪作者驗證與交付邊界
+
+證據根 `artifacts-local/lea212-20261015/round2/`。五支指定 smoke、`weather_headlights_smoke`、四車射擊／受損／切換回歸 `player_rigid_variants_runtime_smoke`，以及上述原生 `weather_light_occlusion_smoke` 均 actual exit0、ERROR0；主圖原生 before／after capture 與 ablation 均 exit0，退出皆有同基底的兩條 texture cleanup ERROR／一條WARNING，完整保留，不宣稱主圖全log ERROR0。R3-A實際形狀查核與規劃重現也通過。
+
+新增 commit 接在9e19e1a後，不amend；主目錄 `playtest/lea212-rain-atmosphere`、素材與cache保全讀回見本機 delivery receipt。只完成本輪作者實作與驗證，停企劃審查，不push／PR／關票，不自行做fresh-context驗收。
+
 新增原 weather smoke 的六盞自身投影檢查；未修產品來源時 `red-weather.log` actual exit1／六個新檢查 FAIL，其餘原檢查 PASS；修正後 `green-weather.log` actual exit0／failures0，兩者 ERROR0。命令為 `<Godot4.7.1> --headless --audio-driver Dummy --fixed-fps 60 --path <隔離專案> --script res://tests/weather_lamp_smoke.gd`，XDG 三目錄獨立置於 `/tmp/lea212-xdg/`。Windows 對照命令沿前述原生入口，改用 `--script res://lea212_capture.gd --resolution 1920x1080 -- baseline`／`-- candidate`；有效兩次 actual exit0／ERROR0。首次 960×720 helper 座標換算錯誤的輸出保存在 `baseline-harness-invalid/` 與 `baseline-console.log`，不作有效證據。
 
 最新封存 Head 的 fresh-context 四原 smoke、weather smoke 與有限來源／證據查核另存本輪 `fresh/`。不以本機修正宣稱原功能全部人驗通過、完整 CI、push、PR、合併或關單；原產品設定與 `.godot` 未交給測試引擎寫入。

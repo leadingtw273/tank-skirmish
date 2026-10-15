@@ -1,5 +1,5 @@
 shader_type spatial;
-render_mode unshaded, blend_add, cull_disabled, depth_draw_never, shadows_disabled, fog_disabled;
+render_mode blend_add, cull_disabled, depth_draw_never, ambient_light_disabled, specular_disabled, fog_disabled;
 
 uniform sampler2D depth_texture : hint_depth_texture, repeat_disable, filter_nearest;
 uniform float noise_offset = 0.0;
@@ -28,7 +28,13 @@ void fragment() {
 	vec4 scene = INV_PROJECTION_MATRIX * vec4(SCREEN_UV * 2.0 - 1.0, textureLod(depth_texture, SCREEN_UV, 0.0).r, 1.0);
 	float separation = -scene.z / scene.w + VERTEX.z;
 	float soft_intersection = smoothstep(0.0, 1.2, separation);
-	float warm = exp(-radius * radius * 2.5);
-	ALBEDO = mix(vec3(0.06, 0.11, 0.18), vec3(1.0, 0.48, 0.14), warm);
+	ALBEDO = vec3(1.0);
 	ALPHA = 0.11 * edge * mix(0.7, 1.0, drift) * soft_intersection;
+}
+
+void light() {
+	if (!LIGHT_IS_DIRECTIONAL) {
+		// ATTENUATION 同時包含距離衰減與真實陰影，不再自繪穿牆暖光。
+		DIFFUSE_LIGHT += LIGHT_COLOR * ATTENUATION * 0.7;
+	}
 }

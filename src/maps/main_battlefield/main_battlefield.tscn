@@ -106,9 +106,16 @@ ambient_light_color = Color(0.26, 0.34, 0.46, 1)
 ambient_light_energy = 0.32
 reflected_light_source = 2
 tonemap_mode = 2
+glow_enabled = true
+glow_intensity = 0.2
+glow_strength = 0.6
+glow_hdr_threshold = 2.3
+glow_hdr_luminance_cap = 6.0
 fog_enabled = true
 fog_light_color = Color(0.14, 0.20, 0.28, 1)
 fog_density = 0.0015
+fog_height = 0.65
+fog_height_density = 0.001
 fog_sky_affect = 0.5
 
 [node name="World" type="Node3D" unique_id=737820505]
@@ -2145,8 +2152,9 @@ grass_material = ExtResource("46_grass_material")
 [node name="Sun" type="DirectionalLight3D" parent="Lighting" unique_id=129475564]
 transform = Transform3D(0.8191522, 0.28678825, -0.4967315, 0, 0.86602527, 0.50000024, 0.5735762, -0.4095763, 0.7094065, 0, 0, 0)
 light_color = Color(0.42, 0.54, 0.72, 1)
-light_energy = 0.12
+light_energy = 0.06
 shadow_enabled = true
+shadow_blur = 3.0
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="Lighting" unique_id=518585028]
 environment = SubResource("SceneEnvironment")

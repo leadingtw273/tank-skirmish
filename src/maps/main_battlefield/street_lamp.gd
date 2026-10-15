@@ -1,6 +1,9 @@
 ## 原道路包路燈的自有剛體、光源及一次性淡出生命週期。
 extends RigidBody3D
 
+const ATMOSPHERE := preload("res://src/maps/main_battlefield/lamp_atmosphere.gd")
+# 第 20 視覺層只供路燈模型：月光仍投影，暖燈可排除燈具本身。
+const LAMP_SHADOW_LAYER := 1 << 19
 @export_range(1, 2) var model_variant := 1
 var toppled := false
 var toppled_seconds := 0.0
@@ -57,12 +60,17 @@ func _ready() -> void:
 		visuals.append(head)
 	light = OmniLight3D.new()
 	light.name = "WarmLight"
-	light.position = Vector3(0.6 if model_variant == 1 else 0.0, 5.85, 0)
-	light.light_color = Color(1, 0.66, 0.30)
-	light.light_energy = 4.2
-	light.omni_range = 18.0
+	# 光源置於實際燈頭下方，避開燈柱及燈罩，保留模型對月光的柱影。
+	light.position = Vector3(1.12, 5.65, 0)
+	light.light_color = Color(1, 0.58, 0.14)
+	light.light_energy = 6.0
+	light.omni_range = 22.0
 	light.omni_attenuation = 1.5
+	light.shadow_caster_mask = 0xFFFFFFFF ^ LAMP_SHADOW_LAYER
 	add_child(light)
+	var atmosphere := ATMOSPHERE.new()
+	atmosphere.name = "LampAtmosphere"
+	add_child(atmosphere)
 	body_entered.connect(_body_entered)
 
 func _add_shape(shape: Shape3D, offset: Vector3) -> void:
@@ -73,8 +81,8 @@ func _add_shape(shape: Shape3D, offset: Vector3) -> void:
 
 func _collect_visuals(node: Node) -> void:
 	if node is GeometryInstance3D:
-		# 原 GLB 是合併網格；關閉自身投影，避免光源啟用陰影時被燈柱／燈罩遮住。
-		(node as GeometryInstance3D).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		(node as GeometryInstance3D).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
+		(node as GeometryInstance3D).layers = LAMP_SHADOW_LAYER
 		visuals.append(node as GeometryInstance3D)
 	for child: Node in node.get_children():
 		_collect_visuals(child)

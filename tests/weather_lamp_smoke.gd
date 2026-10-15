@@ -47,13 +47,16 @@ func _run() -> void:
 			"tilt": rad_to_deg(acos(clampf(lamp.global_basis.y.dot(Vector3.UP), -1, 1))),
 			"toppled": lamp.toppled, "overlaps": overlaps}
 		placements.append(row)
-		_expect("standing-" + str(lamp.name), not lamp.toppled and row.tilt < 1 and absf(lamp.position.y) < 0.05 and overlaps.is_empty(), row)
-		_expect("no-self-shadow-" + str(lamp.name), lamp.visuals.size() == 1 + lamp.heads.size() and lamp.visuals.all(func(visual: GeometryInstance3D): return visual.cast_shadow == GeometryInstance3D.SHADOW_CASTING_SETTING_OFF), lamp.visuals.size())
+		var spawn_height: float = lamp.get_meta("spawn_height")
+		_expect("standing-" + str(lamp.name), not lamp.toppled and row.tilt < 1 and absf(lamp.position.y - spawn_height) < 0.05 and overlaps.is_empty(), row)
+		var model_casts: bool = lamp.visuals.size() == 1 + lamp.heads.size() and lamp.visuals[0].cast_shadow == GeometryInstance3D.SHADOW_CASTING_SETTING_ON
+		var heads_do_not_cast: bool = lamp.heads.all(func(head: MeshInstance3D): return head.cast_shadow == GeometryInstance3D.SHADOW_CASTING_SETTING_OFF)
+		_expect("pole-shadow-casters-" + str(lamp.name), model_casts and heads_do_not_cast, lamp.visuals.size())
 	_expect("bounds", weather.rain.amount <= 7000 and lamps.size() == 6 and weather.heightfield.size == Vector3(180, 80, 180), {"particles":weather.rain.amount,"lamps":lamps.size()})
 	var lamp: RigidBody3D = lamps[0]
 	var other: RigidBody3D = lamps[5]
-	# 原 Tank2 朝 +X 行駛；測試只控制原公開輸入及初始姿勢。
-	tank.global_transform = Transform3D(Basis(Vector3.UP, PI), lamp.global_position + Vector3(-8, 1, 0))
+	# 沿新 P1 所在街邊朝 +Z 行駛，車心向車道偏 1m；只控制原公開輸入及初始姿勢。
+	tank.global_transform = Transform3D(Basis(Vector3.UP, PI * 0.5), lamp.global_position + Vector3(1, 1, -8))
 	tank.linear_velocity = Vector3.ZERO
 	tank.angular_velocity = Vector3.ZERO
 	await _frames(120)

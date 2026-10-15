@@ -34,6 +34,48 @@ Windows 原生入口固定 `Godot_v4.7.1-stable_win64_console.exe --path <自有
 
 本輪本機證據位於 `artifacts-local/lea212-20261015/`（ignored，不外送）。隔離 helper `project/lea212_capture.gd` 使用實際路燈場景與原 GLB，在固定灰色地面、相同正交相機 `(0,30,0)`／size32、1920×1080 上逐款比較熄光、陰影關及陰影開；Windows Godot 4.7.1／Forward+／Vulkan／RTX 5090。126 個固定地面樣本的平均亮度扣除熄光值後，`baseline/metrics.json` 顯示 `lamp_2` 關陰影為 `0.0635041352`、開陰影為 `0`；`candidate/metrics.json` 兩者均為 `0.0635041352`（保留比例 100%）。`lamp_1` 修正前後開／關陰影均為 `0.0632078574`。同機位畫面為 `baseline/lamp-2-shadow-on.png` 與 `candidate/lamp-2-shadow-on.png`，各款開／關對照同目錄皆有保存。這是隔離路燈的因果對照，正式 F5 滑鼠操作仍待 leadi 人驗。
 
+## 2026-10-15：LEA-212 雨夜氛圍第一包與 v3 細修
+
+本節實作以 `3ee957f` 為 baseline，在 `/tmp/tank-skirmish-lea212-atmosphere` 的 `feat/lea212-rain-atmosphere` 開發。企劃已通過 direction-streets-v2 的方向；本次完成 A–D 細修及作者驗證，產品驗收交由企劃另派跨模型 panel，不宣稱已驗收。
+
+### 實作邊界與做法
+
+- 六盞單臂 variant1 改放出生街廓內側人行道；位置及 yaw 定義在 `main_weather.gd`。生成高度固定 `0.110125m`，以 `spawn_height` 記錄原點。旋轉整個剛體，模型、燈臂、碰撞及局部光效共同旋轉。原六燈、最近兩盞陰影、110m 距離管理及倒燈 5＋2 秒生命週期保留。
+- `lamp_atmosphere.gd` 在每盞燈建立隨燈生命週期的光暈與三層貼地霧；halo 使用面向相機的柔邊亮度分布，薄霧使用低頻噪聲、柔邊及場景深度交界消散。霧隨暖燈熄滅，無全圖全螢幕濾鏡。
+- `lit_rain.gdshader` 共用管理器提供的六盞實際光源位置、顏色、範圍及啟用狀態；燈外回到原冷雨的顏色 `(0.60,0.72,0.85)` 與 alpha `0.36`，燈下隨距離轉暖、變亮。粒子數 7000、尺寸、速度、屋頂 heightfield 及相機跟隨方式保留。
+- 濕路只在 `Roads` 的執行期材質副本壓暗底色，保留原貼圖與金屬比例，抑制環境高光。`wet_road_glint.gdshader` 作為道路 next pass，依實際燈位及相機方向生成狹長暖倒影；以平滑低頻 value noise 取代規則正弦條紋。沒有覆寫建築材質或更動建築淡出 render layers。
+- A：只為主圖目前受控玩家車的非特效 StandardMaterial3D 建立執行期副本，加入低量冷色填光；支援受控車切換，保留既有發光材質及損傷覆寫流程。原素材 bytes、坦克功能與訓練場不變。
+- D：逐項關閉新增霧、草葉、其他粒子及固定草色後，灰片仍在；改用標準地材或關閉月光後才消失。來源縮到原草底自訂光照的月光／陰影分界。正式修正只將主圖 Sun 能量由 `0.12` 降到 `0.06`、`shadow_blur` 設 `3.0`，柔化冷亮片區，草材質算法與 palette 不變。
+- 柱影：原 GLB 模型恢復 `cast_shadow=ON`，暖燈頭仍為 OFF，Omni 移到燈頭下方 `(1.12,5.65,0)`。單純移位實測仍有 1.7–3% 自遮光，因此路燈模型使用專用視覺 layer 20，僅暖燈的 `shadow_caster_mask` 排除此層；月光仍包含此層，其他物件仍可遮擋暖光。相機仍可見燈具。
+- 主圖 glow 採低強度與 HDR threshold `2.3`，新增 unshaded 光效由 ALBEDO 輸出亮度；原生雙 Quad 探針顯示單寫 EMISSION 無法得到預期可見輸出，故未採用該寫法。
+
+### 正交 volumetric fog 實測
+
+`atmosphere/fog-probe/` 是 Windows 原生 Godot 4.7.1／Forward+ 的最小 FogVolume 場景，保存同機位正交與透視的開／關截圖、屬性 read-back 及引擎資訊。正交模式能設定 `volumetric_fog_enabled=true`，開／關有圖像差異，但這不足以證明局部體積霧正確，亦未證明平移穩定、無條紋及無邊緣切斷。本輪採局部柔邊平面霧與低量環境霧，不將此探針說成正交 volumetric fog 已可正式使用。
+
+### 作者實測與重現
+
+證據根為 `artifacts-local/lea212-20261015/atmosphere/`，不進 Git、不外送。`direction-streets-v3/{baseline,candidate}/{f5,lamp-close,street-layout}.png` 為同三機位原生對照：F5 檢視冷雨及玩家可讀性，lamp-close 檢視 halo／暖霧／平滑倒影，street-layout 檢視街燈擺放。helper 與完整命令存於 `validation-v3/helpers/`、`native-capture-commands.json`；自有 override.cfg／userdata 不提交。
+
+原生環境為 Windows Godot 4.7.1、RTX 5090、Forward+／Vulkan、1920×1080。兩版均原 F5 transform／size100、草啟用，VSync read-back `1`、Engine.max_fps `0`，未傳 fixed-fps。helper 只凍結玩家移動、瞄準及相機控制，避免桌面游標造成機位或砲塔差異；產品相機與玩法程式不變。Performance.TIME_PROCESS 是引擎 process frame 時間，不是 GPU timer。
+
+| 樣本 | baseline median／p95 | v3 median／p95 |
+| --- | --- | --- |
+| 360 warmup | 17.736／32.188 ms | 18.110／32.411 ms |
+| 240 steady | 17.339／19.105 ms | 17.456／17.775 ms |
+
+兩版原生 capture actual exit 0；runtime／script／shader ERROR 0。兩版退出時皆有相同的 TextureStorage RID 與 ImageTexture cleanup ERROR 各一條及 Texture leak WARNING 一條，保留完整 log，不報成原生全 log ERROR 0。此短樣本不推論全地圖效能。
+
+五項 Linux headless smoke（`weather_lamp_smoke`、`main_ground_visual_smoke`、`map960_components_smoke`、`rigid_tank_contact_smoke`、`tank_occlusion_smoke`）皆 actual exit 0、ERROR 0，見 `validation-v3/smoke-results.json`。共同入口為 Godot 4.7.1 `--headless --audio-driver Dummy --fixed-fps 60 --path /tmp/tank-skirmish-lea212-atmosphere --script res://tests/<名稱>.gd`，XDG 三目錄隔離於 `/tmp/lea212-atmosphere-xdg/`。
+
+路燈 smoke 只將高度基準改為生成高度、模型投影檢查改為 GLB ON／燈頭 OFF；新 P1 的接觸路線沿街朝 +Z、車心向車道偏 1m，避免舊橫向路線推到對街建物。原傾倒、實體推動、倒後再接觸、立即熄光、5＋2 秒及釋放後繼續更新等門檻保留。實測傾倒峰值 `90.73°`、總推動 `7.44m`、倒後再推 `0.86m`。
+
+`validation-v3/placements.json` 以實際 capsule／arm shapes 查六盞初始 overlap，結果全空；各 y 均 `0.110125`，support ray 誤差小於 `0.000001m`，直立且未傾倒。兩款真 GLB 的原生光照測量見 `shadows-final/metrics.json`：扣除熄光後，俯視及斜視 shadow on/off 保留比均為 `100%`，月光柱影 strip／reference 分別為 variant1 `0.31863／0.40000`、variant2 `0.34510／0.40000`，並保存柱影 PNG。
+
+額外 layer 1 遮擋物的地面對照，兩款燈皆由關陰影平均亮度 `0.101996` 變為開陰影 `0`，確認其他物件仍實際遮光。F5 全圖 PNG 加權編碼亮度由 baseline `0.18795` 變為 v3 `0.17175`；暖色門檻像素由 `13821` 增至 `16346`，該群平均飽和度由 `0.44867` 變為 `0.42673`。計算方法與全部三機位數據見 `image-metrics.json`；這是門檻式輔助比較，不當作美術驗收結論。
+
+`validation-v3/preservation.json` 查核主工作目錄 2607 檔的 hash／size／mtime、主分支及 HEAD 均未動；候選副本 627 個 assets 檔與原檔 bytes 一致。這些是作者可重現證據，不替代企劃 panel 或 leadi 的人員產品驗收。
+
 新增原 weather smoke 的六盞自身投影檢查；未修產品來源時 `red-weather.log` actual exit1／六個新檢查 FAIL，其餘原檢查 PASS；修正後 `green-weather.log` actual exit0／failures0，兩者 ERROR0。命令為 `<Godot4.7.1> --headless --audio-driver Dummy --fixed-fps 60 --path <隔離專案> --script res://tests/weather_lamp_smoke.gd`，XDG 三目錄獨立置於 `/tmp/lea212-xdg/`。Windows 對照命令沿前述原生入口，改用 `--script res://lea212_capture.gd --resolution 1920x1080 -- baseline`／`-- candidate`；有效兩次 actual exit0／ERROR0。首次 960×720 helper 座標換算錯誤的輸出保存在 `baseline-harness-invalid/` 與 `baseline-console.log`，不作有效證據。
 
 最新封存 Head 的 fresh-context 四原 smoke、weather smoke 與有限來源／證據查核另存本輪 `fresh/`。不以本機修正宣稱原功能全部人驗通過、完整 CI、push、PR、合併或關單；原產品設定與 `.godot` 未交給測試引擎寫入。

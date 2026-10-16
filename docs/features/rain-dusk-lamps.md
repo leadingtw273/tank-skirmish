@@ -419,3 +419,62 @@ python3 /tmp/lea212_native.py /tmp/lea212-round4-runs/candidate res://tests/weat
 作者保全查核：主目錄仍 `playtest/lea212-round3`／`8cb90ab`，4003個來源／素材／cache檔SHA、大小與mtime無差異、無新增assets/cache；worktree1409個保護檔不變；593個私生成資源在主目錄、worktree及兩執行副本均同hash；修前副本1240個tracked blobs符合8cb90ab。見 `guard-before.json`、`guard-after.json`；產品與執行副本逐檔比對見 `direction-product-blobs.json`。override.cfg、私素材與證據不提交。
 
 **在此停下等企劃方向審查**。新增風／雨滴亂數／落地反應參數smoke、完整冷快取首發矩陣、其他第二／三輪完整回歸與隔離獨立驗收，留待方向通過後執行；本次有限回歸是作者自查，不能冒稱fresh-context驗收。坦克、正式相機、玩法、物理、草生成、訓練場產品檔均未改。
+
+### 方向稿 v2：修正發射落點集中，待企劃審查
+
+v1 `b86a218` 已被 leadi／企劃退回，以上 v1 數值與圖片只保留作歷史，不代表方向通過。v2 證據在 `artifacts-local/lea212-20261015/round4-rain/v2/`，入口 `review.html`；**依本次明示偏好，不自動開啟審查頁，後續也不自動開啟**。本次仍只交方向 checkpoint，不進完整收尾。
+
+#### 固定漏水感的根因與證據
+
+不能只看單一粒子相鄰兩次重生：v1 的 NUMBER 確實隨週期更新，單槽位的下一個位置也會變，但**不同槽位／週期間反覆使用同一小群 X/Z 落點**。其 `fract(sin(seed*12.9898+78.233)*43758.5453)` 浮點雜湊在本機GPU產生嚴重集中的組合；約九秒觀測35,743個不同發射狀態，只有872個不同X/Z落點，單點最多被使用324次。v1關閉碰撞的控制仍只有872個，故不是高度場只留下少數縫隙；相機與發射器坐標全程不動，也不是8m吸附反覆跳動。碰撞確實使有效粒子由7,000降至median4,599，進一步降低密度；F5原柔線約0.08–0.29px寬，使大多數雨過淡，放大了固定漏水點的觀感。
+
+使用診斷draw shader將GPU真實INDEX／NUMBER／發射X/Z／目前Y編碼成44張連續狀態影格，約每0.2s一次，固定seed21204僅供診斷。X/Z解析度1/64m；按(index,NUMBER,x,z)去除同滴跨幀重複。inactive transform由引擎移到-INF，Y編碼全零，不算有效粒子。原始PNG、解碼資料、source shader及方法在 `probe-v1/`、`probe-v1-no-collision/`、`probe-v2-fixed/`；`gpu-rebirth-summary.json`為摘要，`birth-density.png`為每格0.3125m的落點熱圖。
+
+| 診斷 | 有效粒子median | 觀測發射狀態 | 不同X/Z落點 | 不同落點／發射 | 單點最多次數 |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| v1正常碰撞 | 4,599 | 35,743 | 872 | 2.44% | 324 |
+| v1停用碰撞控制 | 7,000 | 35,848 | 872 | 2.43% | 見raw |
+| v2正常碰撞 | 7,000 | 64,659 | 62,727 | 97.01% | 3 |
+
+Godot的NUMBER合約見[官方粒子shader說明](https://docs.godotengine.org/en/4.7/tutorials/shaders/shader_reference/particle_shader.html)，相同引擎hash的[particles.glsl](https://github.com/godotengine/godot/blob/a13da4feb8d8aefc283c3763d33a2f170a18d541/servers/rendering/renderer_rd/shaders/particles.glsl#L445)由cycle×total+index計算；[particles_copy.glsl](https://github.com/godotengine/godot/blob/a13da4feb8d8aefc283c3763d33a2f170a18d541/servers/rendering/renderer_rd/shaders/particles_copy.glsl#L324)說明inactive的-INF處理。落點集中／修正數量來自本機GPU讀回，不是由文件推算。
+
+#### v2 手段與參數
+
+將浮點sin雜湊改為整數xor／shift／乘法雜湊，以NUMBER、RANDOM_SEED與TIME混合；X/Z各自取獨立雜湊值。碰撞後仍在真高度場表面生成漣漪，原滴結束，槽位立即換到高空的新隨機位置，維持7,000上限且不在屋簷落點接著往下滴；高度場、發射盒半尺寸80／1／80m、相機追隨、lifetime2.2s與原陣風保持。沒有增加螢幕雨幕或修改相機。
+
+雨基quad改0.028×0.38m，保留每滴大小、空間層次、頭尾fade與柔邊；正交遠景額外保證橫向0.65–0.95px的柔邊取樣寬度，世界位置／速度／深度不變。冷底EMISSION由×0.65改×0.85、alpha峰值係數0.50→0.55；近地透明度下限0.70→0.85、遠處0.72→0.80，仍乘亂數、空間與軟遮罩。漣漪Plane0.44→0.62m、軟環寬0.08→0.12、alpha峰值0.12–0.26→0.28–0.48、EMISSION×0.14→0.22，仍最多1,800顆／0.42s。非方向光受光函式與真陰影未改。
+
+#### 正式畫面的同位置重複量化
+
+另以正式F5連續約九秒取證，配對同機位雨關閉參考；只統計靜態建築silhouette內亮度增加>5/255的瞬變，排除草地／道路動態。ROI891,623像素；12×8格中至少500個ROI像素的格才計入覆蓋率。v1取92幀／9.075s、v2取65幀／9.092s，依真實時間戳配對時間差±0.05s，兩版取樣皆前景。完整原始序列比分析取樣更密，保留在 `screen-{v1,v2}/f5/`；九秒影片各9.133s。
+
+| 正式畫面診斷 | v1 | v2 |
+| --- | ---: | ---: |
+| 可見亮度瞬變像素median | 845 | 4,594 |
+| 有瞬變的有效網格比例median | 66.67% | 75.76% |
+| 相隔2.2s同像素重疊比例 | 8.8649% | 1.3389% |
+| 扣除隨機重疊後的2.2s相關係數 | 0.087733 | 0.008301 |
+
+可見瞬變約增加5.4倍，長時間的同位置記憶降低。v1在0.4–4.4s也持續有較高相關，**2.2s不是唯一獨峰，不宣稱整幕精確每2.2s重播**；這與少數發射欄位被不同滴重用相符。0.2s內還包含同一雨絲持續移動的相關，不能拿它單獨判定漏水。`repetition-correlation.svg`同時展示全段與0.4s後放大圖，`screen-repetition-summary.json`保留每個時間差、配對數與完整ffmpeg命令。此為固定機位局部ROI診斷，不是每滴真值、全畫面藝術評分或完整屋頂驗收。
+
+#### 三機位、效能與回歸
+
+8cb90ab對照沿用上一稿 `../direction-baseline/{f5,lamp-close,grass}.{png,mp4}`，v2為 `direction-v2-ready/` 同名檔。三機位position／basis／size／projection與baseline完全一致，畫面原始1080p、每段連續2秒以上、MP4各2.067s，未調亮或插值。`camera-comparison.json`、`video-commands.json`可查證；退回稿另連回 `../direction-v1/`，診斷狀態圖不混入藝術方向圖。
+
+原生效能依序A1 B1 B2 A2 B3 A3；每機位360 warmup＋240 steady、RTX5090／Forward+ Vulkan／1080p／VSync1／60Hz。B2 F5失焦112/240，完整保留但不進主比；F5只比較完整配對1、3，dense比較完整配對1、2、3，按焦點條件選樣，不按速度挑選。所有幀相機不變／1080p、GPU有效樣本240、117燈／F5與dense48／61盞全亮全Spot陰影、dropped0、atlas8192／32-bit與quadrants[4,4,4,4]保持。
+
+| 主要配對 | 8cb90ab逐幀median範圍 ms | v2逐幀median範圍 ms | baseline p95範圍 ms | v2 p95範圍 ms |
+| --- | --- | --- | --- | --- |
+| F5：1、3 | 16.670–16.690 | 16.667–16.670 | 18.296–18.704 | 17.249–17.357 |
+| dense：1、2、3 | 16.660–16.681 | 16.665–16.679 | 17.676–18.380 | 17.303–17.479 |
+
+本次候選median皆≤17.5ms，p95沒有明顯退步；主目錄editor仍開著，短窗不足以宣稱效能提升或完整AC。每次median再取median的viewport CPU／GPU為F5 baseline1.715／1.048ms、v2 1.426／1.034ms；dense baseline1.910／1.420ms、v2 1.437／1.486ms。CPU／GPU分開回報、不相加、不當同幀，TIME_PROCESS不作逐幀門檻。全12機位原始樣本與排除原因在 `perf-*/profile.json`、`performance-summary.json`、`native-commands.json`。
+
+```sh
+XDG_DATA_HOME=/tmp/lea212-round4-xdg/data XDG_CONFIG_HOME=/tmp/lea212-round4-xdg/config XDG_CACHE_HOME=/tmp/lea212-round4-xdg/cache /home/markchou/.local/share/starspell-godot-tools/4.7.1/editor/Godot_v4.7.1-stable_linux.x86_64 --headless --path /tmp/lea212-round4-v2-runs/candidate --script res://tests/<name>.gd
+python3 /tmp/lea212_native.py /tmp/lea212-round4-v2-runs/candidate res://tests/weather_light_occlusion_smoke.gd /home/markchou/project/tank-skirmish/artifacts-local/lea212-20261015/round4-rain/v2/light-occlusion direction-v2
+```
+
+五支name=`weather_lamp_smoke`、`weather_headlights_smoke`、`weather_lamp_budget_smoke`、`firing_vfx_warmup_smoke`、`combat_boundary_smoke`，actual exit皆0／ERROR0；warmup有10條owner一致性WARNING，其餘WARNING0，原smoke未修改。原生遮牆actual exit0／failures=[]／ERROR0，兩型開陰影受光保留比1.0、控制牆照度0；雨冷底／blocked皆0.421394、unblocked0.731842，halo遮擋與月光柱影通過。有效主圖取證runtime／script／shader ERROR0，退出仍有baseline同樣2條texture cleanup ERROR與1條WARNING。早期helper編譯失敗與尚未通過GPU分布檢查的探索稿已在 `evidence-notes.json`排除，保留raw，不作本稿證據。
+
+保全查核仍為主目錄playtest/lea212-round3／8cb90ab，4003檔SHA／大小／mtime無異動與無新增assets/cache；worktree1409個保護檔、593個私生成資源與修前1240個tracked blobs保持。只變更4個雨程式／shader及本文件；引擎只在額外/tmp副本執行。**v2在此停下等企劃審**，不push／開PR，不提交override.cfg，不跑方向通過後的完整收尾；作者smoke與局部量化不代替企劃審圖或最終獨立驗收。

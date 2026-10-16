@@ -20,7 +20,7 @@ func _ready() -> void:
 	var material := ShaderMaterial.new()
 	material.shader = RAIN_DRAW
 	var mesh := QuadMesh.new()
-	mesh.size = Vector2(0.022,0.5)
+	mesh.size = Vector2(0.028,0.38)
 	mesh.material = material
 	draw_pass_1 = mesh
 	var impacts := GPUParticles3D.new()
@@ -37,7 +37,7 @@ func _ready() -> void:
 	var impact_material := ShaderMaterial.new()
 	impact_material.shader = IMPACT_DRAW
 	var impact_mesh := PlaneMesh.new()
-	impact_mesh.size = Vector2(0.44,0.44)
+	impact_mesh.size = Vector2(0.62,0.62)
 	impact_mesh.material = impact_material
 	impacts.draw_pass_1 = impact_mesh
 	add_child(impacts)

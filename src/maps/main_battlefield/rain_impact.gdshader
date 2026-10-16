@@ -12,11 +12,11 @@ void vertex() {
 
 void fragment() {
 	float radius = length(UV-vec2(0.5))*2.0;
-	float ring = exp(-pow((radius-mix(0.08,0.86,age))/0.08,2.0));
+	float ring = exp(-pow((radius-mix(0.08,0.86,age))/0.12,2.0));
 	float fade = smoothstep(0.0,0.06,age) * pow(max(0.0,1.0-age),1.7);
 	ALBEDO = vec3(0.48,0.60,0.70);
-	EMISSION = ALBEDO * 0.14;
-	ALPHA = ring * fade * mix(0.12,0.26,variation);
+	EMISSION = ALBEDO * 0.22;
+	ALPHA = ring * fade * mix(0.28,0.48,variation);
 }
 
 void light() {

@@ -1,8 +1,14 @@
 shader_type particles;
 render_mode disable_force;
 
-float random_value(float value) {
-	return fract(sin(value * 12.9898 + 78.233) * 43758.5453);
+uint hash_value(uint value) {
+	value = (value ^ (value >> 16u)) * 73244475u;
+	value = (value ^ (value >> 16u)) * 73244475u;
+	return value ^ (value >> uint(16));
+}
+
+float random_value(uint state) {
+	return float(hash_value(state) & 16777215u) / 16777216.0;
 }
 
 vec2 wind(float time) {
@@ -10,12 +16,16 @@ vec2 wind(float time) {
 	return vec2(2.2,-1.4) * gust + vec2(0.55*sin(time*0.43),0.65*sin(time*0.51));
 }
 
+vec4 drop_random(uint state) {
+	// NUMBER 隨引擎週期更新；碰撞後的提早重生另混入時間，避免同一槽位在週期內重用落點。
+	return vec4(random_value(state),random_value(state+31u),random_value(state+41u),random_value(state+53u));
+}
+
 void start() {
-	float seed = float(NUMBER) + float(RANDOM_SEED % uint(10000));
-	CUSTOM = vec4(random_value(seed),0.0,0.0,0.0);
-	vec3 point = vec3(random_value(seed+31.0),random_value(seed+41.0),random_value(seed+53.0));
+	vec4 sample = drop_random(NUMBER ^ RANDOM_SEED ^ uint(TIME * 65536.0));
+	CUSTOM = vec4(sample.x,0.0,0.0,0.0);
 	TRANSFORM = mat4(1.0);
-	TRANSFORM[3] = EMISSION_TRANSFORM * vec4((point*2.0-1.0)*vec3(80.0,1.0,80.0),1.0);
+	TRANSFORM[3] = EMISSION_TRANSFORM * vec4((sample.yzw*2.0-1.0)*vec3(80.0,1.0,80.0),1.0);
 	COLOR = vec4(1.0);
 }
 
@@ -35,8 +45,14 @@ void process() {
 		surface[0].xyz = normalize(cross(normal,reference));
 		surface[2].xyz = normalize(cross(surface[0].xyz,normal));
 		surface[3].xyz = TRANSFORM[3].xyz + normal * (COLLISION_DEPTH + 0.018);
-		emit_subparticle(surface,vec3(0.0),COLOR,vec4(CUSTOM.x,0.0,random_value(CUSTOM.x+7.0),random_value(CUSTOM.x+19.0)),
+		uint impact_seed = INDEX ^ uint(TIME * 65536.0);
+		emit_subparticle(surface,vec3(0.0),COLOR,vec4(CUSTOM.x,0.0,random_value(impact_seed),random_value(impact_seed+19u)),
 			FLAG_EMIT_POSITION | FLAG_EMIT_ROT_SCALE | FLAG_EMIT_VELOCITY | FLAG_EMIT_COLOR | FLAG_EMIT_CUSTOM);
-		ACTIVE = false;
+		// 此滴在接觸屋頂／地面時結束，槽位直接換到高空的全新落點；不在屋簷接續滴水。
+		vec4 sample = drop_random(NUMBER ^ RANDOM_SEED ^ uint(TIME * 65536.0));
+		CUSTOM = vec4(sample.x,0.0,0.0,0.0);
+		TRANSFORM = mat4(1.0);
+		TRANSFORM[3] = EMISSION_TRANSFORM * vec4((sample.yzw*2.0-1.0)*vec3(80.0,1.0,80.0),1.0);
+		COLOR = vec4(1.0);
 	}
 }

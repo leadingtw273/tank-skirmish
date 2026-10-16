@@ -15,20 +15,23 @@ void vertex() {
 	float depth_layer = 1.0-smoothstep(70.0,180.0,-center.z);
 	float width = mix(0.55,1.1,fract(INSTANCE_CUSTOM.x*37.0+0.7)) * mix(0.62,1.1,height_layer);
 	float length_scale = mix(0.55,1.45,fract(INSTANCE_CUSTOM.x*19.0+0.3)) * mix(0.65,1.05,height_layer);
-	VERTEX = vec3(across*VERTEX.x*width + along*VERTEX.y*length_scale,0.0);
+	// 正交 F5 的原雨絲多半不到 0.3px；保留世界座標，僅補足柔邊取樣的最小寬度。
+	float pixels_per_meter = length((PROJECTION_MATRIX * vec4(across,0.0,0.0)).xy * VIEWPORT_SIZE * 0.5);
+	float world_width = max(0.028*width,mix(0.65,0.95,fract(INSTANCE_CUSTOM.x*43.0))/pixels_per_meter);
+	VERTEX = vec3(across*(VERTEX.x/0.028)*world_width + along*VERTEX.y*length_scale,0.0);
 	MODELVIEW_MATRIX = mat4(1.0);
 	MODELVIEW_MATRIX[3] = center;
 	MODELVIEW_NORMAL_MATRIX = mat3(1.0);
 	opacity = mix(0.58,1.0,fract(INSTANCE_CUSTOM.x*53.0+0.2));
-	opacity *= mix(0.70,1.0,height_layer) * mix(0.72,1.0,depth_layer);
+	opacity *= mix(0.85,1.0,height_layer) * mix(0.80,1.0,depth_layer);
 }
 
 void fragment() {
 	float edge = 1.0-smoothstep(0.10,0.5,abs(UV.x-0.5));
 	float ends = smoothstep(0.0,0.18,UV.y) * (1.0-smoothstep(0.45,1.0,UV.y));
 	ALBEDO = vec3(0.48,0.60,0.74);
-	EMISSION = ALBEDO * 0.65;
-	ALPHA = 0.50 * opacity * edge * ends;
+	EMISSION = ALBEDO * 0.85;
+	ALPHA = 0.55 * opacity * edge * ends;
 }
 
 void light() {

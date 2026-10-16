@@ -1,3 +1,55 @@
+# 2026-10-16 LEA-212 雨夜多輪人驗 accepted 與收尾步驟 A
+
+現役狀態：LEA-212 產品人驗 **accepted**，待草稿 PR、平台核對、合併與交付；下方有日期的舊 pending 記錄保留為歷史。本輪功能與可重現入口見 [雨夜路燈](../features/rain-dusk-lamps.md)、[第三輪首發](../features/rain-first-shot-round3.md) 與 [T1b 首發預繪](../features/rain-first-shot-t1b.md)。
+
+## 核可來源與本步邊界
+
+leadi 於 2026-10-16 實測主工作目錄 `playtest/lea212-round4`、產品 Head `ce49e89e1603f120aa581cd9b7b3408360d54e5c` 後表示：「當前狀況我驗收通過，可以做收尾合併了，並且去做關單。」企劃在本機 `.git/codex-task-lea212-closeout.md` 記錄人驗 accepted 與 push／PR／合併／關 LEA-212 的整體授權。
+
+本次明示只執行收尾步驟 **A1–A4**：只改本 ITERATION 與 HANDOFF 文件、繁中 commit；在帶齊私素材及生成資源的額外 `/tmp` 副本對最終文件 Head 跑一次完整 `bash scripts/ci.sh`；push `feat/lea212-rain-atmosphere`，開至 `main` 的草稿 PR；用 Linear MCP 只讀目前狀態、負責人與關聯／子單。**草稿 PR 開立後停下，不合併，不更改 Linear 狀態。**這個停止點優先於整體合併／關單授權。
+
+產品 bytes 維持已 accepted 的 ce49e89；只在 `/tmp/tank-skirmish-lea212-atmosphere` 修改文件，不切換主工作目錄分支，不在主目錄或該工作樹啟動引擎。原有未提交 `override.cfg` 保留，不提交；`.godot`、私素材、生成資源及 `artifacts-local` 不進 Git。私素材網路 CI 仍須依原 runbook 的 exact tuple 授權，不由這次 push／草稿 PR 授權推定可啟動。
+
+## 需求與逐輪範圍
+
+1. **滑鼠造成路燈閃爍**：leadi 回報滑鼠移向某盞燈就暗、移開又亮。修正路燈自遮光，保留後續恢復的月光柱影，不改坦克瞄準與相機。
+2. **第一輪雨夜氛圍**：雨本身「算不錯」，但只是單純下雨，需提升雨夜感；以「接近入夜，路燈主導」為方向，增加暖光暈、燈下雨絲、貼地薄霧與濕地反光，恢復柱影並將燈放到街邊，保留玩家車可讀性。
+3. **第二輪三點**：坦克不要無來源自發光，改為車頭兩盞燈且四車型各有錨點；路燈／車燈及自繪光效不能穿牆；全圖沿路配置路燈。最後為 117 盞、最小間距 12m、最大沿路空隙 36m，畫內候選全亮並有 Spot 陰影；效能使用逐幀繪製間隔與 CPU／GPU 分項，不沿用 TIME_PROCESS 偽分位數。
+4. **第三輪五點**：第一次開砲嚴重卡頓；草與砲煙疊合異常；車燈應由車身而非履帶前端發出；光暈只在燈罩下方；濕柏油倒影不應像鏡面。T1b 以正式 viewport 三幀實際預繪處理首發，保留原玩法、物理、相機、瞄準、遮蔽及輪廓。
+5. **第四輪雨**：避免螢幕前雨幕、加上縱深與隨時間變化的風、將粗白線改為細軟雨絲。v1 被指出像固定位置的屋頂漏水；改用分散的整數雜湊落點，保留 F5 短斜拖影、真受光暖雨與細小落地漣漪，修正槽位回收與碰撞後外插。
+
+## 跨模型工程驗收紀錄
+
+以下為各輪獨立 Claude Opus 5.5 驗收，不是作者自驗或方向 checkpoint；完整 Head 及 VERDICT 已讀回。本機證據根為 `/home/markchou/project/tank-skirmish/artifacts-local/lea212-20261015/`，報告保持 ignored，不隨 PR 上傳；這些本機判定不是 GitHub approval、required status 或平台 CI。
+
+| 輪次 | Reviewed Head | VERDICT | 本機報告（相對證據根） |
+| --- | --- | --- | --- |
+| round2 | `ae09baa3632ba57cb288d32f1f45e55e2a207e0e` | PASS | `cross-model-round2/report.md`，總結第 204 行 |
+| round3 | `8cb90ab038e1a8f35677241672b44ef7b5a69a17` | PASS | `cross-model-round3/REPORT.md`，總結第 81 行 |
+| round4 | `ce49e89e1603f120aa581cd9b7b3408360d54e5c` | PASS | `cross-model-round4/REPORT.md`，總結第 172 行 |
+
+round2 的 87 支全量 smoke 中有 13 支在 baseline 同樣失敗；PASS 的解讀是無本輪回歸、直接相關 smoke 通過，不能寫成 87 支全綠。round3 為 18 項候選 headless 檢查通過；round4 的雨量、F5 靜幀斜度與長時間轉換風險保留 advisory。leadi 對 ce49e89 的人驗 accepted 與這些工程判定分開記錄，未要求藉收尾消除全部 advisory。
+
+## 後續 backlog（本步不實作、不新開單）
+
+- 鄰燈互投影：共用 caster 排除層也排除了鄰燈燈柱，需後續評估分離自遮光與鄰燈遮光。
+- 清理 13 支既有失敗 smoke：保留 baseline 同失敗與工具／fixture 分類，不放寬既有測試換綠燈。
+- 相機 size25 草地 alpha hash 細點。
+- 燈下濕斑的方塊感。
+- F5 靜幀雨絲斜度偏弱；動態與靜圖需求分開評估。
+- `uint(TIME*65536)` 的長時間越界風險。
+- Windows 原生結束時 RID／Texture 洩漏與清理訊息。
+
+## 交付與平台核對
+
+收尾基準：功能分支 `feat/lea212-rain-atmosphere` 的 ce49e89；2026-10-16 開始 A 步驟時遠端 `main` 為祖先 `590c80177125bd8f86acc273954d5f3d4b1d9d2d`、open PR 0。草稿 PR 及最終文件 Head 以完成回報與 GitHub 讀回為準，不以這個歷史快照推定後續平台狀態。
+
+A2 的最終 Head 本機完整 CI 實際命令、exit code 與 raw log 記入收尾證據及草稿 PR；不沿用 ce49e89 的舊 CI 冒稱新 Head 已跑。GitHub review、CI Head／結果與真實合併條件目前為「待設定／未查核」，後續必須依同 Head 真實結果處理。人驗 accepted 不代表已合併、已交付或 Linear 已關單。
+
+本步 Linear 僅只讀查核，不新增關聯、不接管負責人、不評論或改狀態；LEA-209 與其他 related／子單是否另行收尾交企劃判斷，不能因相關就自動一併關閉。
+
+---
+
 # 2026-10-12 草地人驗 accepted；雨天近夜晚續輪
 
 leadi 明示接受本機草地版本 `d5d7ef69`；LEA-209 已讀回人驗 accepted 評論，原工程驗收與本機交付證據保留於 `/home/markchou/evidence/retained-project-data-20261012/tank-grass-wall-20261012/`。GitHub main 尚未包含本機草地續修，不以人驗代替 CI／merge。

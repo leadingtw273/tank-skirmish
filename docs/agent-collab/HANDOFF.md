@@ -1,3 +1,19 @@
+# 2026-10-16 LEA-212 accepted，待合併／交付
+
+現役工作為 [LEA-212 雨夜多輪收尾](ITERATION.md#2026-10-16-lea-212-雨夜多輪人驗-accepted-與收尾步驟-a)。leadi 已在主工作目錄 `playtest/lea212-round4` 實測產品 Head `ce49e89e1603f120aa581cd9b7b3408360d54e5c`，於 2026-10-16 明示「當前狀況我驗收通過，可以做收尾合併了，並且去做關單」；本功能人員產品驗收為 **accepted**。下方六燈候選／人驗 pending 與舊平台快照只作歷史，不代表本輪現況。
+
+本次只做企劃 `.git/codex-task-lea212-closeout.md` 的 A1–A4：文件收尾、對最終文件 Head 在額外完整 `/tmp` 副本跑完整 CI、push 功能分支並開到 `main` 的草稿 PR、Linear MCP 只讀查核。**開完草稿 PR 停下；不合併、不更改 Linear 狀態。**整體合併／關單授權不取消本步停止點。
+
+工作樹 `/tmp/tank-skirmish-lea212-atmosphere`、分支 `feat/lea212-rain-atmosphere`；只改 ITERATION／HANDOFF，不改 accepted 產品 bytes、不切主工作目錄分支、不在主目錄或工作樹跑引擎。保留原未提交 `override.cfg`；私素材、生成資源、`.godot` 與 `artifacts-local` 不提交、不外送。本機完整副本 CI 與待設定的 GitHub CI 分開；這次不啟動需 exact tuple 授權的私素材網路 runner。
+
+第二輪 `ae09baa`、第三輪 `8cb90ab`、第四輪 `ce49e89` 的跨模型 Claude 工程驗收均為 PASS；完整 Head、報告路徑、13 支 baseline 既有失敗的解讀與後續 backlog 見上述 ITERATION。功能入口與完整證據索引見 [雨夜路燈](../features/rain-dusk-lamps.md)、[T1b 首發預繪](../features/rain-first-shot-t1b.md)；人的 accepted 與工程驗收、平台 review／CI／merge 分開。
+
+開始 A 步驟時 GitHub `main` 為 `590c801`、無 open PR；後續草稿 PR URL／最終文件 Head 依完成回報與 GitHub 真實讀回，不從這個歷史快照推定。平台 review、CI Head／結果及合併條件為 **待設定／未查核**，不得預填成功；本地 A2 結果另附實際命令與 exit code。
+
+交接者只依本步可查證證據繼續；下個階段合併前仍須核對最新同 Head 的必要 CI、獨立 review 與真實平台條件，不能 bypass。相關／子單不因 LEA-212 accepted 自動關閉，依 Linear 只讀結果交企劃處理。
+
+---
+
 # 2026-10-12 草地人驗 accepted；雨天近夜晚續輪
 
 leadi 明示接受本機草地版本 `d5d7ef69`；LEA-209 已讀回人驗 accepted 評論，原工程驗收與本機交付證據保留於 `/home/markchou/evidence/retained-project-data-20261012/tank-grass-wall-20261012/`。GitHub main 尚未包含本機草地續修，不以人驗代替 CI／merge。

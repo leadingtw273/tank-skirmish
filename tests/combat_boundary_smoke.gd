@@ -50,7 +50,7 @@ func _init() -> void:
 	node_added.connect(observe)
 	runtime.ready.connect(func():
 		startup_unchanged = startup_state == _startup_snapshot(instance, initial_tank)
-		startup_clean = runtime.get_child_count() == 2 \
+		startup_clean = runtime.get_child_count() == 3 and runtime.has_node("FiringVfxWarmup") \
 			and runtime.projectiles.get_child_count() == 0 and runtime.effects.get_child_count() == 0)
 	root.add_child(instance)
 	call_deferred("_validate", instance)
@@ -74,18 +74,15 @@ func _validate(instance: Node) -> void:
 	if runtime == null or tank == null or player_runtime == null or projectiles == null or effects == null:
 		_fail("Combat boundary smoke requires the composed main-scene dependencies.")
 		return
-	if initialization_shots != 0 or initialization_impacts != 0 or initialization_visible \
+	if initialization_shots != 0 or initialization_impacts != 0 or not initialization_visible \
 			or not startup_unchanged or not startup_clean or initialized_paths.size() != 4:
-		_fail("FX initialization must create four invisible wrappers without gameplay changes or retained children.")
+		_fail("FX warmup must submit four wrappers without gameplay changes or contents in combat containers.")
 		return
 	for path in FIRING_VFX_PATHS:
 		if initialized_paths.count(path) != 1:
 			_fail("Each firing FX wrapper must initialize exactly once per CombatRuntime.")
 			return
-	for id in initialized_vfx:
-		if is_instance_id_valid(id):
-			_fail("All initialization-only FX must be synchronously freed before the playable frame.")
-			return
+	var warmup_vfx_ids := initialized_vfx.duplicate()
 	for property in player_runtime.get_property_list():
 		if property.get("name") == &"combat_runtime":
 			_fail("PlayerRuntime must not retain a CombatRuntime reference.")
@@ -146,7 +143,20 @@ func _validate(instance: Node) -> void:
 		return
 	var smoke_world_position := muzzle_smoke.global_position
 	tank.global_position += Vector3(10, 0, 0)
+	## T1b 允許前三個 render frame 預繪；上面仍在第一幀之前驗證真開砲可立即成立。
+	for frame in 3:
+		if DisplayServer.get_name() == "headless":
+			await process_frame
+		else:
+			await RenderingServer.frame_post_draw
 	await process_frame
+	for id in warmup_vfx_ids:
+		if is_instance_id_valid(id):
+			_fail("Initialization-only FX must be freed after three render frames.")
+			return
+	if runtime.get_child_count() != 2:
+		_fail("Completed warmup must leave only the original Projectiles and Effects containers.")
+		return
 	if not muzzle_smoke.global_position.is_equal_approx(smoke_world_position):
 		_fail("A generated MuzzleSmokeVFX must remain at its world position after the tank moves.")
 		return

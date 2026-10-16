@@ -1,5 +1,7 @@
 # LEA-212 第三輪：真首發診斷 checkpoint
 
+本檔保留 Head `1d0a3a6` 的歷史 checkpoint。企劃授權後的 T1b 實作、冷／延續快取對照與 editor F5 證據，見 [開場三幀 GPU 預繪](rain-first-shot-t1b.md)。
+
 2026-10-16，依 `.git/codex-task-lea212-round3.md` T1。基線為9e19e1a與ae09baa；只新增診斷工具，不修改LEA-134的CombatRuntime預初始化、FX、玩法、輸入或相機架構。T1沒有專門修正／尚未證明穩定達標，停在派工單允許的診斷checkpoint；其餘T2–T5另行實作與作者回歸，獨立驗收交企劃。
 
 ## 場景、方法與證據有效性

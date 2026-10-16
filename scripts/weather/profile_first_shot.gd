@@ -83,9 +83,16 @@ func _run() -> void:
 	for key in ClassDB.class_get_integer_constant_list("RenderingServer"):
 		if str(key).begins_with("RENDERING_INFO_PIPELINE_COMPILATIONS_"):
 			counters[key] = ClassDB.class_get_integer_constant("RenderingServer", key)
+	var load_started := Time.get_ticks_usec()
 	scene = load("res://src/main.tscn").instantiate() as Node3D
 	root.add_child(scene)
 	current_scene = scene
+	var ready_us := Time.get_ticks_usec()
+	var startup := {"load_to_ready_ms":float(ready_us - load_started) / 1000.0,
+		"registered_sources":scene.get_node("CombatRuntime").get_registered_shot_sources().size(),
+		"controls_enabled":scene.get_node("PlayerRuntime/PlayerController").controls_enabled,
+		"ready_to_input_ms":float(Time.get_ticks_usec() - ready_us) / 1000.0,
+		"pipeline_at_ready":_pipelines()}
 	var road_meshes := scene.get_node("World/Roads").find_children("*", "MeshInstance3D", true, false).size()
 	var building_meshes := scene.get_node("World/Buildings").find_children("*", "MeshInstance3D", true, false).size()
 	if road_meshes < 200 or building_meshes < 170:
@@ -118,6 +125,8 @@ func _run() -> void:
 			"viewport_cpu_ms":RenderingServer.viewport_get_measured_render_time_cpu(viewport_rid),
 			"viewport_gpu_ms":RenderingServer.viewport_get_measured_render_time_gpu(viewport_rid), "pipeline":_pipelines()})
 		previous = now
+		if samples.size() == 1:
+			startup["ready_to_first_draw_ms"] = float(now - ready_us) / 1000.0
 		if requested < 4 and elapsed >= 7000.0 + requested * 4000.0:
 			_fire()
 		if elapsed >= 23000.0:
@@ -133,7 +142,7 @@ func _run() -> void:
 		"camera_transform":str(camera.global_transform), "camera_size":camera.size,
 		"atlas_size":root.positional_shadow_atlas_size, "atlas_16bits":root.positional_shadow_atlas_16_bits,
 		"atlas_quadrants":[root.positional_shadow_atlas_quad_0,root.positional_shadow_atlas_quad_1,root.positional_shadow_atlas_quad_2,root.positional_shadow_atlas_quad_3],
-		"external_mouse_buttons_discarded":mouse_filter.discarded_buttons,
+		"external_mouse_buttons_discarded":mouse_filter.discarded_buttons, "startup":startup,
 		"requests":requests, "shots":shots, "events":events, "frames":samples}
 	DirAccess.make_dir_recursive_absolute(args[0])
 	var file := FileAccess.open(args[0] + "/first-shot.json", FileAccess.WRITE)

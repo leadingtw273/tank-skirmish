@@ -48,6 +48,7 @@ func _summary(samples: Array[Dictionary]) -> Dictionary:
 	result["repeated_gpu_timestamp_frames"] = repeated_timestamp
 	result["focused_frames"] = samples.filter(func(row: Dictionary): return row.focused).size()
 	result["camera_unchanged_frames"] = samples.filter(func(row: Dictionary): return row.camera_unchanged).size()
+	result["viewport_1080_frames"] = samples.filter(func(row: Dictionary): return row.viewport_1080).size()
 	return result
 
 func _sample(camera: Camera3D, weather: Node, tag: String) -> void:
@@ -76,6 +77,7 @@ func _sample(camera: Camera3D, weather: Node, tag: String) -> void:
 			"draw_calls":Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME),
 			"render_objects":Performance.get_monitor(Performance.RENDER_TOTAL_OBJECTS_IN_FRAME),
 			"focused":DisplayServer.window_is_focused(),
+			"viewport_1080":root.get_visible_rect().size.is_equal_approx(Vector2(1920,1080)),
 			"camera_unchanged":camera.global_transform.is_equal_approx(expected_transform) and is_equal_approx(camera.size, expected_size)}
 		previous_usec = now
 		if frame < WARMUP:
@@ -109,6 +111,10 @@ func _run() -> void:
 		return
 	_output = args[0]
 	DirAccess.make_dir_recursive_absolute(_output)
+	## 避免 Windows 有邊框視窗被工作區壓短，導致 canvas expand 實際變成 2019×1080。
+	root.borderless = true
+	root.size = Vector2i(1920,1080)
+	root.position = Vector2i.ZERO
 	var main := load("res://src/main.tscn").instantiate() as Node3D
 	root.add_child(main)
 	current_scene = main
@@ -159,4 +165,5 @@ func _run() -> void:
 	main.queue_free()
 	for frame: int in 3:
 		await process_frame
-	quit(0)
+	var valid := _rows.all(func(row: Dictionary): return row.steady.viewport_1080_frames == STEADY)
+	quit(0 if valid else 2)

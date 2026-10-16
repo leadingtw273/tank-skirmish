@@ -18,7 +18,10 @@ void vertex() {
 	// 正交 F5 的原雨絲多半不到 0.3px；保留世界座標，僅補足柔邊取樣的最小寬度。
 	float pixels_per_meter = length((PROJECTION_MATRIX * vec4(across,0.0,0.0)).xy * VIEWPORT_SIZE * 0.5);
 	float world_width = max(0.028*width,mix(0.65,0.95,fract(INSTANCE_CUSTOM.x*43.0))/pixels_per_meter);
-	VERTEX = vec3(across*(VERTEX.x/0.028)*world_width + along*VERTEX.y*length_scale,0.0);
+	float along_pixels = length((PROJECTION_MATRIX * vec4(along,0.0,0.0)).xy * VIEWPORT_SIZE * 0.5);
+	// 遠景仍是細短斜線；避免長度縮到與寬度相近而讀成雪點。
+	float world_length = max(0.38*length_scale,mix(5.5,8.0,fract(INSTANCE_CUSTOM.x*29.0))/along_pixels);
+	VERTEX = vec3(across*(VERTEX.x/0.028)*world_width + along*(VERTEX.y/0.38)*world_length,0.0);
 	MODELVIEW_MATRIX = mat4(1.0);
 	MODELVIEW_MATRIX[3] = center;
 	MODELVIEW_NORMAL_MATRIX = mat3(1.0);
@@ -28,14 +31,14 @@ void vertex() {
 
 void fragment() {
 	float edge = 1.0-smoothstep(0.10,0.5,abs(UV.x-0.5));
-	float ends = smoothstep(0.0,0.18,UV.y) * (1.0-smoothstep(0.45,1.0,UV.y));
+	float ends = smoothstep(0.0,0.14,UV.y) * (1.0-smoothstep(0.60,1.0,UV.y));
 	ALBEDO = vec3(0.48,0.60,0.74);
-	EMISSION = ALBEDO * 0.85;
+	EMISSION = ALBEDO * 0.32;
 	ALPHA = 0.55 * opacity * edge * ends;
 }
 
 void light() {
 	if (!LIGHT_IS_DIRECTIONAL) {
-		DIFFUSE_LIGHT += LIGHT_COLOR * ATTENUATION * 3.5;
+		DIFFUSE_LIGHT += LIGHT_COLOR * ATTENUATION * 12.0;
 	}
 }

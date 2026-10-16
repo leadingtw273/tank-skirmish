@@ -2,7 +2,7 @@
 
 本輪沿 [LEA-212](https://linear.app/leadingtw273/issue/LEA-212/主地圖雨天近夜晚與可推倒路燈)，leadi 於 2026-10-12 指定「接近入夜，路燈主導」。原草地 `d5d7ef69` 人驗 accepted 保留；本功能作者有限實跑已留證，獨立同 Head 驗收及產品人驗均 pending。基線 `36afbf71e49ad90dbab7613dc76a66e017127a80` 只額外保存原兩文件證據路徑搬遷及草地接受狀態。
 
-> 最新狀態以末尾「round2-c」為準：117 盞全圖街燈、畫面內全亮且有陰影，企劃已核可視覺。**效能統計更正**：本文件歷史 `Performance.TIME_PROCESS` median／p95 是約每秒更新一次的區間最大值重複取樣，不能視為逐幀時間分位數；舊 raw 保留追溯，效能結論改用末尾的繪製間隔與 CPU／GPU 分項。
+> 最新雨效候選見末尾「第四輪收尾」；round2-c 的 117 盞街燈、畫面內全亮且有陰影維持。**效能統計更正**：本文件歷史 `Performance.TIME_PROCESS` median／p95 是約每秒更新一次的區間最大值重複取樣，不能視為逐幀時間分位數；舊 raw 保留追溯，效能結論改用末尾的繪製間隔與 CPU／GPU 分項。
 
 ## 固定範圍與使用入口
 
@@ -478,3 +478,83 @@ python3 /tmp/lea212_native.py /tmp/lea212-round4-v2-runs/candidate res://tests/w
 五支name=`weather_lamp_smoke`、`weather_headlights_smoke`、`weather_lamp_budget_smoke`、`firing_vfx_warmup_smoke`、`combat_boundary_smoke`，actual exit皆0／ERROR0；warmup有10條owner一致性WARNING，其餘WARNING0，原smoke未修改。原生遮牆actual exit0／failures=[]／ERROR0，兩型開陰影受光保留比1.0、控制牆照度0；雨冷底／blocked皆0.421394、unblocked0.731842，halo遮擋與月光柱影通過。有效主圖取證runtime／script／shader ERROR0，退出仍有baseline同樣2條texture cleanup ERROR與1條WARNING。早期helper編譯失敗與尚未通過GPU分布檢查的探索稿已在 `evidence-notes.json`排除，保留raw，不作本稿證據。
 
 保全查核仍為主目錄playtest/lea212-round3／8cb90ab，4003檔SHA／大小／mtime無異動與無新增assets/cache；worktree1409個保護檔、593個私生成資源與修前1240個tracked blobs保持。只變更4個雨程式／shader及本文件；引擎只在額外/tmp副本執行。**v2在此停下等企劃審**，不push／開PR，不提交override.cfg，不跑方向通過後的完整收尾；作者smoke與局部量化不代替企劃審圖或最終獨立驗收。
+## 第四輪收尾：暖雨、持續落地反應與 F5 短拖影
+
+本節接續企劃已核可的 `f6b5f1a` v2 方向，對應派工單「方向稿 v2 方向通過，附修正後收尾」。證據根為 `artifacts-local/lea212-20261015/round4-rain/final/`；`review.html` 提供三機位圖、影片、原始讀值與驗證入口，不自動開啟瀏覽器。這是工程收尾證據，使用者的最終產品驗收另計。
+
+### 根因與修正
+
+- 暖色被冷底光壓過：雨的冷色 emission 從 0.85 降至 0.32，真局部燈的受光增益從 3.5 調為 12。仍使用引擎 `LIGHT_COLOR * ATTENUATION`，包含牆體陰影；沒有新增不受遮擋的距離染色。燈外保持灰藍，燈下較亮且偏暖。
+- 漣漪槽位沒有回收：sub-emitter 的 shader 只累加 age、繪圖變透明，未將 `ACTIVE` 設為 false。原版暖機後 1800 槽全部過期，9 秒採樣都沒有年輕漣漪；修正為 age≥1 即釋放槽位，維持 1800／0.42s 預算。
+- 碰撞後的繪製外插：原生 GPU 讀回屋頂核心 3532 筆，9 筆中心低於 4.8m，最低 4.484375m，下一採樣已換到新出生點。引擎 particles-copy 在碰撞之後仍以 `velocity * frame_remainder` 外插。改為雨 60Hz、`interpolate=false`，保持原屋頂門檻，沒有放寬容差。
+- 遠景雨滴過短：沿實際投影速度補足 5.5–8px 的有限長度下限，寬度仍為 0.65–0.95px，下限之外保留高度、距離與每滴差異。頭尾與軟邊仍漸淡；碰撞重生時同步更新真速度與 `CUSTOM.zw`，避免一幀朝向不符。
+- F5 小環被壓成點或被濕路底色蓋過：保留 0.62m Plane，但每滴尺寸倍率改為 1.1–1.6，半徑從 0.30 漲至 0.92；環寬 `max(0.09,fwidth(radius)*0.35)` 保留中空，淡出指數 1.1、alpha 0.55–0.75。以加色混合呈現短暫水面反光，不覆蓋既有路面高光；冷底 emission 0.015、真局部燈增益 10。壽命、數量、碰撞法線與表面偏移 0.018m 不變。
+
+仍為單一 7000 顆 world-space 雨體積、整數雜湊更新落點、時間變化陣風與每滴擾動；180×80×180m／512／WHEN_MOVED／follow_camera=false 高度場與 8m 格跟隨保持。沒有增加螢幕雨幕、CPU 落地查詢、無陰影的暖光或額外燈源。
+
+### 新增與加嚴的 smoke
+
+`tests/weather_rain_contract_smoke.gd` 已加入 `scripts/quality.mjs`：從實例讀回 world-space、7000／2.2s、60Hz／禁止外插、生產隨機 seed、mesh、1800／0.42s 的 event-only sub-emitter 與實際 shader 資源。既有品質檢查和斷言保留。
+
+`tests/weather_rain_gpu_smoke.gd` 必須使用原生 Forward+，拒絕 headless。合成場景有真屋頂、地板和高度場，直接使用產品 motion shader；僅以診斷 draw shader 將真 GPU 位置、NUMBER、CUSTOM 讀回影像，不另抄一套風或亂數公式。暖機後約 9 秒跨粒子／週期採樣，以 `(index,NUMBER,x,z)` 辨識出生狀態，要求落點唯一率>90%、單落點重用<10、風有時間變化、seed 差異、屋頂遮擋、真屋頂／地板落地、持續有年輕漣漪且無過期 active 槽位，最後停雨並檢查回收。固定 seed 21204 僅在診斷測試。
+
+三組鑑別證據保留：`red-gpu/` 為 f6 原版，exit 1（屋頂外插、過期槽位、無持續落地）；`gpu-final/` 為最終候選，exit 0；`v1-mutant/` 只回灌 b86a218 浮點 motion，exit 1，僅落點集中失敗（唯一率 2.60%、最大重用 322）。紅燈沒有藉由修改原門檻變綠。
+
+最終 GPU 的 44 次採樣讀回 64376 個出生狀態、62793 個落點（97.54%）、最大重用 3 次；每次有 372–605 個年輕漣漪，過期 active 均為 0。屋頂核心雨滴樣本 3483、屋頂落地 260、地板落地 19782；原屋頂／地板位置門檻均通過，風速平均值範圍約 (1.115,2.265)m/s，seed 分箱遍及 0–30。
+
+`tests/weather_light_occlusion_smoke.gd` 保留原亮度與遮牆條件，新增 RGB 暖冷斷言。兩款 GLB 的冷色／牆後雨均為 RGB (0.2431,0.2706,0.3020)、亮度 0.2670；無牆受光為 (1.0000,0.8314,0.3725)、亮度 0.8341，exit 0。這是固定受光控制；正式 F5 可見度另由真場景畫面確認。
+
+原生重現（僅在額外完整資源副本執行）：
+
+```sh
+python3 <evidence>/harness/lea212_native.py <copy> res://tests/weather_rain_gpu_smoke.gd <output> final
+python3 <evidence>/harness/lea212_native.py <copy> res://tests/weather_light_occlusion_smoke.gd <output> final
+```
+
+### 正式畫面與落地對照
+
+`visual-final/` 有 F5 size100、可見燈 `G1__T:corner:1` size24、出生草地 size28 的原始 1920×1080 PNG、連續兩秒幀序列與依時間戳編碼 MP4。相機沿正式 basis，完整資源讀回 218 道路、170 建築、12494 草、117 路燈；畫面候選燈全亮、全陰影、dropped 0。`direction-baseline/` 的 8cb90ab 與 `v2/direction-v2-ready/` 保留作前後對照。
+
+`diagnostic-f5-{on,impact-off,all-off}.png` 在同一正式 F5 相機暫停粒子後分別關閉落地、關閉雨的繪圖；這些開關僅存在隔離擷取 harness。原圖沒有增亮；最近鄰裁切明確標成放大。最終單幀落地開關有 319 像素增加>5/255，其中 93 位於暖背景；這只證明渲染差異，不單憑像素數字代替視覺驗收。中央暖光路面約 x955–959／y706–708 可辨小環，關閉落地反應時該環消失，多個時間點可見位置變換；另一模型的限定視覺複查收據在 `lea212-final-impact-review.json`。
+
+草煙原生 `grass-smoke/normal-{before,0_3s,1_0s,2_0s}.png` 使用原粒子壽命與草材質，保留第三輪消散、深度疊合與真射擊接點。這組視覺 harness 預先開火，不作冷首發樣本。擷取的幀時間也不作效能樣本。
+
+### 完整功能回歸與交錯效能
+
+Windows Godot4.7.1 official a13da4feb、RTX5090、Forward+ Vulkan、1920×1080、VSync1／60Hz；A=8cb90ab、B=本輪最終候選，順序 A1 B1 B2 A2 A3 B3，第二組機位順序反轉。每機位360暖機＋240穩態；F5、dense各三組完整前景配對，無樣本因條件無效而排除，全部相機不變／1080p／前景240/240。117燈保持，F5／dense各48／61盞候選全亮且有Spot陰影、dropped0，atlas8192／32-bit／quadrants[4,4,4,4]。
+
+| 樣本 | 機位 | 逐幀median／p95 ms | viewport CPU median ms | viewport GPU median ms |
+| --- | --- | --- | --- | --- |
+| A1 | f5 | 16.661／17.497 | 1.483 | 1.435 |
+| A1 | dense-street | 16.699／17.418 | 1.300 | 2.449 |
+| B1 | f5 | 16.667／17.294 | 1.030 | 2.051 |
+| B1 | dense-street | 16.684／17.074 | 1.259 | 2.645 |
+| B2 | dense-street | 16.699／17.959 | 1.660 | 1.304 |
+| B2 | f5 | 16.659／17.532 | 1.591 | 2.886 |
+| A2 | dense-street | 16.693／17.228 | 1.641 | 1.275 |
+| A2 | f5 | 16.714／17.413 | 1.452 | 2.762 |
+| A3 | f5 | 16.669／17.477 | 1.507 | 1.436 |
+| A3 | dense-street | 16.668／20.936 | 1.753 | 2.595 |
+| B3 | f5 | 16.672／17.592 | 1.068 | 1.914 |
+| B3 | dense-street | 16.651／17.299 | 1.301 | 2.518 |
+
+候選每次median為16.651–16.699ms，均≤17.5ms；F5三次p95的中位數A／B為17.477／17.532ms（+0.055ms），dense為17.418／17.299ms（-0.119ms），未見一致p95退步。A3 dense的20.936ms也原樣保留，沒有依速度挑樣。CPU／GPU為引擎最新回報，非同幀且不相加；逐幀門檻使用frame_post_draw時間差，不使用TIME_PROCESS。細項、所有逐幀資料、有效配對與實際命令／exit見 `performance-summary.json`、`perf-*/profile.json`、`performance-valid-pairs.json`、`profile-commands.json`。
+
+冷首發依 A1 B1 B2 A2 交錯，再用相同副本／userdata同序跑延續樣本；只有四次真左鍵／四ShotEvent，每發0–2秒包含命中特效，保留正式物理、相機、後座、草與正常FX。診斷harness額外固定borderless1920×1080並逐幀記錄viewport，未改產品相機或畫質。八次的四窗口全部前景、size100及1080p，皆符合首發≤50ms且≤後三發最大值的2倍。
+
+| 樣本 | 首發最大逐幀間隔 ms | 相對後三發最大值 |
+| --- | --- | --- |
+| cold-A1 | 29.517 | 1.267 |
+| cold-B1 | 37.334 | 1.534 |
+| cold-B2 | 23.678 | 0.965 |
+| cold-A2 | 21.898 | 0.982 |
+| continued-A1 | 27.708 | 1.160 |
+| continued-B1 | 23.200 | 0.928 |
+| continued-B2 | 26.419 | 1.107 |
+| continued-A2 | 27.892 | 1.155 |
+
+冷指Godot專案／應用shader快取冷：四個新副本的project shader_cache不存在、各自唯一userdata執行前不存在，執行後確認產生116／118個shader／Vulkan快取檔。未隔離NVIDIA driver cache，不能稱完全冷GPU。`cold-preconditions.json`、`cache-readback.json`、`first-shot-summary.json`及各樣本 `first-shot.json` 保存完整證據。
+
+完整 `GODOT_BIN=/home/markchou/.local/share/starspell-godot-tools/4.7.1/editor/Godot_v4.7.1-stable_linux.x86_64 bash scripts/ci.sh` 在額外 `/tmp/lea212-round4-final-runs/quality` 執行，76步驟通過、exit0、ERROR0；另以相同引擎在candidate副本用 `--headless --audio-driver Dummy --fixed-fps 60 --path <copy> --script res://tests/<name>.gd` 補跑16支雨／燈／首發預繪／後座／邊界／地圖／遮蔽／四車／瞄準smoke，均exit0、ERROR0。精確16支名稱與命令在 `smokes/results.json`，完整CI細項在 `smokes/quality-details/`；原生GPU與首發預繪也各exit0，見 `native-final-commands.json`。
+
+品質檢查開始後僅漣漪draw shader作上述視覺細修；最終三機位真渲染與GPU smoke已補驗該shader，GDScript／介面相同，來源差異記於 `validation-source-scope.json`。此為本機驗證，未宣稱GitHub同Head CI。既有owner警告與smoke的非有限向量控制警告按原log保留；主圖原生退出的兩條Texture清理ERROR／一條WARNING與8cb一致，與執行期／script／shader錯誤分列。初次缺Git metadata的隔離副本及診斷harness API解析失敗另存，修正執行環境後才採用重跑結果，未放寬測試。

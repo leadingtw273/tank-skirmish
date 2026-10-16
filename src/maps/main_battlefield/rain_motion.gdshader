@@ -53,6 +53,8 @@ void process() {
 		CUSTOM = vec4(sample.x,0.0,0.0,0.0);
 		TRANSFORM = mat4(1.0);
 		TRANSFORM[3] = EMISSION_TRANSFORM * vec4((sample.yzw*2.0-1.0)*vec3(80.0,1.0,80.0),1.0);
+		VELOCITY = vec3(breeze.x,-mix(17.0,21.0,CUSTOM.x),breeze.y);
+		CUSTOM.zw = VELOCITY.xz;
 		COLOR = vec4(1.0);
 	}
 }

@@ -91,12 +91,18 @@ func _effect_shadow_control(lamp: RigidBody3D, floor: MeshInstance3D, camera: Ca
 		image.save_png(out + "/lamp%d-effects-%s.png" % [variant,state])
 		var rain_pixel := Vector2i(camera.unproject_position(rain.global_position))
 		measurements[state] = {"floor":_mean(_measure(camera,points)),"rain":image.get_pixelv(rain_pixel).get_luminance()}
+		var rgb := image.get_pixelv(rain_pixel)
+		measurements[state]["rain_rgb"] = [rgb.r,rgb.g,rgb.b]
 		if state == "blocked":
 			measurements["hidden_halos"] = atmosphere.halos.all(func(halo: MeshInstance3D): return not halo.visible)
 	if measurements.blocked.floor > measurements["cold-baseline"].floor + 0.005 or measurements.blocked.rain > measurements["cold-baseline"].rain + 0.01 or not measurements.hidden_halos:
 		failures.append("lamp%d:effects-leak-through-wall" % variant)
 	if measurements.unblocked.floor <= measurements["cold-baseline"].floor + 0.02 or measurements.unblocked.rain <= measurements["cold-baseline"].rain + 0.01:
 		failures.append("lamp%d:unblocked-effects-control" % variant)
+	var cold: Array = measurements["cold-baseline"].rain_rgb
+	var warm: Array = measurements.unblocked.rain_rgb
+	if cold[2] <= cold[0] + 0.01 or warm[0] <= warm[2] + 0.015:
+		failures.append("lamp%d:rain-cold-warm-color-control" % variant)
 	floor.mesh.material.next_pass = null
 	atmosphere.queue_free()
 	wall.queue_free()

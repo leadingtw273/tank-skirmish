@@ -121,6 +121,10 @@ run("converted-assets-production-static", process.execPath, [
   join(projectRoot, "docs", "assets", "quaternius-lock.json"),
 ]);
 run("import", godot, ["--headless", "--path", ".", "--import"], { scanGodotErrors: true });
+run("weather-rain-contract-smoke", godot, [
+  "--headless", "--audio-driver", "Dummy", "--fixed-fps", "60", "--path", ".",
+  "--script", "res://tests/weather_rain_contract_smoke.gd",
+], { scanGodotErrors: true });
 run("aim-cursor-smoke", godot, [
   "--headless",
   "--audio-driver",

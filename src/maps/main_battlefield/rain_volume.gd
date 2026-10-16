@@ -12,6 +12,9 @@ func _ready() -> void:
 	lifetime = 2.2
 	preprocess = 2.2
 	local_coords = false
+	# 碰撞後不能再沿速度外插繪製到屋頂內；60Hz 步長保留移動平順度。
+	fixed_fps = 60
+	interpolate = false
 	visibility_aabb = AABB(Vector3(-100,-40,-100), Vector3(200,60,200))
 	cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	var motion := ShaderMaterial.new()

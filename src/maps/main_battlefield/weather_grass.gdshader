@@ -1,6 +1,6 @@
-// 專案自有天氣衍生 shader：BinbunGrass 原 grass.gdshader（CC0），僅適配 LIGHT_COLOR。
+// 專案自有衍生 shader：保留 BinbunGrass（CC0）的形狀／風／配色，適配受光與不透明覆蓋。
 shader_type spatial;
-render_mode blend_mix, depth_prepass_alpha;
+render_mode blend_mix;
 
 uniform bool billboard = false;
 
@@ -90,6 +90,8 @@ void fragment() {
 	ALBEDO = color.rgb;
 
 	float alpha = shape_value;
+	// 草先以逐像素 coverage 寫入深度，砲煙再依深度混合；不以整片透明草排序蓋掉煙。
+	ALPHA_HASH_SCALE = 1.0;
 	if(alpha_mode == 0){
 		ALPHA = alpha;
 	} else {

@@ -1,5 +1,5 @@
 shader_type spatial;
-render_mode blend_mix, depth_prepass_alpha;
+render_mode blend_mix;
 
 uniform bool billboard = false;
 
@@ -112,6 +112,8 @@ void fragment() {
 	ALBEDO = color.rgb;
 
 	float alpha = shape_value;
+	// 與出生草相同的 coverage 路徑；串流漸入仍保留原 alpha，生成／密度／風動不變。
+	ALPHA_HASH_SCALE = 1.0;
 	if(alpha_mode == 0){
 		ALPHA = alpha * stream_alpha;
 	} else {

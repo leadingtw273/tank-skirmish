@@ -67,9 +67,9 @@ scale = Vector3(1.1, 1.1, 1.1)
 [node name="Headlights" type="Node3D" parent="."]
 
 [node name="HeadlightL" type="Marker3D" parent="Headlights"]
-position = Vector3(-3.76, 1.0, -1.95)
+position = Vector3(-3.76, 1.0, -0.9)
 rotation = Vector3(0, 1.5707963, 0)
 
 [node name="HeadlightR" type="Marker3D" parent="Headlights"]
-position = Vector3(-3.76, 1.0, 1.95)
+position = Vector3(-3.76, 1.0, 0.9)
 rotation = Vector3(0, 1.5707963, 0)

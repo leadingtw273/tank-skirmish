@@ -15,6 +15,24 @@ func _frames(count: int) -> void:
 	for unused: int in count:
 		await physics_frame
 
+func _track_inner_limits(tank: Node3D) -> Vector2:
+	# 履帶是蒙皮網格，raw Mesh AABB 不能代表實際兩側；使用已烘焙的四相位碰撞包絡。
+	var donor: Node3D = tank.get("combat_tank")
+	var geometry: Resource = donor.get("part_geometry")
+	var limits := Vector2(-INF, INF)
+	for id: StringName in [&"left_track", &"right_track"]:
+		var part: Resource = geometry.call("part_named", id)
+		var anchor: Transform3D = donor.call("_current_anchor_transform", part.get("anchor"))
+		var frame: Transform3D = tank.global_transform.affine_inverse() * anchor * part.get("anchor_transform")
+		var shapes: Array = part.get("convex_shapes")
+		var transforms: Array = part.get("convex_transforms")
+		for i: int in shapes.size():
+			for point: Vector3 in shapes[i].points:
+				var z: float = (frame * transforms[i] * point).z
+				if id == &"left_track": limits.y = minf(limits.y, z)
+				else: limits.x = maxf(limits.x, z)
+	return limits
+
 func _run() -> void:
 	var main := load("res://src/main.tscn").instantiate() as Node3D
 	root.add_child(main)
@@ -36,11 +54,13 @@ func _run() -> void:
 		previous_lights.clear()
 		var lights: Array = weather.get("player_headlights")
 		_expect(str(id) + "-two-variant-anchors", lights.size() == 2 and tank.get_node("Headlights").get_child_count() == 2)
+		var track_limits := _track_inner_limits(tank)
 		for light: SpotLight3D in lights:
 			var direction := -light.global_basis.z
 			_expect(str(id) + "-forward-down-shadow", direction.dot(-tank.global_basis.x * cos(deg_to_rad(16.0)) + Vector3.DOWN * sin(deg_to_rad(16.0))) > 0.9999 and light.shadow_enabled and light.spot_range >= 15.0 and light.spot_range <= 20.0)
 			_expect(str(id) + "-warm-soft-auxiliary", light.light_color.is_equal_approx(Color(1,.85,.65)) and light.light_energy < 6.0 and light.spot_angle == 42.0 and is_equal_approx(light.spot_angle_attenuation,0.6))
 			var anchor := light.get_parent() as Marker3D
+			_expect(str(id) + "-inside-track-inner-boundaries", is_finite(track_limits.x) and is_finite(track_limits.y) and track_limits.x < -0.8 and track_limits.y > 0.8 and anchor.position.z > track_limits.x + 0.15 and anchor.position.z < track_limits.y - 0.15)
 			var query := PhysicsRayQueryParameters3D.create(anchor.global_position, anchor.global_position + tank.global_basis.x * 2.0, 1)
 			query.hit_from_inside = true
 			var hit := tank.get_world_3d().direct_space_state.intersect_ray(query)

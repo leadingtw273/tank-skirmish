@@ -355,3 +355,67 @@ actual exit0／ERROR0／WARNING0，failures空。兩支owner警告與ae09baa同�
 有效主圖原生取證exit0、runtime／script／shader ERROR0，退出仍兩條texture cleanup ERROR與一條WARNING，不報全log ERROR0。額外候選首發final-first-shot四次request收到七個ShotEvent、actual exit2，原因未確認，已排除，未放寬四發驗證。T1以排除cold-B2、補replacement-B3後的兩基線各兩次與新控制作診斷checkpoint。候選replacement-final首發47.484ms，但後發部分失焦、只有一次，不能宣稱已修好或穩定達標。
 
 保全：主目錄branch／HEAD保持playtest/lea212-round2／ae09baa，來源、assets、project.godot無差異。開發worktree1408個保護檔、593個私生成資源保持。主目錄開著的editor曾匯入本輪證據PNG，3個既有cache漂移、70個新增匯入cache；初期漏放.gdignore，已補證據根.gdignore，不覆寫／刪除使用中cache。guard-after.json逐檔記錄，不能宣稱主目錄cache完全未變。未push／開PR；override.cfg、GLB／素材與ignored證據不提交。
+
+## 2026-10-16 第四輪：雨的縱深、風與線條方向 checkpoint
+
+從 `8cb90ab` 接續；本節為**待企劃審查的方向稿**，不是第四輪完整收尾或獨立驗收。程式在 `/tmp/tank-skirmish-lea212-atmosphere`，引擎只在額外 `/tmp/lea212-round4-runs/{baseline,candidate}` 完整資源副本執行。證據根 `artifacts-local/lea212-20261015/round4-rain/` 先建立 `.gdignore`，入口 `review.html`。
+
+### 根因與方向
+
+正式相機為正交投影、size100，沒有透視縮放可提供近遠雨大小差異。舊雨使用固定方向與完整 camera billboard，畫面上永遠豎直；0.035×0.8m quad 的顏色／透明度固定，沒有軟邊、頭尾漸淡或落地反應，因此容易像螢幕前的白線雨幕。原 `emission_box_extents=(80,1,80)` 是半尺寸，實際發射體積為160×2×160m。
+
+本稿保留7,000顆雨滴與原高度場，改由 GPU particle shader 控制隨時間變化的風；draw shader 讀取每滴真實水平速度，將完整速度投影成雨絲方向，只在橫向面向相機展寬。依世界高度、view depth、每滴亂數改變大小與透明度，為正交畫面增加層次；保留真實位置與深度遮擋。碰撞時雨滴停止，沿高度場法線將落點退回表面上方，直接在 GPU sub-emitter 生成短生命的柔和擴張漣漪，提供地面／屋頂錨點，無每滴CPU raycast。
+
+### 方向參數
+
+| 項目 | 本稿 |
+| --- | --- |
+| 雨滴預算／生命 | 7,000／2.2s，preprocess2.2s、world coordinates，原200×60×200m可見AABB |
+| 風 | 基向量(x,z)=(2.2,-1.4)m/s；整體陣風倍率1+0.4sin(0.72t)，方向擺動(0.55sin(0.43t),0.65sin(0.51t))m/s |
+| 每滴擾動／落速 | 水平各軸最多±0.28m/s的不同相位擾動；初始向下17–21m/s，向下加速度3m/s² |
+| 雨絲 | 基quad0.022×0.5m；每滴寬倍率0.55–1.10、長0.55–1.45，近地再縮小；view depth70–180m逐漸降低透明度 |
+| 色與透明度 | 冷藍ALBEDO=(0.48,0.60,0.74)、EMISSION×0.65；alpha峰值係數0.50再乘每滴0.58–1、空間層次、左右軟邊及頭尾fade；不是整面固定0.50 |
+| 落地漣漪 | 最多1,800顆、生命0.42s、Plane0.44m、尺寸亂數×0.65–1.3；環擴張並淡出，alpha峰值0.12–0.26；法線外偏0.018m |
+| 受光／遮擋 | 雨絲仍為真LIGHT_COLOR×ATTENUATION×3.5；漣漪×2.6；燈內受暖Spot光、燈外冷底光，兩者均保留深度與真陰影 |
+| 高度場 | 原180×80×180m、512、WHEN_MOVED、follow_camera=false與8m格移動；相機地面上雨+32m／高度場+20m不變 |
+
+### 三機位圖與動態
+
+`direction-baseline/` 是8cb90ab；`direction-v1/` 是本checkpoint產品來源，各有 `f5.png`、`lamp-close.png`、`grass.png` 及同名 `.mp4`。F5為正式size100；燈下近景為原可見燈 `G1__T:corner:1`、size24；草地為出生草地／玩家近景、size28，均沿正式相機basis。兩版F5／燈下相機完全一致；草地focus受物理落地浮點影響相差0.000092m，保守換算小於0.01px，basis／size／projection相同，詳見 `camera-comparison.json`。
+
+每機位暖機後，連續約2.05s依單調時鐘擷取50–53張原始1080p PNG，時間戳在 `capture.json`，全程前景。影格先放記憶體、事後存PNG，MP4按時間戳重採樣30fps，長2.067s，不插值。影片擷取本身會擾動時間，**不作效能樣本**。`direction-candidate/` 是已排除的偏淡探索原型；`collision-probe-fixed/` 是刻意增亮橘環的接點診斷，均不混入正式方向圖。漣漪正式強度偏低，交企劃依動態判斷，沒有宣稱藝術方向或屋頂AC已核可。
+
+### 效能初估與有限回歸
+
+Windows原生Godot4.7.1 official `a13da4feb`、RTX5090、Forward+ Vulkan、1920×1080、VSync1／60Hz。A=8cb90ab、B=本方向；順序A1 B1 B2 A2，每機位360 warmup＋240 steady。兩版相機完全一致、所有steady前景／1080p／相機不變皆240/240；218道路mesh、170建築mesh、出生草12494。117燈保持，F5／dense48／61盞全亮全Spot陰影、dropped0；atlas8192／32-bit、quadrants[4,4,4,4]保持。
+
+| 樣本 | 機位 | frame_post_draw間隔median／p95 ms | viewport CPU median ms | viewport GPU median ms |
+| --- | --- | --- | --- | --- |
+| A1 | F5 | 16.665／17.516 | 1.068 | 2.222 |
+| A1 | dense | 16.663／17.086 | 1.351 | 2.842 |
+| B1 | F5 | 16.655／17.501 | 1.630 | 2.211 |
+| B1 | dense | 16.650／17.793 | 1.855 | 2.530 |
+| B2 | dense | 16.664／17.319 | 1.724 | 1.217 |
+| B2 | F5 | 16.658／18.510 | 1.633 | 2.397 |
+| A2 | dense | 16.660／18.459 | 1.742 | 1.205 |
+| A2 | F5 | 16.662／21.612 | 1.841 | 1.932 |
+
+候選逐幀median均≤17.5ms；本次p95未見一致退步，但僅每版每機位兩次，且主目錄editor仍在，不能宣稱完整效能AC或效能提升。每次median再取median，F5 viewport CPU約+0.177ms、GPU約+0.227ms；dense CPU約+0.243ms，GPU有背景波動，不用它宣稱變快。CPU／GPU為引擎最新回報，不相加或當同幀；TIME_PROCESS不作逐幀門檻。完整raw、分項時間與命令見 `perf-{A1,B1,B2,A2}/profile.json`、`perf-commands.json`、`performance-summary.json`。
+
+實際headless命令：
+
+```sh
+XDG_DATA_HOME=/tmp/lea212-round4-xdg/data XDG_CONFIG_HOME=/tmp/lea212-round4-xdg/config XDG_CACHE_HOME=/tmp/lea212-round4-xdg/cache /home/markchou/.local/share/starspell-godot-tools/4.7.1/editor/Godot_v4.7.1-stable_linux.x86_64 --headless --path /tmp/lea212-round4-runs/candidate --script res://tests/<name>.gd
+```
+
+`weather_lamp_smoke`、`weather_headlights_smoke`、`weather_lamp_budget_smoke`、`firing_vfx_warmup_smoke`、`combat_boundary_smoke`全數actual exit0／ERROR0；warmup smoke有10條owner一致性警告，其餘WARNING0，詳見 `smokes/results.json`與完整log。未修改或放寬原smoke。
+
+```sh
+python3 /tmp/lea212_native.py /tmp/lea212-round4-runs/candidate res://tests/weather_light_occlusion_smoke.gd /home/markchou/project/tank-skirmish/artifacts-local/lea212-20261015/round4-rain/light-occlusion-native direction-v1
+```
+
+原生遮牆actual exit0／ERROR0／failures=[]；兩型燈開陰影受光保留比1.0、控制牆照度0；雨冷底／blocked皆0.321369、unblocked0.671268，halo遮擋與月光柱影通過。初次命令誤用不存在的 `tests/smoke/` 路徑exit1，保留在 `light-occlusion/`，不算產品失敗或有效測試。正式主圖capture／profile皆exit0、runtime／script／shader ERROR0；退出仍有baseline相同的2條texture cleanup ERROR與1條WARNING，未報全log ERROR0。
+
+作者保全查核：主目錄仍 `playtest/lea212-round3`／`8cb90ab`，4003個來源／素材／cache檔SHA、大小與mtime無差異、無新增assets/cache；worktree1409個保護檔不變；593個私生成資源在主目錄、worktree及兩執行副本均同hash；修前副本1240個tracked blobs符合8cb90ab。見 `guard-before.json`、`guard-after.json`；產品與執行副本逐檔比對見 `direction-product-blobs.json`。override.cfg、私素材與證據不提交。
+
+**在此停下等企劃方向審查**。新增風／雨滴亂數／落地反應參數smoke、完整冷快取首發矩陣、其他第二／三輪完整回歸與隔離獨立驗收，留待方向通過後執行；本次有限回歸是作者自查，不能冒稱fresh-context驗收。坦克、正式相機、玩法、物理、草生成、訓練場產品檔均未改。

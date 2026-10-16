@@ -1,14 +1,34 @@
 shader_type spatial;
 render_mode blend_mix, cull_disabled, depth_draw_never, ambient_light_disabled, specular_disabled;
 
+varying float opacity;
+
 void vertex() {
-	MODELVIEW_MATRIX = VIEW_MATRIX * mat4(INV_VIEW_MATRIX[0], INV_VIEW_MATRIX[1], INV_VIEW_MATRIX[2], MODEL_MATRIX[3]);
+	vec3 position = MODEL_MATRIX[3].xyz;
+	vec4 center = VIEW_MATRIX * vec4(position,1.0);
+	// 水平分量直接來自粒子真實速度；只朝向相機展寬，保留投影後的落下方向。
+	vec3 velocity = vec3(INSTANCE_CUSTOM.z,-mix(17.0,21.0,INSTANCE_CUSTOM.x)-6.6*INSTANCE_CUSTOM.y,INSTANCE_CUSTOM.w);
+	vec2 projected = (VIEW_MATRIX * vec4(normalize(velocity),0.0)).xy;
+	vec2 along = normalize(projected + vec2(0.00001));
+	vec2 across = vec2(along.y,-along.x);
+	float height_layer = smoothstep(2.0,31.0,position.y);
+	float depth_layer = 1.0-smoothstep(70.0,180.0,-center.z);
+	float width = mix(0.55,1.1,fract(INSTANCE_CUSTOM.x*37.0+0.7)) * mix(0.62,1.1,height_layer);
+	float length_scale = mix(0.55,1.45,fract(INSTANCE_CUSTOM.x*19.0+0.3)) * mix(0.65,1.05,height_layer);
+	VERTEX = vec3(across*VERTEX.x*width + along*VERTEX.y*length_scale,0.0);
+	MODELVIEW_MATRIX = mat4(1.0);
+	MODELVIEW_MATRIX[3] = center;
+	MODELVIEW_NORMAL_MATRIX = mat3(1.0);
+	opacity = mix(0.58,1.0,fract(INSTANCE_CUSTOM.x*53.0+0.2));
+	opacity *= mix(0.70,1.0,height_layer) * mix(0.72,1.0,depth_layer);
 }
 
 void fragment() {
-	ALBEDO = vec3(0.60, 0.72, 0.85);
-	EMISSION = ALBEDO;
-	ALPHA = 0.36;
+	float edge = 1.0-smoothstep(0.10,0.5,abs(UV.x-0.5));
+	float ends = smoothstep(0.0,0.18,UV.y) * (1.0-smoothstep(0.45,1.0,UV.y));
+	ALBEDO = vec3(0.48,0.60,0.74);
+	EMISSION = ALBEDO * 0.65;
+	ALPHA = 0.50 * opacity * edge * ends;
 }
 
 void light() {

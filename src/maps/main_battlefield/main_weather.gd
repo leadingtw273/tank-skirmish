@@ -1,10 +1,11 @@
-## 主圖固定近夜晚中雨；只有相機地面附近的一個雨粒子發射器。
+## 主圖固定近夜晚中雨；雨體積與落地反應皆限於相機地面附近。
 extends Node3D
 
 const LAMP := preload("res://src/maps/main_battlefield/street_lamp.tscn")
 const RAIN_MATERIAL := preload("res://src/maps/main_battlefield/lit_rain.gdshader")
 const WET_GLINT := preload("res://src/maps/main_battlefield/wet_road_glint.gdshader")
 const LAYOUT := preload("res://src/maps/main_battlefield/lamp_layout.gd")
+const RAIN_VOLUME := preload("res://src/maps/main_battlefield/rain_volume.gd")
 # 畫面含12m緩衝內全亮、全投影；256只供倒影uniform容量，不是關燈上限。
 const VIEW_BUFFER_METERS := 12.0
 const GLINT_CAPACITY := 256
@@ -42,31 +43,10 @@ func _ready() -> void:
 	road_glints = ShaderMaterial.new()
 	road_glints.shader = WET_GLINT
 	_wet_roads(get_parent().get_node("Roads"), {})
-	rain = GPUParticles3D.new()
+	rain = RAIN_VOLUME.new()
 	rain.name = "BoundedRain"
-	rain.amount = 7000
-	rain.lifetime = 2.2
-	rain.preprocess = 2.2
-	rain.local_coords = false
-	rain.visibility_aabb = AABB(Vector3(-100, -40, -100), Vector3(200, 60, 200))
-	rain.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	var process := ParticleProcessMaterial.new()
-	process.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_BOX
-	process.emission_box_extents = Vector3(80, 1, 80)
-	process.direction = Vector3(0.07, -1, 0.025)
-	process.spread = 2.0
-	process.initial_velocity_min = 17.0
-	process.initial_velocity_max = 21.0
-	process.gravity = Vector3(0, -3, 0)
-	process.collision_mode = ParticleProcessMaterial.COLLISION_HIDE_ON_CONTACT
-	rain.process_material = process
-	var mesh := QuadMesh.new()
-	mesh.size = Vector2(0.035, 0.8)
-	rain_material = ShaderMaterial.new()
-	rain_material.shader = RAIN_MATERIAL
-	mesh.material = rain_material
-	rain.draw_pass_1 = mesh
 	add_child(rain)
+	rain_material = rain.draw_pass_1.material as ShaderMaterial
 	heightfield = GPUParticlesCollisionHeightField3D.new()
 	heightfield.name = "LocalRainRoofHeightfield"
 	heightfield.size = Vector3(180, 80, 180)

@@ -23,7 +23,7 @@ void vertex() {
 
 void fragment() {
 	ALBEDO = vec3(1.0);
-	ALPHA = 0.42;
+	ALPHA = 0.32;
 }
 
 void light() {
@@ -35,11 +35,14 @@ void light() {
 		vec2 toward_camera = normalize(INV_VIEW_MATRIX[2].xz);
 		float mirror_offset = lamp_positions[i].y * length(INV_VIEW_MATRIX[2].xz) / max(INV_VIEW_MATRIX[2].y, 0.1);
 		vec2 delta = world_position.xz - lamp_positions[i].xz - toward_camera * mirror_offset;
-		float along = dot(delta, toward_camera) / 6.5;
-		float across = dot(delta, vec2(-toward_camera.y, toward_camera.x)) / 0.85;
-		float film = 0.93 + 0.07 * noise(world_position.xz * 0.75 + vec2(TIME * 0.025, 0.0));
-		float reflection = exp(-across * across * 2.0 - along * along * 1.2) * film;
-		DIFFUSE_LIGHT += LIGHT_COLOR * ATTENUATION * reflection * 6.0;
+		float along = dot(delta, toward_camera) / 8.5;
+		// 粗糙柏油的光帶橫向散開、局部扭曲；兩種尺度的濕斑打散清晰鏡影。
+		float distortion = (noise(world_position.xz * 0.35) - 0.5) * 0.75;
+		float across = (dot(delta, vec2(-toward_camera.y, toward_camera.x)) + distortion) / 1.7;
+		float patches = 0.28 + 0.72 * noise(world_position.xz * 0.55);
+		float grain = 0.65 + 0.35 * noise(world_position.xz * 3.7);
+		float reflection = exp(-across * across * 1.35 - along * along * 0.9) * patches * grain;
+		DIFFUSE_LIGHT += LIGHT_COLOR * ATTENUATION * reflection * 3.8;
 	}
 	}
 }

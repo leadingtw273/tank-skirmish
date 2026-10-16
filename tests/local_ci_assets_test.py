@@ -118,11 +118,11 @@ lock = json.loads((ROOT / 'docs/assets/local-ci-assets-lock.json').read_text())
 if args.archive is not None:
     with tarfile.open(args.archive) as tar:
         members = tar.getmembers(); by = {m.name:m for m in members}
-        exact = len(members) == len(by) == lock['fileCount'] == 586 and set(by) == {r['path'] for r in lock['files']}
+        exact = len(members) == len(by) == lock['fileCount'] == 589 and set(by) == {r['path'] for r in lock['files']}
         exact = exact and sha(args.archive.read_bytes()) == lock['archiveSha256'] == runner.ARCHIVE_SHA
         exact = exact and all(by[r['path']].isfile() and by[r['path']].size == r['bytes'] and
                              sha(tar.extractfile(by[r['path']]).read()) == r['sha256'] for r in lock['files'])
-    record('known-586-lock-exact', exact)
+    record('known-589-lock-exact', exact)
 
 HEAD, RUN, RID, PR = 'a'*40, 12345, 678, 124
 class Clock:

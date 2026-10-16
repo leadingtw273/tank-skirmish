@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "policy": "本機CI素材庫；禁止將archive/payload提交Git或上傳驗收artifacts",
-  "archiveSha256": "7490a4277e526600951c0ea7a6e32027825c3c51e6c81bba83761944167a3847",
-  "fileCount": 586,
+  "archiveSha256": "05ba9ef9f2a117b0470d1f7b684e3e1c7d08f275a059b583d164ecc93b3be0b6",
+  "fileCount": 589,
   "files": [
     {
       "path": "assets/AtomicRealmModularRoads/base/PLUS/Road1_A.png",
@@ -53,6 +53,21 @@
       "path": "assets/AtomicRealmModularRoads/base/PLUS/gltf/Road2_X_Road2_X_B.png",
       "sha256": "c06b574db23bdac339a4ee69ecaea664bb6fa73d24dcce400df36a75594855ea",
       "bytes": 79584
+    },
+    {
+      "path": "assets/AtomicRealmModularRoads/lighting/lamp_1.glb",
+      "sha256": "98f90212c9b9d632518169ffa1d10fb0e55bbcf81952d9cf545ac64ad0cb05c2",
+      "bytes": 667872
+    },
+    {
+      "path": "assets/AtomicRealmModularRoads/lighting/lamp_2.glb",
+      "sha256": "4bdb38d66c0b5d180aa2c06e012fa67b2e950a1aa748df59264a1b985f29c85a",
+      "bytes": 679500
+    },
+    {
+      "path": "assets/BinbunGrass/texture/grass_basic_atlas.png",
+      "sha256": "73471dd753dc80b141dc1b958a834107205c23d7982fc6b01319921128b73995",
+      "bytes": 259854
     },
     {
       "path": "src/world/buildings/quaternius/collisions/materials/default/2Story_2_Mat_0.res",

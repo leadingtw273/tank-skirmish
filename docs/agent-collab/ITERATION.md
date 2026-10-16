@@ -1,3 +1,35 @@
+# 2026-10-16 LEA-212 收尾步驟 B：PR #130 私素材閉包修正
+
+本輪沿 [PR #130](https://github.com/leadingtw273/tank-skirmish/pull/130)，基線 `1e5c0683a6e6730dd0bc1b7cf2ea4b3b5d2097e8`。企劃依本機 `.git/codex-task-lea212-closeout.md`「步驟 B」及「企劃裁決：B2–B4 續行」核可方案 a：只補缺少的兩個路燈 GLB 與草 atlas、另建 repo 外 0600 素材封存檔、更新 lock／來源紀錄，完成乾淨本機 quality 及新 Head 的 PR 私有 CI 後停止。**不合併、不發 `agent-team/review` status、不改 Linear。**此續行授權取代下方歷史步驟 A 的停止點，但不擴張產品範圍。
+
+原 586 筆 lock 與 `quarter.tar` 還原至乾淨 checkout 後，`bash scripts/ci.sh` 實測 exit 1，首個失敗為 import 載入 `grass_basic_atlas.png`；獨立盤點確認缺檔全集為 `assets/AtomicRealmModularRoads/lighting/lamp_1.glb`、`lamp_2.glb` 與 `assets/BinbunGrass/texture/grass_basic_atlas.png`。本機證據在 `artifacts-local/lea212-20261015/pr130-b1-fix/`，不隨 PR 上傳。
+
+新版 lock 共 589 筆，原 586 筆路徑、bytes、SHA 與 payload 保持；原 archive 不覆蓋、不刪除。新增三檔的 `.import`／匯入快取由 Godot 重建，兩 GLB 無外部 buffer／圖像 URI，不另加入 PNG。來源與封存操作見 [AtomicRealm 路燈](../assets/atomicrealm-lamps-provenance.md)、[Binbun 草 atlas](../assets/binbun-godot-grass-provenance.md#2026-10-16-lea-212-本機-ci-封存輸入)、[本機私有 CI](../local-private-ci.md)。AtomicRealm 授權狀態仍「未查證」；企劃裁決同 ZIP 的路燈沿既有 base 輸入狀態，不套用 Quaternius CC0，也不寫成已查證。
+
+驗證要求為 `python3 tests/local_ci_assets_test.py --archive <新版 archive>`、乾淨 checkout 只還原新 archive 後完整 `bash scripts/ci.sh` exit 0／ERROR 0，以及新 Head 的 PR `quality` 真 run／job success、三項清理旗標皆 true。實際結果與精確 Head／run 以完成回報、GitHub 及本機收據為準；此處不預填成功。launcher 從當前 lock 取得 archive SHA；workflow 的 `quarter.tar` 是 gate 傳遞名稱，不是 host 封存版本，不需變更。
+
+## LEA-212 backlog 補記（本單不實作）
+
+PR #130 獨立 review 的 reviewed Head 為 `1e5c068`，判定 `changes_requested`；本單只修素材閉包 blocker B1。報告為本機 `artifacts-local/lea212-20261015/pr130-review/REVIEW.md`，advisory 1–13 全部保留 backlog，不改寫為本單 AC：
+
+1. 預繪不可見性自動斷言與 omni 陰影。
+2. `frame_pre_draw` 首幀座標／RenderingServer 同步。
+3. 停止繪製與離場再入場的預繪生命週期。
+4. `preprocess` 設定與 restart／play 順序。
+5. 相機移動時重算 117 燈、重送 shadow 與陣列配置成本。
+6. 8192² shadow atlas 的 VRAM 成本。
+7. 畫邊燈光 pop 與遮擋更新延遲。
+8. 雨碰撞與 lifetime、6.6 硬編碼及 TIME rollover。
+9. 正俯視 NaN、退化凸包與草地兄弟節點依賴。
+10. variant2 雙燈頭與固定光源位置；主圖仍只用 variant1。
+11. 落點重用斷言精度及無效程式碼。
+12. 本次 review 未重跑兩支原生 GPU smoke 的證據限制。
+13. 下方原七項 backlog 全部保留。
+
+另列 **AtomicRealm 整包正式授權查證**，屬既有 base／道路包問題，不是本單引入。leadi 對產品 ce49e89 的人驗 accepted 保持；收尾只改 CI 素材 metadata／驗證筆數與文件，玩法及視覺產品 bytes 不變。
+
+---
+
 # 2026-10-16 LEA-212 雨夜多輪人驗 accepted 與收尾步驟 A
 
 現役狀態：LEA-212 產品人驗 **accepted**，待草稿 PR、平台核對、合併與交付；下方有日期的舊 pending 記錄保留為歷史。本輪功能與可重現入口見 [雨夜路燈](../features/rain-dusk-lamps.md)、[第三輪首發](../features/rain-first-shot-round3.md) 與 [T1b 首發預繪](../features/rain-first-shot-t1b.md)。

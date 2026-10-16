@@ -3,6 +3,13 @@
 ## *-off 僅供根因消去實驗，不是可採用的產品修正。
 extends SceneTree
 
+class DiagnosticMouseFilter extends Node:
+	var discarded_buttons := 0
+	func _input(event: InputEvent) -> void:
+		if event is InputEventMouseButton and not event.has_meta(&"first_shot_profile"):
+			discarded_buttons += 1
+			get_viewport().set_input_as_handled()
+
 var scene: Node3D
 var player: Node3D
 var started: int
@@ -31,7 +38,9 @@ func _fired(_event: Variant) -> void:
 
 func _added(node: Node) -> void:
 	var label := str(node.name)
-	if mode == "fx-lights-off" and node is Light3D:
+	var path := str(node.get_path())
+	var firing_light := path.contains("/MuzzleFlash/") or path.contains("/Projectiles/Projectile") or path.contains("/ImpactVFX/")
+	if mode == "fx-lights-off" and node is Light3D and firing_light:
 		node.visible = false
 	if node is Node3D and ((mode == "all-fx-off" and (label.begins_with("MuzzleSmokeVFX") or label.begins_with("MuzzleFlash") or label.begins_with("Projectile") or label.begins_with("ImpactVFX")))
 		or (mode == "smoke-off" and label.begins_with("MuzzleSmokeVFX"))
@@ -47,12 +56,14 @@ func _added(node: Node) -> void:
 		events.append(row)
 
 func _fire() -> void:
+	root.grab_focus()
 	requested += 1
 	var begin := Time.get_ticks_usec()
 	var click := InputEventMouseButton.new()
 	click.button_index = MOUSE_BUTTON_LEFT
 	click.pressed = true
 	click.position = root.get_visible_rect().size * 0.5
+	click.set_meta(&"first_shot_profile", true)
 	Input.parse_input_event(click)
 	var release := click.duplicate() as InputEventMouseButton
 	release.pressed = false
@@ -83,6 +94,10 @@ func _run() -> void:
 		return
 	root.grab_focus()
 	var runtime := scene.get_node("PlayerRuntime")
+	# 僅診斷副本隔離外部滑鼠按鍵；受控左鍵仍走原始 PlayerController／ShotEvent。
+	var mouse_filter := DiagnosticMouseFilter.new()
+	root.add_child(mouse_filter)
+	scene.get_node("PlayerSpawnGroup/CameraRig").set_process_unhandled_input(false)
 	player = runtime.get("controlled_tank")
 	# 保留正式玩家左鍵／ShotEvent、物理、相機跟隨與後座；僅固定鍵盤移動／滑鼠瞄準輸入。
 	runtime.get_node("PlayerController").set_physics_process(false)
@@ -98,7 +113,7 @@ func _run() -> void:
 		var now := Time.get_ticks_usec()
 		var elapsed := float(now - started) / 1000.0
 		samples.append({"t_ms":elapsed, "interval_ms":float(now - previous) / 1000.0,
-			"frame":Engine.get_process_frames(), "focused":DisplayServer.window_is_focused(),
+			"frame":Engine.get_process_frames(), "focused":DisplayServer.window_is_focused(), "camera_size":root.get_camera_3d().size,
 			"setup_cpu_ms":RenderingServer.get_frame_setup_time_cpu(),
 			"viewport_cpu_ms":RenderingServer.viewport_get_measured_render_time_cpu(viewport_rid),
 			"viewport_gpu_ms":RenderingServer.viewport_get_measured_render_time_gpu(viewport_rid), "pipeline":_pipelines()})
@@ -118,13 +133,14 @@ func _run() -> void:
 		"camera_transform":str(camera.global_transform), "camera_size":camera.size,
 		"atlas_size":root.positional_shadow_atlas_size, "atlas_16bits":root.positional_shadow_atlas_16_bits,
 		"atlas_quadrants":[root.positional_shadow_atlas_quad_0,root.positional_shadow_atlas_quad_1,root.positional_shadow_atlas_quad_2,root.positional_shadow_atlas_quad_3],
+		"external_mouse_buttons_discarded":mouse_filter.discarded_buttons,
 		"requests":requests, "shots":shots, "events":events, "frames":samples}
 	DirAccess.make_dir_recursive_absolute(args[0])
 	var file := FileAccess.open(args[0] + "/first-shot.json", FileAccess.WRITE)
 	file.store_string(JSON.stringify(result, "\t"))
 	file.close()
 	print("FIRST_SHOT_PROFILE ", args[1], " requested=", requested, " actual=", shots.size(), " mode=", mode)
-	var valid := shots.size() == 4 and requests.size() == 4
+	var valid := shots.size() == 4 and requests.size() == 4 and samples.all(func(row: Dictionary): return is_equal_approx(row.camera_size, 100.0))
 	RenderingServer.viewport_set_measure_render_time(viewport_rid, false)
 	scene.queue_free()
 	for frame: int in 3:

@@ -47,13 +47,18 @@ func _summary(samples: Array[Dictionary]) -> Dictionary:
 	result["zero_gpu_samples"] = zero_gpu
 	result["repeated_gpu_timestamp_frames"] = repeated_timestamp
 	result["focused_frames"] = samples.filter(func(row: Dictionary): return row.focused).size()
+	result["camera_unchanged_frames"] = samples.filter(func(row: Dictionary): return row.camera_unchanged).size()
 	return result
 
 func _sample(camera: Camera3D, weather: Node, tag: String) -> void:
 	var warm: Array[Dictionary] = []
 	var steady: Array[Dictionary] = []
 	var previous_usec := Time.get_ticks_usec()
+	var expected_transform := camera.global_transform
+	var expected_size := camera.size
 	for frame: int in WARMUP + STEADY:
+		if frame < WARMUP and frame % 60 == 0 and not DisplayServer.window_is_focused():
+			root.grab_focus()
 		await RenderingServer.frame_post_draw
 		var now := Time.get_ticks_usec()
 		var timestamp_frame := -1
@@ -70,7 +75,8 @@ func _sample(camera: Camera3D, weather: Node, tag: String) -> void:
 			"interval_ms":float(now - previous_usec) / 1000.0,
 			"draw_calls":Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME),
 			"render_objects":Performance.get_monitor(Performance.RENDER_TOTAL_OBJECTS_IN_FRAME),
-			"focused":DisplayServer.window_is_focused()}
+			"focused":DisplayServer.window_is_focused(),
+			"camera_unchanged":camera.global_transform.is_equal_approx(expected_transform) and is_equal_approx(camera.size, expected_size)}
 		previous_usec = now
 		if frame < WARMUP:
 			warm.append(sample)
@@ -106,9 +112,18 @@ func _run() -> void:
 	var main := load("res://src/main.tscn").instantiate() as Node3D
 	root.add_child(main)
 	current_scene = main
+	# Git archive 不含本機生成地圖；拒絕以缺道路／建築的副本產出效能結論。
+	var roads := main.get_node("World/Roads").find_children("*", "MeshInstance3D", true, false).size()
+	var buildings := main.get_node("World/Buildings").find_children("*", "MeshInstance3D", true, false).size()
+	if roads < 200 or buildings < 170:
+		push_error("正式主圖資源不完整：roads=%d buildings=%d" % [roads, buildings])
+		quit(2)
+		return
 	var runtime := main.get_node("PlayerRuntime")
 	runtime.call("set_controls_enabled", false)
 	main.get_node("PlayerSpawnGroup/CameraRig").set_process(false)
+	main.get_node("PlayerSpawnGroup/CameraRig").set_process_input(false)
+	main.get_node("PlayerSpawnGroup/CameraRig").set_process_unhandled_input(false)
 	runtime.get("player_aim_controller").set_process(false)
 	runtime.get("player_aim_controller").set_physics_process(false)
 	var camera := root.get_camera_3d()
@@ -122,6 +137,7 @@ func _run() -> void:
 	if args.size() > 2 and args[2] == "dense-first":
 		views.reverse()
 	for tag: String in views:
+		root.grab_focus()
 		camera.global_transform = f5_transform
 		camera.size = f5_size
 		if tag == "dense-street":
@@ -134,6 +150,7 @@ func _run() -> void:
 		"grass_enabled":main.get_node("World/GrassField").visible, "measurement_phase":"frame_post_draw; latest CPU/GPU reports; GPU not frame-aligned with CPU",
 		"atlas_size":root.positional_shadow_atlas_size, "atlas_16bits":root.positional_shadow_atlas_16_bits,
 		"atlas_quadrants":[root.positional_shadow_atlas_quad_0,root.positional_shadow_atlas_quad_1,root.positional_shadow_atlas_quad_2,root.positional_shadow_atlas_quad_3],
+		"road_meshes":roads, "building_meshes":buildings,
 		"warmup_frames":WARMUP, "steady_frames":STEADY, "views":_rows}
 	var file := FileAccess.open(_output + "/profile.json", FileAccess.WRITE)
 	file.store_string(JSON.stringify(result, "\t"))

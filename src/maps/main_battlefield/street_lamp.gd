@@ -41,14 +41,15 @@ func _ready() -> void:
 	var arm := BoxShape3D.new()
 	arm.size = Vector3(2.9 if model_variant == 2 else 1.6, 0.24, 0.32)
 	_add_shape(arm, Vector3(0 if model_variant == 2 else 0.62, 6.06, 0))
-	var head_positions := PackedFloat32Array([-1.12, 1.12] if model_variant == 2 else [1.12])
+	# 原 GLB 不自發光；只在燈罩內側向下面加薄發光面，不再以球包住燈罩。
+	var head_positions := PackedFloat32Array([-1.1880, 1.1880] if model_variant == 2 else [1.1242])
+	var opening_y := 5.9924 if model_variant == 2 else 6.07627
 	for x: float in head_positions:
 		var head := MeshInstance3D.new()
 		head.name = "WarmHead%d" % heads.size()
 		head.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-		var mesh := SphereMesh.new()
-		mesh.radius = 0.22
-		mesh.height = 0.22
+		var mesh := PlaneMesh.new()
+		mesh.size = Vector2(0.42, 0.22)
 		var material := StandardMaterial3D.new()
 		material.albedo_color = Color(1, 0.72, 0.32)
 		material.emission_enabled = true
@@ -56,7 +57,9 @@ func _ready() -> void:
 		material.emission_energy_multiplier = 6.0
 		mesh.material = material
 		head.mesh = mesh
-		head.position = Vector3(x, 6.18, 0)
+		head.rotation.x = PI
+		head.position = Vector3(x, 6.048 if model_variant == 2 else 6.132, 0.0085 if model_variant == 1 else 0.0)
+		head.set_meta("opening_y", opening_y)
 		add_child(head)
 		heads.append(head)
 		visuals.append(head)

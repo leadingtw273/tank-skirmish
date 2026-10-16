@@ -39,7 +39,7 @@ func _run() -> void:
 			_expect("real-down-spot-shadow-"+str(lamp.name),lamp.light is SpotLight3D and (-lamp.light.global_basis.z).dot(Vector3.DOWN)>.999 and (not required or lamp.light.shadow_enabled) and lamp.light.spot_range==22 and lamp.light.spot_angle==75)
 			if not required:
 				remote+=1
-				_expect("remote-warm-point-"+str(lamp.name),lamp.heads.all(func(head: MeshInstance3D):return (head.mesh.material as StandardMaterial3D).emission_enabled and (head.mesh.material as StandardMaterial3D).emission_energy_multiplier>=6 and is_equal_approx((head.mesh as SphereMesh).radius,.22)))
+				_expect("remote-downward-emitter-"+str(lamp.name),lamp.heads.all(func(head: MeshInstance3D):return head.mesh is PlaneMesh and (head.mesh as PlaneMesh).size.is_equal_approx(Vector2(.42,.22)) and head.global_basis.y.dot(Vector3.DOWN)>.999 and (head.mesh.material as StandardMaterial3D).emission_enabled and (head.mesh.material as StandardMaterial3D).emission_energy_multiplier>=6 and head.position.y>float(head.get_meta("opening_y"))))
 				_expect("inactive-fx-no-rays-"+str(lamp.name),not lamp.atmosphere.visible and not lamp.atmosphere.is_physics_processing())
 		_expect("every-view-light-enabled-shadowed",lit==in_view and lit==weather.visible_candidates and weather.budget_dropped==0 and remote>0)
 		print("LAMP_COVERAGE_VIEW ",center," required=",in_view," lit=",lit," dropped=",weather.budget_dropped)

@@ -12,10 +12,10 @@ func _ready() -> void:
 	for head: MeshInstance3D in get_parent().heads:
 		var halo := MeshInstance3D.new()
 		halo.name = "HeadHalo"
-		halo.position = head.position + Vector3(0, -0.08, 0)
+		halo.position = Vector3(head.position.x, float(head.get_meta("opening_y")) - 0.45, head.position.z)
 		halo.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		var quad := QuadMesh.new()
-		quad.size = Vector2(2.4, 2.4)
+		quad.size = Vector2(1.2, 1.5)
 		var material := ShaderMaterial.new()
 		material.shader = HALO
 		quad.material = material

@@ -8,6 +8,7 @@ const IMPACT_VFX_SCENE := preload("res://src/vfx/impacts/impact_explosion_vfx.ts
 const MUZZLE_SMOKE_VFX_SCENE := preload("res://src/vfx/muzzle/muzzle_smoke_vfx.tscn")
 const MUZZLE_FLASH_VFX_SCENE := preload("res://src/vfx/muzzle/muzzle_flash_vfx.tscn")
 const JAVELIN_VFX_SCENE := preload("res://src/vfx/projectiles/javelin_projectile_vfx.tscn")
+const FiringVfxWarmup := preload("res://src/combat/firing_vfx_warmup.gd")
 const TankProjectile := preload("res://src/combat/projectile.gd")
 const ShotEvent := preload("res://src/combat/shot_event.gd")
 const ImpactEvent := preload("res://src/combat/impact_event.gd")
@@ -54,17 +55,15 @@ func _ready() -> void:
 
 
 func _preinitialize_firing_vfx() -> void:
-	## 只提前局部 CPU 端的場景／材質／播放初始化；隱藏物件未繪製，不保證 GPU pipeline 已預熱。
-	## ready 在來源註冊前同步做一次，換車只重新接線，不建立戰鬥 Projectile 或發出遊戲事件。
-	var hidden_root := Node3D.new()
-	hidden_root.visible = false
+	## 只在 ready 建立一次；保留至前三個 render frame，來源註冊與開砲不等預繪結束。
+	var warmup := FiringVfxWarmup.new()
+	warmup.name = "FiringVfxWarmup"
 	var flash := MUZZLE_FLASH_VFX_SCENE.instantiate() as Node3D
 	var smoke := MUZZLE_SMOKE_VFX_SCENE.instantiate() as Node3D
 	var javelin := JAVELIN_VFX_SCENE.instantiate() as Node3D
 	var impact := IMPACT_VFX_SCENE.instantiate() as Node3D
 	for vfx in [flash, smoke, javelin, impact]:
-		vfx.visible = false
-		hidden_root.add_child(vfx)
+		warmup.add_child(vfx)
 	for vfx in [flash, javelin, impact]:
 		## 避免 vendor ready 自動播放；one_shot 排除 play 的 await／循環分支。
 		vfx.set("one_shot", true)
@@ -75,13 +74,12 @@ func _preinitialize_firing_vfx() -> void:
 	smoke_particles.process_material = smoke_material
 	smoke_particles.one_shot = true
 	smoke.scale = Vector3.ONE * muzzle_smoke_scale
-	add_child(hidden_root)
+	add_child(warmup)
 	_apply_impact_vfx_scale(impact, impact_vfx_scale)
 	for vfx in [flash, javelin, impact]:
 		vfx.call("play")
 	smoke_particles.restart()
-	## 同步返回前釋放所有粒子、網格、燈與 decal；沒有計時器或可操作影格殘留。
-	hidden_root.free()
+	warmup.begin()
 
 
 ## 回傳目前註冊來源的快照；修改回傳陣列不會影響執行期 registry。

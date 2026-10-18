@@ -1,0 +1,49 @@
+[gd_resource type="ShaderMaterial" load_steps=10 format=3]
+
+[ext_resource type="Shader" path="res://src/maps/main_battlefield/weather_grass.gdshader" id="1_grass"]
+[ext_resource type="Texture2D" path="res://assets/BinbunGrass/texture/grass_basic_02.png" id="2_shape"]
+
+[ext_resource type="Texture2D" path="res://assets/BinbunGrass/texture/grass_basic_atlas.png" id="3_atlas"]
+
+[sub_resource type="FastNoiseLite" id="GrassNoise"]
+seed = 117
+frequency = 0.018
+
+[sub_resource type="NoiseTexture2D" id="GrassNoiseTexture"]
+width = 256
+height = 256
+seamless = true
+noise = SubResource("GrassNoise")
+
+[sub_resource type="FastNoiseLite" id="GrassWindNoise"]
+seed = 117
+frequency = 0.08
+
+[sub_resource type="NoiseTexture2D" id="GrassWindTexture"]
+width = 256
+height = 256
+seamless = true
+noise = SubResource("GrassWindNoise")
+
+[sub_resource type="Gradient" id="GrassGradient"]
+colors = PackedColorArray(0.25, 0.34, 0.20, 1, 0.40, 0.48, 0.30, 1)
+
+[sub_resource type="GradientTexture2D" id="GrassPalette"]
+gradient = SubResource("GrassGradient")
+width = 256
+height = 1
+
+[resource]
+shader = ExtResource("1_grass")
+shader_parameter/billboard = true
+shader_parameter/shape_texture = ExtResource("2_shape")
+shader_parameter/shape_atlas = ExtResource("3_atlas")
+shader_parameter/use_atlas = true
+shader_parameter/noise_texture = SubResource("GrassNoiseTexture")
+shader_parameter/color_gradient = SubResource("GrassPalette")
+shader_parameter/random_variation = 0.0
+shader_parameter/wind_texture = SubResource("GrassWindTexture")
+shader_parameter/wind_velocity = Vector2(0.6, 0.3)
+shader_parameter/alpha_cut_start = 0.35
+shader_parameter/alpha_cut_end = 0.65
+shader_parameter/alpha_mode = 0

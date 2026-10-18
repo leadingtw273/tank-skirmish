@@ -44,9 +44,19 @@
 [ext_resource type="Texture2D" path="res://assets/BinbunSkies/textures/clouds/clouds_01.tres" id="42_i7060"]
 [ext_resource type="Texture2D" path="res://assets/BinbunSkies/textures/clouds/clouds_02.tres" id="43_mwgf4"]
 
-[sub_resource type="StandardMaterial3D" id="GroundMaterial"]
-albedo_color = Color(0.42, 0.26, 0.12, 1)
-roughness = 0.92
+[ext_resource type="Shader" path="res://src/maps/main_battlefield/ground_grass.gdshader" id="44_ground_grass"]
+
+[ext_resource type="Script" path="res://src/maps/main_battlefield/main_grass_field.gd" id="45_grass_field"]
+[ext_resource type="Material" path="res://src/maps/main_battlefield/binbun_grass_material.tres" id="46_grass_material"]
+
+[ext_resource type="PackedScene" path="res://src/maps/main_battlefield/main_weather.tscn" id="47_weather"]
+
+[sub_resource type="ShaderMaterial" id="GroundMaterial"]
+shader = ExtResource("44_ground_grass")
+shader_parameter/grass_dark = Color(0.27, 0.36, 0.22, 1)
+shader_parameter/grass_light = Color(0.36, 0.43, 0.28, 1)
+shader_parameter/patch_size_meters = 12.0
+shader_parameter/roughness = 0.92
 
 [sub_resource type="BoxMesh" id="GroundMesh"]
 material = SubResource("GroundMaterial")
@@ -61,16 +71,16 @@ shader_parameter/sky_day = Color(0, 0.3, 0.7, 1)
 shader_parameter/horizon_day = Color(0.75, 0.85, 0.85, 1)
 shader_parameter/horizon_sunset = Color(0.95, 0.42, 0.22, 1)
 shader_parameter/sky_sunset = Color(0.16, 0.12, 0.3, 1)
-shader_parameter/horizon_night = Color(0.1, 0.15, 0.2, 1)
-shader_parameter/sky_night = Color(0.05, 0.1, 0.15, 1)
-shader_parameter/day_night_mix = 0.8
-shader_parameter/use_directional_light = true
+shader_parameter/horizon_night = Color(0.08, 0.105, 0.14, 1)
+shader_parameter/sky_night = Color(0.035, 0.055, 0.085, 1)
+shader_parameter/day_night_mix = 1.0
+shader_parameter/use_directional_light = false
 shader_parameter/horizon_exponent = 2.0
 shader_parameter/sunset_amount_exponent = 0.7
 shader_parameter/night_amount_exponent = 4.0
 shader_parameter/cloud_tex_01 = ExtResource("42_i7060")
 shader_parameter/cloud_tex_02 = ExtResource("43_mwgf4")
-shader_parameter/cloud_color = Color(0.48, 0.36, 0.46, 1)
+shader_parameter/cloud_color = Color(0.10, 0.14, 0.18, 1)
 shader_parameter/cloud_tiling = Vector2(1, 1)
 shader_parameter/wind_speed = Vector2(0.5, 0.5)
 shader_parameter/cloud_density = 0.85
@@ -92,10 +102,21 @@ background_mode = 2
 background_color = Color(0.24, 0.4, 0.56, 1)
 sky = SubResource("SceneSky")
 ambient_light_source = 2
-ambient_light_color = Color(0.38, 0.36, 0.5, 1)
-ambient_light_energy = 0.8
+ambient_light_color = Color(0.26, 0.34, 0.46, 1)
+ambient_light_energy = 0.32
 reflected_light_source = 2
 tonemap_mode = 2
+glow_enabled = true
+glow_intensity = 0.2
+glow_strength = 0.6
+glow_hdr_threshold = 2.3
+glow_hdr_luminance_cap = 6.0
+fog_enabled = true
+fog_light_color = Color(0.14, 0.20, 0.28, 1)
+fog_density = 0.0015
+fog_height = 0.65
+fog_height_density = 0.001
+fog_sky_affect = 0.5
 
 [node name="World" type="Node3D" unique_id=737820505]
 
@@ -2123,14 +2144,19 @@ transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 65.9
 metadata/quaternius_source = "res://src/world/buildings/quaternius/meshes/materials/6Story_Stack_Mat.glb"
 
 [node name="GrassField" type="Node3D" parent="." unique_id=1305721088]
+script = ExtResource("45_grass_field")
+grass_material = ExtResource("46_grass_material")
 
 [node name="Lighting" type="Node3D" parent="." unique_id=2128133978]
 
 [node name="Sun" type="DirectionalLight3D" parent="Lighting" unique_id=129475564]
 transform = Transform3D(0.8191522, 0.28678825, -0.4967315, 0, 0.86602527, 0.50000024, 0.5735762, -0.4095763, 0.7094065, 0, 0, 0)
-light_color = Color(1, 0.72, 0.5, 1)
-light_energy = 0.55
+light_color = Color(0.42, 0.54, 0.72, 1)
+light_energy = 0.06
 shadow_enabled = true
+shadow_blur = 3.0
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="Lighting" unique_id=518585028]
 environment = SubResource("SceneEnvironment")
+
+[node name="MainWeather" parent="." instance=ExtResource("47_weather")]

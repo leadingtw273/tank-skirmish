@@ -1,4 +1,66 @@
+# 2026-10-16 LEA-212 accepted，待合併／交付
+
+現役工作為 [LEA-212 雨夜多輪收尾](ITERATION.md#2026-10-16-lea-212-雨夜多輪人驗-accepted-與收尾步驟-a)。leadi 已在主工作目錄 `playtest/lea212-round4` 實測產品 Head `ce49e89e1603f120aa581cd9b7b3408360d54e5c`，於 2026-10-16 明示「當前狀況我驗收通過，可以做收尾合併了，並且去做關單」；本功能人員產品驗收為 **accepted**。下方六燈候選／人驗 pending 與舊平台快照只作歷史，不代表本輪現況。
+
+本次只做企劃 `.git/codex-task-lea212-closeout.md` 的 A1–A4：文件收尾、對最終文件 Head 在額外完整 `/tmp` 副本跑完整 CI、push 功能分支並開到 `main` 的草稿 PR、Linear MCP 只讀查核。**開完草稿 PR 停下；不合併、不更改 Linear 狀態。**整體合併／關單授權不取消本步停止點。
+
+工作樹 `/tmp/tank-skirmish-lea212-atmosphere`、分支 `feat/lea212-rain-atmosphere`；只改 ITERATION／HANDOFF，不改 accepted 產品 bytes、不切主工作目錄分支、不在主目錄或工作樹跑引擎。保留原未提交 `override.cfg`；私素材、生成資源、`.godot` 與 `artifacts-local` 不提交、不外送。本機完整副本 CI 與待設定的 GitHub CI 分開；這次不啟動需 exact tuple 授權的私素材網路 runner。
+
+第二輪 `ae09baa`、第三輪 `8cb90ab`、第四輪 `ce49e89` 的跨模型 Claude 工程驗收均為 PASS；完整 Head、報告路徑、13 支 baseline 既有失敗的解讀與後續 backlog 見上述 ITERATION。功能入口與完整證據索引見 [雨夜路燈](../features/rain-dusk-lamps.md)、[T1b 首發預繪](../features/rain-first-shot-t1b.md)；人的 accepted 與工程驗收、平台 review／CI／merge 分開。
+
+開始 A 步驟時 GitHub `main` 為 `590c801`、無 open PR；後續草稿 PR URL／最終文件 Head 依完成回報與 GitHub 真實讀回，不從這個歷史快照推定。平台 review、CI Head／結果及合併條件為 **待設定／未查核**，不得預填成功；本地 A2 結果另附實際命令與 exit code。
+
+交接者只依本步可查證證據繼續；下個階段合併前仍須核對最新同 Head 的必要 CI、獨立 review 與真實平台條件，不能 bypass。相關／子單不因 LEA-212 accepted 自動關閉，依 Linear 只讀結果交企劃處理。
+
+---
+
+# 2026-10-12 草地人驗 accepted；雨天近夜晚續輪
+
+leadi 明示接受本機草地版本 `d5d7ef69`；LEA-209 已讀回人驗 accepted 評論，原工程驗收與本機交付證據保留於 `/home/markchou/evidence/retained-project-data-20261012/tank-grass-wall-20261012/`。GitHub main 尚未包含本機草地續修，不以人驗代替 CI／merge。
+
+本輪 [LEA-212](https://linear.app/leadingtw273/issue/LEA-212/主地圖雨天近夜晚與可推倒路燈) 主地圖雨天近夜晚暖路燈已形成隔離候選：六燈可由原 Tank2 真實撞倒即熄、再推動，5 秒後開始 2 秒淡出並完整釋放。有限作者原生同 F5 畫面、完整生命週期及 baseline／candidate 四原 smoke 已留證；詳見 [雨夜路燈 feature](../features/rain-dusk-lamps.md)。獨立同 Head 驗收、本機正式交付及本功能產品人驗均 pending，不沿用原草地 accepted；既有證據路徑搬遷修改正常保存。
+
+---
+
+# 2026-10-12 LEA-209 牆邊草留白修正
+
+leadi 確認牆邊只見建築與地面、分界太明確；本輪沿既有自然銜接 AC 修正。建築 XZ 凸包排除距離由 1m 改為 0.15m，道路保留 1m；草型、密度／seed、材質受光／深度／風動與玩法保持。
+
+作者同版 WinGodot4.7.1／Forward+，同 F4 相機實拍：出生 11820→12494 株，庭院樣本最近草根至低層外緣 1.0208→0.1551m；60m 方框檢查 24301→29244 根，道路 1m／建築原凸包內／樣本建築 0.15m 排除反例均 0。兩原 smoke actual exit0、ERROR／WARNING0；圖形退出兩版同有既有 RID 清理訊息。證據在本機 `/home/markchou/evidence/retained-project-data-20261012/tank-grass-wall-20261012/{baseline,candidate}`，不是完整 benchmark 或新版人驗。
+
+候選 `fix/lea209-grass-wall-gap` 待 fresh-context 同 Head 驗收與 root 正常本機 FF；沒有 push／PR／CI／關票或來源／私圖外送。以下為前輪紀錄。
+
+---
+
+# 2026-10-12 LEA-209 相機範圍草地續輪
+
+leadi 先確認出生草效果很好，核可按相機可見地面＋外圍緩衝分塊生成／跨chunk更新／固定位置／有限快取；沿LEA-209，不改認可出生樣式。最新閉包計畫與原生隔離plan review approve／0 blocker由root GO，本輪基線 `0fde8832717d3639567d430e9d1a407ffbe85cae`、分支 `feat/lea209-camera-grass-stream`。
+
+16m chunk、48→64m近區密度過渡、0.2／0.4／0.8m固定嵌套格、dense80m／mid外24m／base32m預載；草與原Ground連續共用palette／noise受光，玩法及原素材保持。750,000株總cap涵蓋出生／active／cache／pending，active400／cache64、2ms候選deadline／2048候選／每frame單次6400株upload。詳細固定實作與有限驗證入口見 [main-ground-grass.md](../features/main-ground-grass.md)。
+
+作者本機Forward+有限路徑與兩原smoke actual exit0，birth11820／重複與排除反例0、peak749809；同相機baseline與16frame跨格GIF已留存，效能／raw入口見feature。工程獨立驗收／本機FF與新功能人驗pending；原出生樣式accepted不延伸成新串流功能accepted。不push／PR／網路CI／關票或外送source／圖／素材；root待fresh同Head PASS後正常本機FF。下方歷史不作本輪PASS。
+
+---
+
+# 2026-10-09 LEA-209 出生庭院草場續修
+
+leadi 新裁決：全地圖大量生成有效能問題；先只鋪主世界坦克出生的空地，草須自然綿延交接。沿同票修正，尚待本機獨立工程驗收與 leadi 實測，不沿用前版人驗或 CI 結果。
+
+本版固定 `Rect2(-116,-115,25,24)`，實車出生 `(-108,0,-106)`；0.2m 格距、±0.08m 抖動、seed117，15,000 候選經既有道路／建築世界 XZ 凸包外擴1m排除。一次性單一 MultiMesh，移除全地圖底草、視野細節tile與每幀生成。Quad 0.4×0.4m、subdiv2/2、centerY0.2，原四形atlas／billboard及平滑alpha，wind(0.6,0.3)。出生patch的無碰撞PlaneMesh與草葉共用同noise／palette／原demo受光算法；其餘floor材質保持。
+
+免費原source atlas只是新增一個ignored本機CC0輸入，原586私素材與239原UID保持；shader/PNG來源不修改，atlas不Git／不外送。正常來源分支 `feat/lea209-spawn-grass`，基線 `3e88ec173e30b452df43749230ad4aba2c2148b4`。本輪不push、PR、網路CI或關票；本機FF由獨立驗收後交付處理。
+
+作者同source有限證據：WinGodot4.7.1／Forward+，15,000候選、11,820株、單一MultiMesh、生成7ms；草根出界0／獨立凸包重建排除反例0、無每幀process，共用noise／palette讀回true。F1／F4與32幀2.56秒wind已實拍，兩原smoke actual exit0且無ERROR/WARN；圖形runtime的WASAPI與退出RID清理訊息與基線相同。此為作者證據，獨立驗收與leadi人驗仍pending。
+
+以下前版記錄保留作歷史，不當作本版PASS。
+
+---
+
 # 一次接手入口
+
+最新 LEA-209 demo 續輪從本機 `cc21ff8`／隔離 `feat/lea209-grass-demo` 開發；root 對 sealed plan `d872296f3f79bfd31431ea526cadae9faedabd71a1310291d686b82c9ac7b314` 明確 GO，原生plan review approve／0 blocker。保留全floor底草／排除凸包，新增相機落地中心附近有界32m密草與原uniform風動；初始化分批補齊、無相機base-only。範圍與本機作者真圖、動態GIF、兩原smoke、fixture D／shutdown限制見 [最新feature](../features/main-ground-grass.md#2026-10-09-demo-密草與風動續輪)。最新source尚待fresh與root guarded本機交付、人驗pending；不沿用下方歷史PASS代新版驗收、不push／CI／關單。
+
+目前 LEA-209 續輪依 leadi 指定真實使用 BinbunGrass，基於本機灰綠草底 `07249fea`、隔離分支 `feat/lea209-binbun-grass`。原生 v2 與最後有限校準審查 approve／0 blocker；Quad 0.6×0.9m、內格 jitter±1.4m／各軸首末±0.5m，來源素材與 shader、灰綠 palette、排除算法保持。最新四視角與兩原 smoke actual exit0；真實 counts／退出 cleanup 限制／本機 receipts 入口見 [feature](../features/main-ground-grass.md#本輪-binbungrass-草株)。候選待 fresh-context 與 root guarded 本機交付，leadi 親測 pending。下方歷史輪次保留。
 
 現役輪次為 [已驗收三票正式收尾](ITERATION.md#2026-10-08-已驗收三票正式收尾)：LEA-134 發射／首發、LEA-194 建築淡出與 LEA-208 訓練場 AI 修正均已由 leadi 人驗 accepted，並明示要求正常合併後關單；LEA-195 原 Done 保留。最新 HEAD 的完整 quality、獨立審查與正式 PR／merge 尚須依平台真實結果完成。
 
@@ -85,7 +147,7 @@ writer 沒有 stage／commit、修改正式 Windows 預覽／235 UID／素材、
 
 ## 灰殘骸矩形 FX 板本機回歸（2026-10-07）
 
-本輪僅修已有 AC「實體模型＋真煙、排除 FX 面片」漏收的 `effect_mesh`，共用 collector 按既有群組略過 Mesh、仍遞迴 child；真模型 Quad／原世界 FX 與 Smoke 不動。根因及有限 Q1–Q3 作者證據見 [feature](../features/tank-occlusion.md#2026-10-07-灰殘骸煙上方矩形板回歸修正)，本機 `agent-team/tmp/tank-smoke-quad-20261007/writer/` 保存原紅燈 17 failures（16 實際反例＋1 測試 D）、最終兩關聯 checks exit 0，以及單台 tank2 真受損／死亡渲染。
+本輪僅修已有 AC「實體模型＋真煙、排除 FX 面片」漏收的 `effect_mesh`，共用 collector 按既有群組略過 Mesh、仍遞迴 child；真模型 Quad／原世界 FX 與 Smoke 不動。根因及有限 Q1–Q3 作者證據見 [feature](../features/tank-occlusion.md#2026-10-07-灰殘骸煙上方矩形板回歸修正)，本機 `/home/markchou/evidence/retained-project-data-20261012/tank-smoke-quad-20261007/writer/` 保存原紅燈 17 failures（16 實際反例＋1 測試 D）、最終兩關聯 checks exit 0，以及單台 tank2 真受損／死亡渲染。
 
 作者 GPU 原 raw exit 2 的唯一 D 為跨 stage 比較原煙啟動的 local_coords／seed，16 項產品量測 true，不稱 overall PASS；source 原 local_coords 設定與 restart 已讀回，沒有修改 FX／粒子。接手在本輪 `fresh/` 核對固定同 stage 的 source/base／穩定參數及 Q1–Q3；不能把作者畫面或量測敘事當 fresh 驗收。235 UID／586 素材 metadata 保持；writer 不 stage／commit／同步 M／外送或 CI，人驗 needs_changes，待 leadi 確認。
 

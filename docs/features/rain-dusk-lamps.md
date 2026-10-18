@@ -1,0 +1,560 @@
+# 主地圖雨天近夜晚與可推倒路燈
+
+本輪沿 [LEA-212](https://linear.app/leadingtw273/issue/LEA-212/主地圖雨天近夜晚與可推倒路燈)，leadi 於 2026-10-12 指定「接近入夜，路燈主導」。原草地 `d5d7ef69` 人驗 accepted 保留；本功能作者有限實跑已留證，獨立同 Head 驗收及產品人驗均 pending。基線 `36afbf71e49ad90dbab7613dc76a66e017127a80` 只額外保存原兩文件證據路徑搬遷及草地接受狀態。
+
+> 最新雨效候選見末尾「第四輪收尾」；round2-c 的 117 盞街燈、畫面內全亮且有陰影維持。**效能統計更正**：本文件歷史 `Performance.TIME_PROCESS` median／p95 是約每秒更新一次的區間最大值重複取樣，不能視為逐幀時間分位數；舊 raw 保留追溯，效能結論改用末尾的繪製間隔與 CPU／GPU 分項。
+
+## 固定範圍與使用入口
+
+Godot 4.7.1／Forward+ 開啟 `src/main.tscn`（正式主圖 F5）：冷藍灰近夜晚中雨、六盞暖路燈；保留主圖原坦克、道路、建築透視、草形／密度／hash／風動與相機。訓練場、天氣 UI、時間推進、傷害、碎裂、砲彈毀燈及全圖雨／路燈串流不在本輪。
+
+`main_weather.gd/tscn` 只建立六個 `street_lamp.tscn` 及一個 7000 world-space GPUParticles3D；雨跟隨正式相機所見地面中心，180×80×180m 原生有限高度場以 512 解析度處理屋頂與地面，8m 格跨越才更新。最多六局部暖光、最近兩盞有陰影，原 Sun 遮蔽保持。六盞初始位置為 (-94,0,-106)、(-140,0,-132)、(-80,0,-140)、(-140,0,-72)、(-77,0,-88)、(-94,0,-114)，actual shape 查核無需微移。
+
+原路燈 GLB 維持內嵌素材，自己的柱／燈臂 collider、暖燈頭與光源由小元件建立。直立時鎖水平及旋轉軸；只接觸 `ContactTank` 才一次解鎖、施有限自身力矩並同回呼熄光／自有 emissive。Ground 不觸發、距離管理先排除已倒燈；重碰不重亮也不重設計時。0–5s 保留碰撞且可推動，5–7s 幾何實例 transparency 增加，7s 釋放完整 root/light/collider。
+
+專案自有 `stream_grass`、`spawn_grass_ground` 的 light() 最小乘 `LIGHT_COLOR`；出生草改引用 project-owned `weather_grass`，它衍生 BinbunGrass 原 `grass.gdshader`（CC0），除 LIGHT_COLOR 與搬移所必需的原 include 絕對路徑外算法保持，vendor bytes 不改。
+
+## 本機素材保全
+
+原 ZIP `/home/markchou/project/tank-skirmish-local-assets/AtomicRealmModularRoads/[FREE] Modular Roads - Base.zip` SHA256 `217979d913494d419f24da5578c76254f529bb85de0f2679a5e02f38e5c3ba20`；只唯讀提取 `PLUS/gltf/lamp_1.glb`、`lamp_2.glb` 至 ignored `assets/AtomicRealmModularRoads/lighting/`。lamp_1 SHA256 `98f90212c9b9d632518169ffa1d10fb0e55bbcf81952d9cf545ac64ad0cb05c2`；lamp_2 `4bdb38d66c0b5d180aa2c06e012fa67b2e950a1aa748df59264a1b985f29c85a`。Godot 原生 importer 另從 GLB 內嵌 image 生成兩份 `lamp_*_roads_UV.png`，已驗證 bytes 與原內嵌圖完全相同；兩 PNG／sidecar 及 `.godot/imported/` 的 scn／ctex／md5 合計 16 個本機檔案 closure 見 `author-lamp-cache-closure.json`，M 同名全部不存在，取得時只精確新增、不同 bytes 不覆寫。兩原 GLB 與全部隔離 import closure 不進 Git、不外送；原 586 私素材及 atlas 都從 M copy2，原 UID／來源 bytes 及 M raw metadata 保全。
+
+## 有限作者證據與再跑
+
+證據根 `/tmp/tank-rain-dusk-20261012/`，精確 Head/tree 及來源 manifest 以 `author-evidence.json`、`author-input-manifest.json`、`author-source-manifest.json` 為準。正式主相機 1920×1080 原生 Forward+ 靜態畫面為 `baseline-final.png`／`candidate-final.png`；短倒燈連續圖 `weather-lamp-{0.0,0.5,1.5,2.5,4.5,5.5,6.8}.png` 與 `weather-lamp-trace.json` 是同一原 Tank2 真實接觸 case（原生數值另存 `weather-lamp-native-trace.json`；`weather-lamp-trace.json` 為最後 Linux case）。作者確認六燈 actual shape 初始無 overlap、Ground 不誤熄；原生 case 傾倒峰值95.50°、倒下後再接觸推6.57m；0秒熄光／發光，4.5秒仍在且有collider、6秒半透明、7秒完整清除，釋放後再跑15個physics frame，另一燈仍亮。這些不是 fresh PASS 或 human accepted。
+
+Linux 原入口：`<Godot4.7.1> --headless --path <隔離專案> --script res://tests/weather_lamp_smoke.gd`；搭配獨立 XDG_DATA_HOME／XDG_CONFIG_HOME／XDG_CACHE_HOME 到自有 /tmp。`main_ground_visual_smoke`、`map960_components_smoke`、`rigid_tank_contact_smoke`、`tank_occlusion_smoke` 同版本 baseline／candidate 各 actual exit0，原 smoke 不改。新 weather smoke Linux 及 Windows 原生 actual exit0、runtime/script/shader ERROR0；原生退出兩版同有既有 TextureStorage RID／ImageTexture 清理訊息，另分類，不能稱全 log0。
+
+Windows 原生入口固定 `Godot_v4.7.1-stable_win64_console.exe --path <自有UNC隔離專案> --script <自有helper或weather_lamp_smoke> --rendering-method forward_plus --rendering-driver vulkan --resolution 1920x1080 --log-file <自有log>`。只在隔離專案使用本機未提交 `override.cfg` 指定唯一 `TankRainDuskAuthor20261012` userdata；原產品 project.godot 與使用者 editor/cache/userdata 不動。helper／完整命令及退出碼留在 evidence，正式 source commit 不含 override.cfg。F5 相機 transform 與 size 原樣，靜態 sample 360 warmup／240 steady 分列 median/p95，草地保持啟用；不是全圖性能承諾或完整 CI。
+
+首次 derivative 相對 include 搬移錯誤曾使 palette/noise 讀取失敗並產生藍白 chunk 階梯，已修為 vendor 絕對 include 及重拍；只以 `*-final` 畫面與 corrected logs 作最終來源證據。作者自檢不代替 fresh 驗收；後續 guarded 本機 FF 由 root 按獨立結果處理，沒有 push／PR／CI／公開發布的預填結果。
+
+短樣本使用 Godot `Performance.TIME_PROCESS`（引擎回報的 process frame 時間），不是獨立 GPU timer 或呈現時間戳。baseline／candidate 同 1920×1080、同 F5 與草地，360 warmup／240 steady；warmup median/p95 分別 18.229/31.953ms 與 17.298/32.735ms；steady 分別 16.783/19.004ms 與 17.774/18.382ms。原生 VSync／Engine.max_fps／fixed-fps 的實際 read-back 見 `native-frame-settings.json`；同 cap 的有限穩定性證據不推算雨夜額外 GPU 成本。
+
+## 2026-10-15：滑鼠移動時路燈變暗修正
+
+沿本機 `7a7f534` 與企劃派工，僅修正路燈自身投影。滑鼠 look-ahead 會移動畫面中心落地點，原管理器因此更換最近兩盞開啟陰影的燈。原兩款 GLB 各只有一個合併網格；`lamp_2` 的光源位於 `(0, 5.85, 0)`，在燈柱範圍內。光源陰影開啟後，自身模型會擋住向地面照射的光；WarmHead 也原本開啟投影。現在只將原模型實例及自有燈頭的 `cast_shadow` 設為 OFF，原光源 `shadow_enabled` 管理仍保留，其他場景物件仍可遮光。六燈／最近兩陰影、相機、雨、草、碰撞與倒燈 5＋2 秒生命週期及素材 bytes 均保持。
+
+本輪本機證據位於 `artifacts-local/lea212-20261015/`（ignored，不外送）。隔離 helper `project/lea212_capture.gd` 使用實際路燈場景與原 GLB，在固定灰色地面、相同正交相機 `(0,30,0)`／size32、1920×1080 上逐款比較熄光、陰影關及陰影開；Windows Godot 4.7.1／Forward+／Vulkan／RTX 5090。126 個固定地面樣本的平均亮度扣除熄光值後，`baseline/metrics.json` 顯示 `lamp_2` 關陰影為 `0.0635041352`、開陰影為 `0`；`candidate/metrics.json` 兩者均為 `0.0635041352`（保留比例 100%）。`lamp_1` 修正前後開／關陰影均為 `0.0632078574`。同機位畫面為 `baseline/lamp-2-shadow-on.png` 與 `candidate/lamp-2-shadow-on.png`，各款開／關對照同目錄皆有保存。這是隔離路燈的因果對照，正式 F5 滑鼠操作仍待 leadi 人驗。
+
+## 2026-10-15：LEA-212 雨夜氛圍第一包與 v3 細修
+
+本節實作以 `3ee957f` 為 baseline，在 `/tmp/tank-skirmish-lea212-atmosphere` 的 `feat/lea212-rain-atmosphere` 開發。企劃已通過 direction-streets-v2 的方向；本次完成 A–D 細修及作者驗證，產品驗收交由企劃另派跨模型 panel，不宣稱已驗收。
+
+### 實作邊界與做法
+
+- 六盞單臂 variant1 改放出生街廓內側人行道；位置及 yaw 定義在 `main_weather.gd`。生成高度固定 `0.110125m`，以 `spawn_height` 記錄原點。旋轉整個剛體，模型、燈臂、碰撞及局部光效共同旋轉。原六燈、最近兩盞陰影、110m 距離管理及倒燈 5＋2 秒生命週期保留。
+- `lamp_atmosphere.gd` 在每盞燈建立隨燈生命週期的光暈與三層貼地霧；halo 使用面向相機的柔邊亮度分布，薄霧使用低頻噪聲、柔邊及場景深度交界消散。霧隨暖燈熄滅，無全圖全螢幕濾鏡。
+- `lit_rain.gdshader` 共用管理器提供的六盞實際光源位置、顏色、範圍及啟用狀態；燈外回到原冷雨的顏色 `(0.60,0.72,0.85)` 與 alpha `0.36`，燈下隨距離轉暖、變亮。粒子數 7000、尺寸、速度、屋頂 heightfield 及相機跟隨方式保留。
+- 濕路只在 `Roads` 的執行期材質副本壓暗底色，保留原貼圖與金屬比例，抑制環境高光。`wet_road_glint.gdshader` 作為道路 next pass，依實際燈位及相機方向生成狹長暖倒影；以平滑低頻 value noise 取代規則正弦條紋。沒有覆寫建築材質或更動建築淡出 render layers。
+- A（v3 做法，已退回並由下方 v4 撤回）：只為主圖目前受控玩家車的非特效 StandardMaterial3D 建立執行期副本，加入低量冷色填光。企劃判定會抹平原色／明暗並干擾既有材質路徑，現行版本不採用。
+- D：逐項關閉新增霧、草葉、其他粒子及固定草色後，灰片仍在；改用標準地材或關閉月光後才消失。來源縮到原草底自訂光照的月光／陰影分界。正式修正只將主圖 Sun 能量由 `0.12` 降到 `0.06`、`shadow_blur` 設 `3.0`，柔化冷亮片區，草材質算法與 palette 不變。
+- 柱影：原 GLB 模型恢復 `cast_shadow=ON`，暖燈頭仍為 OFF，Omni 移到燈頭下方 `(1.12,5.65,0)`。單純移位實測仍有 1.7–3% 自遮光，因此路燈模型使用專用視覺 layer 20，僅暖燈的 `shadow_caster_mask` 排除此層；月光仍包含此層，其他物件仍可遮擋暖光。相機仍可見燈具。
+- 主圖 glow 採低強度與 HDR threshold `2.3`，新增 unshaded 光效由 ALBEDO 輸出亮度；原生雙 Quad 探針顯示單寫 EMISSION 無法得到預期可見輸出，故未採用該寫法。
+
+### 正交 volumetric fog 實測
+
+`atmosphere/fog-probe/` 是 Windows 原生 Godot 4.7.1／Forward+ 的最小 FogVolume 場景，保存同機位正交與透視的開／關截圖、屬性 read-back 及引擎資訊。正交模式能設定 `volumetric_fog_enabled=true`，開／關有圖像差異，但這不足以證明局部體積霧正確，亦未證明平移穩定、無條紋及無邊緣切斷。本輪採局部柔邊平面霧與低量環境霧，不將此探針說成正交 volumetric fog 已可正式使用。
+
+### 作者實測與重現
+
+證據根為 `artifacts-local/lea212-20261015/atmosphere/`，不進 Git、不外送。`direction-streets-v3/{baseline,candidate}/{f5,lamp-close,street-layout}.png` 為同三機位原生對照：F5 檢視冷雨及玩家可讀性，lamp-close 檢視 halo／暖霧／平滑倒影，street-layout 檢視街燈擺放。helper 與完整命令存於 `validation-v3/helpers/`、`native-capture-commands.json`；自有 override.cfg／userdata 不提交。
+
+原生環境為 Windows Godot 4.7.1、RTX 5090、Forward+／Vulkan、1920×1080。兩版均原 F5 transform／size100、草啟用，VSync read-back `1`、Engine.max_fps `0`，未傳 fixed-fps。helper 只凍結玩家移動、瞄準及相機控制，避免桌面游標造成機位或砲塔差異；產品相機與玩法程式不變。Performance.TIME_PROCESS 是引擎 process frame 時間，不是 GPU timer。
+
+| 樣本 | baseline median／p95 | v3 median／p95 |
+| --- | --- | --- |
+| 360 warmup | 17.736／32.188 ms | 18.110／32.411 ms |
+| 240 steady | 17.339／19.105 ms | 17.456／17.775 ms |
+
+兩版原生 capture actual exit 0；runtime／script／shader ERROR 0。兩版退出時皆有相同的 TextureStorage RID 與 ImageTexture cleanup ERROR 各一條及 Texture leak WARNING 一條，保留完整 log，不報成原生全 log ERROR 0。此短樣本不推論全地圖效能。
+
+五項 Linux headless smoke（`weather_lamp_smoke`、`main_ground_visual_smoke`、`map960_components_smoke`、`rigid_tank_contact_smoke`、`tank_occlusion_smoke`）皆 actual exit 0、ERROR 0，見 `validation-v3/smoke-results.json`。共同入口為 Godot 4.7.1 `--headless --audio-driver Dummy --fixed-fps 60 --path /tmp/tank-skirmish-lea212-atmosphere --script res://tests/<名稱>.gd`，XDG 三目錄隔離於 `/tmp/lea212-atmosphere-xdg/`。
+
+路燈 smoke 只將高度基準改為生成高度、模型投影檢查改為 GLB ON／燈頭 OFF；新 P1 的接觸路線沿街朝 +Z、車心向車道偏 1m，避免舊橫向路線推到對街建物。原傾倒、實體推動、倒後再接觸、立即熄光、5＋2 秒及釋放後繼續更新等門檻保留。實測傾倒峰值 `90.73°`、總推動 `7.44m`、倒後再推 `0.86m`。
+
+`validation-v3/placements.json` 以實際 capsule／arm shapes 查六盞初始 overlap，結果全空；各 y 均 `0.110125`，support ray 誤差小於 `0.000001m`，直立且未傾倒。兩款真 GLB 的原生光照測量見 `shadows-final/metrics.json`：扣除熄光後，俯視及斜視 shadow on/off 保留比均為 `100%`，月光柱影 strip／reference 分別為 variant1 `0.31863／0.40000`、variant2 `0.34510／0.40000`，並保存柱影 PNG。
+
+額外 layer 1 遮擋物的地面對照，兩款燈皆由關陰影平均亮度 `0.101996` 變為開陰影 `0`，確認其他物件仍實際遮光。F5 全圖 PNG 加權編碼亮度由 baseline `0.18795` 變為 v3 `0.17175`；暖色門檻像素由 `13821` 增至 `16346`，該群平均飽和度由 `0.44867` 變為 `0.42673`。計算方法與全部三機位數據見 `image-metrics.json`；這是門檻式輔助比較，不當作美術驗收結論。
+
+`validation-v3/preservation.json` 查核主工作目錄 2607 檔的 hash／size／mtime、主分支及 HEAD 均未動；候選副本 627 個 assets 檔與原檔 bytes 一致。這些是作者可重現證據，不替代企劃 panel 或 leadi 的人員產品驗收。
+
+## v4：改用玩家局部補光，撤回材質接管
+
+依「企劃審查 v3」，保留已通過的 B／C／D；完整移除 `_fill_player_materials`、`_readable_player_material` 及 `rain_readability_applied` metadata。天氣系統不再寫入坦克的 material override、surface override、next_pass 或 emission，坦克沿用原本的配色、受光、射擊／受損與 LEA-194 淡出材質路徑。原資產 bytes 不變。
+
+`main_weather.gd` 改以一盞 `RainPlayerFill` OmniLight3D 作為目前受控剛體的子節點，局部位置 `(0,3.2,0)`、冷色 `(0.72,0.82,1)`、energy `1.6`、range `5m`、attenuation `1.5`、陰影關閉；以實際光照保留車身亮面、暗面及履帶細節。補光不進入六盞 `lamps` 陣列、不參與街燈距離排序，也不寫入暖雨／道路倒影的六燈參數。穩態光源預算為最多六盞街燈加一盞玩家補光，街燈最多兩盞陰影，補光不增加陰影來源。原生 read-back 實際為六盞街燈全亮、兩盞有陰影，加一盞無陰影補光。
+
+綁定 `PlayerRuntime.controlled_tank_changed`，換車先隱藏／釋放舊補光，再綁新車。死亡不只等車被移除：綁定直屬 `HealthComponent.depleted`，血量歸零當下即撤光，保留的殘骸不會繼續被補亮；已死亡車也不重新補光。地圖卸載時解除 runtime／health 訊號並釋放掛在車上的補光。只載入地圖且沒有 PlayerRuntime 時跳過補光綁定。
+
+作者新增 `weather_player_fill_smoke`，透過實際主圖與公開換車／生命元件驗證跟隨、換車移除、死亡即熄、死車不重亮、重新換存活車及地圖卸載清理。它與五項指定 smoke 皆 actual exit `0`、ERROR `0`；完整命令與結果為 `atmosphere/validation-v4/smoke-results.json`。這是作者回歸測試，不是企劃的 fresh-context 驗收。
+
+v4 同三機位截圖位於 `atmosphere/direction-streets-v4/{baseline,candidate}/{f5,lamp-close,street-layout}.png`，baseline 仍為 `3ee957f`。新增效能證據集中於 `validation-v4/performance.json`，完整命令與 actual exit code 為 `native-capture-commands.json`；逐幀原始樣本、機位、視窗與光源 read-back 在兩個 capture.json，helper 封存於 `validation-v4/helpers/`。
+
+Windows 原生 Godot 4.7.1／RTX 5090／Forward+／Vulkan，兩版同 1920×1080、原 F5 transform／size100、草啟用、VSync `1`、max_fps `0`，依序執行，各取 360 warmup 及 240 steady。數據仍為 Performance.TIME_PROCESS，引擎 process frame 時間，非 GPU timer；受 VSync 影響的短樣本不推論全圖成本。
+
+| 樣本 | baseline 3ee957f median／p95 | v4 median／p95 |
+| --- | --- | --- |
+| 360 warmup | 16.600／18.680 ms | 18.343／18.788 ms |
+| 240 steady | 16.957／19.334 ms | 16.760／18.827 ms |
+
+兩版原生 capture actual exit `0`，runtime／script／shader ERROR `0`；退出時均有與 v3 相同的兩條 texture cleanup ERROR 與一條 WARNING，完整保留，未列為 smoke 的 ERROR 0。`validation-v4/preservation.json` 另存主目錄與素材保全查核。v4 以新 commit 接在 `8c68e9f` 後，不 amend、不 push、不 PR、不關票；A 的視覺驗收仍交企劃。
+
+## 2026-10-15 第二輪：R1 車燈、R2 遮擋、R3-A 全圖燈位提案
+
+基底 `9e19e1a`，續用 `/tmp/tank-skirmish-lea212-atmosphere`／`feat/lea212-rain-atmosphere`。本節取代 v4 的玩家上方補光與「最近兩盞街燈陰影」；只交 R1＋R2＋R3-A，停企劃審查。R3-B 的全圖實例、動態光源預算與效能矩陣尚未實作，不將作者測試視為產品驗收。
+
+### R1：四車型車頭錨點
+
+四份 donor variant 場景各定義空 `Headlights/HeadlightL`、`HeadlightR`；rigid 組裝只把該空群組移到車身根層，不跟隨砲塔或視覺後座。位置依既有正式 hull／tracks convex snapshot 的 rigid-local 外形配置，沒有改 mesh、材質、碰撞或物理參數。車身前進為 −X、左右為 ±Z，錨點 yaw=π/2，Spot 的 −Z 因而朝車身 −X。
+
+| 車型 | ID | 左右錨點 rigid-local (x,y,±z)，m |
+| --- | --- | --- |
+| 輕型 | tank1 | (−3.08, 0.90, ±1.60) |
+| 中型 | tank2 | (−3.42, 1.00, ±1.80) |
+| 重型 | tank3 | (−3.76, 1.00, ±1.95) |
+| 驅逐 | tank4 | (−3.42, 0.85, ±1.70) |
+
+MainWeather 移除 RainPlayerFill；只在存活的受控車兩錨點上掛 SpotLight3D：暖白 `(1,0.92,0.78)`、energy12、range20m、angle24°、向下6°、陰影開啟。不新增車燈模型，不接管坦克材質。換車／死亡／卸載沿用 runtime 與 health 訊號，立即隱藏並釋放舊燈；訓練場只有空錨點，不掛雨夜車燈。
+
+`round2/screens/candidate/headlights-tank{1,2,3,4}.png` 為四車車頭近景；`weather_headlights_smoke` 實際檢查錨點前向射線能打到車身且起點在形狀外、前進／略向下方向、平移／轉向跟隨、四車切換、死亡與卸載。`headlight-road/` 另有關閉街燈後的同機位車燈開／關濕路面對照：距車燈14.58m樣本 PNG 亮度 `0.04545→0.06980`，範圍仍為20m。
+
+### R2：兩種漏光根因與修正
+
+根因一是六盞活躍 Omni 只有最近兩盞開陰影，其餘可照到建築背後。根因二是 mist／wet-glint／暖雨原本由 unshaded 距離公式自繪，沒有光源到受光點的遮擋；原 depth test 只管相機方向，無法代替光線陰影。halo 也可能在燈頭中心被牆擋住時仍露出外圈。
+
+同主圖機位消去對照在 `round2/r2-ablation/{baseline,candidate}/`：正交 size28、camera `(−102,8,−118)` 看 `(−80,3,−120)`，先保留 F5 原燈管理狀態再固定。每版依序拍 full、只全開陰影、再停用自繪光效；lamp2 的 energy6／range22 全程相同。背牆地面固定 patch 的平均 PNG 亮度為：
+
+| 狀態 | baseline 9e19e1a | 修正後 |
+| --- | --- | --- |
+| 完整效果 | 0.288423 | 0.128833 |
+| 六街燈全開陰影 | 0.156886 | 0.128850 |
+| 再關閉自繪光效 | 0.128833 | 0.128833 |
+
+因此兩條漏光路徑都成立；修正後完整效果的背牆 patch 回到無自繪暖光基準，沒有降低路燈亮度或範圍來隱藏問題。完整同機位前後為 `screens/{baseline,candidate}/building-occlusion.png`，另有 F5、lamp-close。
+
+`r2-geometry.json` 另以實體 ray 確認：相機到 StreetLamp2 光心，以及該光心到 patch 中心地面 `(−98.97682,0,−122.3099)`，兩條視線均被 `Buildings/4Story_Wide_2Doors_Mat_default6` 擋住；不是只憑畫面顏色猜測遮擋關係。
+
+本階段只有原六盞街燈，110m內啟用的街燈一律開陰影；加兩盞有陰影車燈，最多8個局部陰影光源，Sun另計。自繪霧、暖雨及濕路倒影改用 shaded 自訂 `light()` 的真實 `ATTENUATION`（包含陰影）；冷雨底色保留，倒影依實際光方向匹配來源。halo 以 `project_ray_origin` 到燈頭中心的實體 ray 查遮擋，支援正交相機的平行視線；保留原逐像素 depth test。原路燈 caster layer20 排除自身的方案不變，仍保留月光柱影。
+
+新增 Windows 原生 `weather_light_occlusion_smoke`：806個地面點、兩款真 GLB、俯視／斜視，shadow on/off 保留比皆 `100%`；一般 layer1 物件仍遮光，月光仍有柱影。另用實際三個 shader＋halo 對控制牆做冷基準／被擋／移除牆對照：兩款的被擋地面亮度均等於冷基準 `0.059894`、雨絲均等於冷基準 `0.539042`，halo全隱；移除牆後地面約 `0.648`、雨絲 `0.905223`，確認光效仍會發亮。此 smoke 必須用圖形 renderer，不能拿 headless 當影像測量。
+
+### R3-A：演算法與俯視圖，尚未鋪入遊戲
+
+`scripts/weather/export_lamp_geometry.gd` 唯讀匯出主圖實際 Roads/Junctions／Connections 的型別、完整 transform 與碰撞 faces，以及170棟建築的 collision faces。`generate_lamp_plan.py`（Python標準庫，不需pip）合併148個連接模組為72條 edge，以約30m站距兩側交錯；52個路口依實際 outward／pivot 求內角的人行道邊界交點，臂朝路口中心。custom端點讀原 catalog，沒有手寫全圖座標。以實際道路三角形查人行道支撐，並對建築三角形投影做內外與邊距篩選：柱半徑0.18m，柱外緣距建築至少0.5m。高度向上量化到10µm，避免單精度同平面微小穿入，未放寬碰撞檢查。
+
+提案為 **138盞**：94個路口內角、2個直通路口、42個直線段。**略過8處**：D0／L0及其鏡像的4個45°彎道候選無實際人行道支撐；G1_to_G2、Mirror_G1_to_Mirror_G2、N_to_NW、Mirror_N_to_Mirror_NW 共4處距建築不足。逐點來源／朝向／高度、略過原因及既有六燈對應在 `layout/lamp-plan.json`；不把略過列作已放置。
+
+原P3／P5／P6對應提案同座標保留；P1／P2／P4因30m站距提案改由距原點約12.53／6／13m的鄰近演算法燈位取代，明列於 existing_six，供企劃決定是否接受這次重排，未套用原六燈。`validate_lamp_plan.gd` 只重用一盞原型的真 capsule／arm shapes 查全部提案，138個初始 overlap／支撐錯誤皆0；`render_lamp_plan.gd` 輸出含繁中圖例的全圖 PNG。正式原六燈位置與數量目前保持，未執行R3-B。
+
+俯視圖 `round2/layout/lamp-plan.png`，可縮放且有來源 tooltip 的版本為 `lamp-plan.svg`。重現順序為 Godot `--headless --script res://scripts/weather/export_lamp_geometry.gd -- <geometry.json>` → Python `scripts/weather/generate_lamp_plan.py <geometry.json> src/world/roads/custom_catalog.json <output-dir>` → Godot `validate_lamp_plan.gd -- <lamp-plan.json> <validation.json>` → 原生圖形 `render_lamp_plan.gd -- <SVG> <plan.json> <PNG>`。完整命令與來源 hash 留在本機證據，圖與 collision faces 不進Git。
+
+### 第二輪作者驗證與交付邊界
+
+證據根 `artifacts-local/lea212-20261015/round2/`。五支指定 smoke、`weather_headlights_smoke`、四車射擊／受損／切換回歸 `player_rigid_variants_runtime_smoke`，以及上述原生 `weather_light_occlusion_smoke` 均 actual exit0、ERROR0；主圖原生 before／after capture 與 ablation 均 exit0，退出皆有同基底的兩條 texture cleanup ERROR／一條WARNING，完整保留，不宣稱主圖全log ERROR0。R3-A實際形狀查核與規劃重現也通過。
+
+新增 commit 接在9e19e1a後，不amend；主目錄 `playtest/lea212-rain-atmosphere`、素材與cache保全讀回見本機 delivery receipt。只完成本輪作者實作與驗證，停企劃審查，不push／PR／關票，不自行做fresh-context驗收。
+
+新增原 weather smoke 的六盞自身投影檢查；未修產品來源時 `red-weather.log` actual exit1／六個新檢查 FAIL，其餘原檢查 PASS；修正後 `green-weather.log` actual exit0／failures0，兩者 ERROR0。命令為 `<Godot4.7.1> --headless --audio-driver Dummy --fixed-fps 60 --path <隔離專案> --script res://tests/weather_lamp_smoke.gd`，XDG 三目錄獨立置於 `/tmp/lea212-xdg/`。Windows 對照命令沿前述原生入口，改用 `--script res://lea212_capture.gd --resolution 1920x1080 -- baseline`／`-- candidate`；有效兩次 actual exit0／ERROR0。首次 960×720 helper 座標換算錯誤的輸出保存在 `baseline-harness-invalid/` 與 `baseline-console.log`，不作有效證據。
+
+最新封存 Head 的 fresh-context 四原 smoke、weather smoke 與有限來源／證據查核另存本輪 `fresh/`。不以本機修正宣稱原功能全部人驗通過、完整 CI、push、PR、合併或關單；原產品設定與 `.godot` 未交給測試引擎寫入。
+
+## f2a96b3 審查修正：R1 柔暖車燈、R2 正式機位證據、R3-B
+
+本節取代第二輪初稿的車燈參數、六燈數量及三層薄霧；依企劃核可進入 B。只完成作者實作／回歸，交付後停在企劃審查，不自行派驗收、不 push／PR／關票。
+
+R1 四車的既有錨點不動，Spot 改為暖白 `(1,.85,.65)`、energy `2.4`（街燈仍為6）、range20m、俯角16°、半角42°、angle attenuation `.6`、distance attenuation `1.25`，兩盞都開陰影。光束由近地面開始並柔化外緣，沒有加入車模型／材質補光。四車均以正式遊戲相機的相同 basis、正交 size27 拍近景；另有原 F5 與車頭距實際建築約1m的近牆圖。關閉街燈的原生 off/on 量測，沿左右錨點前1.08m的亮度由 `.04854` 分別變為 `.16747/.17111`，之後沿各束方向持續漸弱，前14.58m仍有 `.04574→.04938` 的受光。數據是 PNG 亮度，不是光度學單位；車頭中央前1m尚未落在左右光束交集，不能拿它代替各束的近端樣本。四車跟隨／換車／死亡／卸載條件仍由 smoke 檢查。
+
+R2 正式機位證據位於 `round2-b/formal-occlusion-ground/`。三組保持正式相機 basis／projection，只平移並改 size60，來源是 G2、Mirror_H1、RI 三盞生成燈。`formal-cases-ground.json` 以實體 ray 確認相機到燈被建築遮住、光源到取樣地面被建築遮住、相機到該地面則可見；不以屋頂擋住取樣點的畫面冒充地面測量。每組依序為 `before-mechanism`／`after`／`cold-control`：前者在相同新燈位重現9e19e1a的無陰影 Omni 與原 unshaded 光效，後者使用本輪修正，cold 關該光作控制；其餘街燈與車燈關閉以隔離來源。這是修正前機制的控制重現，不宣稱整張圖來自9e19e1a。路燈 energy6／range22 全程不變，三組被擋 halo 皆隱藏，取樣 after 與 cold 的 PNG 亮度差為 `0 / 0 / .002805`；完整畫面保留供企劃檢查背面、屋頂邊與牆角。
+
+水平 banding 的消去實驗（`banding-diagnosis*`）顯示：放寬倒影方向門檻、移除 film、移除 light attenuation／陰影仍存在條帶；關閉 GroundMist 才消失。原因是三層水平霧片在掠視角形成分層，不是已移除的正弦倒影重新加入。改為一片22×3m、中心高0.8m的柔邊 billboard 低霧，保留深度軟交界與真實 `light()/ATTENUATION` 遮擋。`banding-regression/` 重建原六燈同座標／朝向，在原退回低角度與正式 basis 各拍舊三層／新單層對照；陰影全開、energy6／range22不變。沒有用關光或降低路燈範圍修圖。
+
+R3-B 由200個實際道路模組與170棟建築生成配置，先排路口內角，再排直通及連接道路。全域柱中心最小12m，沿路由相鄰路口燈投影起算30m並交錯；沒有合法 anchor 的兩條 edge 才從 connection 起點起算，記在 JSON。新結果 **69盞**（54內角、2直通、13沿路），實際最小 **12.17651m**；52個候選略過：46個不足12m、4個沒有實際人行道、2個距建築不足。數量下降同時來自去除密集角燈與改為從角燈起算，沒有手動刪座標。原六燈依裁決由新配置取代，逐一對應仍在 `existing_six`。
+
+`generate_lamp_plan.py` 同時輸出完整 `lamp-plan.json/svg` 及只含 pose／來源ID的 `lamp_layout.gd`；將後者複製到 `src/maps/main_battlefield/`，主圖讀此產物建立全部實體。生成產物可逐 byte 重現，未將私有碰撞 faces 納入 Git。`validate_lamp_plan.gd` 對69個姿勢以原 capsule／arm 真實 shape 查核，overlap／支撐錯誤0；遊戲中的69盞也全部通過 standing 檢查。直立時另鎖Y軸以避免 Jolt 在人行道產生約2.7mm的靜置穿入；接觸時解除所有鎖，原倒燈推動、即熄光、5秒等待＋2秒淡出及釋放條件都保持。
+
+光源預算為 **最多8盞街燈＋2盞玩家車燈**，Sun另計。每0.2秒依正式相機下光照球的螢幕投影邊界篩選，優先距地面焦點近者；所有啟用街燈都有陰影。超額或畫外關 Omni／halo／mist，WarmHead emission 保留；倒燈仍立即熄頭並走原生命週期。倒影只上傳8個活躍來源，暖雨由引擎接收實際光源，沒有全圖硬編碼6燈限制。非活躍霧不跑 halo射線，直立燈停用空轉的 physics callback，倒下時恢復計時。
+
+Windows原生 Godot4.7.1／RTX5090／Forward+ Vulkan，同1920×1080、草啟用、VSync1、max_fps0，每機位360 warmup／240 steady。正式 F5 不改 transform／size100，密集街廓沿同 basis 平移至焦點 `(-84,0,-48)`、size100。下表為歷史 `Performance.TIME_PROCESS` 重讀結果；round2-c 診斷已確認它是約1Hz的區間最大值，撤回將此表當作逐幀 median／p95 或效能差百分比的解讀。
+
+| 240 steady | 9e19e1a median／p95 | 本輪 median／p95 | median差 |
+| --- | --- | --- | --- |
+| F5 | 17.504／17.551ms | 17.851／18.000ms | +1.98% |
+| 密集街廓 | 17.3285／18.744ms | 17.792／18.722ms | +2.67% |
+
+兩機位的240/240幀（100%）均觸及預算：F5候選32、啟用8、關光24；密集街廓候選44、啟用8、關光36。候選包含光照球碰到畫面但柱在畫外者。未發生無陰影仍開光；未承諾所有可見燈頭都有照明。`weather_lamp_budget_smoke` 另跨五個街廓驗證此取捨與遠燈發光頭。
+
+證據根為 `artifacts-local/lea212-20261015/round2-b/`：`layout/lamp-plan.png`、`screens-final/` 四車／近牆／F5／密集街道、上述正式遮擋與banding、`headlight-road-anchor-rays/`、`performance.json`、`smoke/results.json`、`light-effects/metrics.json`。五支指定 smoke＋headlights＋四車runtime＋budget共8支 headless，及1支原生 `weather_light_occlusion_smoke` 皆 actual exit0、ERROR0。原生自遮光806點×兩型×兩機位仍保留100%，控制牆遮光／月光柱影及雨絲受光也通過。native fixture只更新8來源基準、移除雨shader廢棄uniform，光度控制以直接切換真Light隔離FX；原檢查門檻未降低。
+
+主圖原生 capture 全部 exit0，runtime／script／shader ERROR0；退出仍有與9e19e1a相同的兩條 texture cleanup ERROR與一條WARNING，並未算入 smoke 的 ERROR0。helpers、完整原始樣本、來源manifest及主目錄／627素材保全讀回封存本機。工程結果交企劃審查，不代表視覺AC已由作者自行核可。
+
+
+## round2-c：117 盞視覺 checkpoint 與效能診斷
+
+依派工單末尾裁決，先保存視覺通過的 **`bf9d5a756dd5f082b38c2a84d2e6658896b44d49`**，再做診斷。本輪後續只新增量測工具及此紀錄，產品光源／陰影設定保持該 checkpoint；未執行選項2、未降低畫質、未減燈。交付後停企劃審查，未自行派獨立驗收、push、開 PR 或關票。
+
+### 視覺通過版本的實際設定
+
+生成器改由每個路口先保留一盞內角燈，額外角燈沿支路錯位，再合併共線道路、填補長空隙。產物 **117盞**（95內角、2直通、20沿路）、52路口全覆蓋，任兩柱中心最小 **12.0m**、最大沿路空隙 **28.221825m**。獨立 coverage 工具依道路 topology 重算；新配置通過，舊69盞配置會因4個路口缺燈、最大48m空隙而失敗。全部117個實際 capsule／arm 姿勢支撐／overlap 錯誤0。俯視圖與原始查核在 `artifacts-local/lea212-20261015/round2-c/layout/`。
+
+街燈改朝下 SpotLight3D（半角75°、range22、energy6、暖色 `(1,.58,.14)`），排除燈具自己的投影層但保留其他遮擋。取消8盞上限，畫面加12m緩衝內全開光、全投影；F5為48盞、dense61盞、formal-1為25盞，三機位 budget_dropped 都是0。畫外燈保留暖發光頭，雨絲／霧／倒影仍用實際光源的陰影衰減。倒燈立即熄光，5秒等待＋2秒淡出與碰撞生命週期維持；R1四型車頭錨點及已核可的車燈、R2遮擋與單片霧均保留。
+
+最終 positional atlas **8192×8192、32-bit、四象限各 SUBDIV_64（enum4）**：共256個512px陰影槽。玩家兩盞車燈也有陰影，與街燈合計未用滿。天氣卸載還原原 viewport 設定，不延續到訓練場。`GLINT_CAPACITY=256` 是倒影 uniform 容量，不是關燈預算。
+
+### 量測方法與歷史指標更正
+
+對照 A=`9e19e1aad3a3c0c832235a8d0de0edb4826795e6`，B=`bf9d5a756dd5f082b38c2a84d2e6658896b44d49`。baseline副本1215個tracked檔均與該Git tree逐blob比對相符；兩版使用同一支新診斷腳本，執行時 SHA256 為 `c4e3f6d929f59ed086d59074fbb68e478efb4455a8eb247e8ce3c43a2c4cd366`。入口：
+
+```sh
+<Windows-Godot4.7.1> --path <隔離UNC專案> --script res://scripts/weather/profile_rain_weather.gd --resolution 1920x1080 --rendering-method forward_plus --rendering-driver vulkan --audio-driver Dummy --log-file <out>/engine.log -- <out> <label> <f5-first或dense-first>
+python3 scripts/weather/summarize_rain_profiles.py <證據根>
+```
+
+Windows原生 Godot4.7.1 official hash `a13da4feb8d8aefc283c3763d33a2f170a18d541`、RTX5090、Forward+ Vulkan、1920×1080、草開、VSync1、螢幕60Hz、max_fps0；F5與dense的transform／size在所有組間完全相同。baseline保留它自身的atlas配置，候選保留上述全亮配置。玩家控制、滑鼠Aim與相機跟隨在兩版同樣停用。每次process兩機位各360 warmup／240 steady；順序 **A1 B1 B2 A2 A3 B3 B4 A4**，第2、4組先dense，其餘先F5。steady只寫記憶體，不列印、截圖、排序或寫檔。
+
+`interval_ms` 是相鄰 `RenderingServer.frame_post_draw` 回呼的單調時鐘間隔，包含同步／等待影響；用它描述本機實際繪製節奏，並不等於螢幕呈現延遲或純CPU工作時間。另記 `get_frame_setup_time_cpu()`、viewport measured render CPU／GPU；均為引擎最新回報，CPU／GPU不相加，也不假稱同一幀對齊。GPU排除非正值與重複timestamp frame，本輪每機位有效GPU樣本240筆。
+
+先前將 `Performance.TIME_PROCESS` 每幀重讀後算median／p95，是量測解讀錯誤。與本機引擎hash完全相符的[官方main.cpp第4738–4759行](https://github.com/godotengine/godot/blob/a13da4feb8d8aefc283c3763d33a2f170a18d541/main/main.cpp#L4738-L4759)顯示，約每1秒才把process_max、physics_process_max、navigation_process_max寫入監視器，再清零。A1每機位240次重讀只有5段TIME_PROCESS值，多段連續60幀，實際interval則逐幀變動。因此舊dense 19.4ms不是逐幀median的有效證據；無法由舊raw重建當時真實median，保留原始資料與命令，不改寫歷史raw。
+
+### 全部交錯樣本（毫秒）
+
+A2的兩機位全程失焦（0/240），完整保留但不作主要受控比較。主要統計使用完整前景配對1、3、4（每版每機位3次）；B2為額外前景參考，不因速度挑選。下列TIME_PROCESS欄只供追溯，不能當逐幀分位數。
+
+| 樣本 | 機位 | interval median/p95 | setup CPU median/p95 | viewport CPU median/p95 | viewport GPU median/p95 | TIME_PROCESS重讀 median/p95 | 前景幀 |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| A1 | f5 | 16.692/17.471 | 0.472/0.686 | 0.918/1.328 | 1.881/2.645 | 17.262/17.815 | 240/240 |
+| A1 | dense-street | 16.612/17.469 | 0.572/0.847 | 1.049/1.589 | 2.211/2.973 | 16.919/18.348 | 240/240 |
+| B1 | f5 | 16.666/17.996 | 0.515/0.814 | 1.416/3.143 | 1.969/2.886 | 17.114/18.484 | 240/240 |
+| B1 | dense-street | 16.669/17.605 | 0.597/0.957 | 1.484/3.443 | 2.970/3.795 | 16.824/17.126 | 240/240 |
+| B2 | dense-street | 16.684/17.777 | 0.524/0.780 | 1.361/3.181 | 1.969/2.933 | 18.640/19.974 | 240/240 |
+| B2 | f5 | 16.683/17.481 | 0.740/1.023 | 1.948/3.998 | 2.993/3.440 | 17.814/21.216 | 240/240 |
+| A2 | dense-street | 16.665/17.763 | 0.718/0.867 | 1.160/1.317 | 1.100/3.421 | 17.014/17.122 | 0/240 |
+| A2 | f5 | 16.672/17.882 | 0.772/0.940 | 1.305/1.485 | 2.032/3.195 | 29.625/32.550 | 0/240 |
+| A3 | f5 | 16.645/17.935 | 0.444/0.632 | 0.837/1.283 | 1.873/2.647 | 18.630/20.125 | 240/240 |
+| A3 | dense-street | 16.662/17.223 | 0.681/0.907 | 1.307/1.635 | 2.207/3.068 | 17.093/19.006 | 240/240 |
+| B3 | f5 | 16.658/17.507 | 0.609/0.927 | 1.716/3.489 | 2.235/2.959 | 17.846/18.289 | 240/240 |
+| B3 | dense-street | 16.674/17.634 | 0.626/0.935 | 1.650/3.906 | 2.917/3.573 | 17.310/17.858 | 240/240 |
+| B4 | dense-street | 16.680/17.760 | 0.685/1.030 | 1.794/4.204 | 1.817/2.832 | 17.755/19.085 | 240/240 |
+| B4 | f5 | 16.677/18.000 | 0.555/0.866 | 1.447/3.170 | 2.811/3.325 | 17.617/17.915 | 240/240 |
+| A4 | dense-street | 16.649/17.934 | 0.488/0.766 | 0.920/1.391 | 1.984/2.576 | 17.989/19.472 | 240/240 |
+| A4 | f5 | 16.651/17.576 | 0.477/0.665 | 0.880/1.248 | 2.881/3.365 | 17.698/18.612 | 240/240 |
+
+三組完整前景配對的各次median再取median：
+
+| 機位／版本 | interval | setup CPU | viewport CPU | viewport GPU |
+| --- | --- | --- | --- | --- |
+| f5／A | 16.651 | 0.472 | 0.880 | 1.881 |
+| f5／B | 16.666 | 0.555 | 1.447 | 2.235 |
+| dense-street／A | 16.649 | 0.572 | 1.049 | 2.207 |
+| dense-street／B | 16.674 | 0.626 | 1.650 | 2.917 |
+
+結論：全亮街燈有額外渲染成本，dense viewport CPU約+0.602ms、GPU約+0.710ms；本機VSync60Hz下，三組主要候選dense median為16.6685／16.6740／16.6795ms，額外B2為16.6840ms，均低於17.5ms，實際繪製節奏約60fps。主要候選dense p95為17.605／17.634／17.760ms，未宣稱所有幀都低於17.5ms。**未達「median穩定>17.5ms」的選項2門檻，保留512px陰影**。短固定機位樣本不能推論長時間駕駛、其他GPU或無VSync的最大fps。
+
+### 本輪對照與回歸證據
+
+證據根 `artifacts-local/lea212-20261015/round2-perf/`：`commands.json` 保存8次原生命令與起訖、actual exit全0；`A1/`至`B4/`保存全部warmup／steady raw及logs；`summary.json`保存機位／條件一致性、前景配對與閘門判斷，`sources.json`保存版本與harness SHA。
+
+三機位對照為 `../round2-c/screens-final/{f5,dense-street,formal-1}.png`（已核可checkpoint）與本輪 `screens-final/`同名新拍PNG；正式相機basis／position／size一致。兩邊都是相同512px設定、相同產品來源，僅拍攝時間與雨粒子相位不同；這是設定保留後的回看，不冒充降解析度前後實驗。原始capture.json保留供查驗，`review.html`並排展示。
+
+checkpoint同產品來源重新跑8支headless：`weather_headlights_smoke`、`weather_lamp_smoke`、`main_ground_visual_smoke`、`map960_components_smoke`、`rigid_tank_contact_smoke`、`tank_occlusion_smoke`、`player_rigid_variants_runtime_smoke`、`weather_lamp_budget_smoke`，全部actual exit0／ERROR0／FAIL0。原生`weather_light_occlusion_smoke`也是actual exit0／ERROR0／failures空：真GLB兩型×兩機位×806點開陰影保留受光100%，控制牆陰影均為0；被牆擋住的倒影／雨絲與關燈控制相同，移除牆後均明顯受光，halo遮擋與月光柱影通過。結果見`light-effects/metrics.json`。這些是作者回歸，不是fresh-context獨立驗收或企劃產品驗收。
+
+所有主圖原生profile／capture為actual exit0、runtime／script／shader ERROR0；退出仍有與baseline相同的兩條texture cleanup ERROR與一條WARNING，沒有報成主圖全log ERROR0。`smoke/results.json`、`native-final-commands.json`、`import-final.json`與完整logs保存實際結果。主工作目錄分支／HEAD、tracked檔案、assets及`.godot`的SHA／大小／mtime另以前後guard查核；`override.cfg`與私有素材／本機證據不提交。
+
+
+## 2026-10-16 第三輪：leadi 實測五點
+
+起點 `ae09baa`，開發 worktree `/tmp/tank-skirmish-lea212-atmosphere`／`feat/lea212-rain-atmosphere`。本輪只在額外 `/tmp/lea212-round3-runs/` 完整資源副本跑引擎；主目錄 `playtest/lea212-round2` 不切分支、不啟動引擎。T1 以明列的架構邊界停 checkpoint，T2–T5 實作後交作者回歸與企劃審查；沒有宣稱跨模型或 fresh-context 驗收。本機對照入口為主目錄 `artifacts-local/lea212-20261015/round3/review.html`。
+
+### T1 真首發：診斷 checkpoint，未修正
+
+詳見 [真首發診斷](rain-first-shot-round3.md)，最初 checkpoint `1db9877`。Windows 原生正式主圖、1920×1080、Forward+ Vulkan；9e19e1a 與 ae09baa 各兩次新 process／空專案 shader cache 的真首發，皆保留 FX、街燈、陰影與原玩法。每發後 0–2000ms 的逐 frame_post_draw 間隔為主門檻，沒有用 TIME_PROCESS 當逐幀數據。
+
+| 版本／樣本 | 首發最大 ms | 後三發最大 ms | 倍率 |
+| --- | ---: | ---: | ---: |
+| 9e19e1a／cold-A1 | 74.885 | 24.882 | 3.010 |
+| 9e19e1a／cold-A2 | 132.081 | 23.057 | 5.728 |
+| ae09baa／cold-B1 | 168.564 | 25.189 | 6.692 |
+| ae09baa／replacement-B3 | 67.228 | 30.207 | 2.226 |
+
+四組有效基線都未達「≤50ms 且≤後三發最大值×2」。cold-B2因最後size25已排除，replacement-B3補第二次ae09baa；僅診斷副本隔離實體滑鼠按鍵／滾輪，每幀size100，原PlayerController受控左鍵路徑／物理／相機後座保留，產品輸入未改。首發伴隨 surface／specialization pipeline 新增；後續通常無增量。既有 CombatRuntime 只做隱藏 FX 的 CPU 初始化並同步釋放，不能保證首次可見 GPU pipeline。證據支持 FX 首次可見繪製路徑，尚不能指認單一材質或 driver call；不以 pipeline counter 當編譯耗時。真正預繪需改 LEA-134 預初始化架構，依派工單停止這部分，未採用砍 FX／陰影、loading 或輸入閘門。
+
+### T2 草煙：改成逐像素不透明覆蓋
+
+完整主圖消去實驗：隱藏草後煙團恢復，單獨移除 depth prepass 仍有草／煙物件排序問題。原草走 alpha blend＋depth prepass，與讀深度的煙材質互動；修正兩支專案自有草 shader，移除 depth_prepass_alpha、加 ALPHA_HASH_SCALE=1。草以 alpha hash coverage 寫深度後，煙依空間深度混合。出生草與串流草都套用，串流仍保留原 stream_alpha，生成邏輯、草數、shape、palette、風與受光函式不變。
+
+T2 單獨對照使用 ae09baa 與僅套兩支草 shader 的副本，車燈／halo／反射仍是 ae09baa。圖：`t2-full-map/diagnosis/normal-{before,0_3s,1_0s,2_0s}.png` 對 `t2-full-map/fixed/normal-{before,0_3s,1_0s,2_0s}.png`；相機 basis／position／size 一致，草數同為12494，實際秒數在 cases.json。0.3s 修後煙團可見，不再被草覆蓋；原粒子 lifetime=1.0s、root 清理=1.2s，所以 1s 已近消散／2s 無煙是壽命回歸，沒有為截圖延長 FX。
+
+F5 作者目視草色／分布接近原版；放大近景可見 alpha hash 細顆粒，交企劃審外觀，不能宣稱像素完全相同。第一批 smoke-priority／no-proximity 控制的材質 read-back 為空（錯讀 draw-pass surface，實際用 material_override），已明列無效，不能用來排除原因；有效重跑在 `t2-full-map/material-controls-valid/`：priority10 與 proximity=false 均有實際 material_override read-back。priority10 可恢復大部分煙團，證明透明排序確有影響；單獨 proximity=false 仍被草蓋掉。priority 仍是整個物件的排序，故採逐像素 coverage 解決草／煙空間深度，而不調高整個煙物件的優先序。另一次誤把 ShadowCaster 當煙材質的 assert 失敗保存在 material-controls，不作有效結果。初次缺生成資源的 mapless 圖亦不作正式證據。
+
+### T3 四車車身錨點
+
+原錨點橫向位置在履帶上方；只把各自 variant 場景的 z 靠近中線，x／y、旋轉、光色、energy2.4、range20、半角42°、soft attenuation0.6、朝下16°與陰影保持。每盞向後 ray 都命中本車前表面且有有效 normal，仍在車頭外側，不由車身內／車頂照出。換車、跟隨／轉向、死亡與卸載 smoke 保持。
+
+| 車型 | L (x,y,z) m | R (x,y,z) m | 負／正 z 履帶內側 m |
+| --- | --- | --- | --- |
+| tank1 | (-3.08,0.90,-0.72) | (-3.08,0.90,+0.72) | -1.2270／+1.1847 |
+| tank2 | (-3.42,1.00,-0.82) | (-3.42,1.00,+0.82) | -1.3633／+1.3164 |
+| tank3 | (-3.76,1.00,-0.90) | (-3.76,1.00,+0.90) | -1.4997／+1.4480 |
+| tank4 | (-3.42,0.85,-0.80) | (-3.42,0.85,+0.80) | -1.3634／+1.3164 |
+
+履帶是蒙皮模型，不能用 raw Mesh AABB 當兩側位置；使用 bake_tank_parts 四動畫相位凸包，經當前 anchor／part／tank transform 換算。新 smoke 要求兩錨均在內界留0.15m，未放寬原前表面／光參數條件。四車斜俯視 before／after 與逐車座標、包絡讀回見 `visuals-selected/{baseline,candidate}/headlights-tank{1,2,3,4}.png` 及 capture.json。
+
+### T4 燈罩下發光
+
+GLB 本身沒有整顆自發光材質；主要來源是程式加在燈頭的發光球與置中的2.4m圓形 billboard。球改為單面朝下0.42×0.22m Plane，置於真 GLB 燈罩內側；不改 GLB bytes。單頭開口 y=6.07627、發光面 y=6.132；雙頭開口 y=5.9924、發光面 y=6.048。emission multiplier6 保留，從上方看不到發光面。
+
+halo 改1.2×1.5m、中心在開口下0.45m，世界水平面裁掉所有開口上方 fragment，下面為窄至略寬的柔光；halo alpha0.48→0.28。保留正交平行視線射線遮擋與每0.1s更新；被牆擋住仍隱藏。Spot 地面照明、雨絲與低霧 shader／能量未改。原生兩型真 GLB 遮光 smoke：各806點、兩機位，開陰影保留受光比1.0、其他牆控制照度0；blocked 地面／雨為0.059894／0.539042，與關燈控制一致，移除牆恢復0.509041／0.817428；halo 遮擋、月光柱影通過。
+
+圖：`visuals-selected/{baseline,candidate}/lamp-{formal,side}.png`。第一批完整圖的 nearest lamp 被建築遮住，因此只封存於 visuals-full-map，不以它的燈頭／道路近拍作交付證據；重拍依正式 F5 投影選 G1__T:corner:1（約1265,768px），讀回該燈 ray 無遮擋，並目視近拍主體；保留建築與遮擋，沒有隱藏建築來交圖。另一版 physics 選點 helper 的 assert／timeout 封存在 visuals-visible，不作交付近拍。
+
+### T5 粗糙濕柏油光帶
+
+道路 PBR 已為 roughness0.9、metallic_specular0、clearcoat=false；正式 Environment SSR read-back=false，這些保持。過亮銳利光帶來自獨立 wet_road_glint 受光 shader，而非 SSR 或道路鏡面材質。
+
+光帶 alpha0.42→0.32、倍率6→3.8；縱向尺度6.5→8.5、橫向0.85→1.7，Gaussian 衰減改柔，加入低頻橫向扭曲與兩種尺度濕斑／細紋，降低峰值、打散清晰鏡影。仍使用實際 LIGHT_COLOR×ATTENUATION 與光源方向匹配，保留深度與牆陰影。圖：`visuals-selected/{baseline,candidate}/{f5,road-close}.png`。
+
+### 第三輪效能與作者回歸收據
+
+Windows原生4.7.1／RTX5090／Forward+ Vulkan、1920×1080、VSync1／60Hz；草開、atlas8192／32-bit／每燈512px保持。F5 48盞、dense61盞，候選全亮／全陰影、dropped0。正式6個process、12機位，各360 warmup＋240 steady，所有幀相機transform／size一致；只以兩版皆240/240前景選主要配對，不依速度挑樣本。
+
+| 機位／版本 | 配對 | interval median的median ms | p95 median／範圍 ms | setup／CPU／GPU median ms |
+| --- | --- | ---: | --- | --- |
+| f5/A | 8,9,10 | 16.687 | 22.774 / 18.378–37.225 | 0.457 / 1.155 / 2.688 |
+| f5/B | 8,9,10 | 16.675 | 17.287 / 17.214–17.858 | 0.428 / 1.107 / 2.237 |
+| dense-street/A | 8,9,10 | 16.669 | 20.567 / 18.044–20.637 | 0.543 / 1.427 / 3.161 |
+| dense-street/B | 8,9,10 | 16.675 | 17.551 / 17.108–17.916 | 0.574 / 1.485 / 2.540 |
+
+A=ae09baa，B=5e43b5b產品來源。所有候選run逐幀median≤17.5ms；正式p95範圍如表，背景仍有使用者其他editor，baseline含明顯離群尖峰，不能把p95差異當效能提升；完整raw供企劃判斷。舊14次因發現滾輪縮放污染，不混入新版逐幀固定相機協定，原始資料與原因保存在perf-condition-correction.json。frame_post_draw含同步等待；CPU／GPU是最新回報，不相加、不當同幀；TIME_PROCESS不作逐幀門檻。performance-summary.json／review.html列全部樣本、焦點與命令。最後一組工具僅在warmup補焦點重試；steady不搶焦點／排序／寫檔。
+
+headless實際共用命令（name與actual exit見下表）：
+
+```sh
+XDG_DATA_HOME=/tmp/lea212-round3-xdg/data XDG_CONFIG_HOME=/tmp/lea212-round3-xdg/config XDG_CACHE_HOME=/tmp/lea212-round3-xdg/cache /home/markchou/.local/share/starspell-godot-tools/4.7.1/editor/Godot_v4.7.1-stable_linux.x86_64 --headless --audio-driver Dummy --fixed-fps 60 --path /tmp/lea212-round3-runs/final --script res://tests/<name>.gd
+```
+
+| name | actual exit | ERROR／FAIL／WARNING |
+| --- | ---: | --- |
+| weather_headlights_smoke | 0 | 0／0／0 |
+| weather_lamp_smoke | 0 | 0／0／0 |
+| main_ground_visual_smoke | 0 | 0／0／0 |
+| map960_components_smoke | 0 | 0／0／0 |
+| rigid_tank_contact_smoke | 0 | 0／0／0 |
+| tank_occlusion_smoke | 0 | 0／0／2 |
+| player_rigid_variants_runtime_smoke | 0 | 0／0／8 |
+| weather_lamp_budget_smoke | 0 | 0／0／0 |
+| combat_boundary_smoke | 0 | 0／0／0 |
+| firing_visual_recoil_smoke | 0 | 0／0／0 |
+
+原生遮光實際命令：
+
+```sh
+python3 /tmp/lea212_native.py /tmp/lea212-round3-runs/final res://tests/weather_light_occlusion_smoke.gd /home/markchou/project/tank-skirmish/artifacts-local/lea212-20261015/round3/light-effects
+```
+
+actual exit0／ERROR0／WARNING0，failures空。兩支owner警告與ae09baa同旗標原腳本數量／WARNING文字一致；不修無關警告或放寬基準。10支headless皆exit0／ERROR0／FAIL0。產品12個source／test檔逐blob與測試副本一致（final-product-blobs.json）。完整quality／CI未跑，作者回歸非獨立驗收。
+
+有效主圖原生取證exit0、runtime／script／shader ERROR0，退出仍兩條texture cleanup ERROR與一條WARNING，不報全log ERROR0。額外候選首發final-first-shot四次request收到七個ShotEvent、actual exit2，原因未確認，已排除，未放寬四發驗證。T1以排除cold-B2、補replacement-B3後的兩基線各兩次與新控制作診斷checkpoint。候選replacement-final首發47.484ms，但後發部分失焦、只有一次，不能宣稱已修好或穩定達標。
+
+保全：主目錄branch／HEAD保持playtest/lea212-round2／ae09baa，來源、assets、project.godot無差異。開發worktree1408個保護檔、593個私生成資源保持。主目錄開著的editor曾匯入本輪證據PNG，3個既有cache漂移、70個新增匯入cache；初期漏放.gdignore，已補證據根.gdignore，不覆寫／刪除使用中cache。guard-after.json逐檔記錄，不能宣稱主目錄cache完全未變。未push／開PR；override.cfg、GLB／素材與ignored證據不提交。
+
+## 2026-10-16 第四輪：雨的縱深、風與線條方向 checkpoint
+
+從 `8cb90ab` 接續；本節為**待企劃審查的方向稿**，不是第四輪完整收尾或獨立驗收。程式在 `/tmp/tank-skirmish-lea212-atmosphere`，引擎只在額外 `/tmp/lea212-round4-runs/{baseline,candidate}` 完整資源副本執行。證據根 `artifacts-local/lea212-20261015/round4-rain/` 先建立 `.gdignore`，入口 `review.html`。
+
+### 根因與方向
+
+正式相機為正交投影、size100，沒有透視縮放可提供近遠雨大小差異。舊雨使用固定方向與完整 camera billboard，畫面上永遠豎直；0.035×0.8m quad 的顏色／透明度固定，沒有軟邊、頭尾漸淡或落地反應，因此容易像螢幕前的白線雨幕。原 `emission_box_extents=(80,1,80)` 是半尺寸，實際發射體積為160×2×160m。
+
+本稿保留7,000顆雨滴與原高度場，改由 GPU particle shader 控制隨時間變化的風；draw shader 讀取每滴真實水平速度，將完整速度投影成雨絲方向，只在橫向面向相機展寬。依世界高度、view depth、每滴亂數改變大小與透明度，為正交畫面增加層次；保留真實位置與深度遮擋。碰撞時雨滴停止，沿高度場法線將落點退回表面上方，直接在 GPU sub-emitter 生成短生命的柔和擴張漣漪，提供地面／屋頂錨點，無每滴CPU raycast。
+
+### 方向參數
+
+| 項目 | 本稿 |
+| --- | --- |
+| 雨滴預算／生命 | 7,000／2.2s，preprocess2.2s、world coordinates，原200×60×200m可見AABB |
+| 風 | 基向量(x,z)=(2.2,-1.4)m/s；整體陣風倍率1+0.4sin(0.72t)，方向擺動(0.55sin(0.43t),0.65sin(0.51t))m/s |
+| 每滴擾動／落速 | 水平各軸最多±0.28m/s的不同相位擾動；初始向下17–21m/s，向下加速度3m/s² |
+| 雨絲 | 基quad0.022×0.5m；每滴寬倍率0.55–1.10、長0.55–1.45，近地再縮小；view depth70–180m逐漸降低透明度 |
+| 色與透明度 | 冷藍ALBEDO=(0.48,0.60,0.74)、EMISSION×0.65；alpha峰值係數0.50再乘每滴0.58–1、空間層次、左右軟邊及頭尾fade；不是整面固定0.50 |
+| 落地漣漪 | 最多1,800顆、生命0.42s、Plane0.44m、尺寸亂數×0.65–1.3；環擴張並淡出，alpha峰值0.12–0.26；法線外偏0.018m |
+| 受光／遮擋 | 雨絲仍為真LIGHT_COLOR×ATTENUATION×3.5；漣漪×2.6；燈內受暖Spot光、燈外冷底光，兩者均保留深度與真陰影 |
+| 高度場 | 原180×80×180m、512、WHEN_MOVED、follow_camera=false與8m格移動；相機地面上雨+32m／高度場+20m不變 |
+
+### 三機位圖與動態
+
+`direction-baseline/` 是8cb90ab；`direction-v1/` 是本checkpoint產品來源，各有 `f5.png`、`lamp-close.png`、`grass.png` 及同名 `.mp4`。F5為正式size100；燈下近景為原可見燈 `G1__T:corner:1`、size24；草地為出生草地／玩家近景、size28，均沿正式相機basis。兩版F5／燈下相機完全一致；草地focus受物理落地浮點影響相差0.000092m，保守換算小於0.01px，basis／size／projection相同，詳見 `camera-comparison.json`。
+
+每機位暖機後，連續約2.05s依單調時鐘擷取50–53張原始1080p PNG，時間戳在 `capture.json`，全程前景。影格先放記憶體、事後存PNG，MP4按時間戳重採樣30fps，長2.067s，不插值。影片擷取本身會擾動時間，**不作效能樣本**。`direction-candidate/` 是已排除的偏淡探索原型；`collision-probe-fixed/` 是刻意增亮橘環的接點診斷，均不混入正式方向圖。漣漪正式強度偏低，交企劃依動態判斷，沒有宣稱藝術方向或屋頂AC已核可。
+
+### 效能初估與有限回歸
+
+Windows原生Godot4.7.1 official `a13da4feb`、RTX5090、Forward+ Vulkan、1920×1080、VSync1／60Hz。A=8cb90ab、B=本方向；順序A1 B1 B2 A2，每機位360 warmup＋240 steady。兩版相機完全一致、所有steady前景／1080p／相機不變皆240/240；218道路mesh、170建築mesh、出生草12494。117燈保持，F5／dense48／61盞全亮全Spot陰影、dropped0；atlas8192／32-bit、quadrants[4,4,4,4]保持。
+
+| 樣本 | 機位 | frame_post_draw間隔median／p95 ms | viewport CPU median ms | viewport GPU median ms |
+| --- | --- | --- | --- | --- |
+| A1 | F5 | 16.665／17.516 | 1.068 | 2.222 |
+| A1 | dense | 16.663／17.086 | 1.351 | 2.842 |
+| B1 | F5 | 16.655／17.501 | 1.630 | 2.211 |
+| B1 | dense | 16.650／17.793 | 1.855 | 2.530 |
+| B2 | dense | 16.664／17.319 | 1.724 | 1.217 |
+| B2 | F5 | 16.658／18.510 | 1.633 | 2.397 |
+| A2 | dense | 16.660／18.459 | 1.742 | 1.205 |
+| A2 | F5 | 16.662／21.612 | 1.841 | 1.932 |
+
+候選逐幀median均≤17.5ms；本次p95未見一致退步，但僅每版每機位兩次，且主目錄editor仍在，不能宣稱完整效能AC或效能提升。每次median再取median，F5 viewport CPU約+0.177ms、GPU約+0.227ms；dense CPU約+0.243ms，GPU有背景波動，不用它宣稱變快。CPU／GPU為引擎最新回報，不相加或當同幀；TIME_PROCESS不作逐幀門檻。完整raw、分項時間與命令見 `perf-{A1,B1,B2,A2}/profile.json`、`perf-commands.json`、`performance-summary.json`。
+
+實際headless命令：
+
+```sh
+XDG_DATA_HOME=/tmp/lea212-round4-xdg/data XDG_CONFIG_HOME=/tmp/lea212-round4-xdg/config XDG_CACHE_HOME=/tmp/lea212-round4-xdg/cache /home/markchou/.local/share/starspell-godot-tools/4.7.1/editor/Godot_v4.7.1-stable_linux.x86_64 --headless --path /tmp/lea212-round4-runs/candidate --script res://tests/<name>.gd
+```
+
+`weather_lamp_smoke`、`weather_headlights_smoke`、`weather_lamp_budget_smoke`、`firing_vfx_warmup_smoke`、`combat_boundary_smoke`全數actual exit0／ERROR0；warmup smoke有10條owner一致性警告，其餘WARNING0，詳見 `smokes/results.json`與完整log。未修改或放寬原smoke。
+
+```sh
+python3 /tmp/lea212_native.py /tmp/lea212-round4-runs/candidate res://tests/weather_light_occlusion_smoke.gd /home/markchou/project/tank-skirmish/artifacts-local/lea212-20261015/round4-rain/light-occlusion-native direction-v1
+```
+
+原生遮牆actual exit0／ERROR0／failures=[]；兩型燈開陰影受光保留比1.0、控制牆照度0；雨冷底／blocked皆0.321369、unblocked0.671268，halo遮擋與月光柱影通過。初次命令誤用不存在的 `tests/smoke/` 路徑exit1，保留在 `light-occlusion/`，不算產品失敗或有效測試。正式主圖capture／profile皆exit0、runtime／script／shader ERROR0；退出仍有baseline相同的2條texture cleanup ERROR與1條WARNING，未報全log ERROR0。
+
+作者保全查核：主目錄仍 `playtest/lea212-round3`／`8cb90ab`，4003個來源／素材／cache檔SHA、大小與mtime無差異、無新增assets/cache；worktree1409個保護檔不變；593個私生成資源在主目錄、worktree及兩執行副本均同hash；修前副本1240個tracked blobs符合8cb90ab。見 `guard-before.json`、`guard-after.json`；產品與執行副本逐檔比對見 `direction-product-blobs.json`。override.cfg、私素材與證據不提交。
+
+**在此停下等企劃方向審查**。新增風／雨滴亂數／落地反應參數smoke、完整冷快取首發矩陣、其他第二／三輪完整回歸與隔離獨立驗收，留待方向通過後執行；本次有限回歸是作者自查，不能冒稱fresh-context驗收。坦克、正式相機、玩法、物理、草生成、訓練場產品檔均未改。
+
+### 方向稿 v2：修正發射落點集中，待企劃審查
+
+v1 `b86a218` 已被 leadi／企劃退回，以上 v1 數值與圖片只保留作歷史，不代表方向通過。v2 證據在 `artifacts-local/lea212-20261015/round4-rain/v2/`，入口 `review.html`；**依本次明示偏好，不自動開啟審查頁，後續也不自動開啟**。本次仍只交方向 checkpoint，不進完整收尾。
+
+#### 固定漏水感的根因與證據
+
+不能只看單一粒子相鄰兩次重生：v1 的 NUMBER 確實隨週期更新，單槽位的下一個位置也會變，但**不同槽位／週期間反覆使用同一小群 X/Z 落點**。其 `fract(sin(seed*12.9898+78.233)*43758.5453)` 浮點雜湊在本機GPU產生嚴重集中的組合；約九秒觀測35,743個不同發射狀態，只有872個不同X/Z落點，單點最多被使用324次。v1關閉碰撞的控制仍只有872個，故不是高度場只留下少數縫隙；相機與發射器坐標全程不動，也不是8m吸附反覆跳動。碰撞確實使有效粒子由7,000降至median4,599，進一步降低密度；F5原柔線約0.08–0.29px寬，使大多數雨過淡，放大了固定漏水點的觀感。
+
+使用診斷draw shader將GPU真實INDEX／NUMBER／發射X/Z／目前Y編碼成44張連續狀態影格，約每0.2s一次，固定seed21204僅供診斷。X/Z解析度1/64m；按(index,NUMBER,x,z)去除同滴跨幀重複。inactive transform由引擎移到-INF，Y編碼全零，不算有效粒子。原始PNG、解碼資料、source shader及方法在 `probe-v1/`、`probe-v1-no-collision/`、`probe-v2-fixed/`；`gpu-rebirth-summary.json`為摘要，`birth-density.png`為每格0.3125m的落點熱圖。
+
+| 診斷 | 有效粒子median | 觀測發射狀態 | 不同X/Z落點 | 不同落點／發射 | 單點最多次數 |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| v1正常碰撞 | 4,599 | 35,743 | 872 | 2.44% | 324 |
+| v1停用碰撞控制 | 7,000 | 35,848 | 872 | 2.43% | 見raw |
+| v2正常碰撞 | 7,000 | 64,659 | 62,727 | 97.01% | 3 |
+
+Godot的NUMBER合約見[官方粒子shader說明](https://docs.godotengine.org/en/4.7/tutorials/shaders/shader_reference/particle_shader.html)，相同引擎hash的[particles.glsl](https://github.com/godotengine/godot/blob/a13da4feb8d8aefc283c3763d33a2f170a18d541/servers/rendering/renderer_rd/shaders/particles.glsl#L445)由cycle×total+index計算；[particles_copy.glsl](https://github.com/godotengine/godot/blob/a13da4feb8d8aefc283c3763d33a2f170a18d541/servers/rendering/renderer_rd/shaders/particles_copy.glsl#L324)說明inactive的-INF處理。落點集中／修正數量來自本機GPU讀回，不是由文件推算。
+
+#### v2 手段與參數
+
+將浮點sin雜湊改為整數xor／shift／乘法雜湊，以NUMBER、RANDOM_SEED與TIME混合；X/Z各自取獨立雜湊值。碰撞後仍在真高度場表面生成漣漪，原滴結束，槽位立即換到高空的新隨機位置，維持7,000上限且不在屋簷落點接著往下滴；高度場、發射盒半尺寸80／1／80m、相機追隨、lifetime2.2s與原陣風保持。沒有增加螢幕雨幕或修改相機。
+
+雨基quad改0.028×0.38m，保留每滴大小、空間層次、頭尾fade與柔邊；正交遠景額外保證橫向0.65–0.95px的柔邊取樣寬度，世界位置／速度／深度不變。冷底EMISSION由×0.65改×0.85、alpha峰值係數0.50→0.55；近地透明度下限0.70→0.85、遠處0.72→0.80，仍乘亂數、空間與軟遮罩。漣漪Plane0.44→0.62m、軟環寬0.08→0.12、alpha峰值0.12–0.26→0.28–0.48、EMISSION×0.14→0.22，仍最多1,800顆／0.42s。非方向光受光函式與真陰影未改。
+
+#### 正式畫面的同位置重複量化
+
+另以正式F5連續約九秒取證，配對同機位雨關閉參考；只統計靜態建築silhouette內亮度增加>5/255的瞬變，排除草地／道路動態。ROI891,623像素；12×8格中至少500個ROI像素的格才計入覆蓋率。v1取92幀／9.075s、v2取65幀／9.092s，依真實時間戳配對時間差±0.05s，兩版取樣皆前景。完整原始序列比分析取樣更密，保留在 `screen-{v1,v2}/f5/`；九秒影片各9.133s。
+
+| 正式畫面診斷 | v1 | v2 |
+| --- | ---: | ---: |
+| 可見亮度瞬變像素median | 845 | 4,594 |
+| 有瞬變的有效網格比例median | 66.67% | 75.76% |
+| 相隔2.2s同像素重疊比例 | 8.8649% | 1.3389% |
+| 扣除隨機重疊後的2.2s相關係數 | 0.087733 | 0.008301 |
+
+可見瞬變約增加5.4倍，長時間的同位置記憶降低。v1在0.4–4.4s也持續有較高相關，**2.2s不是唯一獨峰，不宣稱整幕精確每2.2s重播**；這與少數發射欄位被不同滴重用相符。0.2s內還包含同一雨絲持續移動的相關，不能拿它單獨判定漏水。`repetition-correlation.svg`同時展示全段與0.4s後放大圖，`screen-repetition-summary.json`保留每個時間差、配對數與完整ffmpeg命令。此為固定機位局部ROI診斷，不是每滴真值、全畫面藝術評分或完整屋頂驗收。
+
+#### 三機位、效能與回歸
+
+8cb90ab對照沿用上一稿 `../direction-baseline/{f5,lamp-close,grass}.{png,mp4}`，v2為 `direction-v2-ready/` 同名檔。三機位position／basis／size／projection與baseline完全一致，畫面原始1080p、每段連續2秒以上、MP4各2.067s，未調亮或插值。`camera-comparison.json`、`video-commands.json`可查證；退回稿另連回 `../direction-v1/`，診斷狀態圖不混入藝術方向圖。
+
+原生效能依序A1 B1 B2 A2 B3 A3；每機位360 warmup＋240 steady、RTX5090／Forward+ Vulkan／1080p／VSync1／60Hz。B2 F5失焦112/240，完整保留但不進主比；F5只比較完整配對1、3，dense比較完整配對1、2、3，按焦點條件選樣，不按速度挑選。所有幀相機不變／1080p、GPU有效樣本240、117燈／F5與dense48／61盞全亮全Spot陰影、dropped0、atlas8192／32-bit與quadrants[4,4,4,4]保持。
+
+| 主要配對 | 8cb90ab逐幀median範圍 ms | v2逐幀median範圍 ms | baseline p95範圍 ms | v2 p95範圍 ms |
+| --- | --- | --- | --- | --- |
+| F5：1、3 | 16.670–16.690 | 16.667–16.670 | 18.296–18.704 | 17.249–17.357 |
+| dense：1、2、3 | 16.660–16.681 | 16.665–16.679 | 17.676–18.380 | 17.303–17.479 |
+
+本次候選median皆≤17.5ms，p95沒有明顯退步；主目錄editor仍開著，短窗不足以宣稱效能提升或完整AC。每次median再取median的viewport CPU／GPU為F5 baseline1.715／1.048ms、v2 1.426／1.034ms；dense baseline1.910／1.420ms、v2 1.437／1.486ms。CPU／GPU分開回報、不相加、不當同幀，TIME_PROCESS不作逐幀門檻。全12機位原始樣本與排除原因在 `perf-*/profile.json`、`performance-summary.json`、`native-commands.json`。
+
+```sh
+XDG_DATA_HOME=/tmp/lea212-round4-xdg/data XDG_CONFIG_HOME=/tmp/lea212-round4-xdg/config XDG_CACHE_HOME=/tmp/lea212-round4-xdg/cache /home/markchou/.local/share/starspell-godot-tools/4.7.1/editor/Godot_v4.7.1-stable_linux.x86_64 --headless --path /tmp/lea212-round4-v2-runs/candidate --script res://tests/<name>.gd
+python3 /tmp/lea212_native.py /tmp/lea212-round4-v2-runs/candidate res://tests/weather_light_occlusion_smoke.gd /home/markchou/project/tank-skirmish/artifacts-local/lea212-20261015/round4-rain/v2/light-occlusion direction-v2
+```
+
+五支name=`weather_lamp_smoke`、`weather_headlights_smoke`、`weather_lamp_budget_smoke`、`firing_vfx_warmup_smoke`、`combat_boundary_smoke`，actual exit皆0／ERROR0；warmup有10條owner一致性WARNING，其餘WARNING0，原smoke未修改。原生遮牆actual exit0／failures=[]／ERROR0，兩型開陰影受光保留比1.0、控制牆照度0；雨冷底／blocked皆0.421394、unblocked0.731842，halo遮擋與月光柱影通過。有效主圖取證runtime／script／shader ERROR0，退出仍有baseline同樣2條texture cleanup ERROR與1條WARNING。早期helper編譯失敗與尚未通過GPU分布檢查的探索稿已在 `evidence-notes.json`排除，保留raw，不作本稿證據。
+
+保全查核仍為主目錄playtest/lea212-round3／8cb90ab，4003檔SHA／大小／mtime無異動與無新增assets/cache；worktree1409個保護檔、593個私生成資源與修前1240個tracked blobs保持。只變更4個雨程式／shader及本文件；引擎只在額外/tmp副本執行。**v2在此停下等企劃審**，不push／開PR，不提交override.cfg，不跑方向通過後的完整收尾；作者smoke與局部量化不代替企劃審圖或最終獨立驗收。
+## 第四輪收尾：暖雨、持續落地反應與 F5 短拖影
+
+本節接續企劃已核可的 `f6b5f1a` v2 方向，對應派工單「方向稿 v2 方向通過，附修正後收尾」。證據根為 `artifacts-local/lea212-20261015/round4-rain/final/`；`review.html` 提供三機位圖、影片、原始讀值與驗證入口，不自動開啟瀏覽器。這是工程收尾證據，使用者的最終產品驗收另計。
+
+### 根因與修正
+
+- 暖色被冷底光壓過：雨的冷色 emission 從 0.85 降至 0.32，真局部燈的受光增益從 3.5 調為 12。仍使用引擎 `LIGHT_COLOR * ATTENUATION`，包含牆體陰影；沒有新增不受遮擋的距離染色。燈外保持灰藍，燈下較亮且偏暖。
+- 漣漪槽位沒有回收：sub-emitter 的 shader 只累加 age、繪圖變透明，未將 `ACTIVE` 設為 false。原版暖機後 1800 槽全部過期，9 秒採樣都沒有年輕漣漪；修正為 age≥1 即釋放槽位，維持 1800／0.42s 預算。
+- 碰撞後的繪製外插：原生 GPU 讀回屋頂核心 3532 筆，9 筆中心低於 4.8m，最低 4.484375m，下一採樣已換到新出生點。引擎 particles-copy 在碰撞之後仍以 `velocity * frame_remainder` 外插。改為雨 60Hz、`interpolate=false`，保持原屋頂門檻，沒有放寬容差。
+- 遠景雨滴過短：沿實際投影速度補足 5.5–8px 的有限長度下限，寬度仍為 0.65–0.95px，下限之外保留高度、距離與每滴差異。頭尾與軟邊仍漸淡；碰撞重生時同步更新真速度與 `CUSTOM.zw`，避免一幀朝向不符。
+- F5 小環被壓成點或被濕路底色蓋過：保留 0.62m Plane，但每滴尺寸倍率改為 1.1–1.6，半徑從 0.30 漲至 0.92；環寬 `max(0.09,fwidth(radius)*0.35)` 保留中空，淡出指數 1.1、alpha 0.55–0.75。以加色混合呈現短暫水面反光，不覆蓋既有路面高光；冷底 emission 0.015、真局部燈增益 10。壽命、數量、碰撞法線與表面偏移 0.018m 不變。
+
+仍為單一 7000 顆 world-space 雨體積、整數雜湊更新落點、時間變化陣風與每滴擾動；180×80×180m／512／WHEN_MOVED／follow_camera=false 高度場與 8m 格跟隨保持。沒有增加螢幕雨幕、CPU 落地查詢、無陰影的暖光或額外燈源。
+
+### 新增與加嚴的 smoke
+
+`tests/weather_rain_contract_smoke.gd` 已加入 `scripts/quality.mjs`：從實例讀回 world-space、7000／2.2s、60Hz／禁止外插、生產隨機 seed、mesh、1800／0.42s 的 event-only sub-emitter 與實際 shader 資源。既有品質檢查和斷言保留。
+
+`tests/weather_rain_gpu_smoke.gd` 必須使用原生 Forward+，拒絕 headless。合成場景有真屋頂、地板和高度場，直接使用產品 motion shader；僅以診斷 draw shader 將真 GPU 位置、NUMBER、CUSTOM 讀回影像，不另抄一套風或亂數公式。暖機後約 9 秒跨粒子／週期採樣，以 `(index,NUMBER,x,z)` 辨識出生狀態，要求落點唯一率>90%、單落點重用<10、風有時間變化、seed 差異、屋頂遮擋、真屋頂／地板落地、持續有年輕漣漪且無過期 active 槽位，最後停雨並檢查回收。固定 seed 21204 僅在診斷測試。
+
+三組鑑別證據保留：`red-gpu/` 為 f6 原版，exit 1（屋頂外插、過期槽位、無持續落地）；`gpu-final/` 為最終候選，exit 0；`v1-mutant/` 只回灌 b86a218 浮點 motion，exit 1，僅落點集中失敗（唯一率 2.60%、最大重用 322）。紅燈沒有藉由修改原門檻變綠。
+
+最終 GPU 的 44 次採樣讀回 64376 個出生狀態、62793 個落點（97.54%）、最大重用 3 次；每次有 372–605 個年輕漣漪，過期 active 均為 0。屋頂核心雨滴樣本 3483、屋頂落地 260、地板落地 19782；原屋頂／地板位置門檻均通過，風速平均值範圍約 (1.115,2.265)m/s，seed 分箱遍及 0–30。
+
+`tests/weather_light_occlusion_smoke.gd` 保留原亮度與遮牆條件，新增 RGB 暖冷斷言。兩款 GLB 的冷色／牆後雨均為 RGB (0.2431,0.2706,0.3020)、亮度 0.2670；無牆受光為 (1.0000,0.8314,0.3725)、亮度 0.8341，exit 0。這是固定受光控制；正式 F5 可見度另由真場景畫面確認。
+
+原生重現（僅在額外完整資源副本執行）：
+
+```sh
+python3 <evidence>/harness/lea212_native.py <copy> res://tests/weather_rain_gpu_smoke.gd <output> final
+python3 <evidence>/harness/lea212_native.py <copy> res://tests/weather_light_occlusion_smoke.gd <output> final
+```
+
+### 正式畫面與落地對照
+
+`visual-final/` 有 F5 size100、可見燈 `G1__T:corner:1` size24、出生草地 size28 的原始 1920×1080 PNG、連續兩秒幀序列與依時間戳編碼 MP4。相機沿正式 basis，完整資源讀回 218 道路、170 建築、12494 草、117 路燈；畫面候選燈全亮、全陰影、dropped 0。`direction-baseline/` 的 8cb90ab 與 `v2/direction-v2-ready/` 保留作前後對照。
+
+`diagnostic-f5-{on,impact-off,all-off}.png` 在同一正式 F5 相機暫停粒子後分別關閉落地、關閉雨的繪圖；這些開關僅存在隔離擷取 harness。原圖沒有增亮；最近鄰裁切明確標成放大。最終單幀落地開關有 319 像素增加>5/255，其中 93 位於暖背景；這只證明渲染差異，不單憑像素數字代替視覺驗收。中央暖光路面約 x955–959／y706–708 可辨小環，關閉落地反應時該環消失，多個時間點可見位置變換；另一模型的限定視覺複查收據在 `lea212-final-impact-review.json`。
+
+草煙原生 `grass-smoke/normal-{before,0_3s,1_0s,2_0s}.png` 使用原粒子壽命與草材質，保留第三輪消散、深度疊合與真射擊接點。這組視覺 harness 預先開火，不作冷首發樣本。擷取的幀時間也不作效能樣本。
+
+### 完整功能回歸與交錯效能
+
+Windows Godot4.7.1 official a13da4feb、RTX5090、Forward+ Vulkan、1920×1080、VSync1／60Hz；A=8cb90ab、B=本輪最終候選，順序 A1 B1 B2 A2 A3 B3，第二組機位順序反轉。每機位360暖機＋240穩態；F5、dense各三組完整前景配對，無樣本因條件無效而排除，全部相機不變／1080p／前景240/240。117燈保持，F5／dense各48／61盞候選全亮且有Spot陰影、dropped0，atlas8192／32-bit／quadrants[4,4,4,4]。
+
+| 樣本 | 機位 | 逐幀median／p95 ms | viewport CPU median ms | viewport GPU median ms |
+| --- | --- | --- | --- | --- |
+| A1 | f5 | 16.661／17.497 | 1.483 | 1.435 |
+| A1 | dense-street | 16.699／17.418 | 1.300 | 2.449 |
+| B1 | f5 | 16.667／17.294 | 1.030 | 2.051 |
+| B1 | dense-street | 16.684／17.074 | 1.259 | 2.645 |
+| B2 | dense-street | 16.699／17.959 | 1.660 | 1.304 |
+| B2 | f5 | 16.659／17.532 | 1.591 | 2.886 |
+| A2 | dense-street | 16.693／17.228 | 1.641 | 1.275 |
+| A2 | f5 | 16.714／17.413 | 1.452 | 2.762 |
+| A3 | f5 | 16.669／17.477 | 1.507 | 1.436 |
+| A3 | dense-street | 16.668／20.936 | 1.753 | 2.595 |
+| B3 | f5 | 16.672／17.592 | 1.068 | 1.914 |
+| B3 | dense-street | 16.651／17.299 | 1.301 | 2.518 |
+
+候選每次median為16.651–16.699ms，均≤17.5ms；F5三次p95的中位數A／B為17.477／17.532ms（+0.055ms），dense為17.418／17.299ms（-0.119ms），未見一致p95退步。A3 dense的20.936ms也原樣保留，沒有依速度挑樣。CPU／GPU為引擎最新回報，非同幀且不相加；逐幀門檻使用frame_post_draw時間差，不使用TIME_PROCESS。細項、所有逐幀資料、有效配對與實際命令／exit見 `performance-summary.json`、`perf-*/profile.json`、`performance-valid-pairs.json`、`profile-commands.json`。
+
+冷首發依 A1 B1 B2 A2 交錯，再用相同副本／userdata同序跑延續樣本；只有四次真左鍵／四ShotEvent，每發0–2秒包含命中特效，保留正式物理、相機、後座、草與正常FX。診斷harness額外固定borderless1920×1080並逐幀記錄viewport，未改產品相機或畫質。八次的四窗口全部前景、size100及1080p，皆符合首發≤50ms且≤後三發最大值的2倍。
+
+| 樣本 | 首發最大逐幀間隔 ms | 相對後三發最大值 |
+| --- | --- | --- |
+| cold-A1 | 29.517 | 1.267 |
+| cold-B1 | 37.334 | 1.534 |
+| cold-B2 | 23.678 | 0.965 |
+| cold-A2 | 21.898 | 0.982 |
+| continued-A1 | 27.708 | 1.160 |
+| continued-B1 | 23.200 | 0.928 |
+| continued-B2 | 26.419 | 1.107 |
+| continued-A2 | 27.892 | 1.155 |
+
+冷指Godot專案／應用shader快取冷：四個新副本的project shader_cache不存在、各自唯一userdata執行前不存在，執行後確認產生116／118個shader／Vulkan快取檔。未隔離NVIDIA driver cache，不能稱完全冷GPU。`cold-preconditions.json`、`cache-readback.json`、`first-shot-summary.json`及各樣本 `first-shot.json` 保存完整證據。
+
+完整 `GODOT_BIN=/home/markchou/.local/share/starspell-godot-tools/4.7.1/editor/Godot_v4.7.1-stable_linux.x86_64 bash scripts/ci.sh` 在額外 `/tmp/lea212-round4-final-runs/quality` 執行，76步驟通過、exit0、ERROR0；另以相同引擎在candidate副本用 `--headless --audio-driver Dummy --fixed-fps 60 --path <copy> --script res://tests/<name>.gd` 補跑16支雨／燈／首發預繪／後座／邊界／地圖／遮蔽／四車／瞄準smoke，均exit0、ERROR0。精確16支名稱與命令在 `smokes/results.json`，完整CI細項在 `smokes/quality-details/`；原生GPU與首發預繪也各exit0，見 `native-final-commands.json`。
+
+品質檢查開始後僅漣漪draw shader作上述視覺細修；最終三機位真渲染與GPU smoke已補驗該shader，GDScript／介面相同，來源差異記於 `validation-source-scope.json`。此為本機驗證，未宣稱GitHub同Head CI。既有owner警告與smoke的非有限向量控制警告按原log保留；主圖原生退出的兩條Texture清理ERROR／一條WARNING與8cb一致，與執行期／script／shader錯誤分列。初次缺Git metadata的隔離副本及診斷harness API解析失敗另存，修正執行環境後才採用重跑結果，未放寬測試。

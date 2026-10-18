@@ -76,6 +76,7 @@ func _prepare_donor(donor: CharacterBody3D) -> void:
 func _finish_donor(donor: CharacterBody3D) -> void:
 	combat_tank = donor
 	donor.configure_external_physics(self)
+	donor.get_node("Headlights").reparent(self, false)
 	var health := donor.get_node("HealthComponent")
 	health.reparent(self, false)
 	get_node("DamageReceiver").health_component = health
